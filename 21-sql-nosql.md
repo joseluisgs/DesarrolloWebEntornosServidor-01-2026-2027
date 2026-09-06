@@ -315,6 +315,47 @@ var resultados = await pipeline.ToListAsync();
 
 📌 **Ejemplo real:** Instagram guarda los perfiles de usuario en MongoDB. Cada usuario tiene información diferente: unos tienen linkedin, otros no; unos tienen bio larga, otros vacía. Con MongoDB no necesitas un esquema rígido.
 
+### EF Core con MongoDB
+
+```bash
+dotnet add package MongoDB.EntityFrameworkCore
+```
+
+```csharp
+// DbContext con MongoDB
+using Microsoft.EntityFrameworkCore;
+
+public class MongoDbContext(DbContextOptions<MongoDbContext> options) : DbContext(options)
+{
+    public DbSet<ProductoMongo> Productos => Set<ProductoMongo>();
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<ProductoMongo>(entity =>
+        {
+            entity.HasKey(p => p.Id);
+            entity.Property(p => p.Nombre).HasMaxLength(200);
+        });
+    }
+}
+
+// Registro en DI
+services.AddDbContext<MongoDbContext>(options =>
+    options.UseMongoDB(configuration.GetConnectionString("MongoDB")));
+```
+
+### MongoDB: Driver Nativo vs EF Core
+
+| Característica | MongoDB.Driver | EF Core + MongoDB |
+|----------------|---------------|-------------------|
+| **Control** | Total sobre la BD | Abstraído por EF Core |
+| **Agregaciones** | Pipeline completo (Unwind, Group, Match) | Limitado (LINQ se traduce parcialmente) |
+| **Esquema** | Sin esquema fijo | Define entidades con Fluent API |
+| **Migraciones** | No existen | `dotnet ef migrations add` |
+| **CRUD** | `InsertOneAsync`, `Find`, `ReplaceOneAsync` | `Add`, `SaveChanges`, LINQ |
+| **Usar cuando** | Agregaciones complejas, documentos anidados | CRUD rápido, si ya usas EF Core |
+| **Rendimiento** | Más rápido | Más productivo |
+
 ## 21.4. Redis: Caché y Clave-Valor
 
 Redis es una base de datos en memoria ultra-rápida. Se usa principalmente para caché, sesiones, colas de mensajes y contadores.
@@ -426,6 +467,59 @@ RedisValue nombre = await _db.HashGetAsync("usuario:1", "nombre");
 > 💡 **Consejo:** Redis es ideal para caché de sesiones de usuario, datos de productos que cambian poco, contadores de visitas y colas de tareas. No uses Redis como base de datos principal: los datos están en memoria y se pierden al reiniciar (a menos que configures persistencia).
 
 📌 **Ejemplo real:** Twitter usa Redis para cachear los timelines de los usuarios. Cuando abres Twitter, el timeline se carga de Redis (microsegundos), no de la base de datos (milisegundos). Los datos se actualizan cuando alguien twittea.
+
+### Redis: Driver Nativo vs EF Core
+
+Redis **NO tiene un provider oficial de EF Core**. La razón es que Redis no es una base de datos relacional: no soporta JOINs, no tiene esquema, y sus operaciones son clave-valor. EF Core está diseñado para bases de datos relacionales.
+
+Sin embargo, existen alternativas para integrar Redis en arquitecturas con EF Core:
+
+| Solución | Descripción | Cuándo usarla |
+|----------|-------------|---------------|
+| **StackExchange.Redis** | Driver nativo, control total | Caché, sesiones, colas (recomendado) |
+| **IDistributedCache** | Interfaz .NET para caché distribuido | Caché simple con Redis o SQL Server |
+| **EF Core + Redis Cache** | Usar Redis como segundo nivel de caché | Cuando EF Core cachea consultas en Redis |
+
+```csharp
+// Patrón recomendado: EF Core para datos, Redis para caché
+public class ProductoService(
+    AppDbContext context,
+    IDistributedCache cache
+) : IProductoService
+{
+    public async Task<Producto?> GetByIdAsync(int id)
+    {
+        // 1. Buscar en Redis
+        string? cached = await cache.GetStringAsync($"producto:{id}");
+        if (cached is not null)
+            return JsonSerializer.Deserialize<Producto>(cached);
+
+        // 2. Si no está, buscar con EF Core
+        var producto = await context.Productos.FindAsync(id);
+        if (producto is not null)
+        {
+            // 3. Guardar en Redis para próxima vez
+            await cache.SetStringAsync($"producto:{id}",
+                JsonSerializer.Serialize(producto),
+                new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30)
+                });
+        }
+        return producto;
+    }
+}
+```
+
+> 📝 **Nota:** Redis como EF Core provider no existe porque Redis no es relacional. El patrón correcto es: **EF Core para la BD principal** (PostgreSQL, SQL Server) y **Redis como caché** encima.
+
+### Comparativa: Driver Nativo vs EF Core (las 3 BD)
+
+| BD | Driver Nativo | EF Core Provider | Cuándo usar nativo | Cuándo usar EF Core |
+|----|---------------|------------------|-------------------|---------------------|
+| **PostgreSQL** | `Npgsql` + Dapper | `Npgsql.EntityFrameworkCore.PostgreSQL` | Consultas complejas, reporting | CRUD rápido, si ya usas EF Core |
+| **MongoDB** | `MongoDB.Driver` | `MongoDB.EntityFrameworkCore` | Agregaciones complejas | CRUD simple, si ya usas EF Core |
+| **Redis** | `StackExchange.Redis` | ❌ No existe oficialmente | Caché, sesiones, colas | Usar `IDistributedCache` + Redis |
 
 ## 21.5. Comparativa y Cuándo Usar Cada Uno
 
