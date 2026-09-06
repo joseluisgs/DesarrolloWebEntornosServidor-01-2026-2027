@@ -143,6 +143,12 @@ var personas = service.GetAll();
 
 ## 11.6. Scrutor: Assembly Scanning Automático
 
+### Instalación
+
+```bash
+dotnet add package Scrutor
+```
+
 Con **Scrutor**, puedes registrar servicios automáticamente escaneando ensamblados, evitando escribir `services.AddTransient<IFoo, Foo>()` uno por uno.
 
 ```csharp
@@ -178,6 +184,77 @@ services.Decorate<IPedidoService, PedidoServiceConLog>();
 | `services.AddTransient<IEmailService, EmailService>();` | Convierte más de 50 registros en uno solo |
 
 > 💡 **Consejo:** Usa interfaces auxiliares como `ITransientService`, `IScopedService` e `ISingletonService` como marcadores. Scrutor las usa para filtrar qué clases registrar.
+
+### Infrastructure/DependenciesProvider.cs con Scrutor
+
+El patrón `Infrastructure/DependenciesProvider.cs` centraliza toda la configuración de DI. Con Scrutor se reduce enormemente:
+
+```csharp
+using Microsoft.Extensions.DependencyInjection;
+using Scrutor;
+
+namespace Academia.Infrastructure;
+
+public static class DependenciesProvider
+{
+    public static IServiceProvider BuildServiceProvider()
+    {
+        var services = new ServiceCollection();
+
+        // Escanear el ensamblado y registrar automáticamente
+        services.Scan(scan => scan
+            .FromAssemblyOf<Program>()
+                .AddClasses(classes => classes.AssignableTo<IScopedService>())
+                    .AsImplementedInterfaces()
+                    .WithScopedLifetime()
+                .AddClasses(classes => classes.AssignableTo<ITransientService>())
+                    .AsImplementedInterfaces()
+                    .WithTransientLifetime()
+                .AddClasses(classes => classes.AssignableTo<ISingletonService>())
+                    .AsImplementedInterfaces()
+                    .WithSingletonLifetime()
+        );
+
+        // Lo que no se puede escanear (configuración condicional, cache, etc.)
+        services.AddSingleton<ICache<int, Persona>>(sp =>
+            new LruCache<int, Persona>(AppConfig.CacheSize));
+
+        return services.BuildServiceProvider();
+    }
+}
+```
+
+**Interfaces marcadoras** (solo para que Scrutor las filtre):
+
+```csharp
+public interface IScopedService { }
+public interface ITransientService { }
+public interface ISingletonService { }
+```
+
+**Servicios que implementan los marcadores:**
+
+```csharp
+// Scrutor lo registra automáticamente como Scoped
+public class AcademiaService : IAcademiaService, IScopedService
+{
+    public AcademiaService(
+        IPersonasRepository repository,
+        IValidador<Persona> validador,
+        ICache<int, Persona> cache
+    ) { }
+}
+
+// Scrutor lo registra automáticamente como Singleton
+public class PersonasMemoryRepository : IPersonasRepository, ISingletonService
+{
+    // ...
+}
+```
+
+> ⚠️ **Advertencia:** Lo que no se pueda escanear (configuración condicional, cache con tamaño, factory) se registra manualmente después del `Scan`. Scrutor complementa la DI manual, no la reemplaza al 100%.
+
+📌 **Ejemplo real:** En el proyecto de Gestión Académica de 1º, el `DependenciesProvider` original tenía ~90 líneas de registros manuales. Con Scrutor se reduce a ~20 líneas.
 
 ## 11.7. Patrones de Diseño con DI
 

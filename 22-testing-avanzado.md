@@ -22,6 +22,14 @@ En este tema aprenderás NUnit, FluentAssertions, Moq, el patrón AAA y TestCont
 
 ## 22.1. NUnit: Framework de Tests
 
+### Instalación
+
+```bash
+dotnet add package NUnit
+dotnet add package NUnit3TestAdapter
+dotnet add package Microsoft.NET.Test.Sdk
+```
+
 **NUnit** es el framework de tests más usado en .NET. Los tests son clases con métodos decorados con atributos.
 
 ### Estructura de un test
