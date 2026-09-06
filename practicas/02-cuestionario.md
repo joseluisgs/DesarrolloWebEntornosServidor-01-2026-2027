@@ -30,7 +30,7 @@
 
 12. **Describe los patrones Repository, Service y Factory. ¿Cómo encajan en una arquitectura Clean Architecture?**
 
-13. **¿En qué se diferencia LINQ declarativo de imperativo? ¿Cuándo usarías `GroupBy` con `ToDictionary` frente a `GroupBy` con `Select` y `ToList`? Menciona al menos 2 tipos de JOINs en LINQ.**
+13. **¿En qué se diferencia LINQ declarativo de imperativo? ¿Cuándo usarías `GroupBy` con `ToDictionary` frente a `GroupBy` con `Select` y `ToList`? ¿Qué es un DataFrame y cuándo lo usarías en vez de colecciones LINQ?**
 
 14. **¿Qué es `IDisposable` y por qué es importante en la gestión de recursos? Menciona 2 bibliotecas o mecanismos para trabajar con ficheros CSV y JSON en C#. ¿Qué es `System.Text.Json`?**
 

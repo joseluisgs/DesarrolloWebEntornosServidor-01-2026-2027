@@ -412,6 +412,36 @@
     C) LINQ to Entities solo funciona con JSON
     D) LINQ to Objects solo funciona con bases de datos
 
+63. ¿Qué es un DataFrame en C#?
+    A) Un tipo de base de datos relacional
+    B) Una estructura de datos tabular similar a una tabla SQL o Excel
+    C) Un protocolo de comunicación
+    D) Un framework de testing
+
+64. ¿Qué paquete NuGet se necesita para usar DataFrames en C#?
+    A) Microsoft.Data.Analysis
+    B) System.Dataframe
+    C) CsvHelper
+    D) EntityFramework
+
+65. ¿Cómo se lee un fichero CSV con un DataFrame?
+    A) DataFrame.LoadCsv("fichero.csv")
+    B) DataFrame.Read("fichero.csv")
+    C) DataFrame.Open("fichero.csv")
+    D) DataFrame.Parse("fichero.csv")
+
+66. ¿Qué método de DataFrame se usa para filtrar filas?
+    A) df.Where(...)
+    B) df.Filter(...)
+    C) df.Select(...)
+    D) df.Find(...)
+
+67. ¿Qué ventaja tiene un DataFrame sobre una colección LINQ para datos tabulares?
+    A) Es más rápido para objetos complejos
+    B) Permite leer CSV directamente y hacer estadísticas (.Mean, .Max, .Min)
+    C) Soporta relaciones entre tablas
+    D) Usa menos memoria
+
 **Tema 14: Ficheros y Formatos**
 
 63. ¿Qué formato de fichero es ideal para almacenar configuraciones de una aplicación .NET?

@@ -1,6 +1,6 @@
-# Práctica 5: Servicio con Almacenamiento Local y Remoto en .NET
+# Práctica 6: Servicio con Almacenamiento Local y Remoto en .NET
 
-- [Práctica 5: Servicio con Almacenamiento Local y Remoto en .NET](#práctica-5-servicio-con-almacenamiento-local-y-remoto-en-net)
+- [Práctica 6: Servicio con Almacenamiento Local y Remoto en .NET](#práctica-6-servicio-con-almacenamiento-local-y-remoto-en-net)
   - [Objetivo](#objetivo)
   - [Descripción de la Práctica](#descripción-de-la-práctica)
   - [Tecnologías a Usar](#tecnologías-a-usar)

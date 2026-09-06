@@ -6,6 +6,7 @@
   - [13.5. LINQ en Base de Datos (Entity Framework Core)](#135-linq-en-base-de-datos-entity-framework-core)
   - [13.6. Parallel LINQ (PLINQ)](#136-parallel-linq-plinq)
   - [13.7. LINQ Avanzado](#137-linq-avanzado)
+  - [13.8. DataFrames en C# con Microsoft.Data.Analysis](#138-dataframes-en-c-con-microsoftdataanalysis)
 
 
 # 13. LINQ en Colecciones y Base de Datos
@@ -313,6 +314,136 @@ foreach (var porcion in porciones)
     Console.WriteLine($"Grupo: {string.Join(", ", porcion)}");
 }
 ```
+
+## 13.8. DataFrames en C# con Microsoft.Data.Analysis
+
+Un **DataFrame** es una estructura de datos tabular, similar a una tabla SQL o un Excel. Microsoft提供 `Microsoft.Data.Analysis` para trabajar con datos tabulares en C#.
+
+### Instalación
+
+```bash
+dotnet add package Microsoft.Data.Analysis
+```
+
+### Crear un DataFrame
+
+```csharp
+using Microsoft.Data.Analysis;
+
+// Crear columnas
+var nombres = new PrimitiveDataFrameColumn<string>("Nombre", new[] { "Ana", "Carlos", "María", "Pedro" });
+var edades = new PrimitiveDataFrameColumn<int>("Edad", new[] { 25, 30, 28, 35 });
+var ciudades = new PrimitiveDataFrameColumn<string>("Ciudad", new[] { "Madrid", "Barcelona", "Madrid", "Sevilla" });
+
+// Crear DataFrame
+var df = new DataFrame();
+df.Columns.Add(nombres);
+df.Columns.Add(edades);
+df.Columns.Add(ciudades);
+
+// Mostrar
+Console.WriteLine(df);
+//  Nombre  Edad  Ciudad
+//  Ana     25    Madrid
+//  Carlos  30    Barcelona
+//  María   28    Madrid
+//  Pedro   35    Sevilla
+```
+
+### Filtrar con Where
+
+```csharp
+// Filtrar personas de Madrid
+var madrid = df.Filter(df.Columns["Ciudad"].Cast<string>().EqualTo("Madrid"));
+Console.WriteLine(madrid);
+//  Nombre  Edad  Ciudad
+//  Ana     25    Madrid
+//  María   28    Madrid
+```
+
+### Seleccionar columnas
+
+```csharp
+// Seleccionar solo nombres y edades
+var seleccion = df.Columns["Nombre"].Join(df.Columns["Edad"]);
+```
+
+### Ordenar
+
+```csharp
+// Ordenar por edad descendente
+var ordenado = df.Sort(df.Columns["Edad"], SortOrder.Descending);
+```
+
+### Agrupar y agregar
+
+```csharp
+// Contar por ciudad
+var porCiudad = df.GroupBy("Ciudad");
+foreach (var grupo in porCiudad)
+{
+    Console.WriteLine($"{grupo.Key}: {grupo.RowCount} registros");
+}
+// Madrid: 2
+// Barcelona: 1
+// Sevilla: 1
+```
+
+### Leer CSV con DataFrame
+
+```csharp
+using Microsoft.Data.Analysis;
+
+// Leer fichero CSV
+var df = DataFrame.LoadCsv("datos.csv");
+
+// Consultas
+var mujeres = df.Filter(df.Columns["Sexo"].Cast<string>().EqualTo("Mujer"));
+var hombres = df.Filter(df.Columns["Sexo"].Cast<string>().EqualTo("Hombre"));
+
+// Estadísticas
+var mediaEdad = df.Columns["Edad"].Cast<double>().Mean();
+var maxEdad = df.Columns["Edad"].Cast<double>().Max();
+var minEdad = df.Columns["Edad"].Cast<double>().Min();
+```
+
+### DataFrame vs colecciones LINQ
+
+| Característica | DataFrame | Colecciones LINQ |
+|----------------|-----------|------------------|
+| **Tipo de datos** | Tabular (filas y columnas) | Colección de objetos |
+| **Esquema** | Cada columna tiene un tipo | Cada objeto tiene propiedades |
+| **Filtrado** | `df.Filter(column.EqualTo(value))` | `lista.Where(x => x.Prop == value)` |
+| **Agrupación** | `df.GroupBy("columna")` | `lista.GroupBy(x => x.Prop)` |
+| **Estadísticas** | `.Mean()`, `.Max()`, `.Min()` | `.Average()`, `.Max()`, `.Min()` |
+| **Lectura CSV** | `DataFrame.LoadCsv()` | CsvHelper |
+| **Rendimiento** | Mejor para datos tabulares grandes | Mejor para objetos complejos |
+| **Usar cuando** | Datos tabulares, CSV, análisis | Objetos de dominio, BD |
+
+📌 **Ejemplo real:** Un análisis de accidentes de tráfico en Madrid. Tienes un CSV con 20.000 registros. Con un DataFrame puedes filtrar por distrito, agrupar por tipo de accidente, calcular estadísticas por sexo y edad, todo en pocas líneas de código.
+
+```csharp
+// Ejemplo: Análisis de accidentes de Madrid
+var accidentes = DataFrame.LoadCsv("2025_Accidentalidad.csv");
+
+// Accidentes con alcohol
+var conAlcohol = accidentes.Filter(
+    accidentes.Columns["PositivoAlcohol"].Cast<bool>().EqualTo(true));
+
+// Por distrito
+var porDistrito = accidentes.GroupBy("Distrito");
+foreach (var grupo in porDistrito)
+{
+    Console.WriteLine($"{grupo.Key}: {grupo.RowCount} accidentes");
+}
+
+// Stats por edad
+var mediaEdad = accidentes.Columns["Edad"].Cast<double>().Mean();
+```
+
+> 📝 **Nota:** `Microsoft.Data.Analysis` es ideal para análisis de datos, ETL y procesamiento de CSV. Para objetos de dominio complejos con relaciones, usa colecciones LINQ o EF Core.
+
+> 💡 **Consejo:** Si necesitas análisis estadístico avanzado, combina DataFrame con LINQ. Carga los datos en un DataFrame, filtra y agrupa, y luego convierte a objetos para lógica de negocio.
 
 ---
 

@@ -63,7 +63,7 @@ La Parte 2 te dio las herramientas de C# para construir aplicaciones reales:
 |------|---------------|--------------|
 | **11. DI** | Inyección de Dependencias | No crees dependencias, recíbelas |
 | **12. Patrones** | Repository, Service, Factory | Organizar el código para que sea mantenible |
-| **13. LINQ** | Consultas declarativas | Manipular datos como si fueran SQL en C# |
+| **13. LINQ** | Consultas declarativas + DataFrames | Manipular datos como si fueran SQL en C# |
 | **14. Ficheros** | IDisposable, CSV, JSON | Leer y escribir datos de forma segura |
 | **15. Result** | CSharpFunctionalExtensions | Manejar errores sin excepciones |
 | **16. Async** | async/await, Task | No bloquear mientras esperas |
