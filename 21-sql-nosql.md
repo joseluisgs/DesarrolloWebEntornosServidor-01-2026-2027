@@ -154,7 +154,7 @@ catch
 
 > 💡 **Consejo:** Para EF Core con PostgreSQL, usa el paquete `Npgsql.EntityFrameworkCore.PostgreSQL`. Para Dapper, usa `Npgsql` directamente. Dapper es más rápido para consultas complejas, EF Core para CRUD rápido.
 
-### EF Core con PostgreSQL
+### EF Core con PostgreSQL: CRUD Completo
 
 ```bash
 dotnet add package Npgsql.EntityFrameworkCore.PostgreSQL
@@ -162,9 +162,9 @@ dotnet add package Microsoft.EntityFrameworkCore.Tools
 ```
 
 ```csharp
-// DbContext con PostgreSQL
 using Microsoft.EntityFrameworkCore;
 
+// DbContext
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
     public DbSet<Persona> Personas => Set<Persona>();
@@ -180,9 +180,83 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     }
 }
 
-// Registro en DI
-services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(configuration.GetConnectionString("PostgreSQL")));
+// Repository con EF Core
+public class PersonaEfRepository(AppDbContext context)
+{
+    // READ: Obtener todos
+    public async Task<List<Persona>> GetAllAsync()
+    {
+        return await context.Personas
+            .OrderBy(p => p.Nombre)
+            .ToListAsync();
+    }
+
+    // READ: Obtener por ID
+    public async Task<Persona?> GetByIdAsync(int id)
+    {
+        return await context.Personas.FindAsync(id);
+    }
+
+    // READ: Buscar por email
+    public async Task<Persona?> GetByEmailAsync(string email)
+    {
+        return await context.Personas
+            .FirstOrDefaultAsync(p => p.Email == email);
+    }
+
+    // CREATE
+    public async Task<Persona> CreateAsync(Persona persona)
+    {
+        context.Personas.Add(persona);
+        await context.SaveChangesAsync();
+        return persona;
+    }
+
+    // UPDATE
+    public async Task<bool> UpdateAsync(Persona persona)
+    {
+        var existente = await context.Personas.FindAsync(persona.Id);
+        if (existente is null) return false;
+
+        existente.Nombre = persona.Nombre;
+        existente.Email = persona.Email;
+        existente.Edad = persona.Edad;
+        existente.Activo = persona.Activo;
+
+        await context.SaveChangesAsync();
+        return true;
+    }
+
+    // DELETE
+    public async Task<bool> DeleteAsync(int id)
+    {
+        var persona = await context.Personas.FindAsync(id);
+        if (persona is null) return false;
+
+        context.Personas.Remove(persona);
+        await context.SaveChangesAsync();
+        return true;
+    }
+
+    // CONSULTA COMPLEJA: Filtrar, ordenar, paginar
+    public async Task<List<Persona>> SearchAsync(string? nombre, int page, int pageSize)
+    {
+        return await context.Personas
+            .Where(p => nombre == null || p.Nombre.Contains(nombre))
+            .OrderBy(p => p.Nombre)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+    }
+}
+```
+
+### Registro en DI
+
+```csharp
+// Program.cs
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("PostgreSQL")));
 ```
 
 ### CRUD con Dapper vs EF Core
@@ -315,16 +389,16 @@ var resultados = await pipeline.ToListAsync();
 
 📌 **Ejemplo real:** Instagram guarda los perfiles de usuario en MongoDB. Cada usuario tiene información diferente: unos tienen linkedin, otros no; unos tienen bio larga, otros vacía. Con MongoDB no necesitas un esquema rígido.
 
-### EF Core con MongoDB
+### EF Core con MongoDB: CRUD Completo
 
 ```bash
 dotnet add package MongoDB.EntityFrameworkCore
 ```
 
 ```csharp
-// DbContext con MongoDB
 using Microsoft.EntityFrameworkCore;
 
+// DbContext
 public class MongoDbContext(DbContextOptions<MongoDbContext> options) : DbContext(options)
 {
     public DbSet<ProductoMongo> Productos => Set<ProductoMongo>();
@@ -339,9 +413,72 @@ public class MongoDbContext(DbContextOptions<MongoDbContext> options) : DbContex
     }
 }
 
-// Registro en DI
-services.AddDbContext<MongoDbContext>(options =>
-    options.UseMongoDB(configuration.GetConnectionString("MongoDB")));
+// Repository con EF Core
+public class ProductoMongoEfRepository(MongoDbContext context)
+{
+    // READ: Obtener todos
+    public async Task<List<ProductoMongo>> GetAllAsync()
+    {
+        return await context.Productos
+            .OrderBy(p => p.Nombre)
+            .ToListAsync();
+    }
+
+    // READ: Obtener por ID
+    public async Task<ProductoMongo?> GetByIdAsync(string id)
+    {
+        return await context.Productos.FindAsync(id);
+    }
+
+    // READ: Buscar por categoría
+    public async Task<List<ProductoMongo>> GetByCategoriaAsync(string categoria)
+    {
+        return await context.Productos
+            .Where(p => p.Categorias.Contains(categoria))
+            .ToListAsync();
+    }
+
+    // CREATE
+    public async Task<ProductoMongo> CreateAsync(ProductoMongo producto)
+    {
+        context.Productos.Add(producto);
+        await context.SaveChangesAsync();
+        return producto;
+    }
+
+    // UPDATE
+    public async Task<bool> UpdateAsync(ProductoMongo producto)
+    {
+        var existente = await context.Productos.FindAsync(producto.Id);
+        if (existente is null) return false;
+
+        existente.Nombre = producto.Nombre;
+        existente.Precio = producto.Precio;
+        existente.Categorias = producto.Categorias;
+
+        await context.SaveChangesAsync();
+        return true;
+    }
+
+    // DELETE
+    public async Task<bool> DeleteAsync(string id)
+    {
+        var producto = await context.Productos.FindAsync(id);
+        if (producto is null) return false;
+
+        context.Productos.Remove(producto);
+        await context.SaveChangesAsync();
+        return true;
+    }
+}
+```
+
+### Registro en DI
+
+```csharp
+// Program.cs
+builder.Services.AddDbContext<MongoDbContext>(options =>
+    options.UseMongoDB(builder.Configuration.GetConnectionString("MongoDB")));
 ```
 
 ### MongoDB: Driver Nativo vs EF Core
@@ -364,14 +501,16 @@ Redis es una base de datos en memoria ultra-rápida. Se usa principalmente para 
 
 ```bash
 dotnet add package StackExchange.Redis
+dotnet add package Microsoft.Extensions.Caching.StackExchangeRedis
 ```
 
-### Conexión y operaciones básicas
+### CRUD con StackExchange.Redis (Driver Nativo): CRUD Completo
 
 ```csharp
 using StackExchange.Redis;
+using System.Text.Json;
 
-public class RedisCacheService(string connectionString)
+public class PersonaRedisRepository(string connectionString)
 {
     private readonly ConnectionMultiplexer _redis = ConnectionMultiplexer.Connect(connectionString);
     private IDatabase _db = null!;
@@ -381,34 +520,176 @@ public class RedisCacheService(string connectionString)
         _db = _redis.GetDatabase();
     }
 
-    // SET: guardar valor
-    public async Task SetAsync(string key, string value, TimeSpan? expiry = null)
+    // CREATE: Guardar persona
+    public async Task<bool> CreateAsync(Persona persona)
     {
-        await _db.StringSetAsync(key, value, expiry);
+        string key = $"persona:{persona.Id}";
+        string json = JsonSerializer.Serialize(persona);
+        return await _db.StringSetAsync(key, json, TimeSpan.FromHours(24));
     }
 
-    // GET: obtener valor
-    public async Task<string?> GetAsync(string key)
+    // READ: Obtener persona por ID
+    public async Task<Persona?> GetByIdAsync(int id)
     {
-        return await _db.StringGetAsync(key);
+        string key = $"persona:{id}";
+        string? json = await _db.StringGetAsync(key);
+        return json is null ? null : JsonSerializer.Deserialize<Persona>(json);
     }
 
-    // DELETE: eliminar
-    public async Task<bool> DeleteAsync(string key)
+    // READ: Obtener todas las personas (scan)
+    public async Task<List<Persona>> GetAllAsync()
     {
-        return await _db.KeyDeleteAsync(key);
+        var personas = new List<Persona>();
+        var server = _redis.GetServer(_redis.GetEndPoints().First());
+        var keys = server.Keys(pattern: "persona:*");
+
+        foreach (var key in keys)
+        {
+            string? json = await _db.StringGetAsync(key);
+            if (json is not null)
+                personas.Add(JsonSerializer.Deserialize<Persona>(json)!);
+        }
+        return personas;
     }
 
-    // EXISTS: comprobar si existe
-    public async Task<bool> ExistsAsync(string key)
+    // UPDATE: Actualizar persona
+    public async Task<bool> UpdateAsync(Persona persona)
     {
-        return await _db.KeyExistsAsync(key);
+        string key = $"persona:{persona.Id}";
+        string? existing = await _db.StringGetAsync(key);
+        if (existing is null) return false;
+
+        string json = JsonSerializer.Serialize(persona);
+        return await _db.StringSetAsync(key, json, TimeSpan.FromHours(24));
     }
 
-    // INCREMENT: incrementar contador
+    // DELETE: Eliminar persona
+    public async Task<bool> DeleteAsync(int id)
+    {
+        return await _db.KeyDeleteAsync($"persona:{id}");
+    }
+
+    // EXISTS: Comprobar si existe
+    public async Task<bool> ExistsAsync(int id)
+    {
+        return await _db.KeyExistsAsync($"persona:{id}");
+    }
+
+    // INCREMENT: Incrementar contador
     public async Task<long> IncrementAsync(string key)
     {
         return await _db.StringIncrementAsync(key);
+    }
+}
+```
+
+### IDistributedCache: Interfaz .NET para caché
+
+```csharp
+using Microsoft.Extensions.Caching.Distributed;
+
+// Registro en DI
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = builder.Configuration.GetConnectionString("Redis");
+    options.InstanceName = "Academia_";
+});
+
+// Uso con IDistributedCache
+public class PersonaCacheService(IDistributedCache cache)
+{
+    public async Task<Persona?> GetAsync(int id)
+    {
+        string? json = await cache.GetStringAsync($"persona:{id}");
+        return json is null ? null : JsonSerializer.Deserialize<Persona>(json);
+    }
+
+    public async Task SetAsync(Persona persona)
+    {
+        string json = JsonSerializer.Serialize(persona);
+        await cache.SetStringAsync($"persona:{persona.Id}", json,
+            new DistributedCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(24),
+                SlidingExpiration = TimeSpan.FromMinutes(30)
+            });
+    }
+
+    public async Task RemoveAsync(int id)
+    {
+        await cache.RemoveAsync($"persona:{id}");
+    }
+}
+```
+
+### Patrón Cache-Aside: EF Core + Redis
+
+```csharp
+// Servicio que usa EF Core para datos y Redis para caché
+public class PersonaService(
+    AppDbContext context,
+    IDistributedCache cache,
+    ILogger<PersonaService> logger
+)
+{
+    public async Task<Persona?> GetByIdAsync(int id)
+    {
+        // 1. Buscar en Redis
+        string? cached = await cache.GetStringAsync($"persona:{id}");
+        if (cached is not null)
+        {
+            logger.LogDebug("Cache HIT para persona {Id}", id);
+            return JsonSerializer.Deserialize<Persona>(cached);
+        }
+
+        // 2. Si no está, buscar con EF Core
+        logger.LogDebug("Cache MISS para persona {Id}", id);
+        var persona = await context.Personas.FindAsync(id);
+        if (persona is not null)
+        {
+            // 3. Guardar en Redis
+            await cache.SetStringAsync($"persona:{id}",
+                JsonSerializer.Serialize(persona),
+                new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30)
+                });
+        }
+        return persona;
+    }
+
+    public async Task<Persona> CreateAsync(Persona persona)
+    {
+        context.Personas.Add(persona);
+        await context.SaveChangesAsync();
+        // Invalidar caché
+        await cache.RemoveAsync($"persona:{persona.Id}");
+        return persona;
+    }
+
+    public async Task<bool> UpdateAsync(Persona persona)
+    {
+        var existente = await context.Personas.FindAsync(persona.Id);
+        if (existente is null) return false;
+
+        existente.Nombre = persona.Nombre;
+        existente.Email = persona.Email;
+        await context.SaveChangesAsync();
+        // Invalidar caché
+        await cache.RemoveAsync($"persona:{persona.Id}");
+        return true;
+    }
+
+    public async Task<bool> DeleteAsync(int id)
+    {
+        var persona = await context.Personas.FindAsync(id);
+        if (persona is null) return false;
+
+        context.Personas.Remove(persona);
+        await context.SaveChangesAsync();
+        // Invalidar caché
+        await cache.RemoveAsync($"persona:{id}");
+        return true;
     }
 }
 ```
