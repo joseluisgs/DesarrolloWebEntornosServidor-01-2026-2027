@@ -45,12 +45,22 @@ Todo tendrá que estar documentado con XMLDoc y tener tests unitarios con NUnit 
 
 Usaremos la API de **JSONPlaceholder** (https://jsonplaceholder.typicode.com) como almacenamiento remoto. Trabajaremos con el recurso **"users"** con campos: **id**, **name**, **username**, **email**.
 
-```
-┌─────────────┐    ┌─────────────┐    ┌─────────────────┐
-│   Caché     │───▶│  BD Local   │───▶│   API REST      │
-│ (Memory/    │    │ (EF Core +  │    │ (JSONPlaceholder│
-│  Redis)     │    │  PostgreSQL)│    │  o similar)     │
-└─────────────┘    └─────────────┘    └─────────────────┘
+```mermaid
+graph LR
+    subgraph NIVELES["3 Niveles de Almacenamiento"]
+        A["🗄️ Caché<br/>(MemoryCache / Redis)"] -->|1. Buscar aquí primero| B["🐘 BD Local<br/>(EF Core + PostgreSQL)"]
+        B -->|2. Si no está aquí| C["🌐 API REST<br/>(JSONPlaceholder)"]
+    end
+
+    D["👤 Cliente"] -->|Petición| A
+    C -->|Respuesta| B
+    B -->|Respuesta| A
+    A -->|Respuesta| D
+
+    style A fill:#FF9800,color:#fff
+    style B fill:#2196F3,color:#fff
+    style C fill:#4CAF50,color:#fff
+    style D fill:#7c3aed,color:#fff
 ```
 
 **Flujo de datos:**
@@ -298,22 +308,29 @@ docker-compose down
 
 ## Servicio de Notificaciones
 
-Se debe implementar un servicio de notificaciones que avise de las operaciones de creación, actualización y eliminación de usuarios.
+Se debe implementar un servicio de notificaciones con **`IObservable<T>` usando System.Reactive (Rx.NET)**.
 
-**Opciones de implementación:**
-- `IObservable<T>` con System.Reactive (Rx.NET)
-- Eventos C# (delegates)
-
-**Comportamiento:**
+**Implementación:**
+- Crear un `Subject<T>` o `BehaviorSubject<T>` en el servicio de notificaciones
 - El servicio se inyecta en `UserService`
-- Se llama cada vez que se crea, actualiza o elimina un usuario
+- Se llama al `OnNext` cada vez que se crea, actualiza o elimina un usuario
 - En `Program.cs`, nada más arrancar, se suscriben los handlers que muestran mensajes en consola
 
 **Ejemplo de uso (lo implementa el alumno):**
 ```csharp
-// El servicio de notificaciones se inyecta en UserService
-// Se notifica en cada operación de escritura
-// En Program.cs se suscriben los handlers para mostrar en consola
+// Servicio de notificaciones con Rx.NET
+public class NotificationService : INotificationService
+{
+    private readonly Subject<UserEvent> _events = new();
+
+    public IObservable<UserEvent> Events => _events.AsObservable();
+
+    public void Notify(UserEvent evt) => _events.OnNext(evt);
+}
+
+// Suscripción en Program.cs
+notificationService.Events.Subscribe(evt =>
+    Console.WriteLine($"[NOTIFICACIÓN] {evt.Type}: {evt.UserName}"));
 ```
 
 ---
