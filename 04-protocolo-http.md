@@ -116,14 +116,16 @@ Cada petición HTTP lleva un **método** (o verbo) que indica qué acción quier
 | **PUT** | Actualizar completo | `PUT /api/usuarios/1` | UPDATE |
 | **PATCH** | Actualizar parcial | `PATCH /api/usuarios/1` | UPDATE parcial |
 | **DELETE** | Eliminar | `DELETE /api/usuarios/1` | DELETE |
+| **QUERY** | Consulta avanzada | `QUERY /api/usuarios` | SELECT con filtros complejos |
 
 📌 **Ejemplo real:** En una app de e-commerce:
 - `GET /api/productos` → Ver el catálogo (SELECT)
 - `POST /api/pedidos` → Crear un pedido nuevo (INSERT)
 - `PUT /api/usuarios/5` → Actualizar todos los datos de un usuario (UPDATE)
 - `DELETE /api/carrito/3` → Eliminar un producto del carrito (DELETE)
+- `QUERY /api/productos` → Consulta compleja con filtros, ordenación y paginación
 
-> 📝 **Nota:** La relación entre verbos HTTP y operaciones CRUD es fundamental. **C**reate = POST, **R**ead = GET, **U**pdate = PUT/PATCH, **D**elete = DELETE.
+> 📝 **Nota:** La relación entre verbos HTTP y operaciones CRUD es fundamental. **C**reate = POST, **R**ead = GET, **U**pdate = PUT/PATCH, **D**elete = DELETE. El verbo **QUERY** (propuesto pero no oficial) se usa para consultas complejas que van más allá de GET con parámetros.
 
 ```csharp
 // Ejemplo de API REST en ASP.NET Core Minimal API

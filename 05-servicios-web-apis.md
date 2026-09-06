@@ -215,12 +215,68 @@ sequenceDiagram
 | **Complejidad** | Baja | Media | Media | Alta | Alta |
 | **Uso principal** | APIs públicas | Apps flexibles | Chat, gaming | Microservicios | Banca |
 
-📌 **Ejemplo real de comparativa:**
-- **REST**: API pública de Twitter (simple, predecible)
-- **GraphQL**: App de Instagram (flexible, diferentes pantallas)
-- **WebSocket**: Chat de WhatsApp (tiempo real, bidireccional)
-- **gRPC**: Comunicación entre microservicios de Netflix (alto rendimiento)
-- **SOAP**: Sistemas bancarios legacy (estRICTO, XML)
+### Pros y contras detallados
+
+**REST**
+| Pros | Contras |
+|------|---------|
+| Simple de entender e implementar | Over-fetching (datos de más) |
+| Estándar de la industria, enorme documentación | Under-fetching (necesitas múltiples peticiones) |
+| Cacheable con HTTP | No es ideal para datos muy anidados |
+| Herramientas maduras (Postman, Swagger) | Versión de API complicada (`/v1/`, `/v2/`) |
+
+📌 **Ejemplo real:** La API de GitHub es 100% REST. Es simple, bien documentada y cualquiera puede consumirla.
+
+**GraphQL**
+| Pros | Contras |
+|------|---------|
+| El cliente pide exactamente lo que necesita | Más complejo de implementar que REST |
+| Un solo endpoint para todo | No usa el caché HTTP nativo |
+| Ideal para apps móviles con diferentes pantallas | Queries complejas pueden ser lentas (N+1) |
+| Auto-documentado con Schema | Curva de aprendizaje mayor |
+
+📌 **Ejemplo real:** Shopify usa GraphQL para su panel de administración. Cada merchants necesita datos diferentes, y GraphQL permite flexibilidad.
+
+**WebSocket**
+| Pros | Contras |
+|------|---------|
+| Comunicación bidireccional en tiempo real | Conexión persistente (consume recursos) |
+| Baja latencia | No es HTTP (necesita configuración especial) |
+| Ideal para chat, gaming, live streaming | Más complejo de escalar que REST |
+| El servidor puede enviar datos sin que el cliente pida | No cacheable |
+
+📌 **Ejemplo real:** Slack usa WebSocket para mantener los mensajes en tiempo real. Cada vez que alguien escribe, todos lo ven al instante.
+
+**gRPC**
+| Pros | Contras |
+|------|---------|
+| Muy alto rendimiento (Protocol Buffers) | No es legible como JSON |
+| Ideal para microservicios internos | Menos herramientas que REST |
+| Streaming bidireccional | No funciona directamente en navegadores |
+| Contratos de tipo estrictos | Curva de aprendizaje alta |
+
+📌 **Ejemplo real:** Netflix usa gRPC para comunicación interna entre sus microservicios. La latencia es crítica y gRPC es más rápido que REST.
+
+**SOAP**
+| Pros | Contras |
+|------|---------|
+| Muy estricto y seguro | XML verbose (pesado) |
+| Estándar en banca y gobierno | Complejidad alta |
+| Transacciones distribuidas | Difícil de implementar |
+| WS-Security integrado | En desuso para nuevas aplicaciones |
+
+📌 **Ejemplo real:** Los sistemas bancarios aún usan SOAP para transferencias internacionales. La seguridad y las transacciones ACID son críticas.
+
+### ¿Cuándo usar cada uno?
+
+| Situación | Protocolo recomendado |
+|-----------|----------------------|
+| API pública simple y bien documentada | **REST** |
+| App móvil con diferentes pantallas | **GraphQL** |
+| Chat en tiempo real, gaming | **WebSocket** |
+| Microservicios internos de alta performance | **gRPC** |
+| Sistemas bancarios legacy | **SOAP** |
+| Notificaciones push simples | **SSE** |
 
 ---
 

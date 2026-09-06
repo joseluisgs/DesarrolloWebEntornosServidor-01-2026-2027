@@ -7,7 +7,7 @@ Tema 01. Introducción al desarrollo de software en Servidor. 2DAW. Curso 2026-2
 
 ## Contenidos
 
-### 
+### Desarrollo Web en Entorno Servidor
 
 1. [Introducción al Desarrollo Web](01-introduccion-web.md)
 2. [Componentes de una Web](02-componentes-web.md)
@@ -19,7 +19,11 @@ Tema 01. Introducción al desarrollo de software en Servidor. 2DAW. Curso 2026-2
 8. [Servidores Web y de Aplicaciones](08-servidores-web.md)
 9. [Despliegue de Aplicaciones](09-despliegue.md)
 10. [Seguridad y Monitorización](10-seguridad-monitorizacion.md)
-11. [Resumen](11-resumen.md)
+
+### C# Avanzado para Desarrollo Web en Entorno Servidor
+
+
+2X. [Resumen](11-resumen.md)
 
 ## Contenido en YouTube
 
