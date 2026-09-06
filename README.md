@@ -7,6 +7,8 @@ Tema 01. Introducción al desarrollo de software en Servidor. 2DAW. Curso 2026-2
 
 ## Contenidos
 
+### 
+
 1. [Introducción al Desarrollo Web](01-introduccion-web.md)
 2. [Componentes de una Web](02-componentes-web.md)
 3. [Arquitecturas Web](03-arquitecturas-web.md)

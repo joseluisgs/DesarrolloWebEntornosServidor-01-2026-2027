@@ -3,7 +3,7 @@
   - [3.2. Modelos de Arquitectura Software](#32-modelos-de-arquitectura-software)
   - [3.3. Patrón MVC (Modelo-Vista-Controlador)](#33-patrón-mvc-modelo-vista-controlador)
   - [3.4. Principios SOLID](#34-principios-solid)
-  - [3.5. Resumen](#35-resumen)
+
 
 
 # 3. Arquitecturas Web

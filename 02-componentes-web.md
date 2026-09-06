@@ -2,7 +2,7 @@
   - [2.1. Front-end y Back-end: La División del Trabajo](#21-front-end-y-back-end-la-división-del-trabajo)
   - [2.2. El Back-end es Universal](#22-el-back-end-es-universal)
   - [2.3. Página Web vs. Aplicación Web](#23-página-web-vs-aplicación-web)
-  - [2.4. Resumen](#24-resumen)
+
 
 
 # 2. Componentes de una Aplicación Web

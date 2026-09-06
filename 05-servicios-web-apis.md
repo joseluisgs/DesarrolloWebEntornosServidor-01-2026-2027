@@ -5,7 +5,7 @@
   - [5.4. WebSocket: Comunicación en Tiempo Real](#54-websocket-comunicación-en-tiempo-real)
   - [5.5. Otros Protocolos](#55-otros-protocolos)
   - [5.6. Comparativa de Protocolos](#56-comparativa-de-protocolos)
-  - [5.7. Resumen](#57-resumen)
+
 
 
 # 5. Servicios Web y Comunicación con APIs

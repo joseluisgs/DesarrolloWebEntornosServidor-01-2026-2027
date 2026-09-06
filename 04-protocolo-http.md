@@ -6,7 +6,7 @@
   - [4.5. Códigos de Estado HTTP](#45-códigos-de-estado-http)
   - [4.6. Cabeceras HTTP](#46-cabeceras-http)
   - [4.7. HTTPS: HTTP Seguro](#47-https-http-seguro)
-  - [4.8. Resumen](#48-resumen)
+
 
 
 # 4. El Protocolo HTTP
