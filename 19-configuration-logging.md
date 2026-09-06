@@ -222,29 +222,41 @@ dotnet add package Serilog
 dotnet add package Serilog.AspNetCore
 dotnet add package Serilog.Sinks.Console
 dotnet add package Serilog.Sinks.File
+dotnet add package Serilog.Enrichers.Environment
+dotnet add package Serilog.Enrichers.Thread
 ```
 
-### Configuración básica
+### Configuración en Program.cs (mínimos por nivel)
 
 ```csharp
-// Program.cs
+// Program.cs - Configuración de Serilog con consola y fichero
 using Serilog;
+using Serilog.Events;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configurar Serilog
+// Consola: solo Warning en adelante (para no ensuciar)
+// Fichero: Information en adelante (para tener traza completa)
 Log.Logger = new LoggerConfiguration()
-    .ReadFrom.Configuration(builder.Configuration)
+    .MinimumLevel.Information()
+    .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+    .MinimumLevel.Override("System", LogEventLevel.Warning)
     .Enrich.FromLogContext()
+    .Enrich.WithProperty("Application", "Academia")
     .Enrich.WithMachineName()
     .Enrich.WithEnvironmentName()
-    .WriteTo.Console()
-    .WriteTo.File("logs/log-.txt",
-        rollingInterval: RollingInterval.Day,
-        retainedFileCountLimit: 30)
+    .WriteTo.Console(
+        restrictedToMinimumLevel: LogEventLevel.Warning,  // Solo Warning+ en consola
+        outputTemplate: "{Timestamp:HH:mm:ss.fff} [{Level:u3}] [{SourceContext}] {Message:lj}{NewLine}{Exception}")
+    .WriteTo.File(
+        path: "logs/log-.txt",
+        rollingInterval: RollingInterval.Day,              // Fichero nuevo cada 24h
+        retainedFileCountLimit: 30,                        // Mantener 30 días
+        restrictedToMinimumLevel: LogEventLevel.Information,  // Information+ en fichero
+        outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff} [{Level:u3}] [{SourceContext}] {Message:lj}{NewLine}{Exception}")
     .CreateLogger();
 
-builder.Host.UseSerilog(); // Reemplazar el logger por defecto
+builder.Host.UseSerilog();  // Reemplazar el logger por defecto
 
 var app = builder.Build();
 ```
@@ -263,13 +275,21 @@ var app = builder.Build();
       }
     },
     "WriteTo": [
-      { "Name": "Console" },
+      {
+        "Name": "Console",
+        "Args": {
+          "restrictedToMinimumLevel": "Warning",
+          "outputTemplate": "{Timestamp:HH:mm:ss.fff} [{Level:u3}] {Message:lj}{NewLine}{Exception}"
+        }
+      },
       {
         "Name": "File",
         "Args": {
           "path": "logs/log-.txt",
           "rollingInterval": "Day",
-          "retainedFileCountLimit": 30
+          "retainedFileCountLimit": 30,
+          "restrictedToMinimumLevel": "Information",
+          "outputTemplate": "{Timestamp:yyyy-MM-dd HH:mm:ss.fff} [{Level:u3}] {Message:lj}{NewLine}{Exception}"
         }
       }
     ],
@@ -278,10 +298,17 @@ var app = builder.Build();
 }
 ```
 
+> 📝 **Nota:** `rollingInterval: RollingInterval.Day` crea un fichero nuevo cada 24 horas: `log-20260905.txt`, `log-20260906.txt`, etc. `retainedFileCountLimit: 30` borra los ficheros de más de 30 días automáticamente.
+
+> 💡 **Consejo:** En producción, la consola muestra solo `Warning` y `Error` para no ensuciar. El fichero guarda `Information` y todo lo que está por encima para tener traza completa de debugging.
+
 ### Uso de ILogger
 
 ```csharp
-public class PedidoService(ILogger<PedidoService> logger) : IPedidoService
+public class PedidoService(
+    IPedidoRepository repository,
+    ILogger<PedidoService> logger
+) : IPedidoService
 {
     public async Task<Pedido> CrearPedidoAsync(CrearPedidoDto dto)
     {
@@ -290,7 +317,19 @@ public class PedidoService(ILogger<PedidoService> logger) : IPedidoService
         try
         {
             var pedido = new Pedido(dto);
-            await _repository.GuardarAsync(pedido);
+            await repository.GuardarAsync(pedido);
+
+            logger.LogInformation("Pedido {PedidoId} creado correctamente", pedido.Id);
+            return pedido;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error al crear pedido para cliente {ClienteId}", dto.ClienteId);
+            throw;
+        }
+    }
+}
+```
 
             logger.LogInformation("Pedido {PedidoId} creado correctamente", pedido.Id);
             return pedido;

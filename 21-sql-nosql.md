@@ -154,6 +154,49 @@ catch
 
 > 💡 **Consejo:** Para EF Core con PostgreSQL, usa el paquete `Npgsql.EntityFrameworkCore.PostgreSQL`. Para Dapper, usa `Npgsql` directamente. Dapper es más rápido para consultas complejas, EF Core para CRUD rápido.
 
+### EF Core con PostgreSQL
+
+```bash
+dotnet add package Npgsql.EntityFrameworkCore.PostgreSQL
+dotnet add package Microsoft.EntityFrameworkCore.Tools
+```
+
+```csharp
+// DbContext con PostgreSQL
+using Microsoft.EntityFrameworkCore;
+
+public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
+{
+    public DbSet<Persona> Personas => Set<Persona>();
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Persona>(entity =>
+        {
+            entity.HasKey(p => p.Id);
+            entity.Property(p => p.Nombre).HasMaxLength(100).IsRequired();
+            entity.Property(p => p.Email).HasMaxLength(200);
+        });
+    }
+}
+
+// Registro en DI
+services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(configuration.GetConnectionString("PostgreSQL")));
+```
+
+### CRUD con Dapper vs EF Core
+
+| Operación | Dapper | EF Core |
+|-----------|--------|---------|
+| **SELECT simple** | `QueryAsync<T>(sql)` | `context.Personas.ToListAsync()` |
+| **INSERT** | `ExecuteAsync(sql, param)` | `context.Personas.AddAsync(p)` |
+| **UPDATE** | `ExecuteAsync(sql, param)` | `p.Nombre = "nuevo"; SaveChanges()` |
+| **DELETE** | `ExecuteAsync(sql, param)` | `context.Personas.Remove(p)` |
+| **JOIN complejo** | `QueryAsync<T>(sqlJoin)` | `Include()` + LINQ |
+| **Rendimiento** | Más rápido | Más productivo |
+| **Usar cuando** | Consultas complejas, reporting | CRUD rápido, prototipos |
+
 ## 21.3. MongoDB: Documentos Flexibles
 
 MongoDB almacena documentos BSON (JSON binario). No necesitas un esquema fijo: cada documento puede tener estructura diferente.

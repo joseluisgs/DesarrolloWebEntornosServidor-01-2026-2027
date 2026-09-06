@@ -1,440 +1,493 @@
-- [15. Patrón Result y Programación Funcional](#15-patrón-result-y-programación-funcional)
-  - [15.1. El Problema: Excepciones como Flujo de Control](#151-el-problema-excepciones-como-flujo-de-control)
-  - [15.2. Result<T>: Errores sin Excepciones](#152-resultt-errores-sin-excepciones)
-  - [15.3. Maybe<T>: Valores que Pueden No Existir](#153-maybet-valores-que-pueden-no-existir)
-  - [15.4. Guard: Validaciones Concisas](#154-guard-validaciones-concisas)
-  - [15.5. Bind y Map: Encadenando Operaciones](#155-bind-y-map-encadenando-operaciones)
-  - [15.6. Match: El Pattern Matching del Result](#156-match-el-pattern-matching-del-result)
-  - [15.7. Result vs Excepciones: Cuándo Usar Cada Uno](#157-result-vs-excepciones-cuándo-usar-cada-uno)
+- [15. Patrón Result vs Excepciones (ROP)](#15-patrón-result-vs-excepciones-rop)
+  - [15.1. El Problema de las Excepciones](#151-el-problema-de-las-excepciones)
+  - [15.2. La Metáfora del Tren](#152-la-metáfora-del-tren)
+  - [15.3. Errores de Dominio](#153-errores-de-dominio)
+  - [15.4. El Tipo Result](#154-el-tipo-result)
+  - [15.5. CSharpFunctionalExtensions](#155-csharpfunctionalextensions)
+  - [15.6. Operaciones con Result](#156-operaciones-con-result)
+  - [15.7. El Tipo Maybe](#157-el-tipo-maybe)
+  - [15.8. Result vs Excepciones: Cuándo Usar Cada Uno](#158-result-vs-excepciones-cuándo-usar-cada-uno)
+  - [15.9. Ejemplo Completo](#159-ejemplo-completo)
 
 
-# 15. Patrón Result y Programación Funcional
+# 15. Patrón Result vs Excepciones (ROP)
 
-> 💡 **Punto de partida:** Imagina que estás en una cadena de montaje de coches. Si una pieza falla, ¿lanzas una alarma y paras toda la fábrica (excepción), o marcas la pieza como defectuosa y sigues adelante (Result)? En programación, las excepciones son como esas alarmas: útiles para errores inesperados, pero un desastre si las usas para errores "normales" como "usuario no encontrado" o "email ya registrado". El patrón `Result` te permite manejar errores como **datos**, no como excepciones.
+> 💡 **Punto de partida:** Si intentas abrir una puerta y no tiene cerradura, ¿lanzas una excepción? No. Simplemente dices "no se puede abrir". Las excepciones fueron diseñadas para errores inesperados (base de datos caída, archivo corrupto), pero frecuentemente se usan para control de flujo ("usuario no encontrado", "email ya existe"). **Railway Oriented Programming (ROP)** es un patrón funcional que modela el éxito y el error como dos vías de un tren.
 
-En este tema aprenderás el patrón Result con CSharpFunctionalExtensions: `Result<T>`, `Maybe<T>`, `Guard`, `Bind`, `Map` y `Match`, y cuándo usar Result vs Excepciones.
+En este tema aprenderás a manejar errores sin excepciones usando `Result<T, TError>` y `Maybe<T>` con la librería `CSharpFunctionalExtensions`.
 
 **Objetivos de aprendizaje:**
 
-- Comprender por qué las excepciones como flujo de control son un problema
-- Usar `Result<T>` para representar éxito o fallo
-- Aplicar `Maybe<T>` para valores que pueden no existir
-- Encadenar operaciones con `Bind` y `Map`
-- Tomar decisiones con `Match`
-- Distinguir cuándo usar Result vs Excepciones
+- Comprender por qué las excepciones no son ideales para control de flujo
+- Conocer la metáfora del tren (vía del éxito / vía de error)
+- Definir errores de dominio con `abstract record` y factory
+- Usar `Result<T, TError>` con Bind, Map, Ensure, Tap, Match
+- Usar `Maybe<T>` y convertirlo a Result con `ToResult()`
 
-## 15.1. El Problema: Excepciones como Flujo de Control
+## 15.1. El Problema de las Excepciones
 
-Las excepciones están diseñadas para errores **inesperados** (fallo de disco, conexión rota, null reference). Pero muchas veces las usamos para errores **esperados** (usuario no encontrado, validación fallida, saldo insuficiente).
+Las excepciones fueron diseñadas para **situaciones excepcionales**, pero se usan frecuentemente para control de flujo:
 
 ```csharp
-// ❌ MALO: Usar excepciones para errores esperados
-public Persona ObtenerPorId(int id)
+// ❌ PROBLEMA: Excepciones para control de flujo
+public Persona GetPersona(int id)
 {
-    var persona = _repository.GetById(id);
-    if (persona is null)
-        throw new NotFoundException($"Persona con ID {id} no encontrada"); // Esto NO es un error inesperado
-    return persona;
-}
-
-// El problema: el que llama DEBE usar try-catch para algo "normal"
-try
-{
-    var persona = service.ObtenerPorId(42);
-}
-catch (NotFoundException ex)
-{
-    Console.WriteLine(ex.Message); // "Persona con ID 42 no encontrada"
+    try
+    {
+        return _repository.GetById(id);
+    }
+    catch (PersonaNotFoundException)
+    {
+        return null;  // Usar excepción para "no encontrado"
+    }
 }
 ```
 
-| Problema | Consecuencia |
+| Problema | Descripción |
 |----------|-------------|
-| Las excepciones son lentas | Capturar una excepción cuesta ~100x más que un `if` |
-| No son visibles en la firma del método | `ObtenerPorId` "parece" que siempre devuelve un `Persona` |
-| Se olvidan los catch | Si no capturas, la app se cae |
-| Dificultan el encadenamiento | No puedes hacer `Obtener().Guardar().Enviar()` sin anidar try-catch |
+| **Coste** | Las excepciones son costosas (crear stack trace) |
+| **Flujo** | Rompen el flujo natural del código |
+| **Encadenamiento** | Difíciles de encadenar |
+| **Type-safety** | No son type-safe (el compilador no verifica) |
+| **Documentación** | No sabes qué excepciones puede lanzar un método |
 
-> 💡 **Analogía:** Las excepciones son como un coche con un único botón: "PANICO". Si te equivocas de camino, presionas PANICO y el coche se para. El patrón Result es como tener un GPS: te dice "turn left", "road not found", pero no Para el coche.
+> 📝 **Nota:** Lanzar una excepción es como usar un martillo para matar una mosca. Funciona, pero es excesivo. Las excepciones deberían ser para situaciones realmente excepcionales (base de datos no disponible, archivo corrupto), no para "el usuario no existe".
 
-## 15.2. Result<T>: Errores sin Excepciones
+## 15.2. La Metáfora del Tren
 
-`Result<T>` es un tipo que puede contener **éxito** (con un valor `T`) o **fallo** (con un mensaje de error). Es un tipo monádico: puede encadenarse.
+**Railway Oriented Programming (ROP)** modela el flujo como un tren con dos vías:
 
-### Paquete NuGet
+```mermaid
+flowchart LR
+    subgraph Input["Entrada"]
+        I[Input]
+    end
+
+    subgraph Track["Vía del Tren"]
+        direction TB
+        Op[Operación]
+        Op -->|"Éxito"| ST[Success Track]
+        Op -->|"Fallo"| FT[Failure Track]
+    end
+
+    subgraph Output["Salida"]
+        direction TB
+        ST -->|"Value"| SV[Result&#60;T,Error&#62;]
+        FT -->|"Error"| SE[Result&#60;T,Error&#62;]
+    end
+
+    I --> Op
+
+    style ST fill:#7cd97e,stroke:#333,color:#000
+    style FT fill:#ff9999,stroke:#333,color:#000
+    style SV fill:#ffdd57,stroke:#333,color:#000
+    style SE fill:#ffdd57,stroke:#333,color:#000
+```
+
+**Concepto clave:**
+- Si todo va bien, el tren sigue la vía del **éxito**
+- Si algo falla, el tren pasa a la vía de **error**
+- **No se necesita try-catch** en cada operación
+- El error se propaga automáticamente
+
+> 💡 **Analogía:** ROP es como un semáforo con dos luces: verde (éxito) y rojo (error). Si un semáforo en tu ruta está en rojo, no necesitas revisar todos los demás: el error se detiene en ese punto.
+
+## 15.3. Errores de Dominio
+
+Los errores de dominio se definen como `abstract record` con nested records. Un **factory** evita el casting explícito:
+
+```csharp
+// ✅ BUENO: Errores de dominio con records anidados
+public abstract record DomainError(string Message)
+{
+    public sealed record NotFound(int Id)
+        : DomainError($"No se ha encontrado ninguna persona con el identificador: {Id}");
+
+    public sealed record Validation(IEnumerable<string> Errors)
+        : DomainError("Se han detectado errores de validación en la entidad.");
+
+    public sealed record AlreadyExists(string Email)
+        : DomainError($"Conflicto: El email {Email} ya está registrado.");
+
+    public sealed record Storage(Exception Exception)
+        : DomainError($"Error de almacenamiento: {Exception.Message}");
+}
+
+// Factory para crear errores sin casting explícito
+public static class DomainErrors
+{
+    public static DomainError NotFound(int id) => new DomainError.NotFound(id);
+    public static DomainError Validation(IEnumerable<string> errors) => new DomainError.Validation(errors);
+    public static DomainError AlreadyExists(string email) => new DomainError.AlreadyExists(email);
+    public static DomainError Storage(Exception ex) => new DomainError.Storage(ex);
+}
+```
+
+```csharp
+// ❌ MALO: Casting explícito necesario
+.ToResult((DomainError)new DomainError.NotFound(id))
+
+// ✅ BUENO: Factory sin casting
+.ToResult(DomainErrors.NotFound(id))
+```
+
+> 📝 **Nota:** C# no permite covarianza implícita con tipos genéricos heredados. Al usar `Result<T, DomainError>`, no podemos hacer `new DomainError.NotFound()` directamente porque el compilador no infiere el tipo base automáticamente. Los factory methods resuelven esto.
+
+## 15.4. El Tipo Result
+
+`Result<TValue, TError>` representa éxito o fracaso:
+
+```csharp
+// Crear resultados
+var ok = Result.Success<Persona, DomainError>(new Persona { Nombre = "Ana" });
+var fail = Result.Failure<Persona, DomainError>(DomainErrors.NotFound(1));
+
+// Verificar
+if (ok.IsSuccess)
+{
+    Console.WriteLine(ok.Value);  // Persona
+}
+
+if (fail.IsFailure)
+{
+    Console.WriteLine(fail.Error.Message);  // "No se ha encontrado..."
+}
+```
+
+## 15.5. CSharpFunctionalExtensions
+
+### Instalación
 
 ```bash
 dotnet add package CSharpFunctionalExtensions
 ```
 
-### Uso básico
+### Configuración en appsettings.json
 
-```csharp
-using CSharpFunctionalExtensions;
-
-// Crear un Result de éxito
-var exito = Result.Success(42);
-var exitoTexto = Result.Success("Operación completada");
-
-// Crear un Result de fallo
-var fallo = Result.Failure<int>("No se encontró el elemento");
-
-// Usar un Result
-if (exito.IsSuccess)
+```json
 {
-    Console.WriteLine($"Valor: {exito.Value}"); // 42
-}
-
-if (fallo.IsFailure)
-{
-    Console.WriteLine($"Error: {fallo.Error}"); // "No se encontró el elemento"
-}
-```
-
-### Result como retorno de método
-
-```csharp
-using CSharpFunctionalExtensions;
-
-public class PersonaService(IPersonaRepository repository)
-{
-    public Result<Persona> ObtenerPorId(int id)
-    {
-        var persona = repository.GetById(id);
-        if (persona is null)
-            return Result.Failure<Persona>($"Persona con ID {id} no encontrada");
-
-        return Result.Success(persona);
+  "Serilog": {
+    "MinimumLevel": {
+      "Default": "Information",
+      "Override": {
+        "Microsoft": "Warning",
+        "System": "Warning"
+      }
     }
-
-    public Result<Persona> Crear(string nombre, string email)
-    {
-        // Validaciones
-        if (string.IsNullOrWhiteSpace(nombre))
-            return Result.Failure<Persona>("El nombre no puede estar vacío");
-
-        if (string.IsNullOrWhiteSpace(email))
-            return Result.Failure<Persona>("El email no puede estar vacío");
-
-        if (_repository.ExisteEmail(email))
-            return Result.Failure<Persona>("El email ya está registrado");
-
-        var persona = new Persona(nombre, email);
-        _repository.Add(persona);
-        return Result.Success(persona);
-    }
-}
-
-// El que llama SABE que puede haber error (está en la firma)
-var resultado = service.Crear("Ana", "ana@email.com");
-if (resultado.IsSuccess)
-{
-    Console.WriteLine($"Creada: {resultado.Value.Nombre}");
-}
-else
-{
-    Console.WriteLine($"Error: {resultado.Error}");
+  }
 }
 ```
 
-> 📝 **Nota:** `Result<T>` no puede ser `null`. Si el método no devuelve nada de interés, usa `Result` (sin genérico). Si devuelve un valor, usa `Result<T>`.
+## 15.6. Operaciones con Result
 
-### UnitResult: Result sin valor
+### Success y Failure: Crear Resultados
 
 ```csharp
-// Para operaciones que pueden fallar pero no devuelven valor
-public Result Eliminar(int id)
-{
-    if (!_repository.Existe(id))
-        return Result.Failure("No se encontró el elemento");
+// Crear resultado de éxito
+var ok = Result.Success<Persona, DomainError>(new Persona { Nombre = "Ana" });
 
-    _repository.Delete(id);
-    return Result.Success();
-}
+// Crear resultado de fallo
+var fail = Result.Failure<Persona, DomainError>(DomainErrors.NotFound(1));
 ```
 
-📌 **Ejemplo real:** En un sistema bancario, transferir dinero puede fallar por "saldo insuficiente", "cuenta destino no existe" o "límite diario alcanzado". Estos NO son errores inesperados: son casos de negocio que el usuario espera. Usar `Result` en vez de excepciones hace que el código sea más claro y eficiente.
-
-## 15.3. Maybe<T>: Valores que Pueden No Existir
-
-`Maybe<T>` representa un valor que **puede no existir**. Es como un `nullable` pero con más funcionalidades.
+### Bind: Encadenar Operaciones que Pueden Fallar
 
 ```csharp
-using CSharpFunctionalExtensions;
-
-// Crear un Maybe
-var alguno = Maybe<string>.From("Hola");
-var ninguno = Maybe<string>.None;
-
-// Usar un Maybe
-if (alguno.HasValue)
-{
-    Console.WriteLine(alguno.Value); // "Hola"
-}
-
-// Convertir desde nullable
-string? nombre = null;
-var maybe = Maybe<string>.From(nombre); // Maybe.None
-```
-
-### Maybe con colecciones
-
-```csharp
-// Buscar el primero que cumpla una condición
-var personas = new List<Persona>
-{
-    new("Ana", 25),
-    new("Carlos", 30),
-    new("María", 28)
-};
-
-Maybe<Persona> encontrado = personas
-    .FirstOrDefault(p => p.Edad > 29)
-    .ToMaybe(); // Maybe<Persona> con el valor o None
-
-encontrado.Map(p => Console.WriteLine($"Encontrado: {p.Nombre}"));
-```
-
-### Maybe como retorno de método
-
-```csharp
-public Maybe<Persona> BuscarPorEmail(string email)
-{
-    var persona = _repository.GetByEmail(email);
-    return Maybe<Persona>.From(persona); // Si persona es null, devuelve Maybe.None
-}
-
-// Uso
-var resultado = service.BuscarPorEmail("ana@email.com");
-resultado.Execute(
-    some: persona => Console.WriteLine($"Encontrado: {persona.Nombre}"),
-    none: () => Console.WriteLine("No se encontró")
-);
-```
-
-> 💡 **Consejo:** Usa `Maybe<T>` cuando el "no encontrar nada" es un caso normal, no un error. Por ejemplo, `BuscarPorEmail` puede no encontrar nada y eso está bien. Pero `ObtenerPorId` en un endpoint que espera un resultado SÍ debería fallar con `Result.Failure`.
-
-## 15.4. Guard: Validaciones Concisas
-
-`Guard` es una clase que facilita las validaciones comunes. En vez de escribir muchos `if`, usas una sintaxis más fluida.
-
-```csharp
-using CSharpFunctionalExtensions;
-
-public Result<Persona> Crear(string nombre, string email, int edad)
-{
-    // Guard agrupa validaciones
-    var resultado = Result
-        .Success()
-        .Tap(() => Guard.NotNullOrEmpty(nombre, nameof(nombre)))
-        .Tap(() => Guard.NotNullOrEmpty(email, nameof(email)))
-        .Tap(() => Guard.NotNegative(edad, nameof(edad)))
-        .Tap(() => Guard.Maximun(edad, 150, nameof(edad)));
-
-    if (resultado.IsFailure)
-        return Result.Failure<Persona>(resultado.Error);
-
-    var persona = new Persona(nombre, email, edad);
-    return Result.Success(persona);
-}
-```
-
-### Guard con más validaciones
-
-```csharp
-// Guard compilation: múltiples validaciones encadenadas
-var resultado = Guard
-    .NotNull(nombre, nameof(nombre))
-    .NotWhiteSpace(nombre, nameof(nombre))
-    .NotNull(email, nameof(email))
-    .Matches(email, @"^[^@]+@[^@]+\.[^@]+$", nameof(email), "Email no válido")
-    .InRange(edad, 0, 150, nameof(edad));
-```
-
-> 📝 **Nota:** `Guard` no es parte de CSharpFunctionalExtensions oficial. Si necesitas validaciones más potentes, considera usar `FluentValidation` que es la librería estándar para validaciones en .NET.
-
-## 15.5. Bind y Map: Encadenando Operaciones
-
-`Bind` y `Map` permiten encadenar operaciones sobre `Result<T>` sin escribir `if/else` en cada paso.
-
-### Map: Transforma el valor interior
-
-```csharp
-// Map transforma el valor SI el resultado es exitoso
-var resultado = Result.Success(10)
-    .Map(x => x * 2)           // 20
-    .Map(x => x + 5)           // 25
-    .Map(x => $"El resultado es {x}"); // "El resultado es 25"
-
-Console.WriteLine(resultado.Value); // "El resultado es 25"
-```
-
-### Bind: Encadena operaciones que devuelven Result
-
-```csharp
-// Bind es como Map pero la función devuelve un Result
-public Result<Persona> Obtener(int id)
+// Sin Result: anidamiento de null checks
+public Persona? GetPersonaSegura(int id)
 {
     var persona = _repository.GetById(id);
-    if (persona is null) return Result.Failure<Persona>("No encontrada");
-    return Result.Success(persona);
+    if (persona == null) return null;
+    if (persona.IsDeleted) return null;
+    return persona;
 }
 
-public Result<Persona> ActualizarEmail(Persona persona, string nuevoEmail)
+// Con Result: encadenamiento fluido
+public Result<Persona, DomainError> GetPersonaSegura(int id)
 {
-    if (string.IsNullOrEmpty(nuevoEmail))
-        return Result.Failure<Persona>("Email vacío");
-
-    var actualizada = persona with { Email = nuevoEmail };
-    return Result.Success(actualizada);
+    return _repository.GetById(id)
+        .ToResult(DomainErrors.NotFound(id))
+        .Ensure(p => !p.IsDeleted, new DomainError.Validation(["Persona eliminada"]));
 }
-
-public Result EnviarBienvenida(Persona persona)
-{
-    _email.Enviar(persona.Email, "¡Bienvenido!");
-    return Result.Success();
-}
-
-// Encadenar con Bind (sin anidar if/else)
-var resultado = Obtener(1)
-    .Bind(p => ActualizarEmail(p, "nuevo@email.com"))
-    .Bind(p => EnviarBienvenida(p));
-
-if (resultado.IsFailure)
-    Console.WriteLine($"Error: {resultado.Error}");
 ```
 
-### Diferencia entre Map y Bind
-
-| Operación | Función de entrada | Función de salida | Uso |
-|-----------|-------------------|-------------------|-----|
-| **Map** | `T → U` | `Result<U>` | Transformar el valor |
-| **Bind** | `T → Result<U>` | `Result<U>` | Encadenar operaciones que pueden fallar |
+### Map: Transformar el Valor
 
 ```csharp
-// Map: transforma el valor (la función NO devuelve Result)
-var doble = Result.Success(5).Map(x => x * 2); // Result<int> con valor 10
-
-// Bind: encadena operaciones que pueden fallar (la función SÍ devuelve Result)
-var resultado = Result.Success(5)
-    .Bind(x => x > 0 
-        ? Result.Success(x * 2) 
-        : Result.Failure<int>("Debe ser positivo")); // Result<int>
+// Transformar el valor en caso de éxito
+Result<string, DomainError> nombre = resultado
+    .Map(p => p.Nombre);  // Result<Persona, Error> → Result<string, Error>
 ```
 
-> 💡 **Analogía:** `Map` es como una estación de una cadena de montaje que **transforma** la pieza (pintarla, lijarla). `Bind` es como una estación que puede **rechazar** la pieza (si falla el control de calidad).
-
-📌 **Ejemplo real:** En un sistema de registro de usuario, el flujo es: validar email → comprobar que no existe → crear usuario → enviar email de bienvenida. Cada paso puede fallar. Con `Bind`, encadena todo en una línea sin anidar `if/else`.
-
-## 15.6. Match: El Pattern Matching del Result
-
-`Match` permite ejecutar una función diferente según si el `Result` es éxito o fallo. Es como un `if/else` pero funcional.
+### MapError: Transformar el Error
 
 ```csharp
-var resultado = service.ObtenerPorId(42);
-
-// Match ejecuta una función según el caso
-string mensaje = resultado.Match(
-    success: persona => $"Encontrado: {persona.Nombre}",
-    failure: error => $"Error: {error}"
-);
-
-Console.WriteLine(mensaje); // "Encontrado: Ana" o "Error: Persona no encontrada"
+var resultadoProcesado = resultado
+    .MapError(e => new DomainError.Validation([$"Error: {e.Message}"]));
 ```
 
-### Match con efectos secundarios
+### Ensure: Validación Condicional
+
+```csharp
+var validado = ObtenerPersona(1)
+    .Ensure(p => p.IsActive, new DomainError.Validation(["Inactiva"]))
+    .Ensure(p => p.Edad >= 18, new DomainError.Validation(["Menor de edad"]));
+```
+
+### Tap: Efectos Secundarios
+
+```csharp
+public class PersonaService(IPersonaRepository repository, ILogger<PersonaService> logger) : IPersonaService
+{
+    public Result<Persona, DomainError> GetById(int id)
+    {
+        return repository.GetById(id)
+            .Tap(p => logger.LogInformation("Obtenida persona: {Nombre}", p.Nombre))
+            .TapError(e => logger.LogError("Error: {Message}", e.Message));
+    }
+}
+```
+
+### Match: Consumir el Resultado
 
 ```csharp
 resultado.Match(
-    success: persona =>
-    {
-        Console.WriteLine($"Nombre: {persona.Nombre}");
-        Console.WriteLine($"Email: {persona.Email}");
-        return Unit.Value; // Unit es como void para lambdas
-    },
-    failure: error =>
-    {
-        Console.WriteLine($"Error: {error}");
-        return Unit.Value;
-    }
+    onSuccess: persona => Console.WriteLine($"Hola {persona.Nombre}"),
+    onFailure: error => Console.WriteLine($"Error: {error.Message}")
 );
 ```
 
-### Match con switch expression
+### OnFailureCompensate: Patrón de Recuperación
 
 ```csharp
-// Alternativa: usar switch expression
-string mensaje = resultado switch
+public Result<Persona, DomainError> GetById(int id)
 {
-    { IsSuccess: true } => $"Encontrado: {resultado.Value.Nombre}",
-    { IsFailure: true } => $"Error: {resultado.Error}",
-    _ => "Estado desconocido"
-};
+    return Maybe.From(cache.Get(id))
+        .ToResult(DomainErrors.NotFound(id))
+        .OnFailureCompensate(_ => GetFromRepository(id));  // Si falla cache, busca en BD
+}
 ```
 
-> 💡 **Consejo:** `Match` es la forma más limpia de manejar `Result` cuando necesitas transformarlo en un valor o efecto secundario. Evita los `if/else` repetitivos.
+> 💡 **Consejo:** `OnFailureCompensate` es útil para patrones de recuperación. Si el cache falla, intenta en la BD. Si la BD primaria falla, intenta en la secundaria.
 
-## 15.7. Result vs Excepciones: Cuándo Usar Cada Uno
+## 15.7. El Tipo Maybe
 
-| Criterio | Result | Excepciones |
-|----------|--------|-------------|
-| **Tipo de error** | Esperado (validación, no encontrado) | Inesperado (fallo de disco, null ref) |
-| **Frecuencia** | Frecuente (cada petición) | Rara (excepcional) |
-| **Velocidad** | Rápido (un objeto simple) | Lento (stack trace, captura) |
-| **Visibilidad** | Visible en la firma del método | Invisible (oculta en el código) |
-| **Encadenamiento** | `Bind`, `Map`, `Match` | `try/catch` anidados |
-| **Testing** | Fácil de testear | Difícil de capturar en tests |
-
-```mermaid
-graph TD
-    A["¿El error es esperado?"] -->|"Sí"| B["Usar Result<T>"]
-    A -->|"No"| C["Usar Excepción"]
-
-    B --> D["Validación fallida"]
-    B --> E["Recurso no encontrado"]
-    B --> F["Operación no permitida"]
-
-    C --> G["NullReferenceException"]
-    C --> H["IOException"]
-    C --> I["SqlConnectionException"]
-
-    style A fill:#4CAF50,color:#fff
-    style B fill:#2196F3,color:#fff
-    style C fill:#f44336,color:#fff
-```
-
-### Ejemplo completo: API con Result
+**Maybe** (también llamado Option) representa un valor que puede existir o no. Es la alternativa funcional a `null`:
 
 ```csharp
-// Endpoint que usa Result para manejar errores
-app.MapGet("/api/personas/{id}", (int id, IPersonaService service) =>
-{
-    var resultado = service.ObtenerPorId(id);
+// En lugar de esto:
+Persona? ObtenerPersona(int id);
 
-    return resultado.Match(
-        success: persona => Results.Ok(persona),
-        failure: error => Results.NotFound(new { Error = error })
-    );
-});
+// Hacemos esto:
+Maybe<Persona> ObtenerPersona(int id);
+```
 
-// Service que devuelve Result
-public class PersonaService : IPersonaService
+### Crear Maybe
+
+```csharp
+// Con valor
+Maybe<Persona> conValor = Maybe.From(persona);
+
+// Sin valor (None)
+Maybe<Persona> sinValor = Maybe<Persona>.None;
+```
+
+### Operaciones con Maybe
+
+```csharp
+// HasValue / HasNoValue
+if (maybe.HasValue)
+    Console.WriteLine(maybe.Value);
+
+// Where: filtrar
+Maybe<Persona> activo = maybe.Where(p => p.IsActive);
+
+// Map: transformar
+Maybe<string> nombre = maybe.Map(p => p.Nombre);
+```
+
+### Maybe a Result: ToResult
+
+```csharp
+// Maybe → Result
+Maybe<Persona> persona = repository.GetById(id);
+
+// Si tiene valor → Success
+// Si no tiene valor → Failure con el error dado
+Result<Persona, DomainError> resultado = persona
+    .ToResult(DomainErrors.NotFound(id));
+```
+
+> ⚠️ **Advertencia:** `ToResult()` de CSharpFunctionalExtensions solo acepta `string` como error. Para usar tipos personalizados como `DomainError`, necesitas crear una extensión propia (ver ejemplo completo en 15.9).
+
+### ¿Cuándo usar Maybe vs Result?
+
+| Escenario | Tipo recomendado |
+|-----------|-----------------|
+| Valor puede ser null | `Maybe<T>` |
+| Operación puede fallar | `Result<T, Error>` |
+| Null significa "no encontrado" | `Maybe<T>` → `ToResult()` |
+| Error con contexto (validación, negocio) | `Result<T, Error>` |
+
+## 15.8. Result vs Excepciones: Cuándo Usar Cada Uno
+
+| Situación | Usar | Ejemplo |
+|-----------|------|---------|
+| Usuario no encontrado | `Result` | `DomainErrors.NotFound(id)` |
+| Datos de entrada inválidos | `Result` | `DomainError.Validation(errors)` |
+| Email ya registrado | `Result` | `DomainError.AlreadyExists(email)` |
+| Base de datos caída | **Excepción** | `SqlException` |
+| Archivo corrupto | **Excepción** | `IOException` |
+| Error de configuración | **Excepción** | `InvalidOperationException` |
+
+> 💡 **Regla simple:** Si el usuario puede resolver el error (rellenar un campo, elegir otro email), usa `Result`. Si es un error del sistema que requiere intervención técnica, usa excepción.
+
+## 15.9. Ejemplo Completo
+
+### Errores de Dominio
+
+```csharp
+namespace Academia.Errors;
+
+public abstract record DomainError(string Message)
 {
-    public Result<Persona> ObtenerPorId(int id)
+    public sealed record NotFound(int Id)
+        : DomainError($"Persona con ID {Id} no encontrada");
+
+    public sealed record Validation(IEnumerable<string> Errors)
+        : DomainError(string.Join(", ", Errors));
+
+    public sealed record AlreadyExists(string Email)
+        : DomainError($"El email {Email} ya está registrado");
+
+    public sealed record Storage(Exception Exception)
+        : DomainError($"Error de almacenamiento: {Exception.Message}");
+}
+
+public static class DomainErrors
+{
+    public static DomainError NotFound(int id) => new DomainError.NotFound(id);
+    public static DomainError Validation(IEnumerable<string> errors) => new DomainError.Validation(errors);
+    public static DomainError AlreadyExists(string email) => new DomainError.AlreadyExists(email);
+    public static DomainError Storage(Exception ex) => new DomainError.Storage(ex);
+}
+```
+
+### Extensión para Maybe.ToResult con Tipos Personalizados
+
+```csharp
+using CF = CSharpFunctionalExtensions;
+
+namespace Academia.Extensions;
+
+public static class MaybeExtensions
+{
+    extension<T>(Maybe<T> maybe) where T : class
     {
-        if (id <= 0)
-            return Result.Failure<Persona>("El ID debe ser positivo");
+        public CF.Result<T, TError> ToResult<TError>(TError error)
+        {
+            return maybe.HasValue
+                ? CF.Result.Success<T, TError>(maybe.Value)
+                : CF.Result.Failure<T, TError>(error);
+        }
 
-        var persona = _repository.GetById(id);
-        if (persona is null)
-            return Result.Failure<Persona>($"Persona con ID {id} no encontrada");
-
-        return Result.Success(persona);
+        public CF.Result<T, TError> ToResult<TError>(Func<TError> errorFactory)
+        {
+            return maybe.HasValue
+                ? CF.Result.Success<T, TError>(maybe.Value)
+                : CF.Result.Failure<T, TError>(errorFactory());
+        }
     }
 }
 ```
 
-> ⚠️ **Advertencia:** No uses `Result` para errores de infraestructura (fallo de BD, error de red). Esos SÍ son excepciones. `Result` es para errores de **negocio** que el código puede manejar.
+### Servicio con Result (Patrón ROP)
+
+```csharp
+public class PersonaService(
+    IPersonaRepository repository,
+    IValidador<Persona> validador,
+    ICache<int, Persona> cache,
+    ILogger<PersonaService> logger
+) : IPersonaService
+{
+    // GetById con caché y Maybe.ToResult
+    public Result<Persona, DomainError> GetById(int id)
+    {
+        return Maybe.From(cache.Get(id))
+            .ToResult(DomainErrors.NotFound(id))
+            .OnFailureCompensate(_ => GetFromRepository(id));
+    }
+
+    // Create con encadenamiento ROP completo
+    public Result<Persona, DomainError> Create(Persona persona)
+    {
+        return Result.Success<Persona, DomainError>(persona)
+            .Bind(validador.Validar)
+            .Bind(CheckEmailIsUnique)
+            .Map(p => repository.Create(p)!)
+            .Tap(p => logger.LogInformation("Creada persona: {Id}", p.Id));
+    }
+
+    // Update con validaciones encadenadas
+    public Result<Persona, DomainError> Update(int id, Persona persona)
+    {
+        return Maybe.From(repository.GetById(id))
+            .ToResult(DomainErrors.NotFound(id))
+            .Bind(_ => validador.Validar(persona))
+            .Bind(p => CheckEmailUniqueForUpdate(id, p))
+            .Map(p => repository.Update(id, p)!)
+            .Tap(_ => cache.Remove(id));
+    }
+
+    private Result<Persona, DomainError> GetFromRepository(int id)
+    {
+        return Maybe.From(repository.GetById(id))
+            .ToResult(DomainErrors.NotFound(id))
+            .Tap(p => cache.Set(id, p));
+    }
+
+    private Result<Persona, DomainError> CheckEmailIsUnique(Persona p) =>
+        repository.FindByEmail(p.Email) is null
+            ? Result.Success<Persona, DomainError>(p)
+            : Result.Failure<Persona, DomainError>(DomainErrors.AlreadyExists(p.Email));
+
+    private Result<Persona, DomainError> CheckEmailUniqueForUpdate(int id, Persona p)
+    {
+        var existente = repository.FindByEmail(p.Email);
+        return existente is null || existente.Id == id
+            ? Result.Success<Persona, DomainError>(p)
+            : Result.Failure<Persona, DomainError>(DomainErrors.AlreadyExists(p.Email));
+    }
+}
+```
+
+### Uso
+
+```csharp
+var service = new PersonaService(repository, validador, cache, logger);
+
+// Obtener
+var resultado = service.GetById(1);
+resultado.Match(
+    onSuccess: p => Console.WriteLine($"Hola {p.Nombre}"),
+    onFailure: e => Console.WriteLine($"Error: {e.Message}")
+);
+
+// Crear
+var crear = service.Create(new Persona { Nombre = "Ana", Email = "ana@correo.com" });
+crear.Match(
+    onSuccess: p => Console.WriteLine($"Creado: {p.Id}"),
+    onFailure: e => Console.WriteLine($"Error: {e.Message}")
+);
+
+// Crear con error
+var error = service.Create(new Persona { Nombre = "", Email = "" });
+error.Match(
+    onSuccess: _ => { },
+    onFailure: e => Console.WriteLine($"Errores: {e.Message}")
+);
+```
 
 ---
 
@@ -442,12 +495,18 @@ public class PersonaService : IPersonaService
 
 | Concepto | Descripción |
 |----------|-------------|
-| **Result\<T\>** | Tipo que representa éxito (con valor) o fallo (con error) |
-| **Maybe\<T\>** | Tipo que representa un valor que puede no existir |
-| **Guard** | Validaciones concisas y encadenables |
-| **Map** | Transforma el valor interior de un Result |
-| **Bind** | Encadena operaciones que devuelven Result |
-| **Match** | Ejecuta una función según éxito o fallo |
-| **Result vs Excepciones** | Result para errores esperados, Excepciones para inesperados |
+| **ROP** | Modela el flujo como un tren con dos vías (éxito/error) |
+| **DomainError** | Abstract record con nested records para errores de dominio |
+| **DomainErrors** | Factory para crear errores sin casting explícito |
+| **Result<T, TError>** | Representa éxito (Value) o fracaso (Error) |
+| **Maybe<T>** | Representa un valor que puede existir o no |
+| **ToResult()** | Convierte Maybe a Result propagando el error |
+| **Bind** | Encadena operaciones que retornan Result |
+| **Map** | Transforma el valor en caso de éxito |
+| **MapError** | Transforma el error |
+| **Ensure** | Validación condicional |
+| **Tap** | Efectos secundarios sin modificar el flujo |
+| **Match** | Consume el resultado final |
+| **OnFailureCompensate** | Patrón de recuperación |
 
-En el siguiente punto veremos concurrencia y asíncronismo en C#: `async/await`, `Task`, `CancellationToken` y patrones de concurrencia para construir aplicaciones más rápidas y responsivas.
+En el siguiente punto veremos concurrencia y asincronía: async/await, Task, CancellationToken y por qué no debemos usar `async void`.
