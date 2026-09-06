@@ -24,7 +24,7 @@ Tema 01. Introducción al desarrollo de software en Servidor. 2DAW. Curso 2026-2
 
 11. [Inyección de Dependencias](11-inyeccion-dependencias.md)
 12. [Patrones y Arquitecturas](12-patrones-arquitecturas.md)
-13. [LINQ en Colecciones y Base de Datos](13-linq.md)
+13. [LINQ y DataFrames](13-linq-dataframes.md)
 14. [Ficheros y Formatos de Intercambio](14-ficheros-formatos.md)
 15. [Patrón Result vs Excepciones (ROP)](15-rop-result.md)
 16. [Concurrencia y Asincronía](16-concurrencia-asincronia.md)
@@ -39,15 +39,6 @@ Tema 01. Introducción al desarrollo de software en Servidor. 2DAW. Curso 2026-2
 
 
 25. [Resumen de la Unidad 01](25-resumen.md)
-
-## Prácticas
-
-1. [Test: 100 preguntas (50 Parte 1 + 50 Parte 2)](practicas/01-test.md)
-2. [Cuestionario: 20 preguntas de desarrollo](practicas/02-cuestionario.md)
-3. [Práctica: Análisis Comparativo de Páginas Web Estáticas y Dinámicas](practicas/03-practica-estaticas-dinamicas.md)
-4. [Práctica: Análisis de la Arquitectura y Tecnologías de Spotify](practicas/04-spotify.md)
-5. [Práctica: Análisis de Accidentes de Madrid con LINQ y DataFrames](practicas/05-accidentes-madrid.md)
-6. [Práctica: Servicio con Almacenamiento Local y Remoto en .NET](practicas/06-repositorio_remoto.md)
 
 ## Contenido en YouTube
 
