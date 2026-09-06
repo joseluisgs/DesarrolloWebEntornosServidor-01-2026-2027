@@ -3,6 +3,10 @@
 - [Práctica 6: Servicio con Almacenamiento Local y Remoto en .NET](#práctica-6-servicio-con-almacenamiento-local-y-remoto-en-net)
   - [Objetivo](#objetivo)
   - [Descripción](#descripción)
+    - [Diagrama de Secuencia: Obtener usuario por ID](#diagrama-de-secuencia-obtener-usuario-por-id)
+    - [Diagrama de Secuencia: Crear usuario](#diagrama-de-secuencia-crear-usuario)
+    - [Diagrama de Secuencia: Sincronización cada 60s](#diagrama-de-secuencia-sincronización-cada-60s)
+    - [Diagrama de Secuencia: Eliminar usuario](#diagrama-de-secuencia-eliminar-usuario)
   - [Tecnologías](#tecnologías)
   - [Docker Compose](#docker-compose)
     - [Conexión desde la app](#conexión-desde-la-app)
@@ -31,7 +35,7 @@ Desarrollar un servicio en **ASP.NET Core** que gestione datos con **tres nivele
 
 Debes tener en cuenta que cada 60 segundos se sincronizará la base de datos local con la API REST remota, y que al arrancar la aplicación se borrará la base de datos local y se cargará desde la API REST.
 
-Además tendrá un servicio de notificaciones. Para ello usaremos programación reactiva o eventos C#. En Program.cs, nada más arrancar el servicio, se suscribirá a los eventos de creación, actualización y eliminación de usuarios y mostrará un mensaje en consola. Este servicio estará inyectado en el `UserService` y se llamará cada vez que se cree, actualice o elimine un usuario.
+Además tendrá un servicio de notificaciones. Para ello usaremos programación reactiva. En Program.cs, nada más arrancar el servicio, se suscribirá a los eventos de creación, actualización y eliminación de usuarios y mostrará un mensaje en consola. Este servicio estará inyectado en el `UserService` y se llamará cada vez que se cree, actualice o elimine un usuario.
 
 Todo tendrá que estar documentado con XMLDoc y tener tests unitarios con NUnit + Moq + FluentAssertions.
 
@@ -53,6 +57,107 @@ Usaremos la API de **JSONPlaceholder** (https://jsonplaceholder.typicode.com) co
 - Lectura: caché → BD local → API REST
 - Escritura: API REST → BD local → caché
 - Sincronización: cada 60 segundos, BackgroundService limpia y recarga desde la API
+
+### Diagrama de Secuencia: Obtener usuario por ID
+
+```mermaid
+sequenceDiagram
+    participant C as Cliente
+    participant API as API /api/users/{id}
+    participant Cache as Caché (Memory/Redis)
+    participant BD as BD Local (EF Core)
+    participant REM as API REST (JSONPlaceholder)
+
+    C->>API: GET /api/users/1
+    API->>Cache: Buscar "user:1"
+
+    alt Cache HIT
+        Cache-->>API: Devuelve usuario
+        API-->>C: 200 OK + usuario
+    else Cache MISS
+        Cache-->>API: null
+        API->>BD: FindAsync(1)
+
+        alt BD HIT
+            BD-->>API: Devuelve usuario
+            API->>Cache: Guardar "user:1"
+            API-->>C: 200 OK + usuario
+        else BD MISS
+            BD-->>API: null
+            API->>REM: GET /users/1
+
+            alt Existe en API
+                REM-->>API: Devuelve usuario
+                API->>BD: Insertar usuario
+                API->>Cache: Guardar "user:1"
+                API-->>C: 200 OK + usuario
+            else No existe
+                REM-->>API: 404
+                API-->>C: 404 Not Found
+            end
+        end
+    end
+```
+
+### Diagrama de Secuencia: Crear usuario
+
+```mermaid
+sequenceDiagram
+    participant C as Cliente
+    participant API as API /api/users
+    participant REM as API REST
+    participant BD as BD Local
+    participant Cache as Caché
+    participant Notif as Notificaciones
+
+    C->>API: POST /api/users (name, username, email)
+    API->>REM: POST /users
+    REM-->>API: 201 Created + id=11
+    API->>BD: Insertar usuario con id=11
+    API->>Cache: Guardar "user:11"
+    API->>Notif: Notificar "Usuario creado: 11"
+    Notif-->>API: Mensaje en consola
+    API-->>C: 201 Created + usuario
+```
+
+### Diagrama de Secuencia: Sincronización cada 60s
+
+```mermaid
+sequenceDiagram
+    participant BS as BackgroundService
+    participant Cache as Caché
+    participant BD as BD Local
+    participant REM as API REST
+
+    loop Cada 60 segundos
+        BS->>Cache: Borrar toda la caché
+        BS->>BD: Borrar todos los usuarios
+        BS->>REM: GET /users (todos)
+        REM-->>BS: Lista de usuarios
+        BS->>BD: Insertar todos los usuarios
+        BS-->>BS: Log "Sincronización completada"
+    end
+```
+
+### Diagrama de Secuencia: Eliminar usuario
+
+```mermaid
+sequenceDiagram
+    participant C as Cliente
+    participant API as API /api/users/{id}
+    participant REM as API REST
+    participant BD as BD Local
+    participant Cache as Caché
+    participant Notif as Notificaciones
+
+    C->>API: DELETE /api/users/1
+    API->>REM: DELETE /users/1
+    REM-->>API: 200 OK
+    API->>BD: Eliminar usuario 1
+    API->>Cache: Borrar "user:1"
+    API->>Notif: Notificar "Usuario eliminado: 1"
+    API-->>C: 204 No Content
+```
 - Al arrancar la aplicación, se borra la BD local y se carga desde la API REST
 - El servicio de notificaciones se inyecta en `UserService` y se llama en cada operación de escritura. En `Program.cs`, nada más arrancar, se suscriben los handlers que muestran mensajes en consola.
 
