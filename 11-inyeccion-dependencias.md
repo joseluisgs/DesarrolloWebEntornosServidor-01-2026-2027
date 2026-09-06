@@ -185,9 +185,39 @@ services.Decorate<IPedidoService, PedidoServiceConLog>();
 
 > 💡 **Consejo:** Usa interfaces auxiliares como `ITransientService`, `IScopedService` e `ISingletonService` como marcadores. Scrutor las usa para filtrar qué clases registrar.
 
-### Infrastructure/DependenciesProvider.cs con Scrutor
+### Infrastructure/DependenciesProvider.cs
 
-El patrón `Infrastructure/DependenciesProvider.cs` centraliza toda la configuración de DI. Con Scrutor se reduce enormemente:
+El patrón `Infrastructure/DependenciesProvider.cs` centraliza toda la configuración de DI. Primero veamos la versión **sin Scrutor** (manual), luego la versión **con Scrutor**.
+
+#### Sin Scrutor (manual)
+
+```csharp
+using Microsoft.Extensions.DependencyInjection;
+
+namespace Academia.Infrastructure;
+
+public static class DependenciesProvider
+{
+    public static IServiceProvider BuildServiceProvider()
+    {
+        var services = new ServiceCollection();
+
+        // Repositories — Transient
+        services.AddTransient<IPedidoRepository, PedidoRepository>();
+        services.AddTransient<IEmailService, EmailService>();
+
+        // Services — Scoped
+        services.AddScoped<IPedidoService, PedidoService>();
+
+        // Cache — Singleton
+        services.AddSingleton<ICacheService, CacheService>();
+
+        return services.BuildServiceProvider();
+    }
+}
+```
+
+#### Con Scrutor (automático)
 
 ```csharp
 using Microsoft.Extensions.DependencyInjection;
@@ -201,60 +231,64 @@ public static class DependenciesProvider
     {
         var services = new ServiceCollection();
 
-        // Escanear el ensamblado y registrar automáticamente
+        // Escanear y registrar automáticamente según marcador
         services.Scan(scan => scan
             .FromAssemblyOf<Program>()
-                .AddClasses(classes => classes.AssignableTo<IScopedService>())
-                    .AsImplementedInterfaces()
-                    .WithScopedLifetime()
                 .AddClasses(classes => classes.AssignableTo<ITransientService>())
                     .AsImplementedInterfaces()
                     .WithTransientLifetime()
+                .AddClasses(classes => classes.AssignableTo<IScopedService>())
+                    .AsImplementedInterfaces()
+                    .WithScopedLifetime()
                 .AddClasses(classes => classes.AssignableTo<ISingletonService>())
                     .AsImplementedInterfaces()
                     .WithSingletonLifetime()
         );
 
-        // Lo que no se puede escanear (configuración condicional, cache, etc.)
-        services.AddSingleton<ICache<int, Persona>>(sp =>
-            new LruCache<int, Persona>(AppConfig.CacheSize));
+        // Lo que no se puede escanear (configuración condicional)
+        services.AddSingleton<ICacheService>(sp =>
+            new CacheService(AppConfig.CacheSize));
 
         return services.BuildServiceProvider();
     }
 }
 ```
 
-**Interfaces marcadoras** (solo para que Scrutor las filtre):
+#### Interfaces marcadoras
 
 ```csharp
-public interface IScopedService { }
 public interface ITransientService { }
+public interface IScopedService { }
 public interface ISingletonService { }
 ```
 
-**Servicios que implementan los marcadores:**
+#### Clases con marcadores (las mismas que antes)
 
 ```csharp
-// Scrutor lo registra automáticamente como Scoped
-public class AcademiaService : IAcademiaService, IScopedService
-{
-    public AcademiaService(
-        IPersonasRepository repository,
-        IValidador<Persona> validador,
-        ICache<int, Persona> cache
-    ) { }
-}
+// ❌ SIN Scrutor: registro manual
+services.AddTransient<IPedidoRepository, PedidoRepository>();
+services.AddTransient<IEmailService, EmailService>();
+services.AddScoped<IPedidoService, PedidoService>();
+services.AddSingleton<ICacheService, CacheService>();
 
-// Scrutor lo registra automáticamente como Singleton
-public class PersonasMemoryRepository : IPersonasRepository, ISingletonService
-{
-    // ...
-}
+// ✅ CON Scrutor: las clases llevan el marcador y Scrutor las registra
+public class PedidoRepository : IPedidoRepository, ITransientService { }
+public class EmailService : IEmailService, ITransientService { }
+public class PedidoService : IPedidoService, IScopedService { }
+public class CacheService : ICacheService, ISingletonService { }
 ```
 
-> ⚠️ **Advertencia:** Lo que no se pueda escanear (configuración condicional, cache con tamaño, factory) se registra manualmente después del `Scan`. Scrutor complementa la DI manual, no la reemplaza al 100%.
+**Comparativa:**
 
-📌 **Ejemplo real:** En el proyecto de Gestión Académica de 1º, el `DependenciesProvider` original tenía ~90 líneas de registros manuales. Con Scrutor se reduce a ~20 líneas.
+| Sin Scrutor | Con Scrutor |
+|-------------|-------------|
+| `services.AddTransient<IPedidoRepository, PedidoRepository>();` | `class PedidoRepository : IPedidoRepository, ITransientService` |
+| `services.AddTransient<IEmailService, EmailService>();` | `class EmailService : IEmailService, ITransientService` |
+| `services.AddScoped<IPedidoService, PedidoService>();` | `class PedidoService : IPedidoService, IScopedService` |
+| `services.AddSingleton<ICacheService, CacheService>();` | `class CacheService : ICacheService, ISingletonService` |
+| 4+ líneas de registro manual | 0 líneas (Scrutor lo hace) |
+
+> 💡 **Consejo:** Lo que no se pueda escanear (configuración condicional, cache con tamaño, factory) se registra manualmente después del `Scan`.
 
 ## 11.7. Patrones de Diseño con DI
 
