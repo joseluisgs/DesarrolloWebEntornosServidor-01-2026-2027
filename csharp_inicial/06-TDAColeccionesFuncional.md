@@ -1162,16 +1162,12 @@ namespace Colecciones.IEnumerable
         }
         
         // Implementación de IEnumerable<T>
-        public class ColeccionPersonalizada<T> : IEnumerable<T>
+        public class ColeccionPersonalizada<T>(T[] datos) : IEnumerable<T>
         {
-            private readonly T[] _datos;
-            
-            public ColeccionPersonalizada(T[] datos) => _datos = datos;
-            
             // Método requerido por IEnumerable<T>
             public IEnumerator<T> GetEnumerator()
             {
-                foreach (var item in _datos)
+                foreach (var item in datos)
                 {
                     yield return item;
                 }
@@ -1182,21 +1178,12 @@ namespace Colecciones.IEnumerable
         }
         
         // Iterador con yield return
-        public class GeneradorNumeros : IEnumerable<int>
+        public class GeneradorNumeros(int inicio, int fin) : IEnumerable<int>
         {
-            private readonly int _inicio;
-            private readonly int _fin;
-            
-            public GeneradorNumeros(int inicio, int fin)
-            {
-                _inicio = inicio;
-                _fin = fin;
-            }
-            
             // El compilador genera una clase IEnumerator
             public IEnumerator<int> GetEnumerator()
             {
-                for (int i = _inicio; i <= _fin; i++)
+                for (int i = inicio; i <= fin; i++)
                 {
                     // yield return pausa la ejecución y возвращает el valor
                     yield return i;

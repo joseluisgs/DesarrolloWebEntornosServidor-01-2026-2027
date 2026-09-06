@@ -712,11 +712,9 @@ public class DescuentoEmpleado : IEstrategiaDescuento
 
 public class CarritoCompra(IEstrategiaDescuento estrategiaDescuento)
 {
-    private readonly IEstrategiaDescuento _estrategiaDescuento = estrategiaDescuento;
-
     public decimal CalcularTotal(decimal precioBase)
     {
-        var descuento = _estrategiaDescuento.CalcularDescuento(precioBase);
+        var descuento = estrategiaDescuento.CalcularDescuento(precioBase);
         return precioBase - descuento;
     }
 }

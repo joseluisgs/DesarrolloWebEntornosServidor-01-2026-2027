@@ -65,31 +65,24 @@ dotnet add package Dapper
 using Npgsql;
 using Dapper;
 
-public class PersonaRepository
+public class PersonaRepository(string connectionString)
 {
-    private readonly string _connectionString;
-
-    public PersonaRepository(string connectionString)
-    {
-        _connectionString = connectionString;
-    }
-
     public async Task<IEnumerable<Persona>> GetAllAsync()
     {
-        using var connection = new NpgsqlConnection(_connectionString);
+        using var connection = new NpgsqlConnection(connectionString);
         return await connection.QueryAsync<Persona>("SELECT * FROM Personas ORDER BY Nombre");
     }
 
     public async Task<Persona?> GetByIdAsync(int id)
     {
-        using var connection = new NpgsqlConnection(_connectionString);
+        using var connection = new NpgsqlConnection(connectionString);
         return await connection.QueryFirstOrDefaultAsync<Persona>(
             "SELECT * FROM Personas WHERE Id = @Id", new { Id = id });
     }
 
     public async Task<int> CreateAsync(Persona persona)
     {
-        using var connection = new NpgsqlConnection(_connectionString);
+        using var connection = new NpgsqlConnection(connectionString);
         return await connection.ExecuteScalarAsync<int>(
             @"INSERT INTO Personas (Nombre, Email, Edad, FechaRegistro, Activo)
               VALUES (@Nombre, @Email, @Edad, @FechaRegistro, @Activo)
@@ -99,7 +92,7 @@ public class PersonaRepository
 
     public async Task<bool> UpdateAsync(Persona persona)
     {
-        using var connection = new NpgsqlConnection(_connectionString);
+        using var connection = new NpgsqlConnection(connectionString);
         int filas = await connection.ExecuteAsync(
             @"UPDATE Personas
               SET Nombre = @Nombre, Email = @Email, Edad = @Edad, Activo = @Activo
@@ -110,7 +103,7 @@ public class PersonaRepository
 
     public async Task<bool> DeleteAsync(int id)
     {
-        using var connection = new NpgsqlConnection(_connectionString);
+        using var connection = new NpgsqlConnection(connectionString);
         int filas = await connection.ExecuteAsync(
             "DELETE FROM Personas WHERE Id = @Id", new { Id = id });
         return filas > 0;
@@ -205,16 +198,11 @@ public class ProductoMongo
 ```csharp
 using MongoDB.Driver;
 
-public class ProductoMongoRepository
+public class ProductoMongoRepository(string connectionString, string database)
 {
-    private readonly IMongoCollection<ProductoMongo> _productos;
-
-    public ProductoMongoRepository(string connectionString, string database)
-    {
-        var client = new MongoClient(connectionString);
-        var db = client.GetDatabase(database);
-        _productos = db.GetCollection<ProductoMongo>("productos");
-    }
+    private readonly IMongoCollection<ProductoMongo> _productos = new MongoClient(connectionString)
+        .GetDatabase(database)
+        .GetCollection<ProductoMongo>("productos");
 
     // CREATE
     public async Task<string> CreateAsync(ProductoMongo producto)
@@ -299,14 +287,13 @@ dotnet add package StackExchange.Redis
 ```csharp
 using StackExchange.Redis;
 
-public class RedisCacheService
+public class RedisCacheService(string connectionString)
 {
-    private readonly ConnectionMultiplexer _redis;
-    private readonly IDatabase _db;
+    private readonly ConnectionMultiplexer _redis = ConnectionMultiplexer.Connect(connectionString);
+    private IDatabase _db = null!;
 
-    public RedisCacheService(string connectionString)
+    public async Task InitializeAsync()
     {
-        _redis = ConnectionMultiplexer.Connect(connectionString);
         _db = _redis.GetDatabase();
     }
 
@@ -345,28 +332,25 @@ public class RedisCacheService
 ### Caché con patrón Cache-Aside
 
 ```csharp
-public class ProductoService
+public class ProductoService(RedisCacheService cache, ProductoRepository repository)
 {
-    private readonly RedisCacheService _cache;
-    private readonly ProductoRepository _repository;
-
     public async Task<Producto?> ObtenerProductoAsync(int id)
     {
         string key = $"producto:{id}";
 
         // 1. Buscar en caché
-        string? cached = await _cache.GetAsync(key);
+        string? cached = await cache.GetAsync(key);
         if (cached is not null)
         {
             return JsonSerializer.Deserialize<Producto>(cached);
         }
 
         // 2. Si no está, buscar en BD
-        var producto = await _repository.GetByIdAsync(id);
+        var producto = await repository.GetByIdAsync(id);
         if (producto is not null)
         {
             // 3. Guardar en caché para próxima vez
-            await _cache.SetAsync(key, JsonSerializer.Serialize(producto),
+            await cache.SetAsync(key, JsonSerializer.Serialize(producto),
                 TimeSpan.FromMinutes(30));
         }
 
@@ -439,25 +423,21 @@ graph TD
 // MongoDB: contenido flexible (posts, comentarios)
 // Redis: caché de sesiones y datos frecuentes
 
-public class PedidoService
+public class PedidoService(PedidoRepository pedidoRepo, PostRepository postRepo, RedisCacheService cache)
 {
-    private readonly PedidoRepository _pedidoRepo;     // PostgreSQL
-    private readonly PostRepository _postRepo;          // MongoDB
-    private readonly RedisCacheService _cache;          // Redis
-
     public async Task<Pedido?> ObtenerPedidoAsync(int id)
     {
         // 1. Buscar en caché (Redis)
-        string cached = await _cache.GetAsync($"pedido:{id}");
+        string cached = await cache.GetAsync($"pedido:{id}");
         if (cached is not null)
             return JsonSerializer.Deserialize<Pedido>(cached);
 
         // 2. Buscar en BD principal (PostgreSQL)
-        var pedido = await _pedidoRepo.GetByIdAsync(id);
+        var pedido = await pedidoRepo.GetByIdAsync(id);
 
         // 3. Guardar en caché
         if (pedido is not null)
-            await _cache.SetAsync($"pedido:{id}", JsonSerializer.Serialize(pedido));
+            await cache.SetAsync($"pedido:{id}", JsonSerializer.Serialize(pedido));
 
         return pedido;
     }

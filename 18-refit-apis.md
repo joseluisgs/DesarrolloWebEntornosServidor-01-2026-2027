@@ -106,18 +106,11 @@ var app = builder.Build();
 ### Uso con nombre
 
 ```csharp
-public class MusicService
+public class MusicService(IHttpClientFactory httpClientFactory)
 {
-    private readonly IHttpClientFactory _httpClientFactory;
-
-    public MusicService(IHttpClientFactory httpClientFactory)
-    {
-        _httpClientFactory = httpClientFactory;
-    }
-
     public async Task<Playlist> ObtenerPlaylistAsync(string playlistId)
     {
-        var client = _httpClientFactory.CreateClient("spotify");
+        var client = httpClientFactory.CreateClient("spotify");
         return await client.GetFromJsonAsync<Playlist>($"playlists/{playlistId}");
     }
 }
@@ -134,23 +127,16 @@ public interface ISpotifyService
 }
 
 // Implementación
-public class SpotifyService : ISpotifyService
+public class SpotifyService(HttpClient client) : ISpotifyService
 {
-    private readonly HttpClient _client;
-
-    public SpotifyService(HttpClient client) // Inyectado por IHttpClientFactory
-    {
-        _client = client;
-    }
-
     public async Task<Playlist?> ObtenerPlaylistAsync(string id)
     {
-        return await _client.GetFromJsonAsync<Playlist>($"playlists/{id}");
+        return await client.GetFromJsonAsync<Playlist>($"playlists/{id}");
     }
 
     public async Task<SearchResult> BuscarAsync(string query)
     {
-        return await _client.GetFromJsonAsync<SearchResult>($"search?q={query}&type=track");
+        return await client.GetFromJsonAsync<SearchResult>($"search?q={query}&type=track");
     }
 }
 
@@ -226,24 +212,17 @@ builder.Services
 ### Usar la interfaz
 
 ```csharp
-public class UsuarioService
+public class UsuarioService(IUsuarioApi api) // Refit crea la implementación automáticamente
 {
-    private readonly IUsuarioApi _api;
-
-    public UsuarioService(IUsuarioApi api) // Refit crea la implementación automáticamente
-    {
-        _api = api;
-    }
-
     public async Task<List<Usuario>> ObtenerTodosAsync()
     {
-        return await _api.ObtenerTodosAsync(); // ¡Una línea! Refit hace la petición HTTP
+        return await api.ObtenerTodosAsync(); // ¡Una línea! Refit hace la petición HTTP
     }
 
     public async Task<Usuario?> CrearAsync(string nombre, string email)
     {
         var usuario = new Usuario { Nombre = nombre, Email = email };
-        return await _api.CrearAsync(usuario);
+        return await api.CrearAsync(usuario);
     }
 }
 ```

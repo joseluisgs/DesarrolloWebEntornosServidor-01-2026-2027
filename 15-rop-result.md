@@ -96,13 +96,11 @@ if (fallo.IsFailure)
 ```csharp
 using CSharpFunctionalExtensions;
 
-public class PersonaService
+public class PersonaService(IPersonaRepository repository)
 {
-    private readonly IPersonaRepository _repository;
-
     public Result<Persona> ObtenerPorId(int id)
     {
-        var persona = _repository.GetById(id);
+        var persona = repository.GetById(id);
         if (persona is null)
             return Result.Failure<Persona>($"Persona con ID {id} no encontrada");
 

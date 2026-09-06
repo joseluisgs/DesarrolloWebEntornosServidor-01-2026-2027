@@ -1,273 +1,189 @@
-- [25. Resumen de la Parte 2 y Conexión con ASP.NET Core](#25-resumen-de-la-parte-2-y-conexión-con-aspnet-core)
-  - [25.1. Recapitulación: Lo que Hemos Aprendido](#251-recapitulación-lo-que-hemos-aprendido)
-  - [25.2. El Camino Recorrido](#252-el-camino-recorrido)
-  - [25.3. Conexión con ASP.NET Core (UD02)](#253-conexión-con-aspnet-core-ud02)
-  - [25.4. Qué Veremos en la Siguiente Unidad](#254-qué-veremos-en-la-siguiente-unidad)
+- [25. Resumen de la Unidad 01](#25-resumen-de-la-unidad-01)
+  - [25.1. Parte 1: Fundamentos del Desarrollo Web en Servidor](#251-parte-1-fundamentos-del-desarrollo-web-en-servidor)
+  - [25.2. Parte 2: C# Avanzado para Desarrollo Servidor](#252-parte-2-c-avanzado-para-desarrollo-servidor)
+  - [25.3. Conexión entre Ambas Partes](#253-conexión-entre-ambas-partes)
+  - [25.4. Conexión con la Unidad 02](#254-conexión-con-la-unidad-02)
   - [25.5. Consejos para el Examen](#255-consejos-para-el-examen)
 
 
-# 25. Resumen de la Parte 2 y Conexión con ASP.NET Core
+# 25. Resumen de la Unidad 01
 
-> 💡 **Punto de partida:** Has llegado al final de la Parte 2 de la asignatura. Has aprendido desde LINQ hasta Docker, pasando por programación funcional, concurrencia, bases de datos y seguridad. Pero... ¿cómo encaja todo esto? ¿Cuándo usar cada cosa? En este resumen conectaremos los puntos y prepararemos el camino para ASP.NET Core, el framework que usaremos en la Unidad 02.
+> 💡 **Punto de partida:** Has completado la Unidad 01, que consta de dos partes fundamentales. La Parte 1 te dio la base teórica de cómo funciona la web y el desarrollo en servidor. La Parte 2 te dio las herramientas de C# para construir aplicaciones reales. Ahora es momento de ver cómo todo encaja y prepararse para la Unidad 02: **Desarrollo de servicios web en .NET**.
 
-En este tema haremos una recapitulación completa de la Parte 2, veremos cómo todo se conecta con ASP.NET Core y prepararemos lo que veremos en la siguiente unidad.
+## 25.1. Parte 1: Fundamentos del Desarrollo Web en Servidor
 
-**Objetivos de aprendizaje:**
-
-- Repasar los conceptos clave de los temas 14-24
-- Entender cómo se conectan con ASP.NET Core
-- Conocer qué veremos en la Unidad 02
-- Preparar la base para el desarrollo web en servidor
-
-## 25.1. Recapitulación: Lo que Hemos Aprendido
-
-La Parte 2 ha sido un viaje por las tecnologías fundamentales del desarrollo backend en C#:
-
-### Tabla resumen de temas
+La Parte 1 cubrió los conceptos teóricos que todo desarrollador web debe conocer:
 
 | Tema | Concepto clave | En una frase |
 |------|---------------|--------------|
-| **14. Ficheros** | IDisposable, System.IO, CSV, JSON | Guardar y leer datos de forma segura |
-| **15. Result** | CSharpFunctionalExtensions | Manejar errores sin excepciones |
-| **16. Concurrencia** | async/await, Task, CancellationToken | No bloquear el hilo mientras esperas |
-| **17. Reactiva** | Rx.NET, IObservable, IAsyncEnumerable | Flujos de datos continuos |
-| **18. APIs** | HttpClient, Refit, Polly | Consumir APIs externas de forma robusta |
-| **19. Configuración** | appsettings.json, Serilog | Configurar y monitorizar la app |
-| **20. EF Core** | DbContext, Migraciones, LINQ | Trabajar con bases de datos como C# |
-| **21. SQL/NoSQL** | PostgreSQL, MongoDB, Redis | Elegir la BD correcta para cada caso |
-| **22. Testing** | NUnit, FluentAssertions, Moq | Tests profesionales y mantenibles |
-| **23. Docker** | Dockerfile, Compose, Volúmenes | Empaquetar y desplegar la app |
-| **24. Seguridad** | JWT, BCrypt, CORS, OWASP | Proteger la app de amenazas |
-
-### Skills adquiridos
+| **01. Introducción** | Front-end vs Back-end | La web tiene dos lados: lo que se ve y lo que procesa |
+| **02. Componentes** | Back-end universal | Un mismo Back-end sirve a web, móvil y escritorio |
+| **03. Arquitecturas** | MVC, SOLID, Microservicios | Cómo se organiza el código para que sea mantenible |
+| **04. HTTP** | Verbos, Códigos de estado | El idioma que usan cliente y servidor para comunicarse |
+| **05. APIs** | REST, GraphQL, WebSocket | Cómo se diseñan los servicios web modernos |
+| **06. Web Dinámica** | SSR, tecnologías | Cómo se generan páginas personalizadas en el servidor |
+| **07. Lenguajes** | Scripting, Compilado, Bytecode | Cómo se ejecuta el código en el servidor |
+| **08. Servidores** | Apache, Nginx, Kestrel | El software que sirve las aplicaciones web |
+| **09. Despliegue** | Docker, K8s, CI/CD | Cómo llevar la app de desarrollo a producción |
+| **10. Seguridad** | Autenticación, Logs | Cómo proteger la app y monitorizarla |
 
 ```mermaid
 graph TD
-    A["🧠 Skills Parte 2"] --> B["📁 Datos"]
-    A --> C["🔄 Asíncrono"]
-    A --> D["🗄️ Persistencia"]
-    A --> E["🧪 Calidad"]
-    A --> F["🚀 Despliegue"]
-    A --> G["🔒 Seguridad"]
+    subgraph PARTE1["📚 PARTE 1: Fundamentos"]
+        A["🌐 Web"] --> B["⚙️ HTTP"]
+        B --> C["📡 APIs"]
+        C --> D["🏗️ Arquitecturas"]
+        D --> E["🚀 Despliegue"]
+        E --> F["🔒 Seguridad"]
+    end
 
-    B --> B1["Leer/escribir ficheros"]
-    B --> B2["CSV, JSON"]
-    B --> B3["Manejar errores"]
+    A1["01. Introducción"] --> A2["02. Componentes"]
+    B1["04. Protocolo HTTP"] --> B2["Verbos y Códigos"]
+    C1["05. REST"] --> C2["GraphQL / WebSocket"]
+    D1["03. MVC / SOLID"] --> D2["Microservicios"]
+    E1["09. Docker"] --> E2["CI/CD / Nube"]
+    F1["10. JWT, HTTPS"] --> F2["Logs"]
 
-    C --> C1["async/await"]
-    C --> C2["Task, CancellationToken"]
-    C --> C3["Programación reactiva"]
-
-    D --> D1["EF Core"]
-    D --> D2["PostgreSQL, MongoDB"]
-    D --> D3["Redis (caché)"]
-
-    E --> E1["NUnit, Moq"]
-    E --> E2["FluentAssertions"]
-    E --> E3["TestContainers"]
-
-    F --> F1["Docker"]
-    F --> F2["Docker Compose"]
-    F --> F3["CI/CD"]
-
-    G --> G1["JWT, BCrypt"]
-    G --> G2["CORS, HTTPS"]
-    G --> G3["OWASP Top 10"]
-
-    style A fill:#4CAF50,color:#fff
-    style B fill:#2196F3,color:#fff
+    style PARTE1 fill:#2196F3,color:#fff
+    style A fill:#7c3aed,color:#fff
+    style B fill:#4CAF50,color:#fff
     style C fill:#FF9800,color:#fff
     style D fill:#9C27B0,color:#fff
     style E fill:#f44336,color:#fff
     style F fill:#607D8B,color:#fff
-    style G fill:#E91E63,color:#fff
 ```
 
-> 💡 **Analogía:** La Parte 2 es como la caja de herramientas de un albañil. Cada herramienta (tema) sirve para algo específico: el llave inglesa (LINQ), el taladro (async/await), el nivel (EF Core)... ASP.NET Core es como construir la casa usando todas esas herramientas juntas.
+📌 **Ejemplo real:** Cuando Netflix diseña su arquitectura, usa los conceptos de la Parte 1: HTTP para comunicar servicios, REST para las APIs, Docker para desplegar, y JWT para autenticar a los usuarios.
 
-## 25.2. El Camino Recorrido
+## 25.2. Parte 2: C# Avanzado para Desarrollo Servidor
 
-### Primera Parte (Temas 01-13): Fundamentos
+La Parte 2 te dio las herramientas de C# para construir aplicaciones reales:
 
-| Tema | Qué vimos |
-|------|-----------|
-| 01-03 | Arquitectura web, componentes, protocolos HTTP |
-| 04-06 | HTTP, APIs REST, web dinámica |
-| 07-09 | Lenguajes, frameworks, servidores, despliegue |
-| 10-11 | Seguridad básica, Inyección de Dependencias |
-| 12-13 | Patrones arquitectónicos, LINQ |
-
-### Segunda Parte (Temas 14-24): Tecnologías Backend
-
-| Tema | Qué vimos |
-|------|-----------|
-| 14-15 | Ficheros, formatos, programación funcional |
-| 16-17 | Concurrencia, asíncrono, Rx.NET |
-| 18-19 | APIs, configuración, logging |
-| 20-21 | EF Core, bases de datos SQL y NoSQL |
-| 22-23 | Testing, Docker |
-| 24 | Seguridad avanzada |
-
-### Conexión entre temas
+| Tema | Concepto clave | En una frase |
+|------|---------------|--------------|
+| **11. DI** | Inyección de Dependencias | No crees dependencias, recíbelas |
+| **12. Patrones** | Repository, Service, Factory | Organizar el código para que sea mantenible |
+| **13. LINQ** | Consultas declarativas | Manipular datos como si fueran SQL en C# |
+| **14. Ficheros** | IDisposable, CSV, JSON | Leer y escribir datos de forma segura |
+| **15. Result** | CSharpFunctionalExtensions | Manejar errores sin excepciones |
+| **16. Async** | async/await, Task | No bloquear mientras esperas |
+| **17. Reactiva** | Rx.NET, IAsyncEnumerable | Flujos de datos continuos |
+| **18. APIs** | Refit, Polly | Consumir APIs externas de forma robusta |
+| **19. Config** | Serilog, IOptions | Configurar y monitorizar la app |
+| **20. EF Core** | DbContext, Migraciones | Trabajar con BD como C# |
+| **21. SQL/NoSQL** | PostgreSQL, MongoDB, Redis | Elegir la BD correcta |
+| **22. Testing** | NUnit, Moq, TestContainers | Tests profesionales |
+| **23. Docker** | Dockerfile, Compose | Empaquetar la app |
+| **24. Seguridad** | JWT, BCrypt, CORS | Proteger la app |
 
 ```mermaid
 graph TD
-    A["LINQ (Tema 13)"] --> B["EF Core (Tema 20)"]
-    B --> C["PostgreSQL (Tema 21)"]
-    B --> D["MongoDB (Tema 21)"]
+    subgraph PARTE2["🔧 PARTE 2: C# Avanzado"]
+        G["📁 Datos"] --> H["🔄 Asíncrono"]
+        H --> I["🗄️ Persistencia"]
+        I --> J["🧪 Calidad"]
+        J --> K["🚀 Despliegue"]
+        K --> L["🔒 Seguridad"]
+    end
 
-    E["IDisposable (Tema 14)"] --> F["HttpClient (Tema 18)"]
-    E --> G["EF Core (Tema 20)"]
+    G1["13. LINQ"] --> G2["14. Ficheros/JSON"]
+    H1["16. async/await"] --> H2["17. Rx.NET"]
+    I1["20. EF Core"] --> I2["21. PostgreSQL/MongoDB/Redis"]
+    J1["22. NUnit/Moq"] --> J2["TestContainers"]
+    K1["23. Docker"] --> K2["Compose"]
+    L1["24. JWT/BCrypt"] --> L2["CORS"]
 
-    H["async/await (Tema 16)"] --> I["EF Core (Tema 20)"]
-    H --> J["HttpClient (Tema 18)"]
-    H --> K["Rx.NET (Tema 17)"]
-
-    L["Result (Tema 15)"] --> M["Services (Tema 12)"]
-    M --> N["Controllers (UD02)"]
-
-    O["Docker (Tema 23)"] --> P["Despliegue (Tema 09)"]
-
-    style A fill:#2196F3,color:#fff
-    style B fill:#4CAF50,color:#fff
+    style PARTE2 fill:#4CAF50,color:#fff
+    style G fill:#2196F3,color:#fff
     style H fill:#FF9800,color:#fff
-    style L fill:#9C27B0,color:#fff
-    style O fill:#f44336,color:#fff
+    style I fill:#9C27B0,color:#fff
+    style J fill:#f44336,color:#fff
+    style K fill:#607D8B,color:#fff
+    style L fill:#E91E63,color:#fff
 ```
 
-> 📝 **Nota:** Cada tema de la Parte 2 es una pieza del puzzle. ASP.NET Core es el marco que une todas las piezas. En la Unidad 02 verás cómo todo se integra en un framework completo.
+📌 **Ejemplo real:** El proyecto de Gestión Académica que hiciste en 1º usa concepts de la Parte 2: DI (tema 11), Repository (tema 12), LINQ (tema 13), CSV/JSON (tema 14), async/await (tema 16), y Serilog (tema 19).
 
-## 25.3. Conexión con ASP.NET Core (UD02)
+## 25.3. Conexión entre Ambas Partes
 
-ASP.NET Core es el framework de Microsoft para desarrollar aplicaciones web y APIs. Usa **todas** las tecnologías que hemos visto:
-
-### Cómo se conecta cada tema con ASP.NET Core
-
-| Tema | En ASP.NET Core |
-|------|----------------|
-| **LINQ (13)** | Consultas en EF Core, filtros en controllers |
-| **Ficheros (14)** | Upload/download de ficheros, configuration |
-| **Result (15)** | Manejo de errores en endpoints |
-| **Concurrencia (16)** | `async` en controllers y servicios |
-| **Rx.NET (17)** | WebSockets, Server-Sent Events |
-| **Refit/Polly (18)** | Clientes HTTP para APIs externas |
-| **Configuración (19)** | `appsettings.json`, `IOptions<T>` |
-| **Logging (19)** | `ILogger<T>`, Serilog |
-| **EF Core (20)** | `DbContext`, Migraciones, LINQ to Entities |
-| **SQL/NoSQL (21)** | Repositories con Dapper, MongoDB, Redis |
-| **Testing (22)** | Tests de controllers y servicios |
-| **Docker (23)** | Dockerfile, Docker Compose para despliegue |
-| **Seguridad (24)** | JWT, autenticación, autorización, CORS |
-
-### Arquitectura típica de una app ASP.NET Core
-
-```mermaid
-graph TD
-    subgraph PRESENTATION["Presentación"]
-        A["🌐 Controllers / Minimal APIs"]
-        B["📄 DTOs / ViewModels"]
-    end
-
-    subgraph APPLICATION["Aplicación"]
-        C["⚙️ Services"]
-        D["📋 Validators"]
-        E["🔄 Mappers"]
-    end
-
-    subgraph DOMAIN["Dominio"]
-        F["📦 Models / Records"]
-        G["📁 Interfaces"]
-        H["📊 Enums"]
-    end
-
-    subgraph INFRASTRUCTURE["Infraestructura"]
-        I["🗄️ Repositories"]
-        J["🔐 Auth (JWT)"]
-        K["📝 Logging (Serilog)"]
-        L["📦 Config (IOptions)"]
-    end
-
-    subgraph DATA["Datos"]
-        M["🐘 PostgreSQL"]
-        N["🍃 MongoDB"]
-        O["⚡ Redis"]
-    end
-
-    A --> C
-    C --> F
-    C --> I
-    I --> M
-    I --> N
-    I --> O
-
-    style PRESENTATION fill:#2196F3,color:#fff
-    style APPLICATION fill:#4CAF50,color:#fff
-    style DOMAIN fill:#FF9800,color:#fff
-    style INFRASTRUCTURE fill:#9C27B0,color:#fff
-    style DATA fill:#f44336,color:#fff
-```
-
-📌 **Ejemplo real:** Un endpoint de "obtener perfil de usuario" usa: `async/await` (Tema 16) para no bloquear, `EF Core` (Tema 20) para consultar la BD, `LINQ` (Tema 13) para filtrar, `JWT` (Tema 24) para verificar quién es, `Serilog` (Tema 19) para logear, y `FluentAssertions` (Tema 22) en los tests.
-
-## 25.4. Qué Veremos en la Siguiente Unidad
-
-La Unidad 02 se llama **"Desarrollo de APIs REST con ASP.NET Core"** y es donde todo cobra sentido:
-
-### Temas de la UD02
-
-| Tema | Contenido |
-|------|-----------|
-| **26. Introducción a ASP.NET Core** | Pipeline, middleware, routing, minimal APIs |
-| **27. Controllers y Endpoints** | Controladores, atributos, model binding |
-| **28. Model Binding y Validación** | DTOs, Data Annotations, FluentValidation |
-| **29. Dependency Injection en ASP.NET** | Registro, ciclos de vida, resolución |
-| **30. Entity Framework Core en ASP.NET** | DbContext, repositorios, migraciones |
-| **31. Autenticación y Autorización** | JWT, OAuth, policies |
-| **32. Logging y Monitorización** | Serilog, Health Checks, Métricas |
-| **33. Testing de APIs** | Tests de integración, WebApplicationFactory |
-| **34. Documentación: Swagger/OpenAPI** | Swashbuckle, documentación automática |
-| **35. Despliegue** | Docker, Azure, publicación |
-
-### Flujo de trabajo en ASP.NET Core
+La Parte 1 y la Parte 2 no son independientes. Se conectan así:
 
 ```mermaid
 graph LR
-    A["👤 Cliente"] -->|"HTTP Request"| B["🌐 Controller"]
-    B -->|"Model Binding"| C["📋 DTO"]
-    C -->|"Validación"| D["📋 Validator"]
-    D -->|"Lógica"| E["⚙️ Service"]
-    E -->|"Acceso a datos"| F["🗄️ Repository"]
-    F -->|"LINQ to EF"| G["🐘 BD"]
-    G -->|"Resultado"| F
-    F -->|"Model"| E
-    E -->|"Result<T>"| B
-    B -->|"HTTP Response"| A
+    subgraph PARTE1["📚 Parte 1: Teoría"]
+        A["HTTP (04)"]
+        B["APIs REST (05)"]
+        C["Arquitecturas (03)"]
+        D["Despliegue (09)"]
+    end
 
-    style A fill:#2196F3,color:#fff
-    style B fill:#4CAF50,color:#fff
-    style E fill:#FF9800,color:#fff
-    style F fill:#9C27B0,color:#fff
-    style G fill:#f44336,color:#fff
+    subgraph PARTE2["🔧 Parte 2: Práctica"]
+        E["DI (11)"]
+        F["EF Core (20)"]
+        G["Refit (18)"]
+        H["Docker (23)"]
+    end
+
+    A -->|"Se implementa con"| G
+    B -->|"Se consume con"| G
+    C -->|"Se aplica con"| E
+    D -->|"Se ejecuta con"| H
+
+    style PARTE1 fill:#2196F3,color:#fff
+    style PARTE2 fill:#4CAF50,color:#fff
 ```
 
-> 💡 **Consejo:** ASP.NET Core es "solo" el pegamento que une todas las tecnologías que has aprendido. Si entiendes la Parte 2, la Unidad 02 será mucho más fácil. Lo nuevo será el framework web: pipeline, middleware, routing, model binding.
+| Parte 1 (Teoría) | Parte 2 (Práctica) |
+|-------------------|---------------------|
+| HTTP (tema 04) | Refit/Polly (tema 18) |
+| APIs REST (tema 05) | ASP.NET Core Minimal API |
+| MVC (tema 03) | Repository/Service (tema 12) |
+| Docker (tema 09) | Dockerfile/Compose (tema 23) |
+| Seguridad (tema 10) | JWT/BCrypt (tema 24) |
+
+> 📝 **Nota:** La Parte 1 es el "por qué" y la Parte 2 es el "cómo". Sabes que HTTP usa verbos (Parte 1), y ahora sabes cómo consumir APIs con Refit (Parte 2).
+
+## 25.4. Conexión con la Unidad 02
+
+La **Unidad 02** se llama **"Desarrollo de servicios web en .NET"** y es donde todo cobra sentido. Verás cómo integrar todas las tecnologías en ASP.NET Core:
+
+| Tema de la UD02 | Tecnología de la UD01 |
+|-----------------|----------------------|
+| **Introducción a ASP.NET Core** | HTTP (04), Arquitecturas (03) |
+| **Controllers y Endpoints** | REST (05), MVC (03) |
+| **Dependency Injection** | DI (11), Scrutor (11) |
+| **Entity Framework Core** | EF Core (20), LINQ (13) |
+| **Autenticación y Autorización** | JWT (24), Seguridad (10) |
+| **Logging y Monitorización** | Serilog (19), Logs (10) |
+| **Testing de APIs** | NUnit/Moq (22), TestContainers (22) |
+| **Swagger/OpenAPI** | APIs REST (05) |
+| **Despliegue** | Docker (23), CI/CD (09) |
+
+📌 **Ejemplo real:** En la UD02 crearás una API REST completa para gestionar productos. Usarás: ASP.NET Core (HTTP/REST), EF Core (PostgreSQL), DI (Scrutor), JWT (autenticación), Serilog (logging), NUnit (tests), y Docker (despliegue). Todo lo que aprendiste en la UD01.
 
 ## 25.5. Consejos para el Examen
 
-### Conceptos clave para recordar
+### Conceptos clave de la Parte 1
 
 | Concepto | Pregunta típica | Respuesta breve |
 |----------|----------------|-----------------|
-| **IDisposable** | ¿Cuándo usar `using`? | Siempre con recursos que implementan IDisposable |
-| **async/await** | ¿Qué hace `await`? | Pausa el método sin bloquear el hilo |
-| **Task vs async void** | ¿Cuándo usar async void? | Solo en eventos de UI, nunca en servicios |
-| **Result\<T\>** | ¿Cuándo usar Result vs excepciones? | Result para errores esperados, excepciones para inesperados |
+| **HTTP** | ¿Qué diferencia hay entre GET y POST? | GET lee, POST crea |
+| **Códigos de estado** | ¿Qué significa 404? | Recurso no encontrado |
+| **REST** | ¿Cuáles son los principios de REST? | Cliente-Servidor, sin estado, cacheable, uniforme |
+| **MVC** | ¿Qué hace cada parte? | Modelo (datos), Vista (interfaz), Controlador (lógica) |
+| **Docker** | ¿Qué es un contenedor? | Instancia aislada de una imagen |
+
+### Conceptos clave de la Parte 2
+
+| Concepto | Pregunta típica | Respuesta breve |
+|----------|----------------|-----------------|
+| **DI** | ¿Qué ciclo de vida usas? | Scoped por defecto |
+| **LINQ** | ¿GroupBy + Select + ToList vs ToDictionary? | ToDictionary es más eficiente |
+| **async/await** | ¿Cuándo usar async void? | Solo en eventos UI, nunca en servicios |
+| **Result\<T\>** | ¿Result vs Excepciones? | Result para errores esperados |
 | **EF Core** | ¿Qué es Include? | Carga relaciones (Eager Loading) |
-| **CORS** | ¿Qué controla? | Qué dominios pueden acceder a tu API |
-| **JWT** | ¿Cuántas partes tiene? | 3: Header, Payload, Signature |
-| **BCrypt** | ¿Por qué no MD5? | BCrypt es resistente a rainbow tables |
-| **Docker** | ¿Diferencia imagen vs contenedor? | Imagen = plantilla, Contenedor = instancia |
-| **TestContainers** | ¿Qué hace? | Lanza Docker reales para tests de integración |
+| **JWT** | ¿Cuántas partes tiene? | 3: Header, Payload, Firma |
+| **BCrypt** | ¿Por qué no MD5? | Resistente a rainbow tables |
 
 ### Errores comunes a evitar
 
@@ -276,15 +192,11 @@ graph LR
 3. ❌ Almacenar contraseñas en texto plano (usar BCrypt)
 4. ❌ Concatenar strings en SQL (usar parámetros)
 5. ❌ Crear `HttpClient` directamente (usar `IHttpClientFactory`)
-6. ❌ No usar `Include` en EF Core (N+1 problem)
+6. ❌ No usar `Include` en EF Core (problema N+1)
 7. ❌ `AllowAnyOrigin()` en CORS producción
 8. ❌ Guardar secretos en `appsettings.json` (usar User Secrets)
 9. ❌ No usar `CancellationToken` en métodos asíncronos
 10. ❌ No rotar logs (el disco se llena)
-
-### Para el examen práctico
-
-> 💡 **Consejo:** Siempre sigue el flujo: **Análisis → Diseño → Codificación → Tests**. No empieces a codificar sin saber qué quieres hacer. Primero el papel, luego el código.
 
 ---
 
@@ -292,14 +204,9 @@ graph LR
 
 | Concepto | Descripción |
 |----------|-------------|
-| **Parte 2** | Tecnologías backend: ficheros, asíncrono, BD, testing, Docker, seguridad |
-| **ASP.NET Core** | Framework que integra todas estas tecnologías |
-| **Arquitectura** | Controllers → Services → Repositories → BD |
-| **UD02** | Desarrollo de APIs REST con ASP.NET Core |
-| **Examen** | Practicar cada concepto: async, EF Core, JWT, Docker |
+| **Parte 1** | Fundamentos teóricos: HTTP, APIs, arquitecturas, despliegue, seguridad |
+| **Parte 2** | Herramientas C#: DI, LINQ, async, EF Core, testing, Docker |
+| **UD02** | Desarrollo de servicios web en .NET (ASP.NET Core) |
+| **Conexión** | La Parte 1 es el "por qué", la Parte 2 es el "cómo" |
 
----
-
-Has completado la Parte 2 del módulo de Desarrollo Web en Entorno Servidor. Ahora tienes las herramientas necesarias para desarrollar aplicaciones web robustas, seguras y mantenibles. En la Unidad 02, todo esto cobra sentido cuando lo integramos en ASP.NET Core para crear APIs REST profesionales.
-
-¡Nos vemos en la Unidad 02! 🚀
+En la Unidad 02 veremos cómo integrar todo en ASP.NET Core para crear APIs REST profesionales.

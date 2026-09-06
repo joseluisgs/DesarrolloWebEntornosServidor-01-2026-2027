@@ -271,20 +271,16 @@ public class PasswordService
 ### Ejemplo completo con registro y login
 
 ```csharp
-public class AuthService : IAuthService
+public class AuthService(IPersonaRepository repository, PasswordService passwordService, TokenService tokenService) : IAuthService
 {
-    private readonly IPersonaRepository _repository;
-    private readonly PasswordService _passwordService;
-    private readonly TokenService _tokenService;
-
     public async Task<Result<string>> RegisterAsync(string nombre, string email, string password)
     {
         // Verificar si el email ya existe
-        if (await _repository.GetByEmailAsync(email) is not null)
+        if (await repository.GetByEmailAsync(email) is not null)
             return Result.Failure<string>("El email ya está registrado");
 
         // Hashear la contraseña
-        string hashedPassword = _passwordService.HashPassword(password);
+        string hashedPassword = passwordService.HashPassword(password);
 
         // Guardar usuario
         var persona = new Persona
@@ -294,22 +290,22 @@ public class AuthService : IAuthService
             PasswordHash = hashedPassword
         };
 
-        await _repository.AddAsync(persona);
+        await repository.AddAsync(persona);
 
         // Generar token
-        string token = _tokenService.GenerarToken(persona.Id, persona.Email, "User");
+        string token = tokenService.GenerarToken(persona.Id, persona.Email, "User");
         return Result.Success(token);
     }
 
     public async Task<Result<string>> LoginAsync(string email, string password)
     {
         // Buscar usuario
-        var persona = await _repository.GetByEmailAsync(email);
+        var persona = await repository.GetByEmailAsync(email);
         if (persona is null)
             return Result.Failure<string>("Credenciales incorrectas");
 
         // Verificar contraseña
-        if (!_passwordService.VerifyPassword(password, persona.PasswordHash))
+        if (!passwordService.VerifyPassword(password, persona.PasswordHash))
             return Result.Failure<string>("Credenciales incorrectas");
 
         // Generar token

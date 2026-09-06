@@ -971,20 +971,20 @@ namespace BBDD.Repository.Generic
         public virtual async Task<T> AddAsync(T entity)
         {
             await _dbSet.AddAsync(entity);
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
             return entity;
         }
 
         public virtual async Task UpdateAsync(T entity)
         {
             _dbSet.Update(entity);
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
         }
 
         public virtual async Task DeleteAsync(T entity)
         {
             _dbSet.Remove(entity);
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
         }
 
         public virtual IQueryable<T> Query()
@@ -1016,7 +1016,6 @@ namespace BBDD.Repository.UoW
 
     public class UnitOfWork(AppDbContext context, ICustomerRepository customers, IOrderRepository orders) : IUnitOfWork
     {
-        private readonly AppDbContext _context = context;
         private IDbContextTransaction? _transaction;
 
         public ICustomerRepository Customers { get; } = customers;
@@ -1024,14 +1023,14 @@ namespace BBDD.Repository.UoW
 
         public async Task BeginTransactionAsync()
         {
-            _transaction = await _context.Database.BeginTransactionAsync();
+            _transaction = await context.Database.BeginTransactionAsync();
         }
 
         public async Task CommitAsync()
         {
             try
             {
-                await _context.SaveChangesAsync();
+                await context.SaveChangesAsync();
                 _transaction?.Commit();
             }
             catch
@@ -1050,7 +1049,7 @@ namespace BBDD.Repository.UoW
         public void Dispose()
         {
             _transaction?.Dispose();
-            _context.Dispose();
+            context.Dispose();
         }
     }
 }
@@ -1065,8 +1064,6 @@ namespace BBDD.EFCore.CRUD
 {
     public class CrudService(AppDbContext context)
     {
-        private readonly AppDbContext _context = context;
-
         public async Task<Customer> CreateCustomer(string name, string email, string? city)
         {
             var customer = new Customer
@@ -1078,14 +1075,14 @@ namespace BBDD.EFCore.CRUD
                 CreatedAt = DateTime.UtcNow
             };
 
-            _context.Customers.Add(customer);
-            await _context.SaveChangesAsync();
+            context.Customers.Add(customer);
+            await context.SaveChangesAsync();
             return customer;
         }
 
         public async Task<Order> CreateOrderWithItems(int customerId, List<OrderItemDto> items)
         {
-            var customer = await _context.Customers.FindAsync(customerId);
+            var customer = await context.Customers.FindAsync(customerId);
             if (customer == null)
                 throw new ArgumentException("Cliente no encontrado");
 
@@ -1099,7 +1096,7 @@ namespace BBDD.EFCore.CRUD
             decimal total = 0;
             foreach (var itemDto in items)
             {
-                var product = await _context.Products.FindAsync(itemDto.ProductId);
+                var product = await context.Products.FindAsync(itemDto.ProductId);
                 if (product == null)
                     throw new ArgumentException($"Producto {itemDto.ProductId} no encontrado");
 
@@ -1113,46 +1110,46 @@ namespace BBDD.EFCore.CRUD
             }
 
             order.Total = total;
-            _context.Orders.Add(order);
-            await _context.SaveChangesAsync();
+            context.Orders.Add(order);
+            await context.SaveChangesAsync();
             return order;
         }
 
         public async Task<Customer?> GetCustomer(int id)
         {
-            return await _context.Customers.FindAsync(id);
+            return await context.Customers.FindAsync(id);
         }
 
         public async Task<bool> UpdateCustomer(int id, string name, string email)
         {
-            var customer = await _context.Customers.FindAsync(id);
+            var customer = await context.Customers.FindAsync(id);
             if (customer == null) return false;
 
             customer.Name = name;
             customer.Email = email;
             customer.UpdatedAt = DateTime.UtcNow;
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
             return true;
         }
 
         public async Task<bool> DeleteCustomer(int id)
         {
-            var customer = await _context.Customers.FindAsync(id);
+            var customer = await context.Customers.FindAsync(id);
             if (customer == null) return false;
 
-            _context.Customers.Remove(customer);
-            await _context.SaveChangesAsync();
+            context.Customers.Remove(customer);
+            await context.SaveChangesAsync();
             return true;
         }
 
         public async Task<bool> SoftDeleteCustomer(int id)
         {
-            var customer = await _context.Customers.FindAsync(id);
+            var customer = await context.Customers.FindAsync(id);
             if (customer == null) return false;
 
             customer.Active = false;
             customer.UpdatedAt = DateTime.UtcNow;
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
             return true;
         }
     }
@@ -1172,16 +1169,14 @@ namespace BBDD.EFCore.Optimizacion
 {
     public class QueryOptimizer(AppDbContext context)
     {
-        private readonly AppDbContext _context = context;
-
         public async Task<List<Customer>> GetCustomersNoTracking()
         {
-            return await _context.Customers.AsNoTracking().ToListAsync();
+            return await context.Customers.AsNoTracking().ToListAsync();
         }
 
         public async Task<List<CustomerDto>> GetCustomerDtos()
         {
-            return await _context.Customers
+            return await context.Customers
                 .Select(c => new CustomerDto
                 {
                     Id = c.Id,
@@ -1194,7 +1189,7 @@ namespace BBDD.EFCore.Optimizacion
 
         public async Task<List<Order>> GetOrdersWithDetailsSplit(int customerId)
         {
-            return await _context.Orders
+            return await context.Orders
                 .Where(o => o.CustomerId == customerId)
                 .Include(o => o.Items)
                 .ThenInclude(oi => oi.Product)
@@ -1204,8 +1199,8 @@ namespace BBDD.EFCore.Optimizacion
 
         public async Task<PagedResult<Order>> GetOrdersPaged(int page, int pageSize)
         {
-            var totalCount = await _context.Orders.CountAsync();
-            var orders = await _context.Orders
+            var totalCount = await context.Orders.CountAsync();
+            var orders = await context.Orders
                 .Include(o => o.Customer)
                 .OrderBy(o => o.CreatedAt)
                 .Skip((page - 1) * pageSize)
@@ -1233,14 +1228,12 @@ namespace BBDD.EFCore.Concurrency
 {
     public class ConcurrencyService(AppDbContext context)
     {
-        private readonly AppDbContext _context = context;
-
         public async Task<bool> UpdateWithTimestamp(Customer customer)
         {
             try
             {
-                _context.Customers.Update(customer);
-                await _context.SaveChangesAsync();
+                context.Customers.Update(customer);
+                await context.SaveChangesAsync();
                 return true;
             }
             catch (DbUpdateConcurrencyException ex)
@@ -1282,25 +1275,23 @@ namespace BBDD.EFCore.Linq
 {
     public class LinqQueries(AppDbContext context)
     {
-        private readonly AppDbContext _context = context;
-
         public async Task<List<Order>> GetOrdersByStatus(OrderStatus status)
         {
-            return await _context.Orders
+            return await context.Orders
                 .Where(o => o.Status == status)
                 .ToListAsync();
         }
 
         public async Task<List<Customer>> GetCustomersByCity(string city)
         {
-            return await _context.Customers
+            return await context.Customers
                 .Where(c => c.City != null && c.City.StartsWith(city))
                 .ToListAsync();
         }
 
         public async Task<List<OrderSummary>> GetOrderSummaries()
         {
-            return await _context.Orders
+            return await context.Orders
                 .Select(o => new OrderSummary
                 {
                     OrderId = o.Id,
@@ -1314,7 +1305,7 @@ namespace BBDD.EFCore.Linq
 
         public async Task<List<OrdersByStatus>> GetOrdersGroupedByStatus()
         {
-            return await _context.Orders
+            return await context.Orders
                 .GroupBy(o => o.Status)
                 .Select(g => new OrdersByStatus
                 {
@@ -1327,12 +1318,12 @@ namespace BBDD.EFCore.Linq
 
         public async Task<bool> HasActiveCustomers()
         {
-            return await _context.Customers.AnyAsync(c => c.Active);
+            return await context.Customers.AnyAsync(c => c.Active);
         }
 
         public async Task<OrderStatistics> GetOrderStatistics()
         {
-            var stats = await _context.Orders
+            var stats = await context.Orders
                 .GroupBy(o => 1)
                 .Select(g => new OrderStatistics
                 {
@@ -1382,18 +1373,16 @@ namespace BBDD.EFCore.SqlRaw
 {
     public class SqlRawExamples(AppDbContext context)
     {
-        private readonly AppDbContext _context = context;
-
         public async Task<List<Customer>> GetCustomersFromSql()
         {
-            return await _context.Customers
+            return await context.Customers
                 .FromSqlRaw("SELECT * FROM customers WHERE active = true")
                 .ToListAsync();
         }
 
         public async Task<List<Order>> GetOrdersByStatusSql(string status)
         {
-            return await _context.Orders
+            return await context.Orders
                 .FromSqlRaw("SELECT * FROM orders WHERE status = @status",
                     new NpgsqlParameter("status", status))
                 .ToListAsync();
@@ -1401,7 +1390,7 @@ namespace BBDD.EFCore.SqlRaw
 
         public async Task<int> UpdateCustomerStatusInterpolated(int customerId, bool active)
         {
-            return await _context.Database
+            return await context.Database
                 .ExecuteSqlInterpolatedAsync(
                     $"UPDATE customers SET active = {active} WHERE id = {customerId}");
         }
@@ -1416,11 +1405,9 @@ namespace BBDD.EFCore.Execution
 {
     public class QueryExecution(AppDbContext context)
     {
-        private readonly AppDbContext _context = context;
-
         public async Task DemoShowSql()
         {
-            var query = _context.Orders
+            var query = context.Orders
                 .Where(o => o.Status == OrderStatus.Pending)
                 .Include(o => o.Customer)
                 .Take(10);
@@ -1431,13 +1418,13 @@ namespace BBDD.EFCore.Execution
 
         public async Task DemoNPlusOneProblem()
         {
-            var orders = await _context.Orders.ToListAsync();
+            var orders = await context.Orders.ToListAsync();
             foreach (var order in orders)
             {
                 Console.WriteLine(order.Customer.Name);
             }
 
-            var ordersFixed = await _context.Orders
+            var ordersFixed = await context.Orders
                 .Include(o => o.Customer)
                 .ToListAsync();
 
@@ -1449,7 +1436,7 @@ namespace BBDD.EFCore.Execution
 
         public async Task DemoFilteredInclude()
         {
-            var customers = await _context.Customers
+            var customers = await context.Customers
                 .Include(c => c.Orders.Where(o => o.Status == OrderStatus.Pending))
                 .ToListAsync();
         }
@@ -1501,14 +1488,12 @@ namespace BBDD.EFCore.MigrationHistory
 {
     public class MigrationHistoryService(AppDbContext context)
     {
-        private readonly AppDbContext _context = context;
-
         public async Task ApplyMigrations()
         {
-            var pendingMigrations = await _context.Database.GetPendingMigrationsAsync();
+            var pendingMigrations = await context.Database.GetPendingMigrationsAsync();
             if (pendingMigrations.Any())
             {
-                await _context.Database.MigrateAsync();
+                await context.Database.MigrateAsync();
             }
         }
     }
@@ -1590,18 +1575,15 @@ namespace BBDD.EFCore.SeedData.Service
 {
     public class SeedDataService(AppDbContext context, ILogger<SeedDataService> logger)
     {
-        private readonly AppDbContext _context = context;
-        private readonly ILogger<SeedDataService> _logger = logger;
-
         public async Task SeedAsync()
         {
-            if (await _context.Products.AnyAsync())
+            if (await context.Products.AnyAsync())
             {
-                _logger.LogInformation("Ya existen productos. Seed Data omitido.");
+                logger.LogInformation("Ya existen productos. Seed Data omitido.");
                 return;
             }
 
-            _logger.LogInformation("Insertando Seed Data...");
+            logger.LogInformation("Insertando Seed Data...");
 
             var categorias = new List<Category>
             {
@@ -1609,7 +1591,7 @@ namespace BBDD.EFCore.SeedData.Service
                 new Category { Name = "Accessories" },
                 new Category { Name = "Gaming" }
             };
-            await _context.Categories.AddRangeAsync(categorias);
+            await context.Categories.AddRangeAsync(categorias);
 
             var productos = new List<Product>
             {
@@ -1618,10 +1600,10 @@ namespace BBDD.EFCore.SeedData.Service
                 new Product { Name = "Keyboard", Price = 79.99m, Stock = 100 },
                 new Product { Name = "Monitor", Price = 349.99m, Stock = 30 }
             };
-            await _context.Products.AddRangeAsync(productos);
+            await context.Products.AddRangeAsync(productos);
 
-            await _context.SaveChangesAsync();
-            _logger.LogInformation("Seed Data insertado correctamente.");
+            await context.SaveChangesAsync();
+            logger.LogInformation("Seed Data insertado correctamente.");
         }
     }
 }
@@ -1636,11 +1618,9 @@ namespace BBDD.EFCore.SeedData.Json
 {
     public class JsonSeedDataService(AppDbContext context)
     {
-        private readonly AppDbContext _context = context;
-
         public async Task SeedFromJsonAsync(string filePath)
         {
-            if (await _context.Products.AnyAsync())
+            if (await context.Products.AnyAsync())
                 return;
 
             var json = await File.ReadAllTextAsync(filePath);
@@ -1648,8 +1628,8 @@ namespace BBDD.EFCore.SeedData.Json
 
             if (products != null)
             {
-                await _context.Products.AddRangeAsync(products);
-                await _context.SaveChangesAsync();
+                await context.Products.AddRangeAsync(products);
+                await context.SaveChangesAsync();
             }
         }
     }

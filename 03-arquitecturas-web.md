@@ -179,16 +179,9 @@ SOLID son cinco principios de diseño que hacen que el código sea más mantenib
 
 ```csharp
 // ✅ BUENO: Single Responsibility — cada servicio tiene una función
-public class PersonaService
+public class PersonaService(IPersonaRepository repository)
 {
-    private readonly IPersonaRepository _repository;
-
-    public PersonaService(IPersonaRepository repository)
-    {
-        _repository = repository;
-    }
-
-    public Persona? GetById(int id) => _repository.GetById(id);
+    public Persona? GetById(int id) => repository.GetById(id);
 }
 
 // ❌ MALO: Una clase que hace todo (violación de SRP)

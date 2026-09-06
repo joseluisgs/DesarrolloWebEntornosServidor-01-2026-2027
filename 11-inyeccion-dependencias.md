@@ -51,21 +51,12 @@ El **principio D de SOLID** dice: "Depende de abstracciones, no de implementacio
 
 ```csharp
 // ✅ BUENO: Depende de una interfaz (abstracción), no de una clase concreta
-public class PedidoService
+public class PedidoService(IPedidoRepository repository, IEmailService email)
 {
-    private readonly IPedidoRepository _repository;
-    private readonly IEmailService _email;
-
-    public PedidoService(IPedidoRepository repository, IEmailService email)
-    {
-        _repository = repository; // Recibe la implementación "de fuera"
-        _email = email;
-    }
-
     public void CrearPedido(Pedido pedido)
     {
-        _repository.Guardar(pedido);
-        _email.EnviarConfirmacion(pedido.Cliente.Email);
+        repository.Guardar(pedido);
+        email.EnviarConfirmacion(pedido.Cliente.Email);
     }
 }
 ```
@@ -214,18 +205,11 @@ public class PedidoRepository : IPedidoRepository
 }
 
 // Patrón Service: lógica de negocio
-public class PedidoService : IPedidoService
+public class PedidoService(IPedidoRepository repository) : IPedidoService
 {
-    private readonly IPedidoRepository _repository;
-
-    public PedidoService(IPedidoRepository repository)
-    {
-        _repository = repository; // Inyectado, no creado
-    }
-
     public void CrearPedido(Pedido pedido)
     {
-        _repository.Guardar(pedido);
+        repository.Guardar(pedido);
     }
 }
 ```

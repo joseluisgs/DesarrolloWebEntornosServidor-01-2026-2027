@@ -62,14 +62,10 @@ public class PersonasMemoryRepository : IPersonasRepository
 }
 
 // Implementación con EF Core (producción)
-public class PersonasEfRepository : IPersonasRepository
+public class PersonasEfRepository(AppDbContext context) : IPersonasRepository
 {
-    private readonly AppDbContext _context;
-
-    public PersonasEfRepository(AppDbContext context) => _context = context;
-
-    public IEnumerable<Persona> GetAll() => _context.Personas.ToList();
-    public Persona? GetById(int id) => _context.Personas.Find(id);
+    public IEnumerable<Persona> GetAll() => context.Personas.ToList();
+    public Persona? GetById(int id) => context.Personas.Find(id);
     // ...
 }
 ```
@@ -93,29 +89,20 @@ public interface IAcademiaService
 }
 
 // Implementación del Service
-public class AcademiaService : IAcademiaService
+public class AcademiaService(IPersonasRepository repository, IValidador<Persona> validador) : IAcademiaService
 {
-    private readonly IPersonasRepository _repository;
-    private readonly IValidador<Persona> _validador;
-
-    public AcademiaService(IPersonasRepository repository, IValidador<Persona> validador)
-    {
-        _repository = repository;
-        _validador = validador;
-    }
-
     public Result<Persona> Save(Persona persona)
     {
         // 1. Validar
-        var error = _validador.Validar(persona);
+        var error = validador.Validar(persona);
         if (error is not null) return Result.Failure<Persona>(error);
 
         // 2. Verificar duplicados
-        var existente = _repository.GetAll().FirstOrDefault(p => p.Dni == persona.Dni);
+        var existente = repository.GetAll().FirstOrDefault(p => p.Dni == persona.Dni);
         if (existente is not null) return Result.Failure<Persona>("DNI ya existe");
 
         // 3. Guardar
-        var creado = _repository.Add(persona);
+        var creado = repository.Add(persona);
         return Result.Success(creado);
     }
 }
@@ -161,22 +148,13 @@ public class PedidoService : IPedidoService
 }
 
 // Decorador que añade logging
-public class PedidoServiceConLog : IPedidoService
+public class PedidoServiceConLog(IPedidoService inner, ILogger<PedidoServiceConLog> logger) : IPedidoService
 {
-    private readonly IPedidoService _inner;
-    private readonly ILogger<PedidoServiceConLog> _logger;
-
-    public PedidoServiceConLog(IPedidoService inner, ILogger<PedidoServiceConLog> logger)
-    {
-        _inner = inner;
-        _logger = logger;
-    }
-
     public void CrearPedido(Pedido pedido)
     {
-        _logger.LogInformation("Creando pedido {Id}", pedido.Id);
-        _inner.CrearPedido(pedido);
-        _logger.LogInformation("Pedido {Id} creado", pedido.Id);
+        logger.LogInformation("Creando pedido {Id}", pedido.Id);
+        inner.CrearPedido(pedido);
+        logger.LogInformation("Pedido {Id} creado", pedido.Id);
     }
 }
 ```

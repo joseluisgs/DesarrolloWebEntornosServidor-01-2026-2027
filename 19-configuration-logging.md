@@ -85,26 +85,19 @@ dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=localhost;
 
 ```csharp
 // En un servicio inyectado
-public class MiServicio
+public class MiServicio(IConfiguration config)
 {
-    private readonly IConfiguration _config;
-
-    public MiServicio(IConfiguration config)
-    {
-        _config = config;
-    }
-
     public void MostrarConfiguracion()
     {
         // Acceso directo por clave
-        string? cadenaConexion = _config["ConnectionStrings:DefaultConnection"];
+        string? cadenaConexion = config["ConnectionStrings:DefaultConnection"];
 
         // Secciones anidadas
-        string? jwtSecret = _config["JwtSettings:SecretKey"];
-        int? expiration = _config.GetValue<int>("JwtSettings:ExpirationMinutes");
+        string? jwtSecret = config["JwtSettings:SecretKey"];
+        int? expiration = config.GetValue<int>("JwtSettings:ExpirationMinutes");
 
         // Sección completa
-        var jwtSection = _config.GetSection("JwtSettings");
+        var jwtSection = config.GetSection("JwtSettings");
         string? issuer = jwtSection["Issuer"];
     }
 }
@@ -171,18 +164,11 @@ builder.Services.Configure<ApiSettings>(
 ### Usar opciones inyectadas
 
 ```csharp
-public class TokenService
+public class TokenService(IOptions<JwtSettings> jwtOptions)
 {
-    private readonly JwtSettings _jwtSettings;
-
-    public TokenService(IOptions<JwtSettings> jwtOptions)
-    {
-        _jwtSettings = jwtOptions.Value; // Aquí está la configuración tipada
-    }
-
     public string GenerarToken(int userId, string email)
     {
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.SecretKey));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Value.SecretKey));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var claims = new[]
@@ -192,10 +178,10 @@ public class TokenService
         };
 
         var token = new JwtSecurityToken(
-            issuer: _jwtSettings.Issuer,
-            audience: _jwtSettings.Audience,
+            issuer: jwtOptions.Value.Issuer,
+            audience: jwtOptions.Value.Audience,
             claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(_jwtSettings.ExpirationMinutes),
+            expires: DateTime.UtcNow.AddMinutes(jwtOptions.Value.ExpirationMinutes),
             signingCredentials: credentials
         );
 
@@ -208,18 +194,11 @@ public class TokenService
 
 ```csharp
 // IOptionsSnapshot: recarga la configuración cuando cambia el fichero
-public class MiServicio
+public class MiServicio(IOptionsSnapshot<ApiSettings> options)
 {
-    private readonly IOptionsSnapshot<ApiSettings> _options;
-
-    public MiServicio(IOptionsSnapshot<ApiSettings> options)
-    {
-        _options = options; // Se actualiza cuando appsettings.json cambia
-    }
-
     public void HacerAlgo()
     {
-        var settings = _options.Value; // Siempre la versión más reciente
+        var settings = options.Value; // Siempre la versión más reciente
     }
 }
 ```
@@ -302,30 +281,23 @@ var app = builder.Build();
 ### Uso de ILogger
 
 ```csharp
-public class PedidoService : IPedidoService
+public class PedidoService(ILogger<PedidoService> logger) : IPedidoService
 {
-    private readonly ILogger<PedidoService> _logger;
-
-    public PedidoService(ILogger<PedidoService> logger)
-    {
-        _logger = logger;
-    }
-
     public async Task<Pedido> CrearPedidoAsync(CrearPedidoDto dto)
     {
-        _logger.LogInformation("Creando pedido para cliente {ClienteId}", dto.ClienteId);
+        logger.LogInformation("Creando pedido para cliente {ClienteId}", dto.ClienteId);
 
         try
         {
             var pedido = new Pedido(dto);
             await _repository.GuardarAsync(pedido);
 
-            _logger.LogInformation("Pedido {PedidoId} creado correctamente", pedido.Id);
+            logger.LogInformation("Pedido {PedidoId} creado correctamente", pedido.Id);
             return pedido;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error al crear pedido para cliente {ClienteId}", dto.ClienteId);
+            logger.LogError(ex, "Error al crear pedido para cliente {ClienteId}", dto.ClienteId);
             throw;
         }
     }
@@ -378,22 +350,15 @@ Log.CloseAndFlush(); // Importante: vaciar los logs pendientes
 ### ILogger con Serilog
 
 ```csharp
-public class MiServicio
+public class MiServicio(ILogger<MiServicio> logger)
 {
-    private readonly ILogger<MiServicio> _logger;
-
-    public MiServicio(ILogger<MiServicio> logger)
-    {
-        _logger = logger;
-    }
-
     public void HacerAlgo()
     {
-        _logger.LogInformation("Iniciando proceso");
+        logger.LogInformation("Iniciando proceso");
 
         // Logging estructurado: el objeto se serializa a JSON
         var pedido = new { Id = 42, Cliente = "Ana", Total = 99.99 };
-        _logger.LogInformation("Procesando pedido {@Pedido}", pedido);
+        logger.LogInformation("Procesando pedido {@Pedido}", pedido);
 
         // Salida en consola:
         // [10:30:00 INF] Procesando pedido {"Id": 42, "Cliente": "Ana", "Total": 99.99}

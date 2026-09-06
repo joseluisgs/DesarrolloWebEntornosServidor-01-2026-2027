@@ -343,22 +343,15 @@ namespace SystemIO.Stream
         }
         
         // Implementación personalizada de Stream
-        public class StreamPersonalizado : Stream
+        public class StreamPersonalizado(byte[] datos) : Stream
         {
-            private readonly byte[] _datos;
-            private int _posicion;
-            
-            public StreamPersonalizado(byte[] datos)
-            {
-                _datos = datos;
-                _posicion = 0;
-            }
+            private int _posicion = 0;
             
             public override bool CanRead => true;
             public override bool CanSeek => true;
             public override bool CanWrite => false;
             
-            public override long Length => _datos.Length;
+            public override long Length => datos.Length;
             
             public override long Position
             {
@@ -371,7 +364,7 @@ namespace SystemIO.Stream
                 int bytesDisponibles = _datos.Length - _posicion;
                 int bytesALeer = Math.Min(count, bytesDisponibles);
                 
-                Array.Copy(_datos, _posicion, buffer, offset, bytesALeer);
+                Array.Copy(datos, _posicion, buffer, offset, bytesALeer);
                 _posicion += bytesALeer;
                 
                 return bytesALeer;
@@ -383,7 +376,7 @@ namespace SystemIO.Stream
                 {
                     SeekOrigin.Begin => (int)offset,
                     SeekOrigin.Current => _posicion + (int)offset,
-                    SeekOrigin.End => _datos.Length + (int)offset,
+                    SeekOrigin.End => datos.Length + (int)offset,
                     _ => throw new ArgumentException("Origin inválido")
                 };
                 return _posicion;

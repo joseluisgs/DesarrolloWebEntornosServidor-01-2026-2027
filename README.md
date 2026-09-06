@@ -22,14 +22,28 @@ Tema 01. Introducción al desarrollo de software en Servidor. 2DAW. Curso 2026-2
 
 ### C# Avanzado para Desarrollo Web en Entorno Servidor
 
-
-25. [Resumen](25-resumen.md)
+11. [Inyección de Dependencias](11-inyeccion-dependencias.md)
+12. [Patrones y Arquitecturas](12-patrones-arquitecturas.md)
+13. [LINQ en Colecciones y Base de Datos](13-linq.md)
+14. [Ficheros y Formatos de Intercambio](14-ficheros-formatos.md)
+15. [Patrón Result vs Excepciones (ROP)](15-rop-result.md)
+16. [Concurrencia y Asincronía](16-concurrencia-asincronia.md)
+17. [Programación Reactiva](17-programacion-reactiva.md)
+18. [Consumo de APIs con Refit](18-refit-apis.md)
+19. [Configuration y Logging](19-configuration-logging.md)
+20. [Entity Framework Core](20-entity-framework-core.md)
+21. [SQL vs NoSQL: ACID vs BASE](21-sql-nosql.md)
+22. [Testing Avanzado](22-testing-avanzado.md)
+23. [Docker](23-docker.md)
+24. [Seguridad](24-seguridad.md)
+25. [Resumen de la Unidad 01](25-resumen.md)
 
 ## Contenido en YouTube
 
 - [Resumen]()
 - [APIs y protocolos]()
 - [Páginas Web Estáticas vs. Dinámicas]()
+- [C# Avanzado para Desarrollo Web en Entorno Servidor]()
 - [Lista de Reproducción](https://www.youtube.com/playlist?list=PLK1PMlIrqj3c)
 
 ## Resultados de Aprendizaje y Criterios de Evaluación
