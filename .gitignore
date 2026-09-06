@@ -1,0 +1,11 @@
+*.pptx
+.DS_Store
+upload.sh
+practicas/2023-2024
+ejercicios/2023-2024
+ejemplos/2024-2025
+practicas/2024-2025
+/docs/
+/apuntes/
+/multimedia/
+/evaluacion/
