@@ -42,10 +42,14 @@ Tema 01. Introducción al desarrollo de software en Servidor. 2DAW. Curso 2026-2
 
 ## Contenido en YouTube
 
-- [Resumen]()
-- [APIs y protocolos]()
-- [Páginas Web Estáticas vs. Dinámicas]()
-- [C# Avanzado para Desarrollo Web en Entorno Servidor]()
+- [Resumen Parte 1: Fundamentos]()
+- [Protocolos y APIs]()
+- [Páginas Web Estáticas vs Dinámicas]()
+- [Resumen Parte 2: C# Avanzado]()
+- [Asincronía y Reactividad]()
+- [SQL vs NoSQL: ACID vs BASE]()
+- [Inyección de Dependencias y Patrones]()
+- [Entity Framework Core]()
 - [Lista de Reproducción](https://www.youtube.com/playlist?list=PLK1PMlIrqj3c)
 
 ## Resultados de Aprendizaje y Criterios de Evaluación
