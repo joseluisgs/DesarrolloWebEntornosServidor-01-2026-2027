@@ -1,94 +1,125 @@
-- [2. Componentes de una Web: Front-end, Back-end, Página Web vs. Aplicación Web](#2-componentes-de-una-web-front-end-back-end-página-web-vs-aplicación-web)
-    - [2.1. Front-end y Back-end: La División y la Universalidad del Back-end](#21-front-end-y-back-end-la-división-y-la-universalidad-del-back-end)
-    - [2.2. Página Web vs. Aplicación Web: Diferencias y Tecnologías Clave](#22-página-web-vs-aplicación-web-diferencias-y-tecnologías-clave)
-
-# 2. Componentes de una Web: Front-end, Back-end, Página Web vs. Aplicación Web
-
-## 2.1. Front-end y Back-end: La División y la Universalidad del Back-end
-
-El desarrollo web actual ha especializado los perfiles en dos roles principales, reflejando la división entre el cliente y el servidor:
-*   El **Front-end** es la parte visible de la aplicación, con la que el usuario interactúa directamente. Se encarga del diseño, maquetación y la lógica interactiva en el navegador, utilizando tecnologías como HTML, CSS y JavaScript (y sus *frameworks*). Un desarrollador Front-end también se preocupa por la correcta presentación en cualquier tipo de dispositivo e incluso por el posicionamiento en buscadores.
-*   El **Back-end** es la parte del desarrollo que se ejecuta en el servidor. Incluye la lógica de negocio, la interacción con bases de datos y la administración del servidor de aplicaciones. Tecnologías como PHP, Java (Servlets/JSP), Python, ASP.NET (C#) o Ruby se utilizan en el Back-end.
-
-La tendencia actual es que el **Back-end se vuelva universal o agnóstico**. Esto significa que el servidor expone su funcionalidad a través de **APIs (Application Programming Interfaces)** que pueden ser consumidas por cualquier tipo de cliente. Esta separación del Back-end del Front-end es crucial porque permite que el mismo Back-end pueda servir a:
-*   **Aplicaciones web** (ej., Single Page Applications - SPAs) que se ejecutan en navegadores.
-*   **Aplicaciones móviles** (iOS y Android).
-*   **Aplicaciones de escritorio** (con interfaces nativas).
-*   **Otros servicios o sistemas**.
-
-De esta manera, el Back-end se desvincula de una interfaz de usuario específica, ofreciendo datos en formatos estandarizados (como JSON o XML) que los clientes interpretan y renderizan según sus propias capacidades. Este enfoque es fundamental para la integración de diferentes servicios y para la creación de aplicaciones más flexibles y escalable.
+- [2. Componentes de una Aplicación Web](#2-componentes-de-una-aplicación-web)
+  - [2.1. Front-end y Back-end: La División del Trabajo](#21-front-end-y-back-end-la-división-del-trabajo)
+  - [2.2. El Back-end es Universal](#22-el-back-end-es-universal)
+  - [2.3. Página Web vs. Aplicación Web](#23-página-web-vs-aplicación-web)
+  - [2.4. Resumen](#24-resumen)
 
 
-![img](/images/front-back-api.jpg)
+# 2. Componentes de una Aplicación Web
 
-```mermaid
-graph TD
-    A[Back-end Universal] -->|API JSON/XML| B[Aplicación Web SPA]
-    A -->|API JSON/XML| C[Aplicación Móvil]
-    A -->|API JSON/XML| D[Aplicación Escritorio]
-    A -->|API JSON/XML| E[Otros Servicios]
+> 💡 **Punto de partida:** Has visto que una aplicación web tiene dos partes: lo que se ve en el navegador y lo que ocurre en el servidor. Pero, ¿qué componentes concretos forman cada parte? ¿Y por qué el mismo Back-end puede alimentar una web, una app móvil y un escritorio?
 
-    A --> F[Lógica de Negocio]
-    A --> G[Base de Datos]
-    A --> H[Servidor de Aplicaciones]
-```
+En este tema aprenderás los componentes que forman una aplicación web, cómo se comunican entre sí y por qué el Back-end es universal.
 
-📝 **Nota del Profesor**: El concepto de "Back-end agnóstico" es crucial hoy en día. Un buen Back-end diseñado como APIs REST puede alimentar múltiples clientes: web, móvil, escritorio, IoT, etc.
+**Objetivos de aprendizaje:**
 
-💡 **Tip del Examinador**: Recuerda que las APIs son el "lenguaje" que permite que el Back-end sea universal. Los formatos más comunes son JSON y XML, siendo JSON el preferido hoy en día.
+- Identificar los componentes de Front-end y Back-end
+- Comprender por qué el Back-end es agnóstico (sirve a cualquier cliente)
+- Distinguir entre una página web estática y una aplicación web dinámica
+- Conocer las tecnologías más usadas en cada lado
 
-⚠️ **Advertencia**: No confundas "Front-end" con "cliente". Front-end es la parte visual web. Un cliente puede ser una app móvil que NO tiene Front-end web.
+## 2.1. Front-end y Back-end: La División del Trabajo
 
-### 🔌 Analogía: El Enchufe Universal
+Una aplicación web se compone de dos partes fundamentales que trabajan juntas pero tienen responsabilidades diferentes:
 
-Piensa en el Back-end como la **red eléctrica** de tu casa. El enchufe de la pared ofrece electricidad (datos/servicio) de forma estándar.
-*   Puedes enchufar una lámpara (Web App).
-*   Puedes enchufar una aspiradora (App Móvil).
-*   Puedes enchufar una tele (Smart TV).
-A la red eléctrica le da igual qué conectes, siempre que el dispositivo sepa "hablar" con el enchufe.
-
-## 2.2. Página Web vs. Aplicación Web: Diferencias y Tecnologías Clave
-
-Es fundamental distinguir entre una página web y una aplicación web:
-*   Una **página web** es un documento o un conjunto de documentos que se muestran en un navegador. Puede ser **estática** (su contenido no cambia dinámicamente, a menos que un desarrollador la modifique manualmente), o **dinámica** (su contenido varía según interacciones, usuario o datos del servidor). Una página web estática puede visualizarse localmente sin un servidor web, pero una dinámica requiere de uno.
-*   Una **aplicación web** es una herramienta de software más compleja, que utiliza páginas web dinámicas (y puede incluir estáticas) y tecnologías web para proporcionar un **servicio o conjunto de servicios** al usuario. Es similar a una aplicación de escritorio, pero ejecutada en un navegador, lo que la independiza del sistema operativo cliente. Las aplicaciones web siempre requieren de un servidor web y de otros componentes.
-
-**Tabla de Tecnologías más usadas en el lado del cliente y servidor**:
-
-| Perfil                  | Tipo de Entorno     | Tecnología                                          | Usos comunes                                                                                                                                                                                       |
-| :---------------------- | :------------------ | :-------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Front-end / Cliente** | Navegador Web       | **HTML + CSS + JavaScript**                         | Estructura, estilo e interactividad de la interfaz de usuario. Animaciones, validación de formularios, comunicación asíncrona (AJAX). Frameworks JS (React.js, Vue.js, Angular, Svelte) para SPAs. |
-| **Back-end / Servidor** | Servidor Web + BBDD | **PHP, Python, Ruby, Java / JSP, .Net / .asp (C#)** | Generación de páginas dinámicas, lógica de negocio, acceso a bases de datos, APIs. JavaScript (Node.js) también es popular.                                                                        |
+| Componente | Qué hace | Tecnologías | Se ejecuta en |
+|------------|----------|-------------|---------------|
+| **Front-end** | Muestra la interfaz al usuario | HTML, CSS, JavaScript | Navegador |
+| **Back-end** | Procesa la lógica y gestiona los datos | C#, Java, Python, PHP | Servidor |
 
 ```mermaid
 graph LR
-    subgraph Página Web
-    A[Estática<br/>HTML/CSS/JS] -->|No necesita servidor| B[Navegador]
-    C[Dinámica<br/>+ Servidor] --> D[Navegador]
+    subgraph FRONTEND["🖥️ FRONT-END"]
+        A1["HTML - Estructura"]
+        A2["CSS - Estilo"]
+        A3["JavaScript - Comportamiento"]
     end
 
-    subgraph Aplicación Web
-    E[Servidor Web] -->|HTML generado| F[Navegador]
-    E -->|API JSON| G[SPA Front-end]
-    G -->|Peticiones| E
+    subgraph BACKEND["⚙️ BACK-END"]
+        B1["API REST"]
+        B2["Lógica de negocio"]
+        B3["Acceso a BBDD"]
     end
 
-    F -.-> H[Servidor BBDD]
-    E --> H
+    FRONTEND -->|"HTTP Request"| BACKEND
+    BACKEND -->|"HTTP Response"| FRONTEND
+
+    style FRONTEND fill:#2196F3,color:#fff
+    style BACKEND fill:#4CAF50,color:#fff
 ```
 
-📝 **Nota del Profesor**: La diferencia clave es que una **página web** es un documento que se visualiza, mientras que una **aplicación web** es una herramienta que provee servicios. Google Search es una página web; Google Docs es una aplicación web.
+> 📝 **Nota:** El Front-end es lo que el usuario ve y toca. El Back-end es todo lo que ocurre "detrás de la cortina". Ambos se comunican a través de **peticiones HTTP** y respuestas en formato **JSON** o **XML**.
 
-💡 **Tip del Examinador**:
-- **Página web estática**: HTML/CSS/JS → No cambia, no necesita servidor
-- **Página web dinámica**: HTML generado por servidor → Cambia según datos
-- **Aplicación web**: Compleja, proporciona servicios → Siempre requiere servidor
+## 2.2. El Back-end es Universal
 
-⚠️ **Advertencia**: Las SPAs (Single Page Applications) como Gmail son aplicaciones web, NO páginas web. Aunque se ejecutan en el navegador, requieren comunicación constante con el servidor vía APIs.
+Uno de los conceptos más importantes es que **el Back-end no es solo para la web**. Un mismo Back-end puede servir datos a múltiples clientes:
 
-### 🧪 Práctica Mental: ¿Web o App?
+```mermaid
+graph TD
+    subgraph BACKEND["⚙️ BACK-END (API REST)"]
+        A["Servidor de aplicaciones"]
+    end
 
-*   **Wikipedia**: Página Web (Dinámica). Muestra información.
-*   **Google Docs**: Aplicación Web. Herramienta de trabajo, manipula datos complejos en tiempo real.
-*   **Netflix**: Aplicación Web. Gestiona usuarios, pagos, streaming adaptativo.
-*   **Blog de cocina de tu tía**: Página Web (Seguramente estática o dinámica simple tipo WordPress).
+    B["🌐 Web<br/>(Navegador)"] -->|"HTTP/JSON"| A
+    C["📱 App Móvil<br/>(iOS/Android)"] -->|"HTTP/JSON"| A
+    D["🖥️ Escritorio<br/>(WPF/WinForms)"] -->|"HTTP/JSON"| A
+    E["⌚ Smartwatch<br/>(WearOS)"] -->|"HTTP/JSON"| A
+
+    style BACKEND fill:#4CAF50,color:#fff
+    style B fill:#2196F3,color:#fff
+    style C fill:#FF9800,color:#fff
+    style D fill:#9C27B0,color:#fff
+    style E fill:#f44336,color:#fff
+```
+
+📌 **Ejemplo real:** Netflix tiene un único Back-end escrito en Java. Ese mismo Back-end alimenta:
+- La web de Netflix (navegador)
+- La app de Netflix para móvil (iOS/Android)
+- La app de Netflix para Smart TVs
+- La app de Netflix para consolas (PlayStation, Xbox)
+
+El Back-end **no sabe ni le importa** qué cliente le está pidiendo datos. Solo recibe una petición HTTP y devuelve una respuesta JSON.
+
+| Cliente | Tecnología | Cómo consume el Back-end |
+|---------|------------|-------------------------|
+| **Web** | JavaScript (fetch/axios) | Llamadas HTTP al navegador |
+| **Móvil** | Swift (iOS) / Kotlin (Android) | Llamadas HTTP desde la app |
+| **Escritorio** | C# / WPF | Llamadas HTTP desde la app |
+| **API pública** | Cualquier lenguaje | Cualquier cliente HTTP |
+
+> 💡 **Analogía:** El Back-end es como un restaurante con servicio a domicilio. No le importa si el cliente come allí (web), si pide para llevar (móvil) o si alguien recoge por él (escritorio). Cocina el plato y lo entrega. El plato es el mismo, lo que cambia es quién lo recibe.
+
+> 📝 **Nota:** Esta es la razón por la que decimos que el Back-end es **agnóstico al cliente**. Puede servir a una web, una app móvil, un smartwatch o incluso un coche conectado. Todos hablan el mismo idioma: **HTTP + JSON**.
+
+## 2.3. Página Web vs. Aplicación Web
+
+No es lo mismo una página web que una aplicación web. Es una diferencia fundamental:
+
+| Característica | **Página Web** | **Aplicación Web** |
+|----------------|----------------|-------------------|
+| **¿Qué es?** | Un documento HTML que se muestra en el navegador | Una herramienta interactiva que procesa datos |
+| **Ejemplo** | Blog, web corporativa, portfolio | Gmail, Instagram, Amazon |
+| **Interactividad** | Baja o nula (solo leer) | Alta (escribir, buscar, comprar) |
+| **Datos** | Contenido estático o con poca dinámica | Datos dinámicos, personalizados |
+| **Backend** | No siempre necesita | Siempre necesita |
+
+📌 **Ejemplo real:** La web de "InfoJobs" es una **página web** con información estática de ofertas. Pero cuando te registras, subes tu CV y aplicas a ofertas, estás usando una **aplicación web**. La diferencia es la **interacción** y el **procesamiento de datos**.
+
+> 💡 **Consejo:** En el ámbito profesional, casi todo son **aplicaciones web**. Las páginas web estáticas son poco comunes hoy en día. Incluso una web corporativa tiene un panel de administración (Back-end) para gestionar contenido.
+
+> ⚠️ **Advertencia:** No confundas "página web" con "sitio web". Un sitio web es un conjunto de páginas web. Un blog puede ser un sitio web de páginas web estáticas, pero un foro es un sitio web con una aplicación web.
+
+---
+
+**Resumen del punto:**
+
+| Concepto | Descripción |
+|----------|-------------|
+| **Front-end** | Interfaz visual que se ejecuta en el navegador |
+| **Back-end** | Lógica de negocio que se ejecuta en el servidor |
+| **Back-end agnóstico** | Un mismo Back-end sirve a web, móvil, escritorio |
+| **Página web** | Documento HTML con contenido estático |
+| **Aplicación web** | Herramienta interactiva que procesa datos |
+| **API REST** | Forma en que Front-end y Back-end se comunican |
+
+En el siguiente punto veremos las arquitecturas web: desde la arquitectura Cliente-Servidor hasta los microservicios, pasando por MVC y los principios SOLID.
