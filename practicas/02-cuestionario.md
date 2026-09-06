@@ -1,13 +1,47 @@
-**Cuestionario de Desarrollo de Respuestas: Desarrollo Web en Entorno Servidor y Despliegue de Aplicaciones Web**
+# Cuestionario de Desarrollo de Respuestas: Desarrollo Web en Entorno Servidor
 
-1.  **Describe la importancia del proceso de despliegue en el desarrollo web moderno, detallando al menos cuatro objetivos clave que busca garantizar una empresa al desplegar una aplicación web.**
-2. 
-3.  **Explica la distinción entre el Front-end y el Back-end en una aplicación web. Luego, elabora sobre el concepto de un Back-end "agnóstico" o "universal", y justifica por qué esta tendencia es crucial en el desarrollo de aplicaciones modernas, mencionando los diferentes tipos de clientes que puede soportar.**
-4.  **Compara en detalle una "página web dinámica" con un "servicio web (API)". ¿Cuál es el propósito principal de cada uno y cómo interactúan en una arquitectura web moderna, especialmente en el contexto de las Single Page Applications (SPAs)?**
-5.  **Analiza la Arquitectura Monolítica y la Arquitectura Basada en Microservicios. Explica las principales ventajas y desventajas de cada una, e indica en qué escenarios o tipos de proyectos sería más adecuado utilizar una u otra, justificando tu elección.**
-6.  **Detalla el funcionamiento del protocolo HTTPS. Explica cómo difiere de HTTP en términos de seguridad, la función de los certificados digitales, y los protocolos criptográficos (SSL/TLS) involucrados para garantizar la confidencialidad y autenticación de la información.**
-7.  **Explica el patrón de arquitectura Modelo-Vista-Controlador (MVC). Describe cada uno de sus tres componentes principales (Modelo, Vista, Controlador) y cómo interactúan para gestionar la lógica de negocio y la presentación de datos en una aplicación web del lado del servidor. Menciona si una aplicación que sigue este modelo es considerada "reactiva" y por qué.**
-8.  **Compara tres protocolos de comunicación de API diferentes (por ejemplo, REST, GraphQL y gRPC o WebSocket). Para cada uno, describe brevemente su funcionamiento, su formato de datos principal, una ventaja clave y un caso de uso ideal donde destacaría sobre los otros.**
-9.  **Describe el proceso paso a paso de cómo funciona una página web dinámica desde el momento en que un cliente (navegador) realiza una petición hasta que el contenido final se muestra en pantalla. Incluye la interacción entre el servidor web, el módulo de ejecución de código dinámico y los repositorios de datos.**
-10. **Define y contrasta la "Escalabilidad Vertical" y la "Escalabilidad Horizontal" en el contexto de las aplicaciones web. Explica cómo los *clusters* y los balanceadores de carga contribuyen a la escalabilidad horizontal y cuál es su función principal.**
-11. **Explica qué son las prácticas de CI/CD (Integración Continua / Entrega Continua / Despliegue Continuo). Detalla los objetivos de cada fase (CI, Continuous Delivery y Continuous Deployment) y cómo la automatización en este ciclo de vida beneficia el desarrollo y el despliegue de software.**
+**Instrucciones:** Responde cada pregunta de forma clara y concisa. Puedes usar ejemplos de código si es necesario.
+
+## PARTE 1 (Temas 01-10)
+
+1.  **¿Qué es el desarrollo web en entorno servidor y por qué es importante en la arquitectura de una aplicación web moderna?**
+
+2.  **Explica la diferencia entre Front-end y Back-end. ¿Qué es el "Back-end universal" y qué ventajas aporta?**
+
+3.  **Describe brevemente la arquitectura MVC. ¿Cómo se relaciona con el principio SOLID? ¿En qué se diferencia una arquitectura monolítica de una basada en microservicios?**
+
+4.  **¿Cuáles son los verbos HTTP más utilizados? Menciona al menos 5 códigos de estado HTTP y explica qué significan. ¿Cuál es la diferencia principal entre HTTP y HTTPS?**
+
+5.  **Compara REST, GraphQL y WebSocket. ¿Cuándo usarías cada uno de estos paradigmas de comunicación en una aplicación?**
+
+6.  **¿Qué es la web dinámica? Explica la diferencia entre renderizado en servidor (SSR) y aplicaciones de página única (SPA). Menciona al menos 2 tecnologías de servidor para desarrollar web dinámica.**
+
+7.  **Explica la diferencia entre lenguajes de scripting, compilados y de bytecode. Pon un ejemplo de cada uno en el contexto del desarrollo web.**
+
+8.  **¿Qué son Apache, Nginx y Kestrel? ¿Para qué se utiliza cada uno y en qué se diferencian?**
+
+9.  **¿Qué es Docker y por qué es útil para el despliegue de aplicaciones? Explica brevemente qué es CI/CD y cómo contribuye a la escalabilidad.**
+
+10. **Explica la diferencia entre autenticación y autorización. ¿Qué es JWT y cómo funciona? ¿Por qué son importantes los logs en la seguridad de una aplicación?**
+
+## PARTE 2 (Temas 11-25)
+
+11. **¿Qué es la Inyección de Dependencias (DI)? Menciona los 3 ciclos de vida principales. ¿Qué es Scrutor y para qué se usa? Menciona un ejemplo de cómo se configuraría un `DependenciesProvider`.**
+
+12. **Describe los patrones Repository, Service y Factory. ¿Cómo encajan en una arquitectura Clean Architecture?**
+
+13. **¿En qué se diferencia LINQ declarativo de imperativo? ¿Cuándo usarías `GroupBy` con `ToDictionary` frente a `GroupBy` con `Select` y `ToList`? Menciona al menos 2 tipos de JOINs en LINQ.**
+
+14. **¿Qué es `IDisposable` y por qué es importante en la gestión de recursos? Menciona 2 bibliotecas o mecanismos para trabajar con ficheros CSV y JSON en C#. ¿Qué es `System.Text.Json`?**
+
+15. **¿Qué es el patrón Result o ROP (Rail-Oriented Programming)? Define `DomainError`, `Maybe`, `Bind`, `Map` y `Match`. ¿Cuándo usar Result frente a Excepciones?**
+
+16. **Explica cómo funciona async/await en C#. ¿Qué es un `Task`? ¿Qué es `CancellationToken` y por qué es importante? ¿Por qué se recomienda evitar `async void`? Menciona al menos 2 patrones de concurrencia.**
+
+17. **¿Qué es la programación reactiva? Compara `IAsyncEnumerable` con `IObservable`. ¿Qué es Rx.NET? ¿Cuándo usar cada uno de estos enfoques?**
+
+18. **¿Qué es un `DbContext` en EF Core? ¿Cómo funciona LINQ to Entities? Explica para qué sirven las migraciones y el método `Include`.**
+
+19. **Compara SQL y NoSQL. ¿Qué es ACID y qué es BASE? ¿Cuándo usar PostgreSQL, MongoDB o Redis? Explica la diferencia entre Embedded y Referencias en una base de datos.**
+
+20. **¿Qué es NUnit y para qué se usa? ¿Cómo se hace mocking con Moq? Menciona 3 tipos de aserciones con FluentAssertions. ¿Qué es TestContainers y por qué es útil? Explica el patrón AAA (Arrange-Act-Assert) en testing.**

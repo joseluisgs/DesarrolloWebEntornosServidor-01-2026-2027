@@ -1,183 +1,659 @@
-**Cuestionario: Desarrollo Web en Entorno Servidor y Despliegue de Aplicaciones Web**
+**Test: Desarrollo Web en Entorno Servidor**
 
 **Instrucciones:** Lee cada pregunta cuidadosamente y selecciona la opción que consideres correcta.
 
-1.  ¿Cuál de los siguientes no es un objetivo principal del despliegue de aplicaciones web?
-    A) Garantizar la accesibilidad.
-    B) Reducir la automatización de procesos.
-    C) Facilitar la escalabilidad.
-    D) Asegurar la seguridad.
+- [PARTE 1 (Temas 01-10)](#parte-1-temas-01-10)
+- [PARTE 2 (Temas 11-25)](#parte-2-temas-11-25)
 
-2.  El código que se ejecuta en el lado del cliente (Front-end) se desarrolla principalmente con:
-    A) PHP y MySQL.
-    B) HTML, CSS y JavaScript.
-    C) Java y Tomcat.
-    D) Python y Django.
 
-3.  ¿Qué describe mejor la tendencia actual de que el Back-end se vuelva universal o agnóstico?
-    A) Que el Back-end solo sirve a aplicaciones web.
-    B) Que el Back-end expone su funcionalidad a través de APIs para diversos clientes.
-    C) Que el Back-end elimina la necesidad de bases de datos.
-    D) Que el Back-end siempre genera HTML directamente.
+---
 
-4.  Una característica clave que distingue a una aplicación web de una página web estática es que una aplicación web:
-    A) Siempre se puede visualizar localmente sin un servidor web.
-    B) Siempre muestra el mismo contenido a todos los usuarios.
-    C) Es una herramienta de software más compleja que proporciona servicios al usuario.
-    D) Solo utiliza lenguajes del lado del cliente como HTML y CSS.
+## PARTE 1 (Temas 01-10)
 
-5.  ¿Cuál de las siguientes es una ventaja de la Arquitectura Cliente-Servidor?
-    A) Congestión del tráfico si hay muchas peticiones.
-    B) Fallo del servidor que impide satisfacer peticiones.
-    C) Centralización del control, gestionando accesos y recursos.
-    D) Requerimiento de software y hardware específico y costoso.
+**Tema 01: Introducción al Desarrollo Web en Servidor**
 
-6.  En la evolución de la Web, la **Web 2.0** o **Web Social** se caracterizó por:
-    A) Contenidos estáticos y escasa interacción.
-    B) Las primeras aplicaciones con bases de datos y contenido dinámico.
-    C) Aplicaciones centradas en el usuario, trabajo colaborativo y redes sociales.
-    D) Una web semántica con inteligencia artificial y gran base de datos.
+1.  ¿Qué es el desarrollo web en entorno servidor?
+    A) Crear páginas estáticas con HTML y CSS únicamente
+    B) Desarrollar la parte de la aplicación que se ejecuta en el servidor, gestionando datos y lógica de negocio
+    C) Programar únicamente el diseño visual que ve el usuario
+    D) Configurar routers y switches de red
 
-7.  Una desventaja de la **Arquitectura Monolítica** a medida que la aplicación crece es:
-    A) La facilidad de escalar componentes individuales.
-    B) Que se vuelve compleja y difícil de mantener.
-    C) La flexibilidad para adoptar diferentes tecnologías.
-    D) Su alta resiliencia ante fallos.
+2.  ¿Cuál de estos NO es un objetivo del despliegue web?
+    A) Accesibilidad
+    B) Estabilidad
+    C) Estilismo visual
+    D) Seguridad
 
-8.  La principal característica de una **Arquitectura Basada en Microservicios** es:
-    A) Agrupar todos los componentes de la aplicación en un solo bloque.
-    B) Dividir los servicios en componentes aún más pequeños y autónomos.
-    C) La dependencia de una única pila tecnológica.
-    D) Que los fallos de un servicio afectan a toda la aplicación.
+3.  ¿Qué componente se encarga de la lógica de negocio en una aplicación web?
+    A) Front-end
+    B) Back-end
+    C) CSS
+    D) HTML
 
-9.  En una **Arquitectura Serverless**, ¿de qué se preocupa principalmente el desarrollador?
-    A) La gestión de la infraestructura del servidor.
-    B) La optimización del hardware del servidor.
-    C) Escribir el código de la aplicación.
-    D) La configuración del balanceo de carga.
+4.  ¿Qué diferencia hay entre Front-end y Back-end?
+    A) El Front-end se ejecuta en el servidor y el Back-end en el navegador
+    B) El Front-end maneja la interfaz visual y el Back-end la lógica y los datos
+    C) No hay diferencia, son sinónimos
+    D) El Front-end solo usa Java y el Back-end solo usa Python
 
-10. En el patrón de diseño **Modelo-Vista-Controlador (MVC)**, ¿qué componente es responsable de presentar los datos al usuario de forma visual?
-    A) El Modelo.
-    B) La Vista.
-    C) El Controlador.
-    D) La Base de Datos.
+**Tema 02: Componentes de una Web**
 
-11. ¿Cuál de los siguientes **Principios SOLID** establece que "Una clase debe tener una, y solo una, razón para cambiar"?
-    A) Principio abierto/cerrado (OCP).
-    B) Principio de sustitución de Liskov (LSP).
-    C) Principio de responsabilidad única (SRP).
-    D) Principio de inversión de dependencias (DIP).
+5.  ¿Cuáles son las tres tecnologías fundamentales del Front-end?
+    A) Java, C#, Python
+    B) HTML, CSS, JavaScript
+    C) SQL, NoSQL, Redis
+    D) Docker, Kubernetes, AWS
 
-12. Una de las características del protocolo **HTTP** es que es:
-    A) Orientado a la conexión.
-    B) Con estado, manteniendo la información de cada interacción.
-    C) Sencillo y extensible.
-    D) Siempre cifrado por defecto.
+6.  ¿Qué lenguaje se utiliza para estructurar el contenido de una página web?
+    A) CSS
+    B) JavaScript
+    C) HTML
+    D) Python
 
-13. ¿Qué información proporciona la cabecera HTTP `Accept-Language`?
-    A) El formato MIME type deseado para la respuesta.
-    B) El idioma preferido para la respuesta.
-    C) El dominio al que se dirige la petición.
-    D) El tamaño de los datos enviados en el cuerpo de la petición.
+7.  ¿Qué tecnología se usa para dar estilos y apariencia visual a una página web?
+    A) HTML
+    B) JavaScript
+    C) CSS
+    D) SQL
 
-14. ¿Qué método HTTP se utiliza comúnmente para **actualizar o reemplazar** completamente un recurso existente en el servidor?
-    A) GET.
-    B) POST.
-    C) PUT.
-    D) DELETE.
+8.  ¿Cuál es la función principal de JavaScript en una aplicación web?
+    A) Estructurar el contenido
+    B) Dar estilos visuales
+    C) Añadir interactividad y comportamiento dinámico
+    D) Conectar con la base de datos
 
-15. Un código de estado HTTP en el rango **4XX** (ej. 404 Not Found) indica:
-    A) Una respuesta informativa.
-    B) Que la petición se ha procesado correctamente.
-    C) Un error del cliente.
-    D) Un error del servidor.
+**Tema 03: Arquitecturas Web**
 
-16. La seguridad en **HTTPS** se basa en el uso de:
-    A) Autenticación HTTP Basic sin cifrado.
-    B) Archivos de registro (logs) públicos.
-    C) Certificados digitales y protocolos SSL/TLS.
-    D) Únicamente el envío de credenciales en texto plano.
+9.  ¿Qué arquitectura divide una aplicación en capas como Presentación, Negocio y Datos?
+    A) Arquitectura de microservicios
+    B) Arquitectura en capas (N-Tier)
+    C) Arquitectura serverless
+    D) Arquitectura peer-to-peer
 
-17. Un **servicio web (API)** se diferencia de una página web dinámica en que su objetivo principal es:
-    A) Generar contenido HTML que el usuario final visualiza en su navegador.
-    B) Exponer datos y funcionalidades a otras aplicaciones.
-    C) Crear interfaces gráficas interactivas directamente para el usuario.
-    D) Almacenar contenido estático de forma eficiente.
+10. ¿Qué ventaja principal ofrecen los microservicios frente a una arquitectura monolítica?
+    A) Son más fáciles de desarrollar al principio
+    B) Permiten escalar y desplegar componentes de forma independiente
+    C) Requieren menos memoria
+    D) No necesitan bases de datos
 
-18. ¿Qué protocolo de comunicación API permite a los clientes solicitar **exactamente los datos que necesitan** en una sola petición, evitando la sobre-obtención?
-    A) REST.
-    B) GraphQL.
-    C) gRPC.
-    D) SOAP.
+11. ¿En qué consiste la arquitectura serverless?
+    A) No existe el servidor
+    B) El desarrollador gestiona los servidores manualmente
+    C) El proveedor gestiona la infraestructura y el desarrollador solo despliega código
+    D) Solo funciona con bases de datos SQL
 
-19. Para aplicaciones que requieren **comunicación persistente, bidireccional y en tiempo real** (como un chat en vivo), el protocolo más adecuado es:
-    A) HTTP.
-    B) REST.
-    C) WebSocket.
-    D) SOAP.
+12. ¿Qué es un monolito en arquitectura web?
+    A) Una aplicación donde toda la lógica está en un único componente desplegable
+    B) Una base de datos con una sola tabla
+    C) Un servidor sin conexión a internet
+    D) Un tipo de protocolo de red
 
-20. ¿Para qué se utiliza principalmente un **JSON Web Token (JWT)** en las APIs web modernas?
-    A) Para almacenar datos en una base de datos.
-    B) Para definir la estructura de una página web estática.
-    C) Para autenticación y autorización.
-    D) Para realizar llamadas a procedimientos remotos de alto rendimiento.
+13. ¿Qué arquitectura usa un modelo cliente-servidor donde el cliente se comunica con el servidor mediante peticiones HTTP?
+    A) Peer-to-peer
+    B) Cliente-Servidor
+    C) Mainframe
+    D) Bitácora
 
-21. En el funcionamiento de una página web dinámica, el proceso de obtención de información de un repositorio (como una base de datos) y la generación del HTML final se realiza en:
-    A) El navegador web del cliente.
-    B) El servidor web, mediante la ejecución de código (script).
-    C) El balanceador de carga.
-    D) El gestor de bases de datos directamente.
+**Tema 04: Protocolo HTTP**
 
-22. ¿Qué tecnología de generación de páginas web dinámicas utiliza Java embebido en HTML y se compila a Servlets?
-    A) PHP.
-    B) C# con ASP.NET Core Razor Pages.
-    C) JavaServer Pages (JSP).
-    D) Python con Django.
+14. ¿Qué significa HTTP?
+    A) HyperText Transfer Protocol
+    B) High Tech Transfer Protocol
+    C) Hyper Transfer Text Protocol
+    D) Home Tool Transfer Protocol
 
-23. Un ejemplo de **lenguaje de guiones (scripting)** del lado del servidor es:
-    A) C++.
-    B) Java.
-    C) PHP.
-    D) C#.
+15. ¿Qué característica define a HTTP como protocolo "sin estado"?
+    A) No puede transmitir datos
+    B) Cada petición es independiente, el servidor no recuerda peticiones anteriores
+    C) No admite cabeceras
+    D) Solo funciona con conexiones seguras
 
-24. La plataforma web **LAMP** combina los siguientes componentes:
-    A) Linux, Apache, MongoDB, Python.
-    B) Linux, Apache, MySQL (o MariaDB), PHP/Perl/Python.
-    C) Windows, Apache, MySQL, PHP.
-    D) Linux, AWS, MariaDB, Perl.
+16. ¿Qué verbo HTTP se utiliza para crear un nuevo recurso en el servidor?
+    A) GET
+    B) POST
+    C) DELETE
+    D) OPTIONS
 
-25. ¿Cuál es una característica fundamental de **Apache HTTP Server**?
-    A) Es un software propietario de Microsoft.
-    B) Su principal característica es la modularidad.
-    C) Solo puede servir contenido dinámico.
-    D) No soporta Virtual Hosts.
+17. ¿Qué código de estado HTTP indica que el recurso solicitado no fue encontrado?
+    A) 200
+    B) 301
+    C) 404
+    D) 500
 
-26. La configuración de **Virtual Hosts** permite a un único servidor físico:
-    A) Ejecutar solo un sitio web por dirección IP.
-    B) Alojar múltiples sitios web o dominios independientes.
-    C) Servir únicamente páginas estáticas.
-    D) Gestionar únicamente las bases de datos.
+18. ¿Qué verbo HTTP se utiliza para actualizar un recurso existente?
+    A) GET
+    B) POST
+    C) PUT
+    D) PATCH
 
-27. La instalación de cualquier versión de **Apache Tomcat** requiere previamente la instalación de:
-    A) Un servidor web como Nginx.
-    B) El Kit de Desarrollo de Java (JDK).
-    C) Una base de datos NoSQL como MongoDB.
-    D) Un balanceador de carga de hardware.
+19. ¿Qué verbo HTTP se utiliza para eliminar un recurso?
+    A) GET
+    B) DELETE
+    C) PUT
+    D) HEAD
 
-28. Aumentar la CPU, RAM y almacenamiento de un único servidor existente para mejorar su rendimiento se conoce como:
-    A) Escalabilidad horizontal.
-    B) Escalabilidad vertical.
-    C) Balanceo de carga.
-    D) Despliegue en contenedores.
+20. ¿Qué código de estado indica un error interno del servidor?
+    A) 400
+    B) 404
+    C) 500
+    D) 201
 
-29. ¿Qué herramienta se utiliza para la **orquestación y automatización del despliegue, escalado y gestión de aplicaciones en contenedores**?
-    A) Docker Compose.
-    B) Dockerfile.
-    C) Kubernetes.
-    D) XAMPP.
+**Tema 05: Servicios Web y APIs**
 
-30. En las prácticas de **CI/CD**, ¿cuál es el objetivo principal de la **Integración Continua (CI)**?
-    A) Desplegar automáticamente todos los cambios directamente a producción.
-    B) Realizar despliegues manuales en entornos de *staging*.
-    C) Detectar errores de forma temprana y asegurar que el código siempre esté en un estado desplegable.
-    D) Reducir la frecuencia de los *commits* de código al repositorio compartido.
+21. ¿Qué es una API REST?
+    A) Un tipo de base de datos
+    B) Una interfaz de programación que usa verbos HTTP para comunicar clientes y servidores
+    C) Un lenguaje de programación
+    D) Un navegador web
+
+22. ¿Qué formato de datos es el más utilizado en las APIs REST modernas?
+    A) XML
+    B) CSV
+    C) JSON
+    D) YAML
+
+23. ¿Qué verbo HTTP se asocia típicamente con la operación CRUD de "Leer"?
+    A) POST
+    B) GET
+    C) PUT
+    D) DELETE
+
+24. ¿Qué es un endpoint en una API?
+    A) Un tipo de servidor
+    B) Una URL específica que expone un recurso o servicio
+    C) Un cliente que consume datos
+    D) Un protocolo de comunicación
+
+25. ¿Qué diferencia hay entre SOAP y REST?
+    A) SOAP es más ligero que REST
+    B) REST usa XML exclusivamente y SOAP usa JSON
+    C) REST es más flexible y ligero, SOAP es más estricto y estandarizado
+    D) No hay diferencia significativa
+
+26. ¿Qué código de estado se devuelve típicamente al crear un recurso con éxito?
+    A) 200
+    B) 201
+    C) 204
+    D) 301
+
+**Tema 06: Web Dinámica**
+
+27. ¿Qué es la programación del lado del servidor (server-side)?
+    A) Programar exclusivamente con HTML
+    B) Ejecutar código en el servidor para generar respuestas dinámicas
+    C) Ejecutar JavaScript en el navegador
+    D) Diseñar hojas de estilo
+
+28. ¿Qué tecnología permite generar contenido HTML dinámico directamente en el servidor en .NET?
+    A) Razor Pages
+    B) CSS Grid
+    C) JavaScript vanilla
+    D) jQuery
+
+29. ¿Qué es AJAX?
+    A) Un lenguaje de programación
+    B) Una técnica para enviar y recibir datos asíncronamente sin recargar la página
+    C) Un framework de CSS
+    D) Un protocolo de red
+
+30. ¿Qué diferencian a una web estática de una web dinámica?
+    A) La web estática tiene más páginas
+    B) La web dinámica genera contenido en tiempo de ejecución según el usuario o contexto
+    C) La web dinámica no necesita servidor
+    D) No hay diferencia real
+
+**Tema 07: Lenguajes y Frameworks**
+
+31. ¿Qué es un framework web?
+    A) Un tipo de base de datos
+    B) Un conjunto de herramientas y bibliotecas que facilitan el desarrollo de aplicaciones web
+    C) Un navegador especializado
+    D) Un protocolo de red
+
+32. ¿Qué lenguaje de programación es el principal en el ecosistema .NET para desarrollo web?
+    A) Java
+    B) Python
+    C) C#
+    D) PHP
+
+33. ¿Qué framework de Microsoft se usa para desarrollar aplicaciones web en .NET?
+    A) Spring Boot
+    B) Django
+    C) ASP.NET Core
+    D) Laravel
+
+34. ¿Qué ventaja ofrece usar un framework frente a programar desde cero?
+    A) El framework elimina la necesidad de escribir código
+    B) Ofrece componentes reutilizables, seguridad y buenas prácticas predefinidas
+    C) No es necesario entender el lenguaje de programación
+    D) Garantiza que la aplicación no tenga errores
+
+**Tema 08: Servidores Web**
+
+35. ¿Qué es un servidor web?
+    A) Un tipo de base de datos
+    B) Un software que recibe peticiones HTTP y devuelve respuestas
+    C) Un navegador modificado
+    D) Un dispositivo de almacenamiento
+
+36. ¿Qué servidor web viene integrado por defecto en ASP.NET Core?
+    A) Apache
+    B) Nginx
+    C) Kestrel
+    D) IIS Express
+
+37. ¿Qué es Kestrel en el ecosistema .NET?
+    A) Un servidor web de alto rendimiento que viene integrado en ASP.NET Core
+    B) Un ORM para bases de datos
+    C) Un framework de JavaScript
+    D) Un cliente HTTP
+
+38. ¿En qué se diferencia Kestrel de servidores como Apache o Nginx?
+    A) Kestrel no puede manejar peticiones HTTP
+    B) Kestrel está optimizado para .NET pero normalmente se usa detrás de un reverse proxy
+    C) Kestrel solo funciona en Linux
+    D) No hay diferencia funcional
+
+**Tema 09: Despliegue**
+
+39. ¿Qué es Docker en el contexto del despliegue?
+    A) Un lenguaje de programación
+    B) Una plataforma para crear y ejecutar aplicaciones en contenedores
+    C) Un tipo de base de datos
+    D) Un navegador web
+
+40. ¿Qué es un contenedor Docker?
+    A) Una máquina virtual completa
+    B) Un entorno aislado que empaqueta la aplicación con todas sus dependencias
+    C) Un tipo de servidor web
+    D) Un protocolo de red
+
+41. ¿Qué diferencia hay entre una imagen y un contenedor Docker?
+    A) No hay diferencia
+    B) La imagen es una plantilla inmutable, el contenedor es una instancia en ejecución
+    C) El contenedor es la plantilla y la imagen es la ejecución
+    D) La imagen solo funciona en Linux y el contenedor en Windows
+
+42. ¿Qué es Docker Compose?
+    A) Un lenguaje de programación
+    B) Una herramienta para definir y ejecutar aplicaciones con múltiples contenedores
+    C) Un servidor web
+    D) Un cliente de bases de datos
+
+43. ¿Qué es un volumen en Docker?
+    A) Un tipo de red
+    B) Un mecanismo para persistir datos fuera del ciclo de vida del contenedor
+    C) Una variable de entorno
+    D) Un archivo de configuración
+
+**Tema 10: Seguridad y Monitorización**
+
+44. ¿Qué es HTTPS?
+    A) Una versión de HTTP con encriptación TLS/SSL para asegurar la comunicación
+    B) Un protocolo para enviar correos electrónicos
+    C) Un tipo de base de datos
+    D) Un lenguaje de programación
+
+45. ¿Qué es un token JWT?
+    A) Un tipo de contraseña
+    B) Un estándar para transmitir información de forma segura entre dos partes como objeto JSON
+    C) Un protocolo de red
+    D) Un framework de testing
+
+46. ¿Qué es el CORS en el contexto de la seguridad web?
+    A) Un tipo de ataque
+    B) Un mecanismo que permite o restringe peticiones de diferentes orígenes
+    C) Un protocolo de autenticación
+    D) Un tipo de base de datos
+
+47. ¿Qué es la monitorización de aplicaciones web?
+    A) Vigilar físicamente el servidor
+    B) Recopilar y analizar métricas, logs y trazas para detectar problemas
+    C) Configurar el firewall
+    D) Actualizar el sistema operativo
+
+---
+
+## PARTE 2 (Temas 11-25)
+
+**Tema 11: Inyección de Dependencias**
+
+48. ¿Qué problema resuelve la Inyección de Dependencias?
+    A) La lentitud del servidor
+    B) El acoplamiento duro entre clases que crean sus propias dependencias
+    C) Los errores de compilación
+    D) La falta de estilos CSS
+
+49. ¿Qué principio SOLID se relaciona directamente con la Inyección de Dependencias?
+    A) Single Responsibility
+    B) Open/Closed
+    C) Dependency Inversion
+    D) Interface Segregation
+
+50. ¿Qué ciclo de vida en DI crea una nueva instancia cada vez que se resuelve el servicio?
+    A) Singleton
+    B) Scoped
+    C) Transient
+    D) Per Request
+
+51. ¿Qué ciclo de vida mantiene una única instancia durante toda la vida de la aplicación?
+    A) Transient
+    B) Scoped
+    C) Singleton
+    D) Per Request
+
+52. ¿Qué ciclo de vida crea una instancia por cada petición HTTP en ASP.NET Core?
+    A) Transient
+    B) Singleton
+    C) Scoped
+    D) Per User
+
+**Tema 12: Patrones y Arquitecturas**
+
+53. ¿Qué patrón de diseño encapsula la lógica de negocio y coordina las operaciones entre diferentes componentes?
+    A) Repository
+    B) Service
+    C) Factory
+    D) Singleton
+
+54. ¿Qué patrón encapsula el acceso a datos, abstrayendo la fuente de datos?
+    A) Service
+    B) Repository
+    C) Observer
+    D) Strategy
+
+55. ¿Qué patrón de diseño crea objetos sin especificar la clase exacta del objeto que se creará?
+    A) Singleton
+    B) Repository
+    C) Factory
+    D) Observer
+
+56. ¿Qué arquitectura separa la aplicación en componentes independientes que se comunican mediante APIs?
+    A) Monolítica
+    B) Capas (N-Tier)
+    C) Microservicios
+    D) Mainframe
+
+57. ¿Qué es el patrón MVC?
+    A) Un patrón de acceso a datos
+    B) Un patrón arquitectónico que separa Modelo, Vista y Controlador
+    C) Un tipo de base de datos
+    D) Un protocolo de red
+
+**Tema 13: LINQ**
+
+58. ¿Qué es LINQ?
+    A) Un tipo de base de datos
+    B) Un lenguaje de consultas integrado en C# para trabajar con colecciones de datos
+    C) Un framework de testing
+    D) Un protocolo de red
+
+59. ¿Qué método LINQ se usa para filtrar elementos que cumplen una condición?
+    A) Select
+    B) Where
+    C) OrderBy
+    D) GroupBy
+
+60. ¿Qué método LINQ transforma los elementos de una colección en una nueva forma?
+    A) Where
+    B) Select
+    C) Count
+    D) First
+
+61. ¿Qué método LINQ ordena los elementos?
+    A) GroupBy
+    B) Select
+    C) OrderBy
+    D) Where
+
+62. ¿Qué diferencia hay entre LINQ to Objects y LINQ to Entities?
+    A) LINQ to Objects trabaja con colecciones en memoria, LINQ to Entities traduce las consultas a SQL
+    B) No hay diferencia
+    C) LINQ to Entities solo funciona con JSON
+    D) LINQ to Objects solo funciona con bases de datos
+
+**Tema 14: Ficheros y Formatos**
+
+63. ¿Qué formato de fichero es ideal para almacenar configuraciones de una aplicación .NET?
+    A) .exe
+    B) appsettings.json
+    C) .dll
+    D) .tmp
+
+64. ¿Qué librería se usa en C# para trabajar con ficheros CSV de forma eficiente?
+    A) CsvHelper
+    B) CsvNet
+    C) FileHelper
+    D) CsvSharp
+
+65. ¿Qué formato de fichero es más adecuado para datos estructurados jerárquicos?
+    A) CSV
+    B) TXT
+    C) JSON
+    D) BIN
+
+66. ¿Qué namespace de .NET se usa para operaciones básicas con ficheros?
+    A) System.Data
+    B) System.IO
+    C) System.Net
+    D) System.XML
+
+**Tema 15: Result/ROP**
+
+67. ¿Qué problema principal resuelve el patrón Result (ROP)?
+    A) La lentitud del servidor
+    B) Manejar errores de dominio sin usar excepciones para control de flujo
+    C) La falta de estilos CSS
+    D) Los errores de compilación
+
+68. ¿Qué tipo genérico representa el resultado de una operación que puede tener éxito o fallo?
+    A) Result<T, TError>
+    B) Option<T>
+    C) Either<L, R>
+    D) Try<T>
+
+69. ¿Qué librería de C# implementa el patrón Result con Bind, Map, Ensure, Tap, Match?
+    A) FluentAssertions
+    B) CSharpFunctionalExtensions
+    C) Newtonsoft.Json
+    D) AutoMapper
+
+70. ¿Qué tipo representa la presencia o ausencia de un valor sin usar null?
+    A) Result<T>
+    B) Maybe<T>
+    C) Optional<T>
+    D) Nullable<T>
+
+71. ¿Cuándo deberías usar Result<T> en lugar de excepciones?
+    A) Siempre, para todo tipo de errores
+    B) Para errores esperados del dominio (usuario no encontrado, email duplicado)
+    C) Solo para errores de compilación
+    D) Nunca, las excepciones son siempre mejores
+
+**Tema 16: Concurrencia y Asincronía**
+
+72. ¿Qué palabra clave en C# se usa para ejecutar código de forma asíncrona?
+    A) sync
+    B) async/await
+    C) parallel
+    D) thread
+
+73. ¿Qué problema resuelve el async/await en aplicaciones web?
+    A) La falta de memoria
+    B) Bloquear el hilo del servidor durante operaciones de larga duración
+    C) Los errores de compilación
+    D) La falta de estilos
+
+74. ¿Qué diferencia hay entre concurrencia y paralelismo?
+    A) No hay diferencia
+    B) Concurrencia maneja múltiples tareas progresivamente, paralelismo ejecuta tareas simultáneamente
+    C) Paralelismo es para un solo hilo
+    D) Concurrencia solo funciona con bases de datos
+
+75. ¿Qué tipo de retorno se usa en métodos asíncronos en C#?
+    A) void
+    B) Task<T> o ValueTask<T>
+    C) string
+    D) object
+
+**Tema 17: Programación Reactiva**
+
+76. ¿Qué es la Programación Reactiva?
+    A) Un tipo de base de datos
+    B) Un paradigma basado en flujos de datos y propagación de cambios
+    C) Un framework de CSS
+    D) Un protocolo de red
+
+77. ¿Qué tipo representa un flujo de datos que emite valores a lo largo del tiempo?
+    A) List<T>
+    B) Observable<T>
+    C) Array<T>
+    D) Dictionary<K,V>
+
+78. ¿Qué operador Rx permite filtrar elementos de un observable según una condición?
+    A) Select
+    B) Where
+    C) Merge
+    D) CombineLatest
+
+79. ¿En qué se diferencia la programación reactiva del enfoque imperativo tradicional?
+    A) No hay diferencia
+    B) La reactiva reacciona a cambios, la imperativa instruye paso a paso
+    C) La imperativa es más moderna
+    D) La reactiva solo funciona con interfaces gráficas
+
+**Tema 18: Consumo de APIs con Refit**
+
+80. ¿Qué es Refit?
+    A) Un framework de testing
+    B) Una librería que convierte interfaces en clientes HTTP tipados
+    C) Un ORM para bases de datos
+    D) Un servidor web
+
+81. ¿Qué característica principal ofrece Refit frente a usar HttpClient manualmente?
+    A) Es más lento
+    B) Elimina código boilerplate y ofrece tipado en tiempo de compilación
+    C) No requiere interfaces
+    D) Solo funciona con JSON
+
+82. ¿Qué atributo se usa en Refit para definir un endpoint HTTP en una interfaz?
+    A) [HttpGet], [HttpPost], etc.
+    B) [Route]
+    C) [ApiController]
+    D) [ServiceFilter]
+
+83. ¿Qué librería se suele usar junto con Refit para resiliencia y reintentos?
+    A) Entity Framework
+    B) Polly
+    C) AutoMapper
+    D) NUnit
+
+**Tema 19: Configuration y Logging/Serilog**
+
+84. ¿Qué archivo se usa para almacenar la configuración de una aplicación ASP.NET Core?
+    A) config.xml
+    B) appsettings.json
+    C) settings.ini
+    D) config.yaml
+
+85. ¿Qué librería de logging se usa frecuentemente en .NET por su potencia y flexibilidad?
+    A) Log4Net
+    B) NLog
+    C) Serilog
+    D) Console.WriteLine
+
+86. ¿Qué es un "sink" en Serilog?
+    A) Un tipo de base de datos
+    B) Un destino donde se envían los logs (consola, fichero, base de datos)
+    C) Un filtro de logs
+    D) Un nivel de log
+
+87. ¿Qué extension file-dotnet se usa para cargar variables de entorno en configuración?
+    A) AddJsonFile
+    B) AddEnvironmentVariables
+    C) AddXmlFile
+    D) AddCommandLine
+
+**Tema 20: Entity Framework Core**
+
+88. ¿Qué es un ORM?
+    A) Un tipo de base de datos
+    B) Una herramienta que mapea entre clases C# y tablas de base de datos
+    C) Un servidor web
+    D) Un framework de testing
+
+89. ¿Qué clase en EF Core representa una sesión con la base de datos?
+    A) DbContext
+    B) Repository
+    C) Service
+    D) Controller
+
+90. ¿Qué diferencia hay entre Data Annotations y Fluent API para configurar modelos en EF Core?
+    A) No hay diferencia
+    B) Data Annotations usa atributos en la clase, Fluent API usa código en OnModelCreating
+    C) Fluent API solo funciona con SQL Server
+    D) Data Annotations es más potente que Fluent API
+
+91. ¿Qué operación se usa para aplicar cambios de esquema en la base de datos con EF Core?
+    A) Update-Database
+    B) Migrate
+    C) Sync
+    D) Apply
+
+92. ¿Qué es una migración en Entity Framework Core?
+    A) Un tipo de backup
+    B) Una representación de cambios en el esquema de la base de datos que se puede aplicar o revertir
+    C) Un archivo de configuración
+    D) Un tipo de log
+
+**Tema 21: SQL vs NoSQL**
+
+93. ¿Qué tipo de base de datos SQL utiliza tablas con esquema fijo?
+    A) MongoDB
+    B) PostgreSQL
+    C) Redis
+    D) Cassandra
+
+94. ¿Qué base de datos NoSQL almacena documentos en formato JSON/BSON?
+    A) PostgreSQL
+    B) MySQL
+    C) MongoDB
+    D) SQL Server
+
+95. ¿Qué tipo de NoSQL es ideal para datos de sesión y caché de alta velocidad?
+    A) MongoDB
+    B) Redis
+    C) PostgreSQL
+    D) Cassandra
+
+96. ¿Cuándo es preferible usar una base de datos SQL frente a NoSQL?
+    A) Cuando necesitas escalabilidad horizontal masiva
+    B) Cuando necesitas transacciones ACID y integridad referencial
+    C) Cuando trabajas exclusivamente con documentos JSON
+    D) Cuando no necesitas persistir datos
+
+**Tema 22: Testing**
+
+97. ¿Qué es un test unitario?
+    A) Un test que verifica toda la aplicación de punta a punta
+    B) Un test que verifica un componentre aislado del sistema
+    C) Un test que verifica la interfaz gráfica
+    D) Un test que verifica la base de datos
+
+98. ¿Qué framework de testing se usa comúnmente en proyectos .NET?
+    A) JUnit
+    B) NUnit
+    C) Mocha
+    D) Jasmine
+
+99. ¿Qué es un mock en el contexto de testing?
+    A) Una base de datos de prueba
+    B) Un objeto falso que simula el comportamiento de una dependencia real
+    C) Un tipo de test de integración
+    D) Un framework de testing
+
+100. ¿Qué escribe el patrón AAA en testing?
+    A) Arrange, Act, Assert
+    B) Arrange, Assert, Act
+    C) Act, Assert, Arrange
+    D) Assert, Arrange, Act
