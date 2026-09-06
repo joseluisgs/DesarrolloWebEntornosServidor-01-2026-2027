@@ -5,9 +5,22 @@
   - [Descripción](#descripción)
   - [Tecnologías](#tecnologías)
   - [Docker Compose](#docker-compose)
+    - [Conexión desde la app](#conexión-desde-la-app)
   - [Comportamiento del Sistema](#comportamiento-del-sistema)
+    - [Al arrancar la aplicación](#al-arrancar-la-aplicación)
+    - [Cada 60 segundos (BackgroundService)](#cada-60-segundos-backgroundservice)
+    - [GET /api/users (obtener todos)](#get-apiusers-obtener-todos)
+    - [GET /api/users/{id} (obtener uno)](#get-apiusersid-obtener-uno)
+    - [POST /api/users (crear)](#post-apiusers-crear)
+    - [PUT /api/users/{id} (actualizar)](#put-apiusersid-actualizar)
+    - [DELETE /api/users/{id} (eliminar)](#delete-apiusersid-eliminar)
+    - [GET /api/users/export (exportar a JSON)](#get-apiusersexport-exportar-a-json)
   - [Servicio de Notificaciones](#servicio-de-notificaciones)
   - [Requisitos Técnicos](#requisitos-técnicos)
+    - [Arquitectura y código:](#arquitectura-y-código)
+    - [Testing:](#testing)
+    - [Documentación:](#documentación)
+    - [Opcional (se valorará):](#opcional-se-valorará)
   - [Estructura de Proyecto](#estructura-de-proyecto)
 
 ---
@@ -18,7 +31,7 @@ Desarrollar un servicio en **ASP.NET Core** que gestione datos con **tres nivele
 
 Debes tener en cuenta que cada 60 segundos se sincronizará la base de datos local con la API REST remota, y que al arrancar la aplicación se borrará la base de datos local y se cargará desde la API REST.
 
-Además tendrá un servicio de notificaciones. Para ello usaremos `IObservable<T>` (System.Reactive) o eventos C#. En Program.cs, nada más arrancar el servicio, se suscribirá a los eventos de creación, actualización y eliminación de usuarios y mostrará un mensaje en consola. Este servicio estará inyectado en el `UserService` y se llamará cada vez que se cree, actualice o elimine un usuario.
+Además tendrá un servicio de notificaciones. Para ello usaremos programación reactiva o eventos C#. En Program.cs, nada más arrancar el servicio, se suscribirá a los eventos de creación, actualización y eliminación de usuarios y mostrará un mensaje en consola. Este servicio estará inyectado en el `UserService` y se llamará cada vez que se cree, actualice o elimine un usuario.
 
 Todo tendrá que estar documentado con XMLDoc y tener tests unitarios con NUnit + Moq + FluentAssertions.
 
@@ -40,6 +53,8 @@ Usaremos la API de **JSONPlaceholder** (https://jsonplaceholder.typicode.com) co
 - Lectura: caché → BD local → API REST
 - Escritura: API REST → BD local → caché
 - Sincronización: cada 60 segundos, BackgroundService limpia y recarga desde la API
+- Al arrancar la aplicación, se borra la BD local y se carga desde la API REST
+- El servicio de notificaciones se inyecta en `UserService` y se llama en cada operación de escritura. En `Program.cs`, nada más arrancar, se suscriben los handlers que muestran mensajes en consola.
 
 ---
 
