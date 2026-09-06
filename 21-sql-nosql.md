@@ -802,7 +802,144 @@ public class ProductoService(
 | **MongoDB** | `MongoDB.Driver` | `MongoDB.EntityFrameworkCore` | Agregaciones complejas | CRUD simple, si ya usas EF Core |
 | **Redis** | `StackExchange.Redis` | ❌ No existe oficialmente | Caché, sesiones, colas | Usar `IDistributedCache` + Redis |
 
-## 21.5. Comparativa y Cuándo Usar Cada Uno
+## 21.5. Diseño de Datos: SQL vs NoSQL
+
+### Integridad referencial vs Flexibilidad
+
+**PostgreSQL (ACID)** garantiza integridad referencial con claves externas:
+
+```sql
+-- PostgreSQL: integridad fuerte con claves externas
+CREATE TABLE Pedidos (
+    Id SERIAL PRIMARY KEY,
+    ClienteId INT NOT NULL REFERENCES Clientes(Id),  -- FK: no puede existir sin cliente
+    ProductoId INT NOT NULL REFERENCES Productos(Id),
+    Cantidad INT CHECK (Cantidad > 0),               -- CHECK: debe ser positivo
+    Total DECIMAL(10,2) NOT NULL
+);
+
+-- Si intentas insertar un ClienteId que no existe → ERROR
+-- Si intentas borrar un Cliente que tiene pedidos → ERROR (a menos que CASCADE)
+```
+
+**MongoDB (BASE)** no tiene claves externas. La integridad se gestiona en la aplicación:
+
+```csharp
+// MongoDB: sin integridad referencial en la BD
+// Si borras un cliente, sus pedidos quedan huérfanos
+// Tú debes gestionarlo en el código
+```
+
+| Característica | PostgreSQL | MongoDB |
+|----------------|-----------|---------|
+| **Claves externas** | ✅ Nativo | ❌ No existe |
+| **Integridad referencial** | ✅ La BD lo garantiza | ❌ La aplicación lo gestiona |
+| **Transacciones** | ✅ ACID completo | ✅ Multi-doc (desde 4.0) |
+| **Constraints** | ✅ CHECK, UNIQUE, NOT NULL | ❌ Solo en el código |
+| **Consistencia** | ✅ Fuerte (siempre) | ⚠️ Eventual (puede haber lag) |
+
+> 💡 **Analogía:** PostgreSQL es como un banco: cada movimiento está verificado, tiene restrictions, y si algo no cuadra, no deja pasar la operación. MongoDB es como un Excel: tú controlas qué es válido y qué no.
+
+### Embedded vs Referencias en MongoDB
+
+MongoDB permite dos formas de modelar relaciones:
+
+#### Embedded (Documentos embebidos)
+
+El documento hijo se guarda **dentro** del padre. No necesitas JOINs.
+
+```json
+{
+  "_id": "cliente123",
+  "nombre": "Ana",
+  "pedidos": [
+    { "producto": "Laptop", "precio": 999, "fecha": "2026-09-01" },
+    { "producto": "Ratón", "precio": 25, "fecha": "2026-09-05" }
+  ]
+}
+```
+
+```csharp
+// Consulta: un solo documento, sin JOIN
+var cliente = await collection.Find(c => c.Id == "cliente123").FirstOrDefaultAsync();
+// Los pedidos ya vienen dentro del documento
+```
+
+#### Referencias (Documento referenciado)
+
+El documento hijo tiene una referencia al padre. Similar a las claves externas.
+
+```json
+// Documento Cliente
+{ "_id": "cliente123", "nombre": "Ana" }
+
+// Documento Pedido (referencia al cliente)
+{ "_id": "pedido456", "clienteId": "cliente123", "producto": "Laptop", "precio": 999 }
+```
+
+```csharp
+// Consulta: necesitas dos queries o $lookup
+var pedidos = await collection.Find(p => p.ClienteId == "cliente123").ToListAsync();
+```
+
+### Cuándo usar Embedded vs Referencias
+
+| Criterio | Embedded | Referencias |
+|----------|----------|-------------|
+| **Datos pequeños** | ✅ Ideal | ⚠️ Innecesario |
+| **Datos grandes (>16MB)** | ❌ Límite de documento | ✅ Necesario |
+| **Acceso conjunto frecuente** | ✅ Un solo documento | ⚠️ Requiere $lookup |
+| **Datos que cambian independientemente** | ⚠️ Actualizar todos los docs | ✅ Actualizar solo el referenciado |
+| **Cardinalidad alta (1:N grande)** | ❌ Documento crece demasiado | ✅ Colección separada |
+| **Cardinalidad 1:1 o 1:N pequeña** | ✅ Perfecto | ⚠️ Overhead innecesario |
+
+📌 **Ejemplo real:** En Instagram:
+- **Embedded**: Los comentarios van dentro del post (post.comentarios = [...])
+- **Referencias**: Los usuarios se referencian por ID (post.usuarioId = "abc123")
+
+```csharp
+// ✅ EMBEDDING: Comentarios dentro del post (1:N pequeña)
+public class Post
+{
+    public string Id { get; set; }
+    public string Texto { get; set; }
+    public List<Comentario> Comentarios { get; set; } = new();  // Embebido
+}
+
+// ✅ REFERENCIA: Pedidos referencian a cliente (1:N grande)
+public class Pedido
+{
+    public string Id { get; set; }
+    public string ClienteId { get; set; }  // Referencia, no embebido
+    public List<ItemPedido> Items { get; set; } = new();
+}
+```
+
+> ⚠️ **Advertencia:** No embebas colecciones grandes. Si un cliente tiene 10.000 pedidos, no los guardes dentro del documento del cliente. Usa referencias.
+
+### Ahorrar JOINs con documentos embebidos
+
+En SQL, para obtener un pedido con su cliente, necesitas un JOIN:
+
+```sql
+-- PostgreSQL: JOIN para combinar tablas
+SELECT p.*, c.Nombre, c.Email
+FROM Pedidos p
+INNER JOIN Clientes c ON p.ClienteId = c.Id
+WHERE p.Id = 456;
+```
+
+En MongoDB con embedding, el dato ya está junto:
+
+```csharp
+// MongoDB: sin JOIN, el dato ya está en el documento
+var pedido = await collection.Find(p => p.Id == "456").FirstOrDefaultAsync();
+// pedido.ClienteNombre ya está ahí (embebido)
+```
+
+> 💡 **Consejo:** El embedding elimina JOINs pero crea redundancia. Si el cliente cambia de email, tienes que actualizar todos los pedidos embebidos. Elige según tu caso de uso: si los datos son estáticos, embebe; si cambian, referencia.
+
+## 21.6. Comparativa y Cuándo Usar Cada Uno
 
 | Característica | PostgreSQL | MongoDB | Redis |
 |---------------|-----------|---------|-------|
@@ -814,6 +951,56 @@ public class ProductoService(
 | **Relaciones** | ✅ JOINs nativos | ⚠️ Embedding/referencing | ❌ No hay |
 | **Uso típico** | Datos relacionales, e-commerce | Contenido, perfiles, IoT | Caché, sesiones, colas |
 | **Coste** | Gratis (open source) | Gratis (open source) | Gratis (open source) |
+
+### Otras alternativas
+
+| Tipo | BD | Cuándo usarla |
+|------|-----|---------------|
+| **SQL** | MySQL / MariaDB | Web apps, CMS (WordPress), hosting barato |
+| **SQL** | SQL Server | Enterprise .NET, integración con Azure |
+| **NoSQL Documentos** | CouchDB | Sincronización offline-first |
+| **NoSQL Columnas** | Cassandra | Big data, IoT, alta escritura |
+| **NoSQL Grafo** | Neo4j | Redes sociales, recomendaciones, grafos |
+| **NoSQL Clave-Valor** | DynamoDB | Serverless AWS, escalamiento automático |
+| **NewSQL** | CockroachDB | SQL + escalabilidad horizontal |
+| **Buscador** | Elasticsearch | Búsquedas full-text, logs |
+| **Timeseries** | InfluxDB | Métricas, IoT, monitorización |
+
+```mermaid
+graph TD
+    A["¿Qué tipo de datos?"] --> B{"Relacionales<br/>con transacciones"}
+    A --> C{"Documentos<br/>flexibles"}
+    A --> D{"Clave-valor<br/>rápido"}
+    A --> E{"Relaciones<br/>entre entidades"}
+    A --> F{"Búsquedas<br/>full-text"}
+
+    B --> B1["PostgreSQL / MySQL"]
+    C --> C1["MongoDB / CouchDB"]
+    D --> D1["Redis / DynamoDB"]
+    E --> E1["Neo4j"]
+    F --> F1["Elasticsearch"]
+
+    style A fill:#4CAF50,color:#fff
+    style B fill:#2196F3,color:#fff
+    style C fill:#FF9800,color:#fff
+    style D fill:#f44336,color:#fff
+    style E fill:#9C27B0,color:#fff
+    style F fill:#607D8B,color:#fff
+```
+
+> 📝 **Nota:** Neo4j es interesante para redes sociales. Si Instagram guardara "Ana sigue a Carlos, Carlos sigue a Pedro", en PostgreSQL necesitarías una tabla de relaciones y JOINs complejos. En Neo4j es simplemente `Ana -> Carlos -> Pedro` y puedes hacer "amigos de amigos" en milisegundos.
+
+### Cuándo elegir cada base de datos
+
+| Situación | BD recomendada | Por qué |
+|-----------|---------------|---------|
+| **E-commerce** (productos, pedidos, pagos) | PostgreSQL | Integridad referencial, transacciones ACID |
+| **Blog / CMS** (posts, comentarios) | MongoDB | Esquema flexible, documentos jerárquicos |
+| **Red social** (amigos, likes, feeds) | Neo4j + Redis | Grafo para relaciones, caché para feeds |
+| **Chat en tiempo real** (mensajes, salas) | MongoDB + Redis | Documentos flexibles, caché de sesiones |
+| **IoT** (sensores, métricas) | InfluxDB + Redis | Timeseries para métricas, Redis para caché |
+| **Búsqueda** (productos, artículos) | PostgreSQL + Elasticsearch | SQL para datos, ES para búsquedas full-text |
+| **Gaming** (ranking, partidas) | Redis | Velocidad extrema,排行榜 en tiempo real |
 
 ```mermaid
 graph TD
