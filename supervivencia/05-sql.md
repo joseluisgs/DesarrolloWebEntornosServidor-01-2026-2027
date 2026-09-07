@@ -37,6 +37,30 @@ VALUES
     ('Ratón', 29.99, 'Periféricos');
 ```
 
+### Obtener la PK tras INSERTar
+
+Cada motor lo resuelve de forma distinta:
+
+```sql
+-- ✅ PostgreSQL: RETURNING (lo más limpio)
+INSERT INTO productos (nombre, precio, categoria)
+VALUES ('Portátil ASUS', 899.99, 'Electrónica')
+RETURNING id;
+
+-- ✅ MariaDB / MySQL: LAST_INSERT_ID()
+INSERT INTO productos (nombre, precio, categoria)
+VALUES ('Portátil ASUS', 899.99, 'Electrónica');
+SELECT LAST_INSERT_ID();   -- devuelve la PK del último INSERT
+
+-- ✅ SQLite: last_insert_rowid()
+INSERT INTO productos (nombre, precio, categoria)
+VALUES ('Portátil ASUS', 899.99, 'Electrónica');
+SELECT last_insert_rowid();   -- función interna de SQLite
+```
+
+> 💡 **Consejo:** En Dapper/C#, para PostgreSQL usa `RETURNING id` directo en el SQL.
+> Para MySQL/SQLite, ejecuta el INSERT y luego `SELECT LAST_INSERT_ID()` o `last_insert_rowid()` como segunda query.
+
 ## Actualizar datos
 
 ```sql

@@ -11,7 +11,24 @@ docker ps
 # Listar todos (incluyendo parados)
 docker ps -a
 
-# Arrancar contenedor
+# Arrancar y ejecutar contenedor desde una imagen
+docker run -d --name mi-postgres -p 5432:5432 -e POSTGRES_PASSWORD=secret postgres:16-alpine
+#   -d              detach (segundo plano)
+#   --name          nombre del contenedor
+#   -p host:cont    mapeo de puertos
+#   -e              variable de entorno
+#   -v vol:/path    montar volumen
+#   imagen:tag      qué imagen usar
+
+# Arrancar con volumen y datos persistentes
+docker run -d --name mi-redis -p 6379:6379 -v redis_data:/data redis:7-alpine
+
+# Arrancar y entrar en la terminal
+docker run -it --rm ubuntu bash
+#   -it             interactivo + terminal
+#   --rm            eliminar al salir
+
+# Arrancar un contenedor parado
 docker start <nombre>
 
 # Parar contenedor
