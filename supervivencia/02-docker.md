@@ -27,7 +27,15 @@ docker run -d --name mi-redis -p 6379:6379 -v redis_data:/data redis:7-alpine
 docker run -it --rm ubuntu bash
 #   -it             interactivo + terminal
 #   --rm            eliminar al salir
+```
 
+> 💡 **Consejo:** Siempre usa `--name` para identificar tus contenedores. Sin nombre, Docker genera uno aleatorio como `angry_newton` y no lo encuentras después.
+
+> 🔧 **Truco:** `docker run -it --rm` es perfecto para probar algo rápido sin dejar basura. El contenedor se borra al salir.
+
+> ⚠️ **Advertencia:** El flag `-f` en `docker rm -f` fuerza la eliminación de un contenedor en ejecución. Puede causar pérdida de datos si no tienes volumen.
+
+```bash
 # Arrancar un contenedor parado
 docker start <nombre>
 
@@ -51,6 +59,8 @@ docker logs --tail 100 <nombre>     # últimas 100 líneas
 docker rm <nombre>                   # parado
 docker rm -f <nombre>               # forzar (en ejecución)
 ```
+
+> 💡 **Analogía:** Un contenedor es como una máquina virtual ligera. `docker run` la crea y arranca, `docker exec` es como hacer SSH a ella, `docker stop` la apaga.
 
 ## Imágenes
 
@@ -116,6 +126,10 @@ docker system prune
 docker system df
 ```
 
+> ⚠️ **Advertencia:** `docker system prune -a --volumes` borra TODO: imágenes, volúmenes, redes. No lo uses si tienes contenedores importantes que no están corriendo.
+
+> 🔧 **Truco:** Usa `docker system df` antes de limpiar para ver cuánto espacio ocupan imágenes, contenedores y volúmenes.
+
 ## Docker Compose
 
 ```bash
@@ -143,6 +157,10 @@ docker compose up -d --build
 docker compose exec <servicio> bash
 docker compose exec <servicio> dotnet run
 ```
+
+> 💡 **Consejo:** `docker compose down -v` elimina también los volúmenes. Útil para empezar de cero, pero CUIDADO: borra la base de datos persistida.
+
+> 🔧 **Truco:** `docker compose up -d --build` reconstruye las imágenes ANTES de arrancar. Si cambiaste el Dockerfile, siempre usa este.
 
 ## Docker Compose — Puerto y volúmenes
 
@@ -182,6 +200,10 @@ COPY --from=build /app .
 EXPOSE 8080
 ENTRYPOINT ["dotnet", "MiProyecto.dll"]
 ```
+
+> 💡 **Consejo:** Multi-stage builds (etapa build + etapa runtime) reducen el tamaño de la imagen de cientos de MB a decenas. El SDK solo se usa para compilar, no para ejecutar.
+
+> ⚠️ **Advertencia:** NUNCA guardes contraseñas o secrets en el Dockerfile. Usa variables de entorno (`-e`) o Docker secrets.
 
 ## Dockerfile — instrucciones clave
 

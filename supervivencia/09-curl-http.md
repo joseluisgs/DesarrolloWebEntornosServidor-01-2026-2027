@@ -30,6 +30,12 @@ curl -o respuesta.json https://jsonplaceholder.typicode.com/users
 curl -L https://ejemplo.com
 ```
 
+> 💡 **Consejo:** `-s` (silent) quita la barra de progreso. Úsalo siempre con `| jq` para-formatear JSON.
+
+> 🔧 **Truco:** `-I` solo descarga las cabeceras. Perfecto para comprobar si un endpoint está vivo sin descargar el body.
+
+> 💡 **Analogía:** `curl` es como un navegador en la terminal. Hace peticiones HTTP y muestra la respuesta. Es la herramienta #1 para probar APIs.
+
 ## POST — Crear datos
 
 ```bash
@@ -53,6 +59,10 @@ curl -X POST https://api.ejemplo.com/upload \
   -F "descripcion=Mi foto"
 ```
 
+> ⚠️ **Advertencia:** Si olvidas `-H "Content-Type: application/json"`, el servidor recibirá el JSON como texto plano y devolverá `415 Unsupported Media Type`.
+
+> 🔧 **Truco:** `-d @usuario.json` lee el contenido de un fichero. Perfecto para enviar payloads grandes sin escribir todo en la línea de comandos.
+
 ## PUT — Actualizar datos
 
 ```bash
@@ -75,6 +85,8 @@ curl -X PATCH https://jsonplaceholder.typicode.com/users/1 \
   -H "Content-Type: application/json" \
   -d '{"email": "nuevo@email.com"}'
 ```
+
+> 💡 **Consejo:** `PUT` reemplaza TODO el recurso. `PATCH` solo cambia los campos que envías. Si solo quieres cambiar el email, usa `PATCH`.
 
 ## DELETE — Eliminar datos
 
@@ -109,6 +121,8 @@ curl -X DELETE https://api.ejemplo.com/users/1 \
 -H "X-Correlation-Id: abc-def"
 ```
 
+> 🔧 **Truco:** Para generar Basic Auth: `echo -n 'usuario:password' | base64`. Ejemplo: `dXN1YXJpbzpwYXNzd29yZA==`.
+
 ## Verbose y debugging
 
 ```bash
@@ -130,6 +144,10 @@ Total:     %{time_total}s
 " https://api.ejemplo.com/users
 ```
 
+> 💡 **Consejo:** `curl -v` es tu mejor amigo para debugging. Muestra las cabeceras de request y response, el body, y los tiempos de conexión.
+
+> 🔧 **Truco:** El flag `-w` (write-out) te da métricas de rendimiento. Si una API es lenta, usa esto para saber si el problema es DNS, conexión o TLS.
+
 ## Proxies y timeouts
 
 ```bash
@@ -143,6 +161,10 @@ curl --max-time 30 https://api.ejemplo.com/users
 # Reintentar
 curl --retry 3 --retry-delay 2 https://api.ejemplo.com/users
 ```
+
+> 💡 **Consejo:** `--connect-timeout 5` evita que curl se quede colgado si el servidor no responde. Siempre úsalo en scripts de automatización.
+
+> ⚠️ **Advertencia:** `--max-time 30` aborta la petición después de 30 segundos. Si el servidor es lento, puede cortar la respuesta a mitad.
 
 ## httpie (alternativa moderna a curl)
 
@@ -164,6 +186,8 @@ http --auth=jose:password GET https://api.ejemplo.com/me
 http --print=hHbB https://api.ejemplo.com/users
 ```
 
+> 💡 **Consejo:** `httpie` es como `curl` pero con sintaxis más legible. No necesitas `-H` ni `-d`. Si no lo tienes instalado, `curl` funciona perfectamente.
+
 ## Probar APIs locales (ASP.NET Core)
 
 ```bash
@@ -176,6 +200,10 @@ curl -k https://localhost:5001/api/productos
 # Con logging detallado
 curl -v http://localhost:5000/api/productos 2>&1 | head -50
 ```
+
+> 🔧 **Truco:** `-k` ignora certificados SSL auto-firmados. Úsalo en desarrollo cuando ASP.NET Core usa HTTPS por defecto.
+
+> ⚠️ **Advertencia:** `-k` es inseguro. NUNCA lo uses en producción — solo en entornos de desarrollo local.
 
 ## Errores comunes
 

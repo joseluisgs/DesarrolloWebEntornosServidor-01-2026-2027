@@ -15,6 +15,8 @@ mongosh "mongodb://admin:password@localhost:27017"
 mongosh "mongodb://localhost:27017/mi_bd"
 ```
 
+> 💡 **Consejo:** `mongosh` es el shell moderno (reemplaza a `mongo`). Si usas Docker, ejecuta: `docker exec -it mi-mongo mongosh`.
+
 ## Bases de datos y colecciones
 
 ```bash
@@ -37,6 +39,8 @@ db.productos.drop()
 db.dropDatabase()
 ```
 
+> 🔧 **Truco:** En MongoDB, la BD se crea automáticamente al insertar el primer documento. No necesitas `CREATE DATABASE` como en SQL.
+
 ## Insertar documentos
 
 ```bash
@@ -54,6 +58,8 @@ db.productos.insertMany([
     { nombre: "Ratón", precio: 29.99, categoria: "Periféricos" }
 ])
 ```
+
+> 💡 **Consejo:** MongoDB genera un `_id` automático (ObjectId) si no lo especificas. No necesitas preocuparte por auto-increment como en SQL.
 
 ## Consultar documentos
 
@@ -80,6 +86,8 @@ db.productos.find().sort({ precio: -1 }).limit(5)
 # Seleccionar solo ciertos campos
 db.productos.find({}, { nombre: 1, precio: 1, _id: 0 })
 ```
+
+> 🔧 **Truco:** El segundo parámetro de `find()` es la proyección: `1` para mostrar, `0` para ocultar. Siempre oculta `_id: 0` si no lo necesitas.
 
 ## Operadores de consulta
 
@@ -121,6 +129,8 @@ db.productos.updateOne(
 )
 ```
 
+> 💡 **Consejo:** `upsert: true` crea el documento si no existe. Es como un "insert or update". Muy útil para sincronizar datos.
+
 ## Eliminar documentos
 
 ```bash
@@ -133,6 +143,8 @@ db.productos.deleteMany({ categoria: "Obsoleto" })
 # Eliminar todos
 db.productos.deleteMany({})
 ```
+
+> ⚠️ **Advertencia:** `deleteMany({})` borra TODOS los documentos de la colección. Asegúrate de estar en la BD correcta con `db` antes de ejecutar.
 
 ## Índices
 
@@ -152,6 +164,8 @@ db.productos.getIndexes()
 # Eliminar índice
 db.productos.dropIndex("nombre_1")
 ```
+
+> 💡 **Consejo:** Crea un índice en `_id` (ya existe por defecto) y en campos que usas en `find()` frecuentemente. El índice compuesto sirve para búsquedas que usan ambos campos.
 
 ## Aggregation Pipeline
 
@@ -177,6 +191,10 @@ db.productos.aggregate([
     }}
 ])
 ```
+
+> 💡 **Analogía:** Aggregation Pipeline es como una tubería de fábrica: cada etapa (`$group`, `$sort`, `$match`) recibe datos, los procesa y los pasa a la siguiente. Es el equivalente a las consultas SQL complejas pero por pasos.
+
+> 🔧 **Truco:** Si no sabes qué pipeline usar, piensa en pasos: primero filtra (`$match`), luego agrupa (`$group`), luego ordena (`$sort`). Es más legible que una query gigante.
 
 ## ERRORES comunes
 

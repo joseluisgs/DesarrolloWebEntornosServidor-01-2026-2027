@@ -23,6 +23,10 @@ SELECT * FROM productos LIMIT 10;          -- PostgreSQL/MySQL
 SELECT TOP 10 * FROM productos;            -- SQL Server
 ```
 
+> 💡 **Consejo:** Evita `SELECT *` en producción. Sé explícito con las columnas: es más rápido y claro.
+
+> 🔧 **Truco:** En PostgreSQL, `LIMIT` va al final. En SQL Server, `TOP` va después de `SELECT`.
+
 ## Insertar datos
 
 ```sql
@@ -73,6 +77,8 @@ WHERE id = 1;
 UPDATE productos SET activo = true;
 ```
 
+> ⚠️ **Advertencia:** Un `UPDATE` sin `WHERE` actualiza TODAS las filas. Siempre incluye un `WHERE` a menos que realmente quieras cambiar todo.
+
 ## Eliminar datos
 
 ```sql
@@ -87,6 +93,10 @@ TRUNCATE TABLE productos;
 TRUNCATE TABLE productos RESTART IDENTITY;  -- PostgreSQL
 ```
 
+> 💡 **Consejo:** `TRUNCATE` es más rápido que `DELETE` para vaciar una tabla porque no genera logs por fila. Pero no ejecuta triggers.
+
+> 🔧 **Truco:** Si quieres borrar todo pero manteniendo la estructura, usa `TRUNCATE`. Si necesitas que se ejecuten triggers, usa `DELETE FROM` sin `WHERE`.
+
 ## Crear tablas
 
 ```sql
@@ -100,6 +110,10 @@ CREATE TABLE productos (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```
+
+> 💡 **Consejo:** `NOT NULL` evita valores vacíos. `DEFAULT` proporciona un valor si no se especifica. Usa ambos para evitar bugs.
+
+> ⚠️ **Advertencia:** El `id SERIAL` es de PostgreSQL. En SQLite usa `INTEGER PRIMARY KEY AUTOINCREMENT`. En MySQL usa `INT AUTO_INCREMENT PRIMARY KEY`.
 
 ## Tipos de datos comunes
 
@@ -131,6 +145,10 @@ FROM productos p
 RIGHT JOIN categorias c ON p.categoria_id = c.id;
 ```
 
+> 💡 **Analogía:** `INNER JOIN` es la intersección de dos conjuntos. `LEFT JOIN` es "todo lo de la izquierda, y si hay coincidencia lo de la derecha". En la práctica, el 90% de las veces usas `LEFT JOIN`.
+
+> 🔧 **Truco:** Si no sabes qué JOIN usar, empieza con `LEFT JOIN`. Si sobran filas, cámbialo a `INNER JOIN`.
+
 ## Agrupaciones
 
 ```sql
@@ -157,6 +175,8 @@ FROM productos
 GROUP BY categoria;
 ```
 
+> 💡 **Consejo:** `WHERE` filtra ANTES de agrupar. `HAVING` filtra DESPUÉS de agrupar. No confundas ambos.
+
 ## Subconsultas
 
 ```sql
@@ -182,6 +202,10 @@ CREATE UNIQUE INDEX idx_productos_nombre ON productos(nombre);
 DROP INDEX idx_productos_categoria;
 ```
 
+> 💡 **Consejo:** Los índices aceleran las búsquedas (`WHERE`, `JOIN`, `ORDER BY`) pero ralentizan los `INSERT`/`UPDATE`. No pongas un índice en cada columna.
+
+> 🔧 **Truco:** Crea un índice en las columnas que usas en `WHERE` y `JOIN` frecuentemente. Si una tabla tiene millones de filas, un índice puede pasar una consulta de 5s a 5ms.
+
 ## Transacciones
 
 ```sql
@@ -193,6 +217,8 @@ COMMIT;  -- confirmar cambios
 -- Si hay error
 ROLLBACK;  -- deshacer todo
 ```
+
+> ⚠️ **Advertencia:** Si haces `BEGIN` y el proceso muere sin `COMMIT` ni `ROLLBACK`, la transacción queda abierta y bloquea la tabla. En PostgreSQL puedes verlas con `SELECT * FROM pg_stat_activity WHERE state = 'idle in transaction'`.
 
 ## Funciones comunes
 

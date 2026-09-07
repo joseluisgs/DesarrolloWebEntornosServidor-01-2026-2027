@@ -35,6 +35,10 @@ rm archivo.txt
 rm -rf carpeta/              # forzar eliminación recursiva
 ```
 
+> 🔧 **Truco:** `cd -` vuelve al directorio anterior. Muy útil para ir y volver entre dos carpetas.
+
+> ⚠️ **Advertencia:** `rm -rf` borra SIN confirmación y SIN ir a la papelera. Verifica siempre la ruta antes de ejecutar. Nunca hagas `rm -rf /`.
+
 ## Ver contenido de ficheros
 
 ```bash
@@ -45,6 +49,10 @@ tail -20 archivo.txt         # últimas 20 líneas
 tail -f archivo.txt          # seguir en tiempo real (logs)
 wc -l archivo.txt            # contar líneas
 ```
+
+> 💡 **Consejo:** `tail -f` es tu mejor amigo para ver logs en tiempo real. Combínalo con `grep` para filtrar: `tail -f app.log | grep ERROR`.
+
+> 🔧 **Truco:** `less` es mejor que `cat` para archivos grandes porque puedes navegar con flechas y buscar con `/texto`.
 
 ## Buscar
 
@@ -60,6 +68,10 @@ grep -r "texto" ./carpeta/             # recursivo
 grep -rn "texto" ./carpeta/            # con número de línea
 grep -i "texto" archivo.txt            # sin importar mayúsculas
 ```
+
+> 💡 **Consejo:** `grep -rn` es perfecto para buscar en qué archivo está una función: `grep -rn "MiFuncion" ./src/`.
+
+> 🔧 **Truco:** `find` + `grep` combinados: `find . -name "*.cs" -exec grep -l "TODO" {} \;` — busca "TODO" en todos los archivos .cs.
 
 ## Permisos
 
@@ -77,6 +89,10 @@ chmod -R 777 carpeta/        # recursivo (¡cuidado!)
 # Cambiar propietario
 sudo chown usuario:grupo archivo.txt
 ```
+
+> 💡 **Analogía:** Los permisos son como una caja fuerte: `r` (leer) = ver el contenido, `w` (escribir) = modificar, `x` (ejecutar) = usar como programa. `755` significa "yo hago todo, los demás leen y ejecutan".
+
+> ⚠️ **Advertencia:** `chmod -R 777` da permisos totales a TODO el mundo. Solo úsalo en entornos de desarrollo, NUNCA en producción.
 
 ## Procesos
 
@@ -100,6 +116,10 @@ df -h                               # disco
 du -sh carpeta/                     # tamaño de carpeta
 ```
 
+> 💡 **Consejo:** `htop` es mucho más legible que `top`. Si no lo tienes instalado: `sudo apt install htop`.
+
+> 🔧 **Truco:** Para encontrar qué proceso usa un puerto: `lsof -i :5432` o `ss -tuln | grep 5432`.
+
 ## Red
 
 ```bash
@@ -120,6 +140,8 @@ nslookup google.com
 dig google.com
 ```
 
+> 💡 **Consejo:** `ss -tuln` es la versión moderna de `netstat`. Muestra puertos TCP/UDP en escucha sin resolución de nombres (más rápido).
+
 ## Compressión y descompresión
 
 ```bash
@@ -131,6 +153,8 @@ tar -xzvf archivo.tar.gz            # descomprimir
 zip -r archivo.zip carpeta/
 unzip archivo.zip
 ```
+
+> 🔧 **Truco:** `tar -czvf` es como hacer un zip pero manteniendo permisos y enlaces. Es el estándar en Linux/Servidores.
 
 ## Variables de entorno
 
@@ -149,6 +173,8 @@ export MI_VAR="valor"
 echo 'export MI_VAR="valor"' >> ~/.bashrc
 source ~/.bashrc
 ```
+
+> ⚠️ **Advertencia:** Las variables definidas con `export` solo viven en la sesión actual. Para que sean permanentes, añádelas a `~/.bashrc` o `~/.bash_profile`.
 
 ## Atajos de terminal
 

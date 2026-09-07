@@ -39,6 +39,10 @@ Remove-Item archivo.txt
 Remove-Item -Recurse -Force carpeta/    # forzar eliminación
 ```
 
+> 💡 **Consejo:** PowerShell tiene alias de Linux: `ls`, `pwd`, `cd`, `cat`. Usa los que te resulten más cómodos.
+
+> ⚠️ **Advertencia:** `Remove-Item -Recurse -Force` no va a la papelera. Verifica la ruta antes de ejecutar.
+
 ## Ver contenido
 
 ```powershell
@@ -61,6 +65,10 @@ Select-String -Path "*.cs" -Pattern "texto" -CaseSensitive
 # Buscar en múltiples archivos
 Get-ChildItem -Recurse -Filter "*.cs" | Select-String "PersonaService"
 ```
+
+> 💡 **Consejo:** `Select-String` es el equivalente a `grep` en PowerShell. Combínalo con `Get-ChildItem` para buscar en múltiples archivos.
+
+> 🔧 **Truco:** Para buscar una palabra exacta: `Select-String -Pattern "\bPersonaService\b"` — evita coincidencias parciales.
 
 ## Procesos
 
@@ -89,6 +97,8 @@ Test-NetConnection -ComputerName localhost -Port 5432
 # Ver puertos en uso
 Get-NetTCPConnection | Where-Object { $_.LocalPort -eq 5432 }
 ```
+
+> 💡 **Consejo:** `Test-NetConnection -ComputerName localhost -Port 5432` comprueba si un puerto está abierto. Muy útil para diagnosticar si PostgreSQL está arrancado.
 
 ## Servicios y Docker
 
@@ -128,6 +138,8 @@ $env:MI_VAR = "valor"
 [System.Environment]::SetEnvironmentVariable("MI_VAR", "valor", "User")
 ```
 
+> ⚠️ **Advertencia:** Las variables definidas con `$env:` solo viven en la sesión actual. Para que sean permanentes, usa `SetEnvironmentVariable` con `"User"` o `"Machine"`.
+
 ## Atajos de PowerShell
 
 | Atajo | Acción |
@@ -155,3 +167,5 @@ Stop-Process -Id (Get-NetTCPConnection -LocalPort 5432).OwningProcess -Force
 # Ejecutar como administrador
 Start-Process powershell -Verb RunAs
 ```
+
+> 🔧 **Truco:** El primer comando (`netstat -ano | findstr :5432`) es el más usado en desarrollo. Si un puerto está ocupado, ahí descubres qué proceso lo tiene.

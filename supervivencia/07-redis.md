@@ -18,6 +18,8 @@ redis-cli -h localhost -p 6379
 redis-cli ping    # debe responder PONG
 ```
 
+> 💡 **Consejo:** Si `redis-cli` no está instalado, puedes usar el contenedor Docker: `docker exec -it mi-redis redis-cli`.
+
 ## Strings
 
 ```bash
@@ -40,6 +42,10 @@ DECR contador      # 15
 APPEND nombre " García"    # "José García"
 STRLEN nombre              # 12
 ```
+
+> 💡 **Consejo:** `INCR` es atómico — seguro para contadores concurrentes (likes, visitas). No necesitas locks.
+
+> 🔧 **Truco:** Usa `EX` en `SET` para auto-expirar claves: `SET sesion:abc123 "datos" EX 3600` (1 hora). Redis se encarga de borrarla.
 
 ## Hashes (objetos)
 
@@ -64,6 +70,8 @@ HEXISTS usuario:1 nombre   # 1 (true)
 HLEN usuario:1             # 2
 ```
 
+> 💡 **Analogía:** Un Hash es como un objeto JSON plano. `HSET usuario:1 nombre "Ana"` es como `{ "nombre": "Ana" }`. Perfecto para entidades con múltiples campos.
+
 ## Listas
 
 ```bash
@@ -84,6 +92,10 @@ BLPOP cola 30           # bloquear hasta que haya dato (30s timeout)
 # Longitud
 LLEN cola
 ```
+
+> 💡 **Consejo:** `BLPOP` es como una cola de mensajes: espera hasta que haya datos. Útil para colas de trabajo (background jobs).
+
+> 🔧 **Truco:** `LPUSH` + `BRPOP` = cola FIFO (first in, first out). `RPUSH` + `RPOP` = cola LIFO (pila).
 
 ## Sets (conjuntos)
 
@@ -106,6 +118,8 @@ SUNION tags tags2           # unión
 SDIFF tags tags2            # solo en tags
 ```
 
+> 💡 **Analogía:** Un Set es como una lista pero sin duplicados y con operaciones matemáticas. `SINTER` es la intersección, `SUNION` la unión.
+
 ## Sorted Sets
 
 ```bash
@@ -126,6 +140,8 @@ ZCARD leaderboard
 ZREM leaderboard "jugador1"
 ```
 
+> 💡 **Consejo:** Los Sorted Sets son perfectos para leaderboards, rankings y colas de prioridad. Cada elemento tiene una puntuación que determina el orden.
+
 ## Expiración y TTL
 
 ```bash
@@ -143,6 +159,10 @@ PTTL clave                   # en milisegundos
 # Quitar expiración
 PERSIST clave
 ```
+
+> 💡 **Consejo:** TTL es lo que hace a Redis ideal para caché. Si no pones expiración, la clave queda para siempre y se llena de basura.
+
+> ⚠️ **Advertencia:** Si pones `EXPIRE` en una clave que ya tiene datos, sobreescribe el TTL anterior.
 
 ## Gestión de claves
 
@@ -169,6 +189,10 @@ UNLINK clave                  # una (asíncrono, mejor en producción)
 DBSIZE
 ```
 
+> ⚠️ **Advertencia:** `KEYS *` bloquea el servidor en bases de datos grandes. Usa `SCAN` en producción — es iterativo y no bloquea.
+
+> 🔧 **Truco:** `UNLINK` es como `DEL` pero asíncrono. En producción, es mejor porque no bloquea el servidor.
+
 ## Transacciones
 
 ```bash
@@ -182,12 +206,18 @@ EXEC   # ejecutar todo
 DISCARD
 ```
 
+> 💡 **Consejo:** `MULTI/EXEC` garantiza que los comandos se ejecuten atómicamente. Nadie puede intercalar comandos entre medio.
+
+> ⚠️ **Advertencia:** Las transacciones de Redis NO son como las de SQL. No hay `ROLLBACK`. Si un comando falla, los demás se ejecutan igual. Para rollback real, usa Lua scripts.
+
 ## Scripting (Lua)
 
 ```bash
 # Ejecutar script Lua
 EVAL "return redis.call('SET', KEYS[1], ARGV[1])" 1 mi_clave mi_valor
 ```
+
+> 🔧 **Truco:** Los scripts Lua son atómicos. Si necesitas una operación compleja con rollback, úsalos en vez de `MULTI/EXEC`.
 
 ## Monitoreo y diagnóstico
 
@@ -207,6 +237,10 @@ MONITOR
 # Ver uso de memoria de una clave
 MEMORY USAGE clave
 ```
+
+> ⚠️ **Advertencia:** `MONITOR` muestra TODOS los comandos en tiempo real. Úsalo solo para debugging — ralentiza el servidor significativamente.
+
+> 🔧 **Truco:** `INFO memory` te dice cuánta memoria usa Redis y cuándo va a empezar a eliminar claves según la política `maxmemory-policy`.
 
 ## Errores comunes
 
