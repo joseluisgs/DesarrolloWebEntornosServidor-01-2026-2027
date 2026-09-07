@@ -104,35 +104,166 @@ git diff                        # cambios sin staging
 git diff --staged               # cambios en staging
 ```
 
-## Deshacer
+## Deshacer cambios
 
 ```bash
-# Deshacer último commit (mantener cambios)
+# ─── EN EL STAGING (ya hiciste git add) ────────────────────────
+# Quitar archivo del staging (mantiene cambios en disco)
+git restore archivo.cs
+git restore Models/             # una carpeta entera
+
+# Quitar todo del staging
+git restore .
+
+# ─── MODIFICAR ÚLTIMO COMMIT ───────────────────────────────────
+# Cambiar el mensaje del último commit
+git commit --amend -m "nuevo mensaje"
+
+# Añadir archivos olvidados al último commit
+git add archivos-olvidados.cs
+git commit --amend --no-edit   # sin cambiar mensaje
+
+# ─── RESET (deshacer commits) ─────────────────────────────────
+# --soft: deshace commit, mantiene staging + archivos
 git reset --soft HEAD~1
 
-# Deshacer último commit (perder cambios)
+# --mixed (por defecto): deshace commit + staging, mantiene archivos
+git reset HEAD~1
+git reset --mixed HEAD~1       # lo mismo
+
+# --hard: deshace TODO (commit + staging + archivos) ← ¡CUIDADO!
 git reset --hard HEAD~1
 
-# Deshacer cambios en archivo
-git checkout -- archivo.cs
+# Ir a un commit concreto (mantiene archivos)
+git reset --soft <commit-hash>
 
-# Ver historial para recuperar algo
+# ─── REVERT (deshacer un commit con commit nuevo) ─────────────
+# Crea un commit nuevo que invierte los cambios (seguro para shared)
+git revert <commit-hash>
+git revert HEAD                # revert del último commit
+
+# ─── STASH (guardar cambios temporalmente) ─────────────────────
+# Guardar cambios sin commitear
+git stash
+git stash push -m "cambios parciales del servicio"
+
+# Listar stashes
+git stash list
+
+# Recuperar último stash (mantiene el stash)
+git stash pop
+
+# Recuperar y eliminar el stash
+git stash apply stash@{0}
+git stash drop stash@{0}
+
+# Limpiar todos los stashes
+git stash clear
+
+# ─── REFLOG (recuperar lo que parece perdido) ──────────────────
+# Ver historial de movimientos de HEAD
 git reflog
-git checkout <commit-hash>      # recuperar archivo puntual
+
+# Recuperar un commit "perdido"
+git checkout <commit-hash>
+git branch recuperacion        # crear rama para guardarlo
 ```
+
+> ⚠️ **Advertencia:** `git reset --hard` borra tus cambios sin posibilidad de recuperación (salvo con `reflog`). Úsalo solo si estás seguro.
 
 ## GitHub
 
 ```bash
-# Añadir remoto
-git remote add origin https://github.com/usuario/repo.git
+# ─── CONFIGURACIÓN ─────────────────────────────────────────────
+# Autenticar con GitHub (abre navegador)
+gh auth login
 
-# Ver remotos
-git remote -v
+# Ver estado de autenticación
+gh auth status
 
-# Crear repositorio en GitHub (desde CLI)
+# ─── REPOSITORIOS ──────────────────────────────────────────────
+# Crear repositorio
 gh repo create mi-repo --public
 gh repo create mi-repo --private
+gh repo create mi-repo --private --source=. --push   # crear + subir
+
+# Clonar
+gh repo clone usuario/repo
+
+# Ver info del repo
+gh repo view
+
+# Abrir en navegador
+gh browse
+
+# ─── ISSUES ────────────────────────────────────────────────────
+# Crear issue
+gh issue create --title "Error en login" --body "Descripción del bug"
+gh issue create -t "Nueva feature" -b "Implementar X" -l "enhancement"
+
+# Listar issues
+gh issue list
+gh issue list --state open
+gh issue list --label "bug"
+
+# Ver issue
+gh issue view 42
+
+# Cerrar issue
+gh issue close 42
+
+# Asignar issue
+gh issue edit 42 --add-assignee @me
+
+# ─── PULL REQUESTS ─────────────────────────────────────────────
+# Crear PR
+gh pr create --title "feat: añadir servicio" --body "Descripción"
+gh pr create -t "fix: corregir bug" -b "Fix #42" -r "otrebor,otro-reviewer"
+
+# Listar PRs
+gh pr list
+gh pr list --state open
+
+# Ver PR
+gh pr view 15
+
+# Ver diff del PR
+gh pr diff 15
+
+# Review (aprobar / solicitar cambios)
+gh pr review 15 --approve
+gh pr review 15 --request-changes --comment "Faltan tests"
+
+# Merge
+gh pr merge 15 --merge       # merge commit
+gh pr merge 15 --squash      # squash (un solo commit)
+gh pr merge 15 --rebase      # rebase
+
+# Checkout de un PR localmente
+gh pr checkout 15
+
+# Abrir PR en navegador
+gh pr browse 15
+
+# ─── RELEASES ──────────────────────────────────────────────────
+# Listar releases
+gh release list
+
+# Crear release
+gh release create v1.0.0 --title "v1.0.0" --notes "Primera versión"
+
+# Descargar release
+gh release download v1.0.0
+
+# ─── WORKFLOWS (GitHub Actions) ───────────────────────────────
+# Ver workflows
+gh workflow list
+
+# Ver ejecuciones
+gh run list
+
+# Ver log de una ejecución
+gh run view <run-id> --log
 ```
 
 ## Errores comunes
