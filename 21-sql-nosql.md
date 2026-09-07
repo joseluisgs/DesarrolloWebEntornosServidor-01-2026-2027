@@ -3,6 +3,8 @@
   - [21.2. PostgreSQL: El SQL Potente](#212-postgresql-el-sql-potente)
   - [21.3. MongoDB: Documentos Flexibles](#213-mongodb-documentos-flexibles)
   - [21.4. Redis: Caché y Clave-Valor](#214-redis-caché-y-clave-valor)
+  - [21.4.1. Algoritmos de Caché](#2141-algoritmos-de-caché)
+  - [21.4.2. Caché Local: Microsoft.Extensions.Caching.Memory](#2142-caché-local-microsoftextensionscachingmemory)
   - [21.5. Diseño de Datos: SQL vs NoSQL](#215-diseño-de-datos-sql-vs-nosql)
   - [21.6. Sharding y Replicación](#216-sharding-y-replicación)
   - [21.7. Patrón Cache-Aside](#217-patrón-cache-aside)
@@ -808,6 +810,209 @@ public class ProductoService(
 | **PostgreSQL** | `Npgsql` + Dapper | `Npgsql.EntityFrameworkCore.PostgreSQL` | Consultas complejas, reporting | CRUD rápido, si ya usas EF Core |
 | **MongoDB** | `MongoDB.Driver` | `MongoDB.EntityFrameworkCore` | Agregaciones complejas | CRUD simple, si ya usas EF Core |
 | **Redis** | `StackExchange.Redis` | ❌ No existe oficialmente | Caché, sesiones, colas | Usar `IDistributedCache` + Redis |
+
+## 21.4.1. Algoritmos de Caché
+
+Cuando la caché se llena, hay que decidir **qué borrar** para hacer hueco. Los algoritmos más comunes son:
+
+| Algoritmo | Qué borra | Complejidad | Uso típico |
+|-----------|-----------|-------------|------------|
+| **FIFO** (First In First Out) | El más antiguo | O(1) | Colas, mensajes |
+| **LRU** (Least Recently Used) | El menos usado recientemente | O(1) | **El más usado en caché** |
+| **LFU** (Least Frequently Used) | El menos consultado | O(1) | Datos con patrones estables |
+| **TTL** (Time To Live) | El que expira primero | O(1) | Caché con tiempo límite |
+
+```mermaid
+graph LR
+    subgraph FIFO["FIFO — El más antiguo"]
+        A1["Dato 1"] --> A2["Dato 2"] --> A3["Dato 3"]
+        A1 -.->|"Borrar"| X1["❌"]
+    end
+
+    subgraph LRU["LRU — El menos reciente"]
+        B1["Dato 1<br/>(hace 5 min)"] --> B2["Dato 2<br/>(hace 1 min)"] --> B3["Dato 3<br/>(ahora)"]
+        B1 -.->|"Borrar"| X2["❌"]
+    end
+
+    subgraph LFU["LFU — El menos frecuente"]
+        C1["Dato 1<br/>(100 lecturas)"] --> C2["Dato 2<br/>(3 lecturas)"] --> C3["Dato 3<br/>(50 lecturas)"]
+        C2 -.->|"Borrar"| X3["❌"]
+    end
+
+    style FIFO fill:#2196F3,color:#fff
+    style LRU fill:#4CAF50,color:#fff
+    style LFU fill:#FF9800,color:#fff
+```
+
+> 💡 **Analogía — La nevera:**
+> - **FIFO:** Compras leche nueva, la vieja se tira primero.
+> - **LRU:** Lo que no has cogido en días va al fondo y se tira.
+> - **LFU:** Lo que nadie toca se tira. Lo que todos piden se queda.
+
+📌 **Ejemplo real:** Redis usa **LRU** por defecto (`maxmemory-policy allkeys-lru`). Cuando se llena la memoria, borra las claves que menos tiempo llevan sin usarse.
+
+> 💡 **Consejo:** `Microsoft.Extensions.Caching.Memory` usa **LRU** por defecto. Si no configuras nada, borra los elementos menos recientes cuando se llena.
+
+### Tipos de expiración
+
+```mermaid
+graph TB
+    subgraph ABSOLUTA["Expiración Absoluta"]
+        A1["Se guarda a las 10:00"] --> A2["Expira a las 10:30<br/>(siempre, se use o no)"]
+    end
+
+    subgraph DESLIZANTE["Expiración Deslizante"]
+        B1["Se guarda a las 10:00"] --> B2["Último acceso: 10:25"]
+        B2 --> B3["Expira a las 10:55<br/>(se renueva con cada uso)"]
+    end
+
+    style ABSOLUTA fill:#f44336,color:#fff
+    style DESLIZANTE fill:#4CAF50,color:#fff
+```
+
+| Tipo | ¿Cuándo expira? | Ejemplo |
+|------|-----------------|---------|
+| **Absoluta** | En un momento fijo, se use o no | Sesión de usuario: expira en 30 min siempre |
+| **Deslizante** | Después de X tiempo sin uso | Token de API: se renueva con cada petición |
+
+## 21.4.2. Caché Local: Microsoft.Extensions.Caching.Memory
+
+Cuando **NO necesitas Redis** (aplicación single-server, datos poco compartidos), usa `MemoryCache` de .NET. Es más rápido (memoria del proceso) y no requiere infraestructura externa.
+
+### Instalación
+
+```csharp
+// En Program.cs o DI
+builder.Services.AddMemoryCache();
+```
+
+### Uso básico
+
+```csharp
+using Microsoft.Extensions.Caching.Memory;
+
+public class ProductoService(
+    IProductoRepository repository,
+    IMemoryCache cache,
+    ILogger<ProductoService> logger)
+{
+    public async Task<Producto?> GetByIdAsync(int id)
+    {
+        string key = $"producto:{id}";
+
+        // 1. Buscar en caché
+        if (cache.TryGetValue(key, out Producto? cached))
+        {
+            logger.LogDebug("Cache HIT para producto {Id}", id);
+            return cached;
+        }
+
+        // 2. Si no está, buscar en BD
+        logger.LogDebug("Cache MISS para producto {Id}", id);
+        var producto = await repository.GetByIdAsync(id);
+
+        if (producto is not null)
+        {
+            // 3. Guardar en caché con opciones
+            var options = new MemoryCacheEntryOptions()
+                .SetAbsoluteExpiration(TimeSpan.FromMinutes(30))  // Expira en 30 min
+                .SetSlidingExpiration(TimeSpan.FromMinutes(5))    // Se renueva si se usa
+                .SetSize(1);  // Tamaño en unidades (para MemoryCache con límite)
+
+            cache.Set(key, producto, options);
+        }
+
+        return producto;
+    }
+}
+```
+
+### MemoryCacheEntryOptions
+
+```csharp
+var options = new MemoryCacheEntryOptions()
+    // Expiración
+    .SetAbsoluteExpiration(TimeSpan.FromHours(1))      // Expira en 1 hora
+    .SetSlidingExpiration(TimeSpan.FromMinutes(10))     // Se renueva si se usa en 10 min
+
+    // Prioridad (qué borrar primero cuando se llena)
+    .SetPriority(CacheItemPriority.Normal)              // Low, Normal, High, NeverRemove
+
+    // Tamaño (para caches con límite)
+    .SetSize(1)                                         // 1 unidad
+    .SetSize(2)                                         // 2 unidades
+
+    // Callbacks
+    .RegisterPostEvictionCallback((key, value, reason, state) =>
+    {
+        // Se ejecuta cuando se borra el elemento
+        Console.WriteLine($"Clave {key} borrada: {reason}");
+    });
+```
+
+### MemoryCache con límite de tamaño
+
+```csharp
+builder.Services.AddMemoryCache(options =>
+{
+    options.SizeLimit = 100;  // Máximo 100 elementos
+});
+
+// Al guardar, INDICAR el tamaño
+cache.Set(key, value, new MemoryCacheEntryOptions()
+    .SetSize(1)
+    .SetAbsoluteExpiration(TimeSpan.FromMinutes(30)));
+```
+
+### ⚠️ Errores comunes
+
+```csharp
+// ❌ MALO: Olvidar SetSize cuando hay SizeLimit
+cache.Set("key", value);  // ¡Excepción si hay SizeLimit!
+
+// ❌ MALO: UsarMemoryCache en app multi-servidor
+// MemoryCache es LOCAL — cada servidor tiene el suyo
+// Si tienes 3 servidores, cada uno tiene datos diferentes
+
+// ✅ BUENO: UsarMemoryCache en app single-server
+// Si solo tienes 1 servidor, MemoryCache es perfecto
+```
+
+### ¿Cuándo usar MemoryCache vs Redis?
+
+| Escenario | MemoryCache | Redis |
+|-----------|:-----------:|:-----:|
+| 1 servidor, datos no compartidos | ✅ | ❌ |
+| Múltiples servidores | ❌ | ✅ |
+| Datos que cambian poco | ✅ | ✅ |
+| Sesiones de usuario | ⚠️ Solo 1 server | ✅ |
+| Colas de mensajes | ❌ | ✅ |
+| Contadores atómicos | ❌ | ✅ |
+
+> 💡 **Consejo:** Empieza con `MemoryCache`. Cuando necesites escalar a múltiples servidores, migra a Redis. El patrón `IDistributedCache` facilita la migración porque cambias el provider sin cambiar el código.
+
+### IDistributedCache: La abstracción .NET
+
+```csharp
+// Interfaz que funciona con MemoryCache O Redis
+public interface IDistributedCache
+{
+    Task<byte[]?> GetAsync(string key);
+    Task SetAsync(string key, byte[] value, DistributedCacheEntryOptions options);
+    Task RemoveAsync(string key);
+}
+
+// Registro con MemoryCache (desarrollo)
+builder.Services.AddDistributedMemoryCache();
+
+// Registro con Redis (producción)
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = "localhost:6379";
+});
+```
+
+> 💡 **Consejo:** Usa `IDistributedCache` en tu código. Así puedes cambiar de MemoryCache a Redis solo modificando `Program.cs`, sin tocar los servicios.
 
 ## 21.5. Diseño de Datos: SQL vs NoSQL
 
