@@ -356,26 +356,127 @@ var dtos = await context.Personas
 
 ## 20.6. SQL Raw
 
-Cuando LINQ no es suficiente (consultas complejas, optimización), puedes escribir SQL directamente:
+Cuando LINQ no es suficiente (consultas complejas, optimización, consultas legadas), puedes escribir SQL directamente. EF Core ofrece varias formas de hacerlo de forma segura.
+
+### FromSqlRaw — Entidades completas
+
+Devuelve entidades completas que EF Core-trackea:
 
 ```csharp
-// SQL raw con FromSqlRaw
+// SQL con parámetros posicionales
 var personas = await context.Personas
     .FromSqlRaw("SELECT * FROM Personas WHERE Edad > {0}", 25)
     .ToListAsync();
 
-// Con interpolated string (seguro contra SQL injection)
+// Con interpolated string (más legible, seguro contra SQL injection)
 int edadMinima = 25;
-var personasFiltradas = await context.Personas
-    .FromSqlInterpolated($"SELECT * FROM Personas WHERE Edad > {edadMinima}")
+string nombre = "Ana";
+var filtradas = await context.Personas
+    .FromSqlInterpolated($"SELECT * FROM Personas WHERE Edad > {edadMinima} AND Nombre = {nombre}")
     .ToListAsync();
-
-// ExecuteSqlRaw para comandos (UPDATE, DELETE)
-int filasAfectadas = await context.Database
-    .ExecuteSqlRawAsync("UPDATE Personas SET Activo = 0 WHERE Edad < {0}", 18);
 ```
 
-> 📝 **Nota:** `FromSqlInterpolated` es seguro contra SQL injection porque parametriza automáticamente la consulta. **NUNCA** concatenes strings para construir SQL.
+### SqlQueryRaw — Escalares y DTOs
+
+Si NO necesitas entidades, usa `SqlQueryRaw` para devolver escalares o DTOs:
+
+```csharp
+// Contar registros (escalar)
+int total = await context.Database
+    .SqlQueryRaw<int>("SELECT COUNT(*) FROM Personas")
+    .SingleAsync();
+
+// Obtener soloSome campos en un DTO
+var resumen = await context.Database
+    .SqlQueryRaw<ResumenPersona>(
+        "SELECT Id, Nombre, Email FROM Personas WHERE Activo = true")
+    .ToListAsync();
+
+// Media de edad (escalar)
+double media = await context.Database
+    .SqlQueryRaw<double>("SELECT AVG(Edad) FROM Personas")
+    .SingleAsync();
+
+// DTO personalizado
+public record ResumenPersona(int Id, string Nombre, string Email);
+```
+
+> 💡 **Consejo:** `SqlQueryRaw` NO trackea las entidades. Es ideal para consultas de solo lectura donde no necesitas modificar el resultado.
+
+### ExecuteSqlRaw — Comandos (INSERT, UPDATE, DELETE)
+
+```csharp
+// UPDATE directo
+int filas = await context.Database
+    .ExecuteSqlRawAsync(
+        "UPDATE Personas SET Activo = 0 WHERE Edad < {0}", 18);
+
+// DELETE directo
+await context.Database
+    .ExecuteSqlRawAsync(
+        "DELETE FROM Personas WHERE UltimaConexion < {0}",
+        DateTime.Now.AddYears(-2));
+
+// Con interpolated (automáticamente parametrizado)
+int umbral = 65;
+await context.Database
+    .ExecuteSqlInterpolatedAsync(
+        $"UPDATE Personas SET Activo = 0 WHERE Edad > {umbral}");
+```
+
+> ⚠️ **Advertencia:** `ExecuteSqlRaw` NO pasa por el Change Tracker. Si tenías entidades en memoria, no se actualizan. Llama a `DetectChanges()` después si necesitas sincronizar.
+
+### Stored Procedures
+
+```csharp
+// Ejecutar stored procedure que devuelve entidades
+var personas = await context.Personas
+    .FromSqlRaw("EXECEDURE GetPersonasActivas @EdadMinima = {0}", 18)
+    .ToListAsync();
+
+// Stored procedure que devuelve un escalar
+int total = await context.Database
+    .SqlQueryRaw<int>("EXECEDURE ContarPersonasActivas")
+    .SingleAsync();
+
+// Stored procedure con ExecuteSqlRaw (sin retorno)
+await context.Database
+    .ExecuteSqlRawAsync(
+        "EXECEDURE ActualizarEstadisticas @Fecha = {0}",
+        DateTime.Now);
+```
+
+### ⚠️ SQL Injection — NUNCA Concatenes Strings
+
+```csharp
+// ❌ MALO: SQL Injection vulnerable
+var personas = await context.Personas
+    .FromSqlRaw($"SELECT * FROM Personas WHERE Nombre = '{nombre}'")  // ¡PELIGRO!
+    .ToListAsync();
+
+// ✅ BUENO: Parametrizado automáticamente
+var personas = await context.Personas
+    .FromSqlInterpolated($"SELECT * FROM Personas WHERE Nombre = {nombre}")
+    .ToListAsync();
+
+// ✅ BUENO: Parámetros posicionales
+var personas = await context.Personas
+    .FromSqlRaw("SELECT * FROM Personas WHERE Nombre = {0}", nombre)
+    .ToListAsync();
+```
+
+### ¿Cuándo usar SQL Raw vs LINQ?
+
+| Escenario | Usa | Por qué |
+|-----------|-----|---------|
+| Consulta simple con WHERE/ORDER BY | LINQ | Más seguro, legible, type-safe |
+| Consulta con JOIN complejo | SQL Raw | LINQ genera SQL ineficiente |
+| UPDATE/DELETE masivo | `ExecuteSqlRaw` | Más rápido que cargar y modificar |
+| Stored Procedure | SQL Raw | LINQ no soporta SPs directamente |
+| Consulta optimizada para rendimiento | SQL Raw | Control total sobre el SQL |
+| Reports / Estadísticas | `SqlQueryRaw` | No necesitas entidad completa |
+
+> 💡 **Consejo:** Empieza SIEMPRE con LINQ. Solo recurre a SQL Raw cuando LINQ no funciona o es significativamente más lento. EF Core es muy bueno generando SQL optimizado.
 
 ## 20.7. Migraciones
 
