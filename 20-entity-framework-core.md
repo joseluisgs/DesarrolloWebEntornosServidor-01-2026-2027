@@ -403,6 +403,34 @@ public record ResumenPersona(int Id, string Nombre, string Email);
 
 > 💡 **Consejo:** `SqlQueryRaw` NO trackea las entidades. Es ideal para consultas de solo lectura donde no necesitas modificar el resultado.
 
+### SqlQuery vs SqlQueryRaw — ¿Cuál usar?
+
+Ambos devuelven tipos no-entidad, pero se diferencian en cómo pasas los parámetros:
+
+```csharp
+// SqlQueryRaw — parámetros posicionales {0}, {1}
+var resultado = await context.Database
+    .SqlQueryRaw<ResumenPersona>(
+        "SELECT Id, Nombre FROM Personas WHERE Edad > {0} AND Activo = {1}",
+        25, true)
+    .ToListAsync();
+
+// SqlQuery — string interpolado, parametrizado automático ✅ RECOMENDADO
+int edad = 25;
+bool activo = true;
+var resultado = await context.Database
+    .SqlQuery<ResumenPersona>(
+        $"SELECT Id, Nombre FROM Personas WHERE Edad > {edad} AND Activo = {activo}")
+    .ToListAsync();
+```
+
+| Método | Sintaxis | ¿Quién parametriza? | ¿Cuándo usarlo? |
+|--------|----------|---------------------|-----------------|
+| `SqlQueryRaw<T>` | `"... WHERE X = {0}"` | Tú pasas los valores | SQL construido dinámicamente |
+| `SqlQuery<T>` | `$"... WHERE X = {variable}"` | EF Core automático | **Siempre (más seguro)** |
+
+> 💡 **Consejo:** Usa SIEMPRE `SqlQuery` (interpolado). Es más legible y seguro. `SqlQueryRaw` solo si necesitas concatenar el SQL de forma dinámica.
+
 ### ExecuteSqlRaw — Comandos (INSERT, UPDATE, DELETE)
 
 ```csharp
