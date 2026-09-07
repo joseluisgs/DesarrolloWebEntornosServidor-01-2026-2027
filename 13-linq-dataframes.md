@@ -7,6 +7,7 @@
   - [13.6. Parallel LINQ (PLINQ)](#136-parallel-linq-plinq)
   - [13.7. LINQ Avanzado](#137-linq-avanzado)
   - [13.8. DataFrames en C# con Microsoft.Data.Analysis](#138-dataframes-en-c-con-microsoftdataanalysis)
+  - [13.9. LINQ vs PLINQ vs DataFrame: ¿Cuándo usar cada uno?](#139-linq-vs-plinq-vs-dataframe-cuándo-usar-cada-uno)
 
 
 # 13. LINQ en Colecciones y Base de Datos
@@ -445,6 +446,174 @@ var mediaEdad = accidentes.Columns["Edad"].Cast<double>().Mean();
 
 > 💡 **Consejo:** Si necesitas análisis estadístico avanzado, combina DataFrame con LINQ. Carga los datos en un DataFrame, filtra y agrupa, y luego convierte a objetos para lógica de negocio.
 
+## 13.9. LINQ vs PLINQ vs DataFrame: ¿Cuándo usar cada uno?
+
+Imagina que tienes un **fichero CSV** con datos de accidentes de tráfico en Madrid. ¿Qué herramienta usas? Depende del **tamaño** y del **tipo de operación**.
+
+### Flujo de datos: del CSV a la colección
+
+```mermaid
+graph LR
+    A["📄 CSV"] -->|"CsvHelper o LoadCsv"| B{"¿Cuántos registros?"}
+    B -->|"Pocos (<10K)"| C["📋 List&lt;T&gt;"]
+    B -->|"Muchos (10K-100K)"| D["📋 List&lt;T&gt; + PLINQ"]
+    B -->|"Muchísimos (100K+)"| E["📊 DataFrame"]
+
+    C --> F["LINQ"]
+    D --> G["PLINQ"]
+    E --> H["DataFrame + LINQ"]
+
+    style C fill:#4CAF50,color:#fff
+    style D fill:#FF9800,color:#fff
+    style E fill:#f44336,color:#fff
+```
+
+> 💡 **Punto clave:** Cuando lees un CSV con CsvHelper, los datos van a una `List<T>` (colección de objetos). Ahí LINQ y PLINQ son naturales. DataFrame NO convierte a objetos — trabaja directamente con columnas tipo tabla, como SQL en memoria.
+
+### Ejemplo real: Procesar CSV de accidentes
+
+**Escenario:** Fichero con 200.000 registros. Queremos filtrar accidentes con alcohol, agrupar por distrito y calcular la media de edad.
+
+#### Opción 1: LINQ (simple, secuencial)
+
+```csharp
+using CsvHelper;
+
+// Leer CSV → List<Accidente>
+var registros = new StreamReader("accidentes.csv")
+    .Then rdr => new CsvReader(rdr, CultureInfo.InvariantCulture)
+    .GetRecords<Accidente>().ToList();
+
+// Procesar con LINQ
+var resultado = registros
+    .Where(a => a.PositivoAlcohol)
+    .GroupBy(a => a.Distrito)
+    .Select(g => new
+    {
+        Distrito = g.Key,
+        Total = g.Count(),
+        MediaEdad = g.Average(a => a.Edad)
+    })
+    .OrderByDescending(x => x.Total)
+    .ToList();
+```
+
+| Ventaja | Desventaja |
+|---------|------------|
+| ✅ Código claro y legible | ❌ Un solo núcleo de CPU |
+| ✅ Sin overhead | ❌ Lento con millones de filas |
+| ✅ Tipo-safe en tiempo de compilación | ❌ Memoria: toda la lista en RAM |
+
+**Cuándo usarlo:** CSV con < 10.000 registros, operaciones simples (Where, Select, GroupBy básico).
+
+#### Opción 2: PLINQ (paralelo, rápido)
+
+```csharp
+using CsvHelper;
+
+// Leer CSV → List<Accidente>
+var registros = new StreamReader("accidentes.csv")
+    .Then rdr => new CsvReader(rdr, CultureInfo.InvariantCulture)
+    .GetRecords<Accidente>().ToList();
+
+// Procesar con PLINQ
+var resultado = registros
+    .AsParallel()                            // ← Paralelizar
+    .WithDegreeOfParallelism(Environment.ProcessorCount)
+    .Where(a => a.PositivoAlcohol)
+    .GroupBy(a => a.Distrito)
+    .Select(g => new
+    {
+        Distrito = g.Key,
+        Total = g.Count(),
+        MediaEdad = g.Average(a => a.Edad)
+    })
+    .AsOrdered()                             // ← Mantener orden
+    .ToList();
+```
+
+| Ventaja | Desventaja |
+|---------|------------|
+| ✅ Aprovecha todos los núcleos de CPU | ❌ Overhead de sincronización |
+| ✅ 2x-8x más rápido con millones de filas | ❌ Orden NO garantizado (sin `.AsOrdered()`) |
+| ✅ Mismo código que LINQ, solo `.AsParallel()` | ❌ No sirve para operaciones con estado |
+
+**Cuándo usarlo:** CSV con 10.000-500.000 registros Y operación pesada por fila (cálculos complejos, llamadas a servicios).
+
+> ⚠️ **Advertencia:** Si la operación por fila es ligera (solo un Where), PLINQ puede ser más LENTO que LINQ por el overhead de sincronización. Solo usa PLINQ cuando el procesamiento de cada fila es pesado.
+
+#### Opción 3: DataFrame (tabular, estadístico)
+
+```csharp
+using Microsoft.Data.Analysis;
+
+// Leer CSV directamente en DataFrame
+var df = DataFrame.LoadCsv("accidentes.csv");
+
+// Filtrar
+var conAlcohol = df.Filter(df.Columns["PositivoAlcohol"].Cast<bool>().EqualTo(true));
+
+// Agrupar y contar
+var porDistrito = conAlcohol.GroupBy("Distrito");
+foreach (var grupo in porDistrito)
+{
+    Console.WriteLine($"{grupo.Key}: {grupo.RowCount} accidentes");
+}
+
+// Estadísticas
+var mediaEdad = conAlcohol.Columns["Edad"].Cast<double>().Mean();
+var maxEdad = conAlcohol.Columns["Edad"].Cast<double>().Max();
+```
+
+| Ventaja | Desventaja |
+|---------|------------|
+| ✅ Optimizado para datos tabulares | ❌ No es tipo-safe (errores en runtime) |
+| ✅ Estadísticas integradas (Mean, Max, Min) | ❌ Menos flexible que LINQ para objetos |
+| ✅ No necesita definir una clase Accidente | ❌ API menos conocida, menos documentación |
+| ✅ Mejor rendimiento con 100K+ filas | ❌ Conversión a objetos es manual |
+
+**Cuándo usarlo:** CSV con 100.000+ registros, análisis estadístico, ETL, o cuando no quieres definir una clase para los datos.
+
+### Tabla comparativa: Los tres en un vistazo
+
+| Criterio | LINQ | PLINQ | DataFrame |
+|----------|------|-------|-----------|
+| **Tipo de datos** | `List<T>` (objetos) | `List<T>` (objetos) | Tabular (columnas) |
+| **Definir modelo** | Sí (`record Accidente`) | Sí (`record Accidente`) | No (columnas dinámicas) |
+| **Rendimiento (pocos datos)** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ (overhead) | ⭐⭐⭐ |
+| **Rendimiento (muchos datos)** | ⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
+| **Estadísticas** | Manual (Average, Count) | Manual | Integradas (Mean, Max) |
+| **Type-safe** | ✅ Compile-time | ✅ Compile-time | ❌ Runtime |
+| **Legibilidad** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐ |
+| **Para CSV < 10K** | ✅ **Mejor** | ⚠️ Innecesario | ⚠️ Sobredimensionado |
+| **Para CSV 10K-100K** | ⚠️ Puede ser lento | ✅ **Mejor** | ⚠️ Posible |
+| **Para CSV > 100K** | ❌ Lento | ⚠️ Posible | ✅ **Mejor** |
+
+### Flujo de decisión
+
+```mermaid
+graph TD
+    A["📄 Tienes un CSV"] --> B{"¿Cuántos registros?"}
+    B -->|"< 10.000"| C["📋 CsvHelper → List&lt;T&gt;<br/>+ LINQ"]
+    B -->|"10K - 100K"| D{"¿Operación pesada<br/>por fila?"}
+    B -->|"> 100K"| E{"¿Necesitas<br/>estadísticas?"}
+
+    D -->|"Sí (cálculos, servicios)"| F["📋 CsvHelper → List&lt;T&gt;<br/>+ PLINQ"]
+    D -->|"No (solo Where, Select)"| C
+
+    E -->|"Sí"| G["📊 DataFrame.LoadCsv()<br/>+ GroupBy + Mean"]
+    E -->|"No, necesito objetos"| H["📋 CsvHelper → List&lt;T&gt;<br/>+ PLINQ"]
+
+    style C fill:#4CAF50,color:#fff
+    style F fill:#FF9800,color:#fff
+    style G fill:#f44336,color:#fff
+    style H fill:#FF9800,color:#fff
+```
+
+📌 **Ejemplo real:** Netflix procesa logs de visualización (millones de registros). Usa algo similar a DataFrames para análisis de datos (qué series se ven, cuándo, en qué países). Pero para la lógica de "recomendar series similares", usa objetos con LINQ porque necesita relaciones complejas.
+
+> 💡 **Consejo para el examen:** Si te preguntan "¿qué usas para procesar un CSV?", la respuesta correcta es: "Depende. Si son pocos datos, LINQ. Si son muchos y necesito paralelismo, PLINQ. Si son muchísimos y necesito estadísticas, DataFrame."
+
 ---
 
 **Resumen del punto:**
@@ -459,5 +628,7 @@ var mediaEdad = accidentes.Columns["Edad"].Cast<double>().Mean();
 | **Join** | Combina datos de dos colecciones |
 | **PLINQ** | LINQ en paralelo con múltiples núcleos |
 | **IQueryable** | Consultas que se traducen a SQL |
+| **DataFrame** | Datos tabulares, CSV, análisis estadístico |
+| **Decisión** | LINQ (<10K) → PLINQ (10K-100K, pesado) → DataFrame (>100K, stats) |
 
 En el siguiente punto veremos cómo trabajar con ficheros y formatos de intercambio: IDisposable, System.IO, CSV con CsvHelper y JSON con System.Text.Json.
