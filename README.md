@@ -43,7 +43,7 @@ Tema 01. Introducción al desarrollo de software en Servidor. 2DAW. Curso 2026-2
 
 ## Contenido en YouTube
 
-- [Resumen Parte 1: Fundamentos]()
+- [Resumen Parte 1: Fundamentos del Desarrollo Web ]()
 - [Protocolos y APIs]()
 - [Páginas Web Estáticas vs Dinámicas]()
 - [Resumen Parte 2: C# Avanzado]()

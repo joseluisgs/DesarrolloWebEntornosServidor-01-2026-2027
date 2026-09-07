@@ -9,7 +9,7 @@
 dotnet new console -n MiProyecto
 dotnet new console -n MiProyecto -f net10.0
 
-# Crear proyecto de类库
+# Crear proyecto de librería
 dotnet new classlib -n MiLibreria
 
 # Crear proyecto de test (NUnit)
@@ -27,6 +27,8 @@ dotnet new list
 # Crear desde template personalizado
 dotnet new webapi -n MiApi
 ```
+
+> 💡 **Consejo:** En .NET 10+ el formato de solución por defecto es `.slnx` (XML), no el antiguo `.sln`. Si tienes ambos, especifica cuál usar.
 
 ## Gestionar proyectos en solution
 
@@ -138,6 +140,10 @@ dotnet publish -c Release --self-contained  # sin necesitar .NET instalado
 dotnet clean
 ```
 
+> 💡 **Consejo:** `dotnet run` compila y ejecuta en un solo paso. Para desarrollo rápido es perfecto. Para producción, usa `dotnet publish`.
+
+> 🔧 **Truco:** `dotnet run --project` te permite ejecutar un proyecto sin estar en su carpeta. Ideal cuando tienes una solution con varios proyectos.
+
 ## Tests
 
 ```bash
@@ -156,6 +162,10 @@ dotnet test --collect:"XPlat Code Coverage"
 # Tests con coverlet y runsettings
 dotnet test --collect:"XPlat Code Coverage" --settings coverlet.runsettings
 ```
+
+> 💡 **Consejo:** El filtro `FullyQualifiedName~` usa parcial del nombre. Si tu test se llama `Crear_PersonaValida_RetornaId`, puedes filtrar con `--filter "Crear_Persona"`.
+
+> ⚠️ **Advertencia:** Si los tests no se ejecutan, comprueba que el proyecto de test tiene referencia al proyecto principal con `dotnet add reference ../MiProyecto/MiProyecto.csproj`.
 
 ## Gestionar herramientas globales
 
@@ -197,6 +207,12 @@ dotnet ef migrations list
 dotnet ef migrations script
 ```
 
+> 💡 **Consejo:** El nombre de la migración debe ser descriptivo. Usa `dotnet ef migrations add AddTablaProductos`, no `dotnet ef migrations add Migracion1`.
+
+> 🔧 **Truco:** `dotnet ef migrations script` genera un SQL limpio que puedes ejecutar en producción sin arrancar la app.
+
+> ⚠️ **Advertencia:** NUNCA hagas `dotnet ef database update` en producción sin antes probar en local. Y NUNCA uses `dotnet ef migrations remove` en un entorno con datos reales.
+
 ## Herramientas de diagnóstico
 
 ```bash
@@ -222,6 +238,11 @@ dotnet-trace collect --process-id <PID> \
 # Abrir trace en Visual Studio o SpeedScope
 # En VS: Archivo → Abrir → Archivo → seleccionar .nettrace
 # En navegador: https://www.speedscope.app → arrastrar archivo
+```
+
+> 💡 **Consejo:** Para encontrar el PID de tu app, usa `dotnet-trace ps` o `Get-Process dotnet` en PowerShell.
+
+> 🔧 **Truco:** SpeedScope es gratis y te muestra un flame graph interactivo. Mucho más claro que leer logs de rendimiento.
 
 # ─── DUMP (volcado de memoria) ────────────────────────────────
 # Crear dump de un proceso
@@ -236,6 +257,9 @@ dotnet dump analyze <archivo.dump>
 #   clrstack -all          # stack de todos los hilos
 #   dumpobject <address>   # inspeccionar objeto
 #   exit                   # salir
+```
+
+> ⚠️ **Advertencia:** `dotnet dump collect` puede pesar varios MB. No lo dejes corriendo en producción — solo úsalo para diagnosticar un problema concreto.
 
 # ─── COUNTERS (métricas en tiempo real) ────────────────────────
 # Monitorizar métricas en vivo
@@ -270,6 +294,10 @@ dotnet --version
 # <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 ```
 
+> 💡 **Consejo:** Si `dotnet --version` muestra algo viejo, puede que tengas varios SDKs instalados. Comprueba con `dotnet --list-sdks` y usa `global.json` para fijar la versión.
+
+> 🔧 **Truco:** Para configurar el nivel de warnings en todo el proyecto, añade `<TreatWarningsAsErrors>true</TreatWarningsAsErrors>` en el `.csproj`. Así compilerá como errores lo que normalmente son warnings — ¡buen hábito!
+
 ## Comandos rápidos
 
 ```bash
@@ -281,3 +309,5 @@ dotnet --help
 dotnet new --help
 dotnet run --help
 ```
+
+> 💡 **Analogía:** `dotnet --help` es como la wikipedia de cada comando. Si no recuerdas un flag, ¡míralo ahí! Es mejor que buscar en Google.

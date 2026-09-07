@@ -13,6 +13,8 @@ git config --global user.email "tu@email.com"
 git config --list
 ```
 
+> 🔧 **Truco:** Usa `git config --global core.autocrlf true` en Windows para evitar problemas con saltos de línea.
+
 ## Crear repositorio
 
 ```bash
@@ -44,6 +46,10 @@ git commit -am "fix: corregir error en login"  # add + commit en uno
 git push
 git push -u origin main         # primera vez, establecer upstream
 ```
+
+> 💡 **Analogía:** `git add` es como meter algo en la caja de "listo para enviar". `git commit` cierra la caja con un mensaje. `git push` la envía al almacén (remoto).
+
+> 💡 **Consejo:** Los mensajes de commit en inglés siguen la convención: `feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `chore:`. Si no estás seguro, mira los commits anteriores con `git log --oneline`.
 
 ## Pull y sincronización
 
@@ -81,6 +87,10 @@ git branch -D rama-local         # forzar
 git push origin --delete rama-remota
 ```
 
+> 💡 **Consejo:** Nombrea las ramas con prefijo: `feature/`, `fix/`, `hotfix/`, `chore/`. Ejemplo: `feature/carrito-compra`.
+
+> ⚠️ **Advertencia:** Nunca hagas `git push --force` en ramas compartidas (`main`, `develop`). Puedes borrar el trabajo de otros.
+
 ## Merge y rebase
 
 ```bash
@@ -92,6 +102,10 @@ git merge feature/nuevo-servicio
 git checkout feature/nuevo-servicio
 git rebase main
 ```
+
+> 💡 **Consejo:** Usa `rebase` para mantener un historial limpio (sin merges innecesarios). Usa `merge` cuando quieras preservar el contexto de una rama completa.
+
+> 🔧 **Truco:** Si hay conflictos en rebase, resuélvelos y luego `git rebase --continue` (no `--abort` a menos que quieras empezar de cero).
 
 ## Ver historial
 
@@ -159,6 +173,11 @@ git stash drop stash@{0}
 
 # Limpiar todos los stashes
 git stash clear
+```
+
+> 💡 **Analogía:** `stash` es como hacer una " pausa" y guardar lo que tienes en la mesa en un cajón. Cuando vuelves, sacas lo que guardaste con `pop`.
+
+> ⚠️ **Advertencia:** `git stash clear` borra TODO sin confirmación. Usa `git stash drop stash@{0}` para borrar uno concreto.
 
 # ─── REFLOG (recuperar lo que parece perdido) ──────────────────
 # Ver historial de movimientos de HEAD
@@ -214,7 +233,13 @@ gh issue close 42
 
 # Asignar issue
 gh issue edit 42 --add-assignee @me
+```
 
+> 💡 **Consejo:** Enlaza un PR con un issue usando `Fix #42` en la descripción. Cuando el PR se merge, el issue se cierra automáticamente.
+
+> 🔧 **Truco:** `gh issue create` abre el editor para escribir la descripción. Si prefieres todo desde terminal, usa `--body "texto"`.
+
+```bash
 # ─── PULL REQUESTS ─────────────────────────────────────────────
 # Crear PR
 gh pr create --title "feat: añadir servicio" --body "Descripción"
@@ -244,6 +269,11 @@ gh pr checkout 15
 
 # Abrir PR en navegador
 gh pr browse 15
+```
+
+> 💡 **Consejo:** `--squash` es útil para limpiar commits molestos ("fix typo", "wip") antes de merge a `main`. `--rebase` mantiene el historial lineal.
+
+> ⚠️ **Advertencia:** Revisa SIEMPRE el diff de un PR antes de approve: `gh pr diff <número>`.
 
 # ─── RELEASES ──────────────────────────────────────────────────
 # Listar releases
@@ -275,6 +305,9 @@ gh run view <run-id> --log
 | `detached HEAD` | `git checkout main` para volver |
 | `merge conflict` | Editar archivo, marcar resuelto, `git add` + `git commit` |
 | `remote: Permission denied` | Revisar credenciales o token de acceso |
+| `error: failed to push some refs` | `git pull --rebase origin main` y reintentar push |
+
+> 💡 **Consejo:** Si ves "Detached HEAD", no es un error grave — es que estás en un commit sin rama. Crea una rama con `git switch -c nueva-rama` para no perder los cambios.
 
 ## .gitignore básico (para C#)
 
