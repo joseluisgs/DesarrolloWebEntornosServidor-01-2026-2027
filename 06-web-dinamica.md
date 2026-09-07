@@ -98,7 +98,35 @@ El proceso detallado es:
 3. Genera una página **personalizada** con tus preferencias, historial y recomendaciones
 4. Esa misma URL (`/browse`) muestra contenido diferente para cada usuario
 
-> 📝 **Nota:** SSR no es la única forma de generar contenido dinámico. Las **SPA (Single Page Application)** usan **CSR (Client-Side Rendering)**: el navegador recibe datos JSON y genera el HTML en el cliente con JavaScript. Es lo que hacen React, Angular y Vue.js. Veremos esto más adelante en el módulo de Front-end.
+> 📝 **Nota:** SSR no es la única forma de generar contenido dinámico. Las **SPA (Single Page Application)** usan **CSR (Client-Side Rendering)**: el navegador recibe datos JSON y genera el HTML en el cliente con JavaScript. Es lo que hacen React, Angular y Vue.js. Veamos la diferencia:
+
+```mermaid
+graph LR
+    subgraph SSR["SSR — Server-Side Rendering"]
+        direction LR
+        S1["⚙️ Servidor"] -->|"Genera HTML completo"| N1["🖥️ Navegador"]
+        N1 -->|"Muestra directamente"| U1["👤 Usuario"]
+    end
+
+    subgraph CSR["CSR — Client-Side Rendering"]
+        direction LR
+        S2["⚙️ Servidor"] -->|"Envía JSON + JavaScript"| N2["🖥️ Navegador"]
+        N2 -->|"Ejecuta JS, genera HTML"| N2b["🧠 Motor JS"]
+        N2b -->|"Muestra"| U2["👤 Usuario"]
+    end
+
+    style SSR fill:#2196F3,color:#fff
+    style CSR fill:#FF9800,color:#fff
+```
+
+| | **SSR (Server-Side)** | **CSR (Client-Side)** |
+|---|---|---|
+| **¿Quién genera el HTML?** | El servidor | El navegador (con JavaScript) |
+| **Velocidad inicial** | Rápida (HTML listo) | Más lenta (descarga JS + ejecuta) |
+| **SEO** | ✅ Excelente (el bot ve HTML) | ⚠️ Requiere configuración |
+| **Interactividad** | Recarga completa de página | Sin recarga (SPA) |
+| **Tecnologías** | PHP, ASP.NET Core, Django | React, Angular, Vue.js |
+| **Ejemplo** | Blog, e-commerce | Gmail, Trello, Netflix (app) |
 
 > 💡 **Consejo:** Para el examen, recuerda que SSR significa que el servidor genera el HTML. CSR significa que el navegador genera el HTML. Ambos son válidos, pero tienen diferentes ventajas e inconvenientes.
 

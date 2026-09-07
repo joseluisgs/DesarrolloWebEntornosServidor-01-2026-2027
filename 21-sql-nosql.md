@@ -3,13 +3,14 @@
   - [21.2. PostgreSQL: El SQL Potente](#212-postgresql-el-sql-potente)
   - [21.3. MongoDB: Documentos Flexibles](#213-mongodb-documentos-flexibles)
   - [21.4. Redis: Caché y Clave-Valor](#214-redis-caché-y-clave-valor)
-  - [21.5. Sharding y Replicación](#215-sharding-y-replicación)
-  - [21.6. Patrón Cache-Aside](#216-patrón-cache-aside)
-  - [21.7. Consistencia Eventual](#217-consistencia-eventual)
-  - [21.8. Modelo Relacional vs Documento](#218-modelo-relacional-vs-documento)
-  - [21.9. Dapper vs EF Core vs ADO.NET](#219-dapper-vs-ef-core-vs-ado)
-  - [21.10. Escalabilidad Vertical vs Horizontal](#2110-escalabilidad-vertical-vs-horizontal)
-  - [21.11. Comparativa y Cuándo Usar Cada Uno](#2111-comparativa-y-cuándo-usar-cada-uno)
+  - [21.5. Diseño de Datos: SQL vs NoSQL](#215-diseño-de-datos-sql-vs-nosql)
+  - [21.6. Sharding y Replicación](#216-sharding-y-replicación)
+  - [21.7. Patrón Cache-Aside](#217-patrón-cache-aside)
+  - [21.8. Consistencia Eventual](#218-consistencia-eventual)
+  - [21.9. Modelo Relacional vs Documento](#219-modelo-relacional-vs-documento)
+  - [21.10. Dapper vs EF Core vs ADO.NET](#2110-dapper-vs-ef-core-vs-ado)
+  - [21.11. Escalabilidad Vertical vs Horizontal](#2111-escalabilidad-vertical-vs-horizontal)
+  - [21.12. Comparativa y Cuándo Usar Cada Uno](#2112-comparativa-y-cuándo-usar-cada-uno)
 
 
 # 21. Bases de Datos SQL y NoSQL
@@ -850,6 +851,24 @@ CREATE TABLE Pedidos (
 
 MongoDB permite dos formas de modelar relaciones:
 
+```mermaid
+graph TB
+    subgraph EMBEDDED["EMBEDDED — Documento embebido"]
+        direction TB
+        D1["_id: cliente123<br/>nombre: Ana<br/>pedidos: [<br/>  {producto: Laptop, precio: 999},<br/>  {producto: Ratón, precio: 25}<br/>]"]
+    end
+
+    subgraph REFERENCIAS["REFERENCIAS — Documento referenciado"]
+        direction TB
+        D2["_id: cliente123<br/>nombre: Ana"]
+        D3["_id: pedido456<br/>clienteId: cliente123<br/>producto: Laptop<br/>precio: 999"]
+        D2 -->|"1:N"| D3
+    end
+
+    style EMBEDDED fill:#4CAF50,color:#fff
+    style REFERENCIAS fill:#FF9800,color:#fff
+```
+
 #### Embedded (Documentos embebidos)
 
 El documento hijo se guarda **dentro** del padre. No necesitas JOINs.
@@ -943,9 +962,26 @@ var pedido = await collection.Find(p => p.Id == "456").FirstOrDefaultAsync();
 // pedido.ClienteNombre ya está ahí (embebido)
 ```
 
+```mermaid
+graph LR
+    subgraph SQL["SQL — 3 tablas + JOIN"]
+        direction LR
+        T1["📋 Tabla Pedidos"] -->|"FK"| T2["📋 Tabla Clientes"]
+        T1 -->|"FK"| T3["📋 Tabla Productos"]
+    end
+
+    subgraph MONGO["MongoDB — 1 solo documento"]
+        direction LR
+        D1["📄 Documento Pedido<br/>cliente: {nombre, email}<br/>producto: {nombre, precio}"]
+    end
+
+    style SQL fill:#2196F3,color:#fff
+    style MONGO fill:#FF9800,color:#fff
+```
+
 > 💡 **Consejo:** El embedding elimina JOINs pero crea redundancia. Si el cliente cambia de email, tienes que actualizar todos los pedidos embebidos. Elige según tu caso de uso: si los datos son estáticos, embebe; si cambian, referencia.
 
-## 21.5. Sharding y Replicación
+## 21.6. Sharding y Replicación
 
 Cuando tu base de datos crece demasiado para un solo servidor, necesitas **distribuir los datos**. Hay dos estrategias principales:
 
@@ -995,7 +1031,7 @@ graph TB
 > 💡 **Analogía — Las Fotocopias:**
 > La replicación es como tener fotocopias de un documento. Si el original se pierde, usas la copia. Y si muchas personas quieren leer el mismo documento, les das fotocopias en vez de hacer una cola para leer el original.
 
-## 21.6. Patrón Cache-Aside
+## 21.7. Patrón Cache-Aside
 
 El patrón más común para usar caché con bases de datos:
 
@@ -1028,7 +1064,7 @@ sequenceDiagram
 
 📌 **Ejemplo real:** Instagram guarda en Redis las fotos de perfil. Cuando abres un perfil, primero busca en Redis (1ms). Si no está, va a PostgreSQL (50ms) y guarda en Redis para la próxima vez.
 
-## 21.7. Consistencia Eventual
+## 21.8. Consistencia Eventual
 
 En sistemas distribuidos, la **consistencia eventual** significa que los datos se sincronizan entre servidores, pero no inmediatamente. Durante unos milisegundos, diferentes servidores pueden tener datos diferentes.
 
@@ -1067,7 +1103,7 @@ sequenceDiagram
 - ❌ Transferencia bancaria (necesita consistencia fuerte, ACID)
 - ❌ Stock de inventario (vender 2 veces el mismo producto es grave)
 
-## 21.8. Modelo Relacional vs Documento
+## 21.9. Modelo Relacional vs Documento
 
 El mismo dato modelado en SQL vs MongoDB:
 
@@ -1118,7 +1154,7 @@ INSERT INTO Pedidos (PersonaId, Producto) VALUES (1, 'ProductoA');
 
 > 💡 **Consejo:** Si los datos tienen relaciones fuertas (pedidos → cliente → productos), usa SQL. Si los datos son autocontenidos (posts con comentarios embebidos), usa MongoDB.
 
-## 21.9. Dapper vs EF Core vs ADO.NET
+## 21.10. Dapper vs EF Core vs ADO.NET
 
 | Característica | ADO.NET | Dapper | EF Core |
 |----------------|---------|--------|---------|
@@ -1152,7 +1188,7 @@ graph LR
 > - **Dapper:** CRUD rápido, control del SQL, alto rendimiento
 > - **EF Core:** Desarrollo rápido,Change Tracking, migraciones automáticas, LINQ
 
-## 21.10. Escalabilidad Vertical vs Horizontal
+## 21.11. Escalabilidad Vertical vs Horizontal
 
 | Tipo | Qué es | Ventajas | Desventajas |
 |------|--------|----------|-------------|
@@ -1185,7 +1221,7 @@ graph TB
 - **MongoDB:** Escala horizontal con **sharding** (dividir datos entre servidores)
 - **Redis:** Escala con clustering (múltiples nodos)
 
-## 21.11. Comparativa y Cuándo Usar Cada Uno
+## 21.12. Comparativa y Cuándo Usar Cada Uno
 
 | Característica | PostgreSQL | MongoDB | Redis |
 |---------------|-----------|---------|-------|
