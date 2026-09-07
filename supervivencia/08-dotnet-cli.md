@@ -62,9 +62,61 @@ dotnet package search "json serializer"
 # Listar paquetes del proyecto
 dotnet list package
 
+# Listar paquetos con vulnerabilidades
+dotnet list package --vulnerabilities
+
 # Actualizar paquete
 dotnet add package Newtonsoft.Json --version 13.0.3
+
+# Restaurar paquetes (descarga los que faltan)
+dotnet restore
+
+# Restaurar con limpieza de caché
+dotnet restore --no-cache
 ```
+
+### Configurar fuentes NuGet (`nuget.config`)
+
+Los paquetes se descargan de **fuentes** (feeds). Por defecto es `nuget.org`, pero puedes añadir repositorios privados o empresariales.
+
+**Ubicación global del usuario:**
+```
+C:\Users\<TU_USUARIO>\AppData\Roaming\NuGet\nuget.config
+```
+
+**Ejemplo de `nuget.config`:**
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <packageSources>
+    <add key="nuget.org" value="https://api.nuget.org/v3/index.json" protocolVersion="3" />
+    <!-- Fuente empresarial / privada -->
+    <add key="mi-empresa" value="https://packages.miempresa.com/repository/nuget/index.json" />
+    <!-- GitHub Packages -->
+    <add key="github" value="https://nuget.pkg.github.com/MI_USUARIO/index.json" />
+  </packageSources>
+</configuration>
+```
+
+```bash
+# Ver fuentes configuradas
+dotnet nuget list source
+
+# Añadir fuente
+dotnet nuget add source "https://mi-repo.com/index.json" -n mi-repositorio
+
+# Quitar fuente
+dotnet nuget remove source mi-repositorio
+
+# Habilitar / deshabilitar fuente
+dotnet nuget disable source mi-repositorio
+dotnet nuget enable source mi-repositorio
+
+# Verificar conexión con la fuente
+dotnet nuget verify MiPaquete
+```
+
+> 💡 **Consejo:** Si un `dotnet restore` falla buscando un paquete, comprueba que tu `nuget.config` tiene la fuente correcta.
 
 ## Compilar y ejecutar
 
@@ -148,16 +200,58 @@ dotnet ef migrations script
 ## Herramientas de diagnóstico
 
 ```bash
-# Trace (diagnóstico)
+# Instalar herramientas de diagnóstico
 dotnet tool install --global dotnet-trace
-dotnet-trace collect --process-id <PID>
+dotnet tool install --global dotnet-dump
+dotnet tool install --global dotnet-counters
 
-# Dump (volcado de memoria)
+# ─── TRACE (grabar perfil de ejecución) ────────────────────────
+# Ver procesos .NET en ejecución
+dotnet-trace ps
+
+# Grabar trace de un proceso (por PID)
+dotnet-trace collect --process-id <PID> -o mi-trace.nettrace
+
+# Grabar con duración máxima (60 segundos)
+dotnet-trace collect --process-id <PID> --duration 00:00:60 -o mi-trace.nettrace
+
+# Grabar con eventos específicos (GC, HTTP, EF Core)
+dotnet-trace collect --process-id <PID> \
+  --providers System.Runtime,Microsoft.EntityFrameworkCore,Microsoft.AspNetCore.Hosting
+
+# Abrir trace en Visual Studio o SpeedScope
+# En VS: Archivo → Abrir → Archivo → seleccionar .nettrace
+# En navegador: https://www.speedscope.app → arrastrar archivo
+
+# ─── DUMP (volcado de memoria) ────────────────────────────────
+# Crear dump de un proceso
 dotnet dump collect --process-id <PID>
-dotnet dump analyze <dump-file>
 
-#-counters (métricas en tiempo real)
+# Analizar dump
+dotnet dump analyze <archivo.dump>
+# Dentro del analizador:
+#   threads                # ver hilos
+#   thread 1               # seleccionar hilo
+#   clrstack               # stack CLR del hilo actual
+#   clrstack -all          # stack de todos los hilos
+#   dumpobject <address>   # inspeccionar objeto
+#   exit                   # salir
+
+# ─── COUNTERS (métricas en tiempo real) ────────────────────────
+# Monitorizar métricas en vivo
 dotnet-counters monitor --process-id <PID>
+
+# Métricas específicas
+dotnet-counters monitor --process-id <PID> \
+  --counters System.Runtime,Microsoft.AspNetCore.Hosting
+
+# Ejemplo de salida:
+#   CPU Usage: 12.3%
+#   Working Set: 85 MB
+#   Gen 0 Collections: 42
+#   Gen 1 Collections: 5
+#   Gen 2 Collections: 1
+#   Exception Count: 0
 ```
 
 ## Configuración
