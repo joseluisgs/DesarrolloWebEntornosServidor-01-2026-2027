@@ -177,21 +177,203 @@ SOLID son cinco principios de diseño que hacen que el código sea más mantenib
 | **I** — Interface Segregation | Interfaces pequeñas y específicas | `IReadOnlyRepository` separado de `IWriteRepository` |
 | **D** — Dependency Inversion | Depender de abstracciones, no de implementaciones | Inyectar `IPersonaRepository`, no `PersonaRepository` |
 
+### SRP: Single Responsibility Principle
+
+> "Una clase debe tener una sola razón para cambiar"
+
 ```csharp
-// ✅ BUENO: Single Responsibility — cada servicio tiene una función
-public class PersonaService(IPersonaRepository repository)
+// ❌ MALO: Una clase que hace todo (violación de SRP)
+public class PedidoService
 {
-    public Persona? GetById(int id) => repository.GetById(id);
+    public void CrearPedido(Pedido pedido) { /* lógica */ }
+    public void EnviarEmail(string email) { /* envío */ }
+    public void GenerarPdf(Pedido pedido) { /* PDF */ }
+    public void GuardarEnLog(string mensaje) { /* log */ }
 }
 
-// ❌ MALO: Una clase que hace todo (violación de SRP)
-public class MiClase
+// ✅ BUENO: Cada responsabilidad en su clase
+public class PedidoService(IPedidoRepository repository)
 {
-    public void GuardarPersona() { ... }
-    public void EnviarEmail() { ... }
-    public void GenerarPdf() { ... }
+    public void CrearPedido(Pedido pedido) => repository.Guardar(pedido);
+}
+
+public class EmailService(IEmailProvider provider)
+{
+    public void Enviar(string email, string asunto, string cuerpo)
+        => provider.Enviar(email, asunto, cuerpo);
+}
+
+public class PdfService
+{
+    public byte[] Generar(Pedido pedido) { /* genera PDF */ }
 }
 ```
+
+📌 **Ejemplo real:** En una tienda online, si `PedidoService` envía emails, genera PDFs y guarda en BD, cuando cambie el proveedor de email tendrías que tocar la clase de pedidos. Con SRP, solo tocas `EmailService`.
+
+### OCP: Open/Closed Principle
+
+> "Abierto a extensión, cerrado a modificación"
+
+```csharp
+// ❌ MALO: Para añadir un tipo nuevo, hay que modificar la clase
+public class CalculadoraDescuento
+{
+    public decimal Calcular(string tipoCliente, decimal precio)
+    {
+        if (tipoCliente == "regular") return precio * 0.95m;
+        if (tipoCliente == "vip") return precio * 0.85m;
+        // Cada nuevo tipo = modificar este método
+        return precio;
+    }
+}
+
+// ✅ BUENO: Para añadir un tipo nuevo, creo una clase nueva
+public interface IDescuento
+{
+    decimal Aplicar(decimal precio);
+}
+
+public class DescuentoRegular : IDescuento
+{
+    public decimal Aplicar(decimal precio) => precio * 0.95m;
+}
+
+public class DescuentoVip : IDescuento
+{
+    public decimal Aplicar(decimal precio) => precio * 0.85m;
+}
+
+public class CalculadoraDescuento(IDescuento descuento)
+{
+    public decimal Calcular(decimal precio) => descuento.Aplicar(precio);
+}
+```
+
+📌 **Ejemplo real:** Netflix añade tipos de suscripción (Básico, Estándar, Premium) sin modificar el código de facturación — cada plan es una clase nueva que implementa una interfaz.
+
+### LSP: Liskov Substitution Principle
+
+> "Los subtipos deben ser sustituibles por sus tipos base sin alterar el comportamiento"
+
+```csharp
+// ❌ MALO: El pingüino no puede volar, rompe el contrato
+public abstract class Ave
+{
+    public abstract void Volar();
+}
+
+public class Pato : Ave
+{
+    public override void Volar() { /* vuela */ }
+}
+
+public class Pinguino : Ave
+{
+    public override void Volar()
+    {
+        throw new InvalidOperationException("¡No puedo volar!");
+    }
+}
+
+// ✅ BUENO: Separar comportamientos desde el inicio
+public interface IVolador
+{
+    void Volar();
+}
+
+public interface INadador
+{
+    void Nadar();
+}
+
+public class Pato : IVolador, INadador
+{
+    public void Volar() { /* vuela */ }
+    public void Nadar() { /* nada */ }
+}
+
+public class Pinguino : INadador
+{
+    public void Nadar() { /* nada */ }
+}
+```
+
+📌 **Ejemplo real:** Si tienes una función `ProcesarPago(IAutenticable usuario)`, cualquier subtipo de `IAutenticable` debe poder usarse sin sorpresas. Si `UsuarioAnonimo` lanza excepción en `Autenticar(),` viola LSP.
+
+### ISP: Interface Segregation Principle
+
+> "Ningún cliente debe verse forzado a depender de métodos que no usa"
+
+```csharp
+// ❌ MALO: Interfaz gigante — el repositorio de solo lectura
+// se ve forzado a implementar métodos de escritura
+public interface IProductoRepository
+{
+    Producto? GetById(int id);
+    List<Producto> GetAll();
+    void Create(Producto producto);
+    void Update(Producto producto);
+    void Delete(int id);
+}
+
+// ✅ BUENO: Interfaces pequeñas y específicas
+public interface IReadOnlyRepository<T>
+{
+    T? GetById(int id);
+    List<T> GetAll();
+}
+
+public interface IWriteRepository<T>
+{
+    void Create(T item);
+    void Update(T item);
+    void Delete(int id);
+}
+
+// El servicio de lectura solo depende de lo que necesita
+public class ProductoQueryService(IReadOnlyRepository<Producto> repository)
+{
+    public Producto? Obtener(int id) => repository.GetById(id);
+}
+```
+
+📌 **Ejemplo real:** Un endpoint de lectura (`GET /productos`) no debería poder borrar productos. Con ISP, el repositorio de lectura no tiene método `Delete`.
+
+### DIP: Dependency Inversion Principle
+
+> "Depende de abstracciones, no de implementaciones"
+
+```csharp
+// ❌ MALO: La clase depende directamente de la implementación
+public class PedidoService
+{
+    private readonly PedidoRepositorySql _repository = new(); // ¡Acoplado a SQL!
+    private readonly EmailServiceGmail _email = new();        // ¡Acoplado a Gmail!
+
+    public void Crear(Pedido pedido)
+    {
+        _repository.Guardar(pedido);
+        _email.Enviar(pedido.Cliente.Email, "Pedido creado");
+    }
+}
+
+// ✅ BUENO: Depende de abstracciones (interfaces)
+public class PedidoService(IPedidoRepository repository, IEmailService email)
+{
+    public void Crear(Pedido pedido)
+    {
+        repository.Guardar(pedido);
+        email.Enviar(pedido.Cliente.Email, "Pedido creado");
+    }
+}
+
+// La implementación se inyecta desde fuera (DI Container)
+services.AddScoped<IPedidoRepository, PedidoRepositorySql>();
+services.AddScoped<IEmailService, EmailServiceGmail>();
+```
+
+📌 **Ejemplo real:** ASP.NET Core usa DIP internamente. Cuando escribes `appDbContext.Services.AddDbContext<AppDbContext>()`, estás configurando qué implementación usar sin modificar el código que la consume.
 
 > 💡 **Consejo:** No memorices SOLID de memoria. Entiende el sentido: **un código limpio es fácil de cambiar**. Si para añadir una funcionalidad tienes que tocar 10 archivos, algo está mal diseñado.
 

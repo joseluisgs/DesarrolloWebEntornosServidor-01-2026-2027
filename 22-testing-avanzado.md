@@ -4,6 +4,9 @@
   - [22.3. Moq: Mocking de Interfaces](#223-moq-mocking-de-interfaces)
   - [22.4. Patrón AAA: Arrange-Act-Assert](#224-patrón-aaa-arrange-act-assert)
   - [22.5. TestContainers: Tests con Docker](#225-testcontainers-tests-con-docker)
+    - [22.5.1. Coverlet: Cobertura de Código](#2251-coverlet-cobertura-de-código)
+  - [22.6. Depuración de Errores en C#](#226-depuración-de-errores-en-c)
+  - [22.7. Regla: Nada se Entrega sin Tests](#227-regla-nada-se-entrega-sin-tests)
 
 
 # 22. Testing Avanzado en .NET
@@ -542,6 +545,99 @@ public class RedisCacheServiceTests
 
 > 💡 **Consejo:** Los tests con TestContainers son más lentos que los unitarios (arrancan Docker), pero mucho más fiables. Úsalos para tests de integración donde necesitas una base de datos real.
 
+### 22.5.1. Coverlet: Cobertura de Código
+
+¿Cómo sabes si tus tests cubren todo el código que deberían? Con **coverlet** — una herramienta que mide qué porcentaje de tu código se ejecuta al correr los tests.
+
+#### Instalación
+
+En el **proyecto de test** (.Test.csproj):
+
+```xml
+<ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="6.0.4" />
+</ItemGroup>
+```
+
+O desde consola:
+
+```bash
+dotnet add package coverlet.collector
+```
+
+#### Generar informe de cobertura
+
+```bash
+# Ejecutar tests con cobertura
+dotnet test --collect:"XPlat Code Coverage"
+
+# El informe se genera en:
+# MiProyecto.Test/TestResults/<GUID>/coverage.cobertura.xml
+```
+
+#### Formato del informe (Cobertura XML)
+
+El archivo `coverage.cobertura.xml` contiene datos como:
+
+```xml
+<line_rate="0.85" />  <!-- 85% de cobertura de líneas -->
+<branch_rate="0.78" /> <!-- 78% de cobertura de ramas -->
+<class name="MiProyecto.Services.ProductoService" 
+        line-rate="1.0" />  <!-- 100% en esta clase -->
+```
+
+#### Ver cobertura en HTML (opcional)
+
+```bash
+# Instalar ReportGenerator
+dotnet tool install --global dotnet-reportgenerator-globaltool
+
+# Generar informe HTML
+reportgenerator -reports:coverage.cobertura.xml -targetdir:coverage
+
+# Abrir en navegador
+start coverage/index.html
+```
+
+#### Excluir código de la cobertura
+
+No todo el código debe medirse. Por ejemplo, `Program.cs` con Top Level Statements es difícil de cubrir. Exclúyelo en `.runsettings`:
+
+```xml
+<!-- coverlet.runsettings -->
+<RunSettings>
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="XPlat code coverage">
+        <Configuration>
+          <Exclude>[Program]*</Exclude>
+          <Exclude>[*]*.Models.*</Exclude>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>
+```
+
+Y ejecútalo así:
+
+```bash
+dotnet test --collect:"XPlat Code Coverage" --settings coverlet.runsettings
+```
+
+#### Qué significa un buen porcentaje
+
+| Cobertura | Significado | Acción |
+|-----------|-------------|--------|
+| **90-100%** | Excelente | Mantener |
+| **80-89%** | Buena | Revisar qué falta |
+| **70-79%** | Aceptable | Añadir tests faltantes |
+| **< 70%** | Insuficiente | Riesgo de bugs no detectados |
+
+> ⚠️ **Advertencia:** Alta cobertura **no** garantiza calidad. Puedes tener 100% de cobertura con tests que no verifican nada. La cobertura es una **métrica**, no un objetivo final.
+
+> 💡 **Consejo para el examen:** Si un método tiene un `if/else` con dos ramas, necesitas al menos dos tests para cubrir ambas ramas. Coverlet detecta esto — si solo cubres una rama, te lo dice.
+
 ### Comparativa de tipos de test
 
 | Tipo | Velocidad | Fiabilidad | Dependencias | Ejemplo |
@@ -566,3 +662,167 @@ public class RedisCacheServiceTests
 | **Integration test** | Prueba componentes juntos, usa BD real |
 
 En el siguiente punto veremos Docker: qué son los contenedores, cómo crear imágenes con Dockerfile y orquestar servicios con Docker Compose.
+
+## 22.6. Depuración de Errores en C#
+
+> 💡 **Punto de partida:** Ves un error en rojo y no sabes por dónde empezar. No es para entrar en pánico — es para leer. Un stack trace bien leído te dice exactamente dónde está el problema. Vamos a aprender a leerlo.
+
+### 22.6.1. Leer un Stack Trace
+
+Cuando tu programa lanza una excepción, ves algo así:
+
+```
+System.InvalidOperationException: Unable to resolve service for type 'IUserService'
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup...
+   at Program.<Main>$(String[] args) in C:\Proyecto\Program.cs:line 27
+```
+
+**Cómo leerlo de abajo a arriba:**
+
+| Línea | Qué te dice |
+|-------|-------------|
+| `Program.cs:line 27` | **Dónde** se rompió (fichero + línea) |
+| `Unable to resolve service for type 'IUserService'` | **Qué** falla (no encuentra IUserService) |
+| `at Microsoft.Extensions...` | **Por qué** falla (el contenedor de DI no puede resolverlo) |
+
+📌 **Ejemplo real:** Es como un GPS de errores — te dice el destino (fichero), la calle (línea) y por qué no puedes llegar (la causa raíz).
+
+> 💡 **Truco:** Busca SIEMPRE la **última línea** de tu código en el stack trace. Las líneas anteriores son de librerías internas — ahí no está tu error.
+
+### 22.6.2. Tipos de Error Comunes en C#
+
+| Error | Causa típica | Solución |
+|-------|-------------|----------|
+| `NullReferenceException` | Accedes a `.Algo` de un null | Usa `?.` o `??` o `if (x is not null)` |
+| `InvalidOperationException` | DI no puede resolver un servicio | Registra el servicio en `ConfigureServices` |
+| `FileNotFoundException` | Falta un fichero de configuración | Comprueba la ruta en `AppContext.BaseDirectory` |
+| `TaskCanceledException` | Timeout o CancellationToken activado | Revisa tiempos o tokens |
+| `JsonException` | JSON mal formado | Usa [jsonlint.com](https://jsonlint.com) para validar |
+
+### 22.6.3. Herramientas de Depuración
+
+**En el IDE (Rider / VS Code):**
+
+```
+1. Breakpoints: Haz clic en el margen izquierdo de la línea
+2. F5 / Debug: Ejecuta hasta el breakpoint
+3. F10 / Step Over: Ejecuta la siguiente línea
+4. F11 / Step Into: Entra en la función
+5. F8 / Step Out: Sale de la función actual
+6. Variables: Ve el valor de las variables en el panel
+```
+
+**Desde consola:**
+
+```bash
+# Ejecutar con depurador adjunto
+dotnet run --debug
+
+# Ver exception completa (útil en logs)
+dotnet run -- 2>&1 | Out-File error.log
+```
+
+**`dotnet-trace` (diagnóstico avanzado):**
+
+```bash
+# Instalar herramienta
+dotnet tool install --global dotnet-trace
+
+# Capturar trace de un proceso
+dotnet-trace collect --process-id <PID>
+```
+
+> 💡 **Consejo para el examen:** Si te sale un error que no entiendes, **lee el mensaje completo**. Los errores de C# suelen decir exactamente qué falla y dónde. No mires solo el tipo de excepción — lee la descripción.
+
+### 22.6.4. Depuración de Tests
+
+Cuando un test falla, NUnit te muestra:
+
+```
+Failed Assert.That(resultado).Should().Be(5)
+  Expected: 5
+  But was:  4
+```
+
+**Cómo depurar un test:**
+
+```csharp
+// 1. Añade un breakpoint en el test
+// 2. En Rider: Click derecho → Debug 'Tests'
+// 3. En VS Code: pestaña Testing → Debug Test
+
+// O usa Console.WriteLine para debug rápido:
+var resultado = service.Calcular(2, 3);
+Console.WriteLine($"DEBUG: resultado = {resultado}"); // Mira en Output
+resultado.Should().Be(5);
+```
+
+> ⚠️ **Advertencia:** `Console.WriteLine` en tests es solo para depuración temporal. Los tests deben ser autoexplicativos — si necesitas prints para entender qué falla, el test necesita mejor nombre o estructura.
+
+## 22.7. Regla: Nada se Entrega sin Tests
+
+> ⚠️ **Regla CRÍTICA:** En este módulo, **no se acepta ninguna entrega sin tests** y **sin informe de cobertura de código**. Esto no es una opción — es lo mínimo esperable de cualquier desarrollador profesional.
+
+### Por qué es obligatorio
+
+| Sin tests | Con tests |
+|-----------|-----------|
+| "Funciona en mi máquina" | "Funciona siempre" |
+| Miedo a cambiar código | Confianza para refactorizar |
+| Bugs que aparecen en producción | Bugs atrapados antes de desplegar |
+| No sabes si tu cobertura es buena | Sabes exactamente qué cubres |
+
+📌 **Ejemplo real:** En cualquier empresa seria, un PR (Pull Request) sin tests no se merge. Punto. Si tu código no tiene tests, no está terminado.
+
+### Qué incluir en cada entrega
+
+```
+MiProyecto/
+├── MiProyecto/           # Código fuente
+└── MiProyecto.Test/      # Tests
+    └── ...
+```
+
+**Al entregar, incluye SIEMPRE:**
+
+1. **Los tests pasan:** `dotnet test` → todos en verde
+2. **Informe de cobertura:** `dotnet test --collect:"XPlat Code Coverage"`
+3. **Mínimo aceptable:** 80% de cobertura en código de negocio
+
+### Cómo generar el informe de cobertura
+
+```bash
+# Ejecutar tests con cobertura
+dotnet test --collect:"XPlat Code Coverage"
+
+# El informe se genera en:
+# MiProyecto.Test/TestResults/<GUID>/coverage.cobertura.xml
+
+# Para verlo en HTML (opcional, requiere ReportGenerator):
+dotnet tool install --global dotnet-reportgenerator-globaltool
+reportgenerator -reports:coverage.cobertura.xml -targetdir:coverage
+# Abrir coverage/index.html en el navegador
+```
+
+### Reglas de cobertura
+
+| Código | Cobertura mínima | Ejemplo |
+|--------|-----------------|---------|
+| **Modelos/Records** | 100% | Properties, constructores, métodos de dominio |
+| **Services** | 90%+ | Lógica de negocio, validaciones |
+| **Repositories** | 80%+ | CRUD, consultas |
+| **Utilidades** | 80%+ | Helpers, extensiones |
+
+> 💡 **Consejo:** La cobertura no lo es todo — un test que solo hace `Assert.Pass()` no cubre nada. Pero sin cobertura, no tienes ni idea de qué partes de tu código están protegidas.
+
+---
+
+**Resumen del punto:**
+
+| Concepto | Descripción |
+|----------|-------------|
+| **Stack Trace** | Léelo de abajo a arriba — la línea de tu código es la última |
+| **Breakpoints** | Pausa la ejecución para inspeccionar variables |
+| **dotnet-trace** | Diagnóstico avanzado desde consola |
+| **Tests obligatorios** | No se entrega nada sin tests verdes |
+| **Cobertura** | Mínimo 80% en código de negocio, informe incluido |

