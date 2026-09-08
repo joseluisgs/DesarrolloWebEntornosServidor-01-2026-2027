@@ -1,18 +1,20 @@
-# Práctica 5: Análisis de Accidentes de Madrid con LINQ y DataFrames
+# Práctica 5: Análisis de Accidentes de Madrid con LINQ, PLINQ y DataFrames
 
-- [Práctica 5: Análisis de Accidentes de Madrid con LINQ y DataFrames](#práctica-5-análisis-de-accidentes-de-madrid-con-linq-y-dataframes)
+- [Práctica 5: Análisis de Accidentes de Madrid con LINQ, PLINQ y DataFrames](#práctica-5-análisis-de-accidentes-de-madrid-con-linq-plinq-y-dataframes)
   - [Objetivo](#objetivo)
   - [Descripción](#descripción)
+  - [Fichero de Datos](#fichero-de-datos)
   - [Estructura de Datos](#estructura-de-datos)
   - [Operaciones Requeridas](#operaciones-requeridas)
   - [Tecnologías](#tecnologías)
   - [Estructura de Proyecto](#estructura-de-proyecto)
+  - [Comparativa de Tiempos](#comparativa-de-tiempos)
 
 ---
 
 ## Objetivo
 
-Procesar un fichero CSV con datos de accidentes de tráfico en Madrid y realizar consultas avanzadas usando **LINQ** y **DataFrames** (`Microsoft.Data.Analysis`). El objetivo es practicar las operaciones de LINQ sobre datos reales y comparar el enfoque de colecciones con el de DataFrames.
+Procesar un fichero CSV con datos reales de accidentes de tráfico en Madrid y realizar consultas avanzadas usando **LINQ**, **PLINQ** y **DataFrames** (`Microsoft.Data.Analysis`). El objetivo es practicar las operaciones de LINQ sobre datos reales, entender cuándo usar PLINQ, y comparar el enfoque de colecciones con el de DataFrames.
 
 > *"Los datos son el nuevo petróleo"* — Clive Humby
 
@@ -23,95 +25,84 @@ Procesar un fichero CSV con datos de accidentes de tráfico en Madrid y realizar
 Dado el fichero `2025_Accidentalidad.csv` del directorio `data`, debemos procesarlo y realizar consultas como si de una base de datos se tratara.
 
 El proyecto debe:
-1. Leer el CSV y mapearlo a objetos de dominio
-2. Realizar 22 consultas LINQ sobre los datos
-3. Comparar el enfoque LINQ (colecciones) con el enfoque DataFrame
-4. Mostrar estadísticas por distrito, sexo, tipo de accidente, etc.
+1. Leer el CSV y mapearlo a objetos de dominio (usando CsvHelper)
+2. Realizar 23 consultas LINQ sobre los datos
+3. Incluir al menos 1 consulta con PLINQ (`AsParallel`)
+4. Demostrar `GroupBy + ToDictionary` vs `GroupBy + Select + ToList`
+5. Realizar al menos 5 consultas equivalentes con DataFrames
+6. Comparar tiempos de ejecución entre LINQ y DataFrames
+
+---
+
+## Fichero de Datos
+
+El fichero CSV se descarga de los **datos abiertos del Ayuntamiento de Madrid**:
+
+📥 **URL de descarga:**
+```
+https://datos.madrid.es/dataset/300228-0-accidentes-trafico-detalle/information
+```
+
+En esa página encontrarás los ficheros de varios años. Descarga el de **2025** y colócalo en la carpeta `data/` de tu proyecto.
+
+> ⚠️ **Nota:** El fichero es grande (~9 MB, ~46.000 registros).
+
+**Cabeceras del CSV (separador `;`):**
+```
+num_expediente;fecha;hora;localizacion;numero;cod_distrito;distrito;tipo_accidente;
+estado_meteorológico;tipo_vehiculo;tipo_persona;rango_edad;sexo;cod_lesividad;
+lesividad;coordenada_x_utm;coordenada_y_utm;positiva_alcohol;positiva_droga
+```
 
 ---
 
 ## Estructura de Datos
 
-Un **Accidente** tiene:
+Deduce la estructura del modelo a partir de las cabeceras del CSV. Ten en cuenta que:
 
-```csharp
-public record Accidente(
-    string NumExpediente,
-    DateTime Fecha,
-    TimeSpan Hora,
-    string Localizacion,
-    int Numero,
-    int CodDistrito,
-    string Distrito,
-    string TipoAccidente,
-    string EstadoMeteorologico,
-    string TipoVehiculo,
-    TipoPersona TipoPersona,
-    string RangoEdad,
-    Sexo Sexo,
-    string CodLesividad,
-    string Lesividad,
-    bool PositivoAlcohol,
-    bool PositivoDroga
-);
-
-public enum TipoPersona { Conductor, Pasajero, Peatón }
-public enum Sexo { Hombre, Mujer, NoAsignado }
-```
+- `numero` puede contener valores no numéricos
+- `positiva_alcohol` y `positiva_droga` usan "S"/"N" en el CSV
+- Algunos campos pueden estar vacíos
 
 ---
 
 ## Operaciones Requeridas
 
-### LINQ (colecciones)
+### LINQ (23 consultas)
 
-1. 5 primeros accidentes
-2. Accidentes con alcohol o drogas
-3. Positivos alcohol Y drogas
-4. Por sexo
-5. Por meses
-6. Mes con más accidentes
-7. Por tipo de vehículo
-8. Accidentes en calle Leganés
-9. Por distrito (ASC)
-10. Accidentes en USERA
-11. Stats por distrito (Max/Min/Avg)
-12. Por distrito (DESC)
-13. Fin de semana + noche + alcohol
-14. Por lesividad
-15. Fallecidos
-16. Fallecidos + alcohol/drogas
-17. Por meteorología
-18. Granizo por distrito
-19. Alcohol/Drogas/Nada
-20. Distrito más alcohol
-21. Distrito más drogas
-22. Distrito más alcohol+drogas
+1. Total de accidentes
+2. Accidentes por distrito (top 5)
+3. Accidentes por tipo
+4. Accidentes por estado meteorológico
+5. Accidentes por sexo
+6. Accidentes por rango de edad
+7. Positivos en alcohol
+8. Positivos en drogas
+9. Accidentes por día de la semana
+10. Accidentes por mes
+11. Hora con más accidentes
+12. Lesiones más frecuentes
+13. Tipo de vehículo más implicado
+14. Accidentes con peatones
+15. Proporción hombre/mujer
+16. Distritos con más peatones
+17. Fin de semana vs entre semana
+18. Media de accidentes por día
+19. Accidentes con alcohol + droga
+20. Rangos de edad más vulnerables (peatones)
+21. Distritos con más positivos en alcohol
+
+### PLINQ (1 consulta)
+
+22. Accidentes por hora usando `AsParallel()` — justificar por qué esta consulta y no otras
+
+### GroupBy eficiente (1 consulta)
+
+23. Demostrar la diferencia entre `GroupBy + ToDictionary` y `GroupBy + Select + ToList`
 
 ### DataFrame (Microsoft.Data.Analysis)
 
-Además, implementar al menos 5 de las mismas consultas usando DataFrame para comparar:
-
-```csharp
-using Microsoft.Data.Analysis;
-
-// Leer CSV
-var df = DataFrame.LoadCsv("data/2025_Accidentalidad.csv");
-
-// Filtrar: accidentes con alcohol
-var conAlcohol = df.Filter(df.Columns["PositivoAlcohol"].Cast<bool>().EqualTo(true));
-
-// Agrupar: por distrito
-var porDistrito = df.GroupBy("Distrito");
-foreach (var grupo in porDistrito)
-{
-    Console.WriteLine($"{grupo.Key}: {grupo.RowCount} accidentes");
-}
-
-// Estadísticas
-var total = df.Rows.Count;
-var conDroga = df.Filter(df.Columns["PositivoDroga"].Cast<bool>().EqualTo(true)).Rows.Count;
-```
+Implementar las mismas 23 consultas usando DataFrame para comparar tiempos con LINQ
 
 ---
 
@@ -122,6 +113,7 @@ var conDroga = df.Filter(df.Columns["PositivoDroga"].Cast<bool>().EqualTo(true))
 | **Microsoft.Data.Analysis** | DataFrames para datos tabulares | `Microsoft.Data.Analysis` |
 | **CsvHelper** | Leer CSV de forma robusta | `CsvHelper` |
 | **LINQ** | Consultas sobre colecciones | `System.Linq` |
+| **PLINQ** | Paralelización de consultas | `System.Linq` (`.AsParallel()`) |
 | **C# 14** | Primary constructors, top-level statements | — |
 
 ---
@@ -133,7 +125,7 @@ AccidentesMadrid/
 ├── Program.cs
 ├── AccidentesMadrid.csproj
 ├── data/
-│   └── 2025_Accidentalidad.csv
+│   └── 2025_Accidentalidad.csv      ← Descargado de datos.madrid.es
 ├── Models/
 │   ├── Accidente.cs
 │   ├── Sexo.cs
@@ -143,29 +135,46 @@ AccidentesMadrid/
 ├── Repositories/
 │   └── AccidentesRepository.cs
 ├── Services/
-│   └── AccidentesAnalyzer.cs
-├── DataFrame/
-│   └── AccidentesDataFrameAnalyzer.cs
+│   ├── IAccidentesAnalyzer.cs
+│   ├── AccidentesLinqAnalyzer.cs     ← LINQ + PLINQ + ToDictionary
+│   └── AccidentesDataFrameAnalyzer.cs ← DataFrames
+├── Dockerfile
+├── docker-compose.yml
+├── .dockerignore
 └── README.md
 ```
 
 ### Ejemplo de uso combinado
 
-```csharp
-// LINQ: objetos de dominio
-var accidentes = repository.GetAll();
-var conAlcoholLinq = accidentes.Where(a => a.PositivoAlcohol).ToList();
+El proyecto debe combinar las tres aproximaciones (LINQ, PLINQ, DataFrame) y mostrar una comparativa de tiempos al final.
 
-// DataFrame: datos tabulares
-var df = DataFrame.LoadCsv("data/2025_Accidentalidad.csv");
-var conAlcoholDf = df.Filter(df.Columns["PositivoAlcohol"].Cast<bool>().EqualTo(true));
+---
 
-Console.WriteLine($"LINQ: {conAlcoholLinq.Count} accidentes con alcohol");
-Console.WriteLine($"DataFrame: {conAlcoholDf.Rows.Count} accidentes con alcohol");
+## Comparativa de Tiempos
+
+El ejemplo incluye una comparativa automática de tiempos:
+
 ```
+═══════════════════════════════════════════════════
+  COMPARATIVA DE TIEMPOS
+═══════════════════════════════════════════════════
+  LINQ / PLINQ:       171 ms
+  DataFrames:         359 ms
+  Ratio LINQ/DF:   0,48x
+
+LINQ es más rápido para este volumen de datos.
+```
+
+> 💡 **Consejo:** Con 46K registros, LINQ es ~2x más rápido que DataFrames. DataFrames tiene overhead por crear la estructura tabular. Con 100K+ registros y análisis estadístico pesado, DataFrames podría ser mejor.
 
 ---
 
 ## Entrega
 
 Sube el proyecto a tu repositorio GitHub con el nombre `AccidentesMadrid`.
+
+Incluye:
+1. Código fuente completo
+2. Fichero CSV en `data/`
+3. Dockerfile y docker-compose.yml
+4. README con instrucciones de uso

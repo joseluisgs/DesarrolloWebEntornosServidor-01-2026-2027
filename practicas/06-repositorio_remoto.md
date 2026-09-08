@@ -31,7 +31,7 @@
 
 ## Objetivo
 
-Desarrollar un servicio en **ASP.NET Core** que gestione datos con **tres niveles de almacenamiento**: caché (MemoryCache o Redis), base de datos local (EF Core + PostgreSQL) y API REST remota. El servicio realizará operaciones CRUD de forma asíncrona y usará las tecnologías vistas en la UD01.
+Desarrollar un servicio en **.NET** que gestione datos con **tres niveles de almacenamiento**: caché (MemoryCache), base de datos local (EF Core + SQLite) y API REST remota. El servicio realizará operaciones CRUD de forma asíncrona y usará las tecnologías vistas en la UD01.
 
 Debes tener en cuenta que cada 60 segundos se sincronizará la base de datos local con la API REST remota, y que al arrancar la aplicación se borrará la base de datos local y se cargará desde la API REST.
 
@@ -48,7 +48,7 @@ Usaremos la API de **JSONPlaceholder** (https://jsonplaceholder.typicode.com) co
 ```mermaid
 graph LR
     subgraph NIVELES["3 Niveles de Almacenamiento"]
-        A["🗄️ Caché<br/>(MemoryCache / Redis)"] -->|1. Buscar aquí primero| B["🐘 BD Local<br/>(EF Core + PostgreSQL)"]
+        A["🗄️ Caché<br/>(MemoryCache)"] -->|1. Buscar aquí primero| B["💾 BD Local<br/>(EF Core + SQLite)"]
         B -->|2. Si no está aquí| C["🌐 API REST<br/>(JSONPlaceholder)"]
     end
 
@@ -74,8 +74,8 @@ graph LR
 sequenceDiagram
     participant C as Cliente
     participant API as API /api/users/{id}
-    participant Cache as Caché (Memory/Redis)
-    participant BD as BD Local (EF Core)
+    participant Cache as Caché (MemoryCache)
+    participant BD as BD Local (EF Core + SQLite)
     participant REM as API REST (JSONPlaceholder)
 
     C->>API: GET /api/users/1
@@ -116,8 +116,8 @@ sequenceDiagram
     participant C as Cliente
     participant API as API /api/users
     participant REM as API REST
-    participant BD as BD Local
-    participant Cache as Caché
+    participant BD as BD Local (SQLite)
+    participant Cache as Caché (MemoryCache)
     participant Notif as Notificaciones
 
     C->>API: POST /api/users (name, username, email)
@@ -135,8 +135,8 @@ sequenceDiagram
 ```mermaid
 sequenceDiagram
     participant BS as BackgroundService
-    participant Cache as Caché
-    participant BD as BD Local
+    participant Cache as Caché (MemoryCache)
+    participant BD as BD Local (SQLite)
     participant REM as API REST
 
     loop Cada 60 segundos
@@ -156,8 +156,8 @@ sequenceDiagram
     participant C as Cliente
     participant API as API /api/users/{id}
     participant REM as API REST
-    participant BD as BD Local
-    participant Cache as Caché
+    participant BD as BD Local (SQLite)
+    participant Cache as Caché (MemoryCache)
     participant Notif as Notificaciones
 
     C->>API: DELETE /api/users/1
@@ -177,11 +177,11 @@ sequenceDiagram
 
 | Tecnología | Para qué | Paquete NuGet |
 |------------|----------|---------------|
-| **MemoryCache** o **Redis** | Caché en memoria/distribuida | `Microsoft.Extensions.Caching.Memory` o `StackExchange.Redis` + `Microsoft.Extensions.Caching.StackExchangeRedis` |
-| **EF Core + PostgreSQL** | BD local | `Npgsql.EntityFrameworkCore.PostgreSQL` |
+| **MemoryCache** | Caché en memoria | `Microsoft.Extensions.Caching.Memory` |
+| **EF Core + SQLite** | BD local | `Microsoft.EntityFrameworkCore.Sqlite` |
 | **Refit** | Cliente HTTP tipado | `Refit` + `Refit.HttpClientFactory` |
 | **CSharpFunctionalExtensions** | Manejo de errores con Result | `CSharpFunctionalExtensions` |
-| **Serilog** | Logging con rolling files | `Serilog.AspNetCore` + `Serilog.Sinks.Console` + `Serilog.Sinks.File` |
+| **Serilog** | Logging con rolling files | `Serilog.Extensions.Hosting` + `Serilog.Sinks.Console` + `Serilog.Sinks.File` |
 | **System.Reactive** | Notificaciones con Rx.NET | `System.Reactive` |
 | **NUnit + Moq + FluentAssertions** | Testing | `NUnit` + `Moq` + `FluentAssertions` |
 
@@ -189,45 +189,34 @@ sequenceDiagram
 
 ## Docker Compose
 
-Si necesitas instalar PostgreSQL y Redis localmente:
+El ejemplo base NO necesita Docker Compose (SQLite y MemoryCache funcionan sin infraestructura externa).
+
+### Opcional: Ampliar con PostgreSQL y Redis
+
+Si quieres ampliar el proyecto, puedes sustituir SQLite por PostgreSQL y MemoryCache por Redis:
 
 ```yaml
-version: '3.8'
-
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: academia-postgres
+    container_name: repositorio-postgres
     environment:
-      POSTGRES_DB: academia
+      POSTGRES_DB: usuarios
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
 
   redis:
     image: redis:7-alpine
-    container_name: academia-redis
+    container_name: repositorio-redis
     ports:
       - "6379:6379"
-    volumes:
-      - redis_data:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
 
 volumes:
   postgres_data:
-  redis_data:
 ```
 
 ```bash
@@ -235,13 +224,10 @@ volumes:
 docker-compose up -d
 
 # Verificar PostgreSQL
-docker exec -it academia-postgres psql -U postgres -c "SELECT 1;"
+docker exec -it repositorio-postgres psql -U postgres -c "SELECT 1;"
 
 # Verificar Redis
-docker exec -it academia-redis redis-cli ping  # → PONG
-
-# Parar
-docker-compose down
+docker exec -it repositorio-redis redis-cli ping  # → PONG
 ```
 
 ### Conexión desde la app
@@ -249,7 +235,7 @@ docker-compose down
 ```json
 {
   "ConnectionStrings": {
-    "PostgreSQL": "Host=localhost;Port=5432;Database=academia;Username=postgres;Password=postgres",
+    "PostgreSQL": "Host=localhost;Port=5432;Database=usuarios;Username=postgres;Password=postgres",
     "Redis": "localhost:6379"
   }
 }
@@ -308,30 +294,13 @@ docker-compose down
 
 ## Servicio de Notificaciones
 
-Se debe implementar un servicio de notificaciones con **`IObservable<T>` usando System.Reactive (Rx.NET)**.
+Se debe implementar un servicio de notificaciones usando **programación reactiva** con `System.Reactive` (Rx.NET).
 
-**Implementación:**
-- Crear un `Subject<T>` o `BehaviorSubject<T>` en el servicio de notificaciones
-- El servicio se inyecta en `UserService`
-- Se llama al `OnNext` cada vez que se crea, actualiza o elimina un usuario
-- En `Program.cs`, nada más arrancar, se suscriben los handlers que muestran mensajes en consola
-
-**Ejemplo de uso (lo implementa el alumno):**
-```csharp
-// Servicio de notificaciones con Rx.NET
-public class NotificationService : INotificationService
-{
-    private readonly Subject<UserEvent> _events = new();
-
-    public IObservable<UserEvent> Events => _events.AsObservable();
-
-    public void Notify(UserEvent evt) => _events.OnNext(evt);
-}
-
-// Suscripción en Program.cs
-notificationService.Events.Subscribe(evt =>
-    Console.WriteLine($"[NOTIFICACIÓN] {evt.Type}: {evt.UserName}"));
-```
+Requisitos:
+- El servicio debe exponer un `IObservable<T>` con los eventos de usuario
+- Se debe inyectar en `UserService`
+- Se debe notificar en cada operación de escritura (crear, actualizar, eliminar)
+- En `Program.cs`, se deben suscribir handlers que muestren mensajes en consola al arrancar
 
 ---
 
@@ -359,6 +328,8 @@ notificationService.Events.Subscribe(evt =>
 - ✅ Docker (Dockerfile multi-stage + docker-compose.yml)
 - ✅ Tests de integración con TestContainers
 - ✅ Pipeline CI/CD
+- ✅ Sustituir SQLite por PostgreSQL
+- ✅ Sustituir MemoryCache por Redis
 
 ---
 
@@ -371,6 +342,7 @@ MiServicio/
 ├── Models/
 │   └── User.cs
 ├── Entity/
+│   ├── AppDbContext.cs
 │   └── UserEntity.cs
 ├── Dto/
 │   ├── JsonPlaceholderUserDto.cs
@@ -383,8 +355,7 @@ MiServicio/
 │   └── IUserService.cs
 ├── Cache/
 │   ├── ICacheService.cs
-│   ├── MemoryCacheService.cs
-│   └── RedisCacheService.cs
+│   └── MemoryCacheService.cs
 ├── Api/
 │   └── IJsonPlaceholderApi.cs
 ├── Notifications/
@@ -396,6 +367,10 @@ MiServicio/
 │   └── DependenciesProvider.cs
 ├── Errors/
 │   └── DomainError.cs
+├── Validators/
+│   └── CreateUserRequestValidator.cs
+├── Sync/
+│   └── UserSyncBackgroundService.cs
 ├── Tests/
 │   └── UserServiceTests.cs
 ├── Dockerfile
