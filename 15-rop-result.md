@@ -217,7 +217,7 @@ var fail = Result.Failure<Persona, DomainError>(DomainErrors.NotFound(1));
 public Persona? GetPersonaSegura(int id)
 {
     var persona = _repository.GetById(id);
-    if (persona == null) return null;
+    if (persona is null) return null;
     if (persona.IsDeleted) return null;
     return persona;
 }

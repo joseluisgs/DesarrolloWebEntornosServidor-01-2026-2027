@@ -159,7 +159,7 @@ writer.WriteLine("Carlos,30,Barcelona");
 // StreamReader: leer línea a línea
 using var reader = new StreamReader("personas.csv");
 string? linea;
-while ((linea = reader.ReadLine()) != null)
+while ((linea = reader.ReadLine()) is not null)
 {
     Console.WriteLine(linea);
 }

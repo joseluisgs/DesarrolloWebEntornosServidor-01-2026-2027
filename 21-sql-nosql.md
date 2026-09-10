@@ -251,7 +251,7 @@ public class PersonaEfRepository(AppDbContext context)
     public async Task<List<Persona>> SearchAsync(string? nombre, int page, int pageSize)
     {
         return await context.Personas
-            .Where(p => nombre == null || p.Nombre.Contains(nombre))
+            .Where(p => nombre is null || p.Nombre.Contains(nombre))
             .OrderBy(p => p.Nombre)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
