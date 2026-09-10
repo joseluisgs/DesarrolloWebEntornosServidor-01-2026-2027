@@ -274,16 +274,16 @@ namespace BBDD.Dapper;
                     if (!customerDictionary.TryGetValue(customer.Id, out var custEntry))
                     {
                         custEntry = customer;
-                        custEntry.Orders = new List<Order>();
+                        custEntry.Orders = List<Order>();
                         customerDictionary.Add(customer.Id, custEntry);
                     }
-                    if (order != null)
+                    if (order is not null)
                         custEntry.Orders.Add(order);
                     return custEntry;
                 }, new { Id = customerId }, splitOn: "id");
 
             return (customerDictionary.Values.FirstOrDefault()!, 
-                    customerDictionary.Values.FirstOrDefault()?.Orders ?? new List<Order>());
+                    customerDictionary.Values.FirstOrDefault()?.Orders ?? List<Order>());
         }
 
         public async Task<int> CrearCliente(Customer customer)
@@ -640,7 +640,7 @@ namespace BBDD.EFCore.Relaciones.DataAnnotations;
         public decimal Price { get; set; }
 
         // Colección de categorías (sin clave foránea explícita)
-        public ICollection<Category> Categories { get; set; } = new List<Category>();
+        public ICollection<Category> Categories { get; set; } = List<Category>();
     }
 
     public class Category
@@ -652,7 +652,7 @@ namespace BBDD.EFCore.Relaciones.DataAnnotations;
         public string Name { get; set; } = "";
 
         // Colección de productos (bidireccional)
-        public ICollection<Product> Products { get; set; } = new List<Product>();
+        public ICollection<Product> Products { get; set; } = List<Product>();
     }
 }
 ```
@@ -734,14 +734,14 @@ namespace BBDD.EFCore.Relaciones.Fluent;
         public int Id { get; set; }
         public string Name { get; set; } = "";
         public decimal Price { get; set; }
-        public ICollection<Category> Categories { get; set; } = new List<Category>();
+        public ICollection<Category> Categories { get; set; } = List<Category>();
     }
 
     public class Category
     {
         public int Id { get; set; }
         public string Name { get; set; } = "";
-        public ICollection<Product> Products { get; set; } = new List<Product>();
+        public ICollection<Product> Products { get; set; } = List<Product>();
     }
 }
 ```
@@ -1072,7 +1072,7 @@ namespace BBDD.EFCore.CRUD;
         public async Task<Order> CreateOrderWithItems(int customerId, List<OrderItemDto> items)
         {
             var customer = await context.Customers.FindAsync(customerId);
-            if (customer == null)
+            if (customer is null)
                 throw new ArgumentException("Cliente no encontrado");
 
             var order = new Order
@@ -1086,7 +1086,7 @@ namespace BBDD.EFCore.CRUD;
             foreach (var itemDto in items)
             {
                 var product = await context.Products.FindAsync(itemDto.ProductId);
-                if (product == null)
+                if (product is null)
                     throw new ArgumentException($"Producto {itemDto.ProductId} no encontrado");
 
                 order.Items.Add(new OrderItem
@@ -1112,7 +1112,7 @@ namespace BBDD.EFCore.CRUD;
         public async Task<bool> UpdateCustomer(int id, string name, string email)
         {
             var customer = await context.Customers.FindAsync(id);
-            if (customer == null) return false;
+            if (customer is null) return false;
 
             customer.Name = name;
             customer.Email = email;
@@ -1124,7 +1124,7 @@ namespace BBDD.EFCore.CRUD;
         public async Task<bool> DeleteCustomer(int id)
         {
             var customer = await context.Customers.FindAsync(id);
-            if (customer == null) return false;
+            if (customer is null) return false;
 
             context.Customers.Remove(customer);
             await context.SaveChangesAsync();
@@ -1134,7 +1134,7 @@ namespace BBDD.EFCore.CRUD;
         public async Task<bool> SoftDeleteCustomer(int id)
         {
             var customer = await context.Customers.FindAsync(id);
-            if (customer == null) return false;
+            if (customer is null) return false;
 
             customer.Active = false;
             customer.UpdatedAt = DateTime.UtcNow;
@@ -1228,7 +1228,7 @@ namespace BBDD.EFCore.Concurrency;
                 var entry = ex.Entries[0];
                 var databaseValues = await entry.GetDatabaseValuesAsync();
                 
-                if (databaseValues == null)
+                if (databaseValues is null)
                 {
                     Console.WriteLine("El registro fue eliminado por otro usuario");
                 }
@@ -1271,7 +1271,7 @@ namespace BBDD.EFCore.Linq;
         public async Task<List<Customer>> GetCustomersByCity(string city)
         {
             return await context.Customers
-                .Where(c => c.City != null && c.City.StartsWith(city))
+                .Where(c => c.City is not null && c.City.StartsWith(city))
                 .ToListAsync();
         }
 
@@ -1565,7 +1565,7 @@ namespace BBDD.EFCore.SeedData.Service;
 
             logger.LogInformation("Insertando Seed Data...");
 
-            var categorias = new List<Category>
+            var categorias = List<Category>
             {
                 new Category { Name = "Electronics" },
                 new Category { Name = "Accessories" },
@@ -1573,7 +1573,7 @@ namespace BBDD.EFCore.SeedData.Service;
             };
             await context.Categories.AddRangeAsync(categorias);
 
-            var productos = new List<Product>
+            var productos = List<Product>
             {
                 new Product { Name = "Laptop", Price = 999.99m, Stock = 50 },
                 new Product { Name = "Mouse", Price = 29.99m, Stock = 200 },
@@ -1605,7 +1605,7 @@ namespace BBDD.EFCore.SeedData.Json;
             var json = await File.ReadAllTextAsync(filePath);
             var products = System.Text.Json.JsonSerializer.Deserialize<List<Product>>(json);
 
-            if (products != null)
+            if (products is not null)
             {
                 await context.Products.AddRangeAsync(products);
                 await context.SaveChangesAsync();

@@ -1,4 +1,4 @@
-- [2. Gestión de Proyectos y Construcción en .NET](#2-gestión-de-proyectos-y-construcción-en-net)
+﻿- [2. Gestión de Proyectos y Construcción en .NET](#2-gestión-de-proyectos-y-construcción-en-net)
   - [2.1. Soluciones, Proyectos y Namespaces](#21-soluciones-proyectos-y-namespaces)
     - [2.1.1. ¿Qué es una Solución?](#211-qué-es-una-solución)
     - [2.1.2. Formatos de Solución: .sln vs .slnx](#212-formatos-de-solución-sln-vs-slnx)
@@ -485,7 +485,7 @@ namespace MiAplicacion.Core.Entities;
     public class User
     {
         public int Id { get; set; }
-        public string Name { get; set; } = string.Empty;
+        public string Name { get; set; } = "";
     }
 }
 
@@ -495,7 +495,7 @@ namespace MiAplicacion.Core.Entities;
 public class User
 {
     public int Id { get; set; }
-    public string Name { get; set; } = string.Empty;
+    public string Name { get; set; } = "";
 }
 ```
 
@@ -516,9 +516,7 @@ flowchart LR
 
 ```csharp
 // Using básico - importa el namespace completo
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 // Using alias - crear alias para tipos o namespaces
@@ -552,7 +550,7 @@ var fecha = new System.DateTime(2025, 1, 15);
 // Con using - más limpio
 using System.Collections.Generic;
 
-var lista = new List<string>();
+var lista = List<string>();
 var dict = new Dictionary<string, int>();
 var fecha = DateTime.Now;
 ```
@@ -596,10 +594,8 @@ public class DemoUsingStatic
 
 ```csharp
 // Archivo "Usings.cs" o al inicio de cualquier archivo
-global using System;
-global using System.Collections.Generic;
-global using System.Linq;
-global using System.Threading.Tasks;
+global global using System.Collections.Generic;
+global global using System.Threading.Tasks;
 global using FluentAssertions;
 
 // Ahora disponible en todos los archivos del proyecto
@@ -608,7 +604,7 @@ public class CualquierClase
     public void Metodo()
     {
         // System está disponible sin escribir using
-        var lista = new List<string>();  // Funciona
+        var lista = List<string>();  // Funciona
         var ahora = DateTime.Now;        // Funciona
     }
 }

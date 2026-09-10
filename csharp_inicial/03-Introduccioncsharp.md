@@ -156,15 +156,7 @@ El código fuente, escrito en un archivo con extensión `.cs`, es procesado por 
 
 ```csharp
 // HolaMundo.cs
-namespace MiAplicacion;
-
-class HolaMundo
-{
-    static void Main(string[] args)
-    {
-        Console.WriteLine("¡Hola, mundo!");
-    }
-}
+Console.WriteLine("¡Hola, mundo!");
 ```
 
 Para compilarlo:
@@ -265,36 +257,27 @@ Vamos a crear un programa que demuestra los conceptos básicos:
 
 ```csharp
 // Program.cs
-namespace MiPrimeraApp;
+Console.WriteLine("¡Bienvenido a C#!");
+Console.WriteLine($"Estás usando .NET {Environment.Version}");
 
-// Entry point de la aplicación
-class Program
+// Variables y tipos
+string nombre = "Estudiante";
+int edad = 20;
+bool esActivo = true;
+
+Console.WriteLine($"\nDatos del estudiante:");
+Console.WriteLine($"  Nombre: {nombre}");
+Console.WriteLine($"  Edad: {edad}");
+Console.WriteLine($"  Activo: {esActivo}");
+
+// Estructura de control
+if (edad >= 18)
 {
-    static void Main(string[] args)
-    {
-        Console.WriteLine("¡Bienvenido a C#!");
-        Console.WriteLine($"Estás usando .NET {Environment.Version}");
-        
-        // Variables y tipos
-        string nombre = "Estudiante";
-        int edad = 20;
-        bool esActivo = true;
-        
-        Console.WriteLine($"\nDatos del estudiante:");
-        Console.WriteLine($"  Nombre: {nombre}");
-        Console.WriteLine($"  Edad: {edad}");
-        Console.WriteLine($"  Activo: {esActivo}");
-        
-        // Estructura de control
-        if (edad >= 18)
-        {
-            Console.WriteLine("\nEres mayor de edad.");
-        }
-        else
-        {
-            Console.WriteLine("\nEres menor de edad.");
-        }
-    }
+    Console.WriteLine("\nEres mayor de edad.");
+}
+else
+{
+    Console.WriteLine("\nEres menor de edad.");
 }
 ```
 

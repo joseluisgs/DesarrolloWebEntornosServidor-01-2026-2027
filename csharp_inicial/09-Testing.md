@@ -131,7 +131,7 @@ namespace Testing.NUnit;
         [Test]
         public void Contains_ElementoExistente_RetornaTrue()
         {
-            var lista = new List<string> { "a", "b", "c" };
+            var lista = List<string> { "a", "b", "c" };
             Assert.That(lista, Does.Contain("b"));
         }
 
@@ -212,7 +212,7 @@ namespace Testing.NUnit;
         public int X { get; } = x;
         public int Y { get; } = y;
 
-        public bool Equals(Point? other) => other != null && X == other.X && Y == other.Y;
+        public bool Equals(Point? other) => other is not null && X == other.X && Y == other.Y;
         public override bool Equals(object? obj) => Equals(obj as Point);
         public override int GetHashCode() => HashCode.Combine(X, Y);
     }
@@ -482,7 +482,7 @@ namespace Testing.FluentAssertions;
         [Test]
         public void CollectionAssertions()
         {
-            var personas = new List<Persona>
+            var personas = List<Persona>
             {
                 new Persona("Juan", 25),
                 new Persona("Ana", 30),
@@ -579,7 +579,7 @@ namespace Testing.FluentAssertions;
             var resultado = new Resultado
             {
                 Success = true,
-                Data = new List<string> { "a", "b" },
+                Data = List<string> { "a", "b" },
                 Message = "OK"
             };
 

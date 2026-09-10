@@ -139,7 +139,7 @@ namespace GestionRecursos.Using;
             using var writerInterno = new StreamWriter("salida.txt");
             
             string linea;
-            while ((linea = readerInterno.ReadLine()) != null)
+            while ((linea = readerInterno.ReadLine()) is not null)
             {
                 writerInterno.WriteLine(linea.ToUpper());
             }
@@ -156,7 +156,7 @@ namespace GestionRecursos.Using;
                 string? linea;
                 int contador = 0;
                 
-                while ((linea = reader.ReadLine()) != null)
+                while ((linea = reader.ReadLine()) is not null)
                 {
                     writer.WriteLine(linea);
                     contador++;
@@ -539,7 +539,7 @@ namespace SystemIO.Stream.Texto;
             
             // Leer línea por línea
             string? linea;
-            while ((linea = reader.ReadLine()) != null)
+            while ((linea = reader.ReadLine()) is not null)
             {
                 Console.WriteLine(linea);
             }
@@ -591,7 +591,7 @@ namespace SystemIO.Stream.Texto;
             string? linea;
             int numeroLinea = 0;
             
-            while ((linea = reader.ReadLine()) != null)
+            while ((linea = reader.ReadLine()) is not null)
             {
                 numeroLinea++;
                 var procesada = ProcesarLinea(linea);
@@ -626,7 +626,7 @@ namespace SystemIO.Stream.Texto;
                     Console.WriteLine($"  Archivo 1: {linea1}");
                     Console.WriteLine($"  Archivo 2: {linea2}");
                 }
-            } while (linea1 != null || linea2 != null);
+            } while (linea1 is not null || linea2 is not null);
         }
     }
 }
@@ -957,7 +957,7 @@ namespace SystemIO.Binary;
         
         public static List<Persona> LeerRegistros(string archivo)
         {
-            var personas = new List<Persona>();
+            var personas = List<Persona>();
             
             using var stream = new FileStream(archivo, FileMode.Open);
             using var reader = new BinaryReader(stream);
@@ -1069,7 +1069,7 @@ namespace Formatos.CSV;
             // Instalación: Install-Package CsvHelper
             
             // Escritura
-            var registros = new List<Persona>
+            var registros = List<Persona>
             {
                 new Persona("Ana", 25, "Madrid"),
                 new Persona("Carlos", 30, "Barcelona")
@@ -1122,7 +1122,7 @@ namespace Formatos.CSV;
         // Lectura manual con manejo de edge cases
         public static List<Persona> LecturaManual()
         {
-            var personas = new List<Persona>();
+            var personas = List<Persona>();
             var lineas = File.ReadAllLines("personas.csv");
             
             // Saltar header
@@ -1144,7 +1144,7 @@ namespace Formatos.CSV;
         
         private static string[] ParseCSVLine(string linea)
         {
-            var campos = new List<string>();
+            var campos = List<string>();
             var campoActual = new StringBuilder();
             bool entreComillas = false;
             
@@ -1236,7 +1236,7 @@ namespace Formatos.JSON;
             {
                 Nombre = "TechCorp",
                 Fundacion = new DateTime(2020, 1, 15),
-                Empleados = new List<Empleado>
+                Empleados = List<Empleado>
                 {
                     new Empleado { Nombre = "Ana", Cargo = " CTO", Salario = 80000 },
                     new Empleado { Nombre = "Carlos", Cargo = " Developer", Salario = 60000 }
@@ -1441,7 +1441,7 @@ namespace Formatos.XML;
             {
                 Id = 123,
                 Cliente = "Ana",
-                Items = new List<Item>
+                Items = List<Item>
                 {
                     new Item { Producto = "Laptop", Cantidad = 1 },
                     new Item { Producto = "Mouse", Cantidad = 2 }

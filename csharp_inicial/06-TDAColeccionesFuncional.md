@@ -335,7 +335,7 @@ Los genéricos, introducidos en C# 2.0 (2005), resolvieron estos problemas de ma
 
 ```csharp
 // C# 2.0+ - Enfoque con genéricos (correcto)
-List<int> listaEnteros = new List<int>();
+List<int> listaEnteros = List<int>();
 listaEnteros.Add(42);  // Sin boxing, directo
 
 // listaEnteros.Add("texto");  // ERROR de compilación - imposible de cometer
@@ -355,9 +355,9 @@ En el contexto de la teoría de tipos, los genéricos implementan lo que se cono
 
 ```csharp
 // Diferentes especializaciones generan diferentes tipos en tiempo de ejecución
-List<int> listaInt = new List<int>();
-List<string> listaString = new List<string>();
-List<Customer> listaCustomer = new List<Customer>();
+List<int> listaInt = List<int>();
+List<string> listaString = List<string>();
+List<Customer> listaCustomer = List<Customer>();
 
 // ¿Son del mismo tipo?
 Console.WriteLine(listaInt.GetType());    // System.Collections.Generic.List`1[[System.Int32]]
@@ -505,7 +505,7 @@ namespace Generics.Metodos;
             IEnumerable<TInput> coleccion,
             Func<TInput, TOutput> conversor)
         {
-            var resultado = new List<TOutput>();
+            var resultado = List<TOutput>();
             foreach (var item in coleccion)
             {
                 resultado.Add(conversor(item));
@@ -739,7 +739,7 @@ namespace Generics.Varianza;
         // Puedes iterar sobre IEnumerable<Perro> como IEnumerable<Animal>
         public static void DemoCovarianza()
         {
-            IEnumerable<Perro> perros = new List<Perro>();
+            IEnumerable<Perro> perros = List<Perro>();
             
             // Covarianza permite esta asignación
             IEnumerable<Animal> animales = perros;
@@ -756,9 +756,9 @@ namespace Generics.Varianza;
         {
             public int Compare(Animal? x, Animal? y)
             {
-                if (x == null && y == null) return 0;
-                if (x == null) return -1;
-                if (y == null) return 1;
+                if (x is null && y is null) return 0;
+                if (x is null) return -1;
+                if (y is null) return 1;
                 return x.GetHashCode().CompareTo(y.GetHashCode());
             }
         }
@@ -801,7 +801,7 @@ namespace Generics.Varianza;
                 Console.WriteLine($"Consumiendo {item.GetType().Name}");
             }
 
-            public bool EstaInteresadoEn(T item) => item != null;
+            public bool EstaInteresadoEn(T item) => item is not null;
         }
             }
         }
@@ -833,7 +833,7 @@ namespace Generics.Varianza;
             
             public bool EstaInteresadoEn(T item)
             {
-                return item != null;
+                return item is not null;
             }
         }
         
@@ -1133,7 +1133,7 @@ namespace Colecciones.IEnumerable;
         // IEnumerable<T> permite LINQ y foreach
         public static void DemoEnumerable()
         {
-            List<int> numeros = new List<int> { 1, 2, 3, 4, 5 };
+            List<int> numeros = List<int> { 1, 2, 3, 4, 5 };
             
             // foreach internamente usa GetEnumerator()
             foreach (var n in numeros)
@@ -1268,7 +1268,7 @@ namespace Colecciones.ICollection;
         // ICollection<T> añade operaciones de modificación
         public static void DemoColeccion()
         {
-            List<int> lista = new List<int> { 1, 2, 3 };
+            List<int> lista = List<int> { 1, 2, 3 };
             
             // Propiedades de ICollection<T>
             int conteo = lista.Count;  // O(1)
@@ -1367,7 +1367,7 @@ namespace Colecciones.IList;
     {
         public static void DemoIList()
         {
-            List<string> frutas = new List<string>
+            List<string> frutas = List<string>
             {
                 "Manzana", "Plátano", "Naranja", "Uva", "Mango"
             };
@@ -2070,7 +2070,7 @@ namespace ProgramacionFuncional.Anonimas;
             };
 
             // Usos comunes
-            var numeros = new List<int> { 1, 2, 3, 4, 5 };
+            var numeros = List<int> { 1, 2, 3, 4, 5 };
             
             // Filtrado con método anónimo
             var pares = numeros.FindAll(delegate (int n) { return n % 2 == 0; });
@@ -2223,7 +2223,7 @@ namespace ProgramacionFuncional.ExtensionMethods;
         public static IEnumerable<T[]> DividirEnChunks<T>(
             this IEnumerable<T> coleccion, int tamanoChunk)
         {
-            var lista = new List<T>();
+            var lista = List<T>();
             foreach (var item in coleccion)
             {
                 lista.Add(item);
@@ -2266,7 +2266,7 @@ namespace ProgramacionFuncional.ExtensionMethods;
             Console.WriteLine(numero.Factorial());  // 5040
 
             // Collection extensions
-            var numeros = new List<int> { 1, 2, 3, 4, 5 };
+            var numeros = List<int> { 1, 2, 3, 4, 5 };
             numeros.ConIndice().ForEach(t => 
                 Console.WriteLine($"[{t.Indice}] = {t.Item}"));
 

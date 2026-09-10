@@ -560,7 +560,7 @@ namespace Fundamentos.Excepciones;
             // ArgumentNullException - Argumento nulo
             void Procesar(string? dato)
             {
-                if (dato == null)
+                if (dato is null)
                     throw new ArgumentNullException(nameof(dato), "El dato no puede ser null");
             }
 
@@ -569,7 +569,7 @@ namespace Fundamentos.Excepciones;
             // int valor = numeros[10]; // ❌ IndexOutOfRangeException
 
             // InvalidOperationException - Operación inválida
-            var lista = new List<int> { 1, 2, 3 };
+            var lista = List<int> { 1, 2, 3 };
             foreach (var num in lista)
             {
                 // lista.Add(num); // ❌ InvalidOperationException
@@ -626,7 +626,7 @@ namespace Fundamentos.Excepciones;
         // Lanzar excepciones personalizadas
         public void Transferir(CuentaBancaria destino, decimal cantidad)
         {
-            if (destino == null)
+            if (destino is null)
                 throw new ArgumentNullException(nameof(destino), "La cuenta de destino no puede ser null");
             
             if (cantidad <= 0)
@@ -1091,7 +1091,7 @@ namespace Fundamentos.Excepciones;
                 Console.WriteLine($"Error: {ex.Message}");
                 
                 // Verificar si hay inner exception
-                if (ex.InnerException != null)
+                if (ex.InnerException is not null)
                 {
                     Console.WriteLine($"Causa original: {ex.InnerException.Message}");
                 }
@@ -1131,7 +1131,7 @@ namespace Fundamentos.Excepciones;
         public User BuscarUsuario(int id)
         {
             var usuario = _repositorio.Buscar(id);
-            if (usuario == null)
+            if (usuario is null)
                 throw new UsuarioNoEncontradoException(id);
             return usuario;
         }
@@ -1142,7 +1142,7 @@ namespace Fundamentos.Excepciones;
     {
         public T? Value { get; }
         public Exception? Error { get; }
-        public bool IsSuccess => Error == null;
+        public bool IsSuccess => Error is null;
 
         private Result(T? value, Exception? error)
         {
@@ -1161,7 +1161,7 @@ namespace Fundamentos.Excepciones;
             try
             {
                 var usuario = _repositorio.Buscar(id);
-                if (usuario == null)
+                if (usuario is null)
                     return Result<User>.Failure(new UsuarioNoEncontradoException(id));
                 return Result<User>.Success(usuario);
             }
@@ -1446,14 +1446,14 @@ namespace Fundamentos.Excepciones;
         // ✅ HACER: Usar excepciones específicas
         public void Correcto()
         {
-            if (archivo == null)
+            if (archivo is null)
                 throw new ArgumentNullException(nameof(archivo));
         }
 
         // ❌ NO HACER: Usar Exception genérica
         public void Incorrecto()
         {
-            if (archivo == null)
+            if (archivo is null)
                 throw new Exception("Archivo null"); // ❌ Genérica
         }
 
@@ -1529,7 +1529,7 @@ namespace POO.Clases;
     public class Persona
     {
         // Campos privados
-        private string _nombre = string.Empty;
+        private string _nombre = "";
         private int _edad;
         private DateTime _fechaNacimiento;
 
@@ -1547,7 +1547,7 @@ namespace POO.Clases;
 
         // Propiedad auto-implementada (C# 3+)
         // No necesita campo privado explícito, se crea implícitamente
-        public string Email { get; set; } = string.Empty;
+        public string Email { get; set; } = "";
 
         // Propiedad de solo lectura
         public int Edad
@@ -1652,7 +1652,7 @@ namespace POO.BackingFields;
     // Antes de C# 14, se requería:
     public class PersonaOldStyle
     {
-        private string _nombre = string.Empty;
+        private string _nombre = "";
         public string Nombre
         {
             get => _nombre;
@@ -1846,7 +1846,7 @@ namespace POO.Herencia;
             // Operador as - conversión segura
             Animal g = new Gato("Luna", 3);
             Perro? perro = g as Perro;  // null si no es Perro
-            if (perro != null)
+            if (perro is not null)
             {
                 Console.WriteLine(perro.Raza);
             }
@@ -2510,7 +2510,7 @@ namespace Fundamentos.NullSafety;
             }
 
             // Safe navigation con listas
-            var lista = new List<string>?();
+            var lista = List<string>?();
             int count = lista?.Count ?? 0;
             foreach (var item in lista ?? Enumerable.Empty<string>())
             {
