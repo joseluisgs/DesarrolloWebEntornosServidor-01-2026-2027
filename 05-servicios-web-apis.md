@@ -175,9 +175,9 @@ sequenceDiagram
     S->>C: 101 Switching Protocols
     Note over C,S: 🔗 Conexión WebSocket abierta
     C->>S: "Hola a todos"
-    S->>C:广播 "Ana dice: Hola a todos"
+    S->>C: broadcast "Ana dice: Hola a todos"
     C->>S: "¿Qué tal?"
-    S->>C:广播 "Carlos dice: ¡Bien!"
+    S->>C: broadcast "Carlos dice: ¡Bien!"
     Note over C,S: La conexión sigue abierta
 ```
 

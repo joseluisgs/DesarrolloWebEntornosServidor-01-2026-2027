@@ -1,4 +1,4 @@
-- [4. Fundamentos de la programación en C#](#4-fundamentos-de-la-programación-en-c)
+﻿- [4. Fundamentos de la programación en C#](#4-fundamentos-de-la-programación-en-c)
   - [4.1. Entrada y Salida por Consola](#41-entrada-y-salida-por-consola)
   - [4.2. Analogía: Value Types vs Reference Types](#42-analogía-value-types-vs-reference-types)
   - [4.3. Estructuras de control](#43-estructuras-de-control)
@@ -65,8 +65,7 @@ flowchart LR
 **Salida por consola:**
 
 ```csharp
-namespace Fundamentos.Consola
-{
+namespace Fundamentos.Consola;
     public class EntradaSalida
     {
         // WriteLine - escribe y salto de línea
@@ -549,8 +548,7 @@ flowchart TD
 | `KeyNotFoundException` | Clave no encontrada en diccionario | `dict["clave"]` inexistente |
 
 ```csharp
-namespace Fundamentos.Excepciones
-{
+namespace Fundamentos.Excepciones;
     public class DemoExcepcionesComunes
     {
         public void DemonstrarExcepciones()
@@ -592,8 +590,7 @@ namespace Fundamentos.Excepciones
 La palabra clave `throw` se usa para lanzar una excepción manualmente.
 
 ```csharp
-namespace Fundamentos.Excepciones
-{
+namespace Fundamentos.Excepciones;
     public class CuentaBancaria
     {
         private decimal _saldo;
@@ -669,8 +666,7 @@ namespace Fundamentos.Excepciones
 El bloque `try-catch` se usa para capturar y manejar excepciones.
 
 ```csharp
-namespace Fundamentos.Excepciones
-{
+namespace Fundamentos.Excepciones;
     public class ManejoExcepciones
     {
         public void EjemplosTryCatch()
@@ -858,8 +854,7 @@ flowchart TD
 La declaración `using` garantiza que los recursos se liberen correctamente, incluso si ocurre una excepción.
 
 ```csharp
-namespace Fundamentos.Excepciones
-{
+namespace Fundamentos.Excepciones;
     public class UsingExamples
     {
         // Formato antiguo (C# 8-)
@@ -916,8 +911,7 @@ namespace Fundamentos.Excepciones
 Puedes crear tus propias excepciones heredando de `Exception` o de una excepción más específica.
 
 ```csharp
-namespace Fundamentos.Excepciones
-{
+namespace Fundamentos.Excepciones;
     // Excepción personalizada básica
     public class MiExcepcionPersonalizada : Exception
     {
@@ -1048,8 +1042,7 @@ namespace Fundamentos.Excepciones
 Puedes capturar una excepción, realizar alguna acción, y luego volver a lanzarla.
 
 ```csharp
-namespace Fundamentos.Excepciones
-{
+namespace Fundamentos.Excepciones;
     public class ReLanzarExcepciones
     {
         public void EjemploReLanzar()
@@ -1131,8 +1124,7 @@ namespace Fundamentos.Excepciones
 Hay debate sobre cuándo usar excepciones vs **valores de retorno de error**. C# favorece excepciones, pero algunos patrones modernos usan `Result<T>`.
 
 ```csharp
-namespace Fundamentos.Excepciones
-{
+namespace Fundamentos.Excepciones;
     // Enfoque 1: Excepciones (estándar en C#)
     public class ServicioConExcepciones
     {
@@ -1448,8 +1440,7 @@ public int ParsearEnteroBueno(string texto)
 💡 **Tip del Examinador**: En entrevistas técnicas preguntan frecuentemente sobre manejo de excepciones. Estos son los puntos clave:
 
 ```csharp
-namespace Fundamentos.Excepciones
-{
+namespace Fundamentos.Excepciones;
     public class MejoresPracticas
     {
         // ✅ HACER: Usar excepciones específicas
@@ -1534,8 +1525,7 @@ Una clase es una plantilla para crear objetos. Las propiedades encapsulan datos 
 En C#, las propiedades pueden ser completas, auto-implementadas, de solo lectura, y usar expression bodies. De esta manera nos ahorramos hacer los famosos getters y setters manuales.
 
 ```csharp
-namespace POO.Clases
-{
+namespace POO.Clases;
     public class Persona
     {
         // Campos privados
@@ -1577,8 +1567,7 @@ namespace POO.Clases
 ### 4.8.2. Constructores
 
 ```csharp
-namespace POO.Constructores
-{
+namespace POO.Constructores;
     public class Producto
     {
         public string Nombre { get; set; }
@@ -1628,8 +1617,7 @@ namespace POO.Constructores
 C# 14 introduce **backing fields** con la keyword `field`, lo que simplifica la creación de propiedades con lógica personalizada sin necesidad de declarar campos privados explícitos.
 
 ```csharp
-namespace POO.BackingFields
-{
+namespace POO.BackingFields;
     public class PersonaC14
     {
         // Sintaxis C# 14 con field keyword
@@ -1715,8 +1703,7 @@ namespace POO.BackingFields
 ### 4.8.4. Métodos
 
 ```csharp
-namespace POO.Metodos
-{
+namespace POO.Metodos;
     public class Calculadora
     {
         // Métodos estáticos
@@ -1768,8 +1755,7 @@ namespace POO.Metodos
 ### 4.8.5. Herencia y Polimorfismo
 
 ```csharp
-namespace POO.Herencia
-{
+namespace POO.Herencia;
     // Clase base
     public class Animal
     {
@@ -1885,8 +1871,7 @@ namespace POO.Herencia
 ### 4.8.6. Clases Abstractas
 
 ```csharp
-namespace POO.Abstractas
-{
+namespace POO.Abstractas;
     public abstract class Figura
     {
         public string Color { get; set; }
@@ -1919,8 +1904,7 @@ namespace POO.Abstractas
 ### 4.8.7. Interfaces
 
 ```csharp
-namespace POO.Interfaces
-{
+namespace POO.Interfaces;
     public interface IAnimal
     {
         string Nombre { get; }
@@ -1962,8 +1946,7 @@ namespace POO.Interfaces
 Los structs son tipos por valor que permiten agrupar datos relacionados. Son útiles para representar objetos pequeños e inmutables.
 
 ```csharp
-namespace POO.Structs
-{
+namespace POO.Structs;
     public struct Punto
     {
         public double X { get; }
@@ -2008,8 +1991,7 @@ namespace POO.Structs
 Los records son tipos por referencia diseñados para almacenar datos inmutables y proporcionar funcionalidades como comparación por valor, clonación y desestructuración.
 
 ```csharp
-namespace POO.Records
-{
+namespace POO.Records;
     // Record básico (class implícito)
     public record Persona(string Nombre, int Edad);
 
@@ -2055,8 +2037,7 @@ namespace POO.Records
 ### 4.8.10. Sobrecarga de Operadores
 
 ```csharp
-namespace POO.Operadores
-{
+namespace POO.Operadores;
     public struct Vector2D
     {
         public double X { get; }
@@ -2089,8 +2070,7 @@ namespace POO.Operadores
 Los métodos `Equals`, `GetHashCode` y `ToString` son miembros fundamentales de la clase base `Object`. Sobrescribirlos permite personalizar el comportamiento de comparación, generación de hash y representación en cadena de los objetos.
 
 ```csharp
-namespace POO.ObjectMembers
-{
+namespace POO.ObjectMembers;
     public class Persona
     {
         public string Nombre { get; set; }
@@ -2141,8 +2121,7 @@ namespace POO.ObjectMembers
 Los miembros estáticos pertenecen a la clase en sí, no a instancias individuales. Las clases estáticas solo pueden contener miembros estáticos y no pueden ser instanciadas.
 
 ```csharp
-namespace POO.Estaticos
-{
+namespace POO.Estaticos;
     public static class Utilidades
     {
         // Método estático
@@ -2179,8 +2158,7 @@ namespace POO.Estaticos
 Las clases inner (anidadas) son clases definidas dentro de otra clase. Pueden acceder a los miembros privados de la clase contenedora.
 
 ```csharp
-namespace POO.ClasesInner
-{
+namespace POO.ClasesInner;
     public class Contenedor
     {
         private string _mensaje = "Hola desde la clase contenedora";
@@ -2221,8 +2199,7 @@ Las clases parciales permiten dividir la definición de una clase en múltiples 
 
 ```csharp
 // Archivo Persona.Part1.cs
-namespace POO.ClasesParciales
-{
+namespace POO.ClasesParciales;
     public partial class Persona
     {
         public string Nombre { get; set; }
@@ -2238,8 +2215,7 @@ namespace POO.ClasesParciales
 
 ```csharp
 // Archivo Persona.Part2.cs
-namespace POO.ClasesParciales
-{
+namespace POO.ClasesParciales;
     public partial class Persona
     {
         public void CumplirAnios()
@@ -2255,8 +2231,7 @@ namespace POO.ClasesParciales
 Los enums (enumeraciones) son tipos de valor que representan un conjunto de constantes nombradas. Son enteros subyacentes por defecto.
 
 ```csharp
-namespace POO.Enums
-{
+namespace POO.Enums;
     public enum DiaSemana
     {
         Lunes = 1,
@@ -2306,8 +2281,7 @@ namespace POO.Enums
 Los parámetros permiten pasar datos a los métodos. C# ofrece varias formas de definir y usar parámetros.
 
 ```csharp
-namespace POO.Parametros
-{
+namespace POO.Parametros;
     public class ParametrosDemo
     {
         // Parámetros opcionales
@@ -2390,8 +2364,7 @@ namespace POO.Parametros
 Los strings en C# son inmutables y ofrecen múltiples funcionalidades para manipulación y formateo.
 
 ```csharp
-namespace Fundamentos.Strings
-{
+namespace Fundamentos.Strings;
     public class StringDemo
     {
         public static void Demo()
@@ -2451,8 +2424,7 @@ Ruta: {ruta}";
 Los tipos nullable y las características de seguridad contra null en C# ayudan a prevenir errores comunes relacionados con referencias nulas. Para que la característica de nullable reference types funcione, debe estar habilitada en el proyecto con `#nullable enable` o en el archivo .csproj y `TreatWarningsAsErrors true` configurado adecuadamente.
 
 ```csharp
-namespace Fundamentos.NullSafety
-{
+namespace Fundamentos.NullSafety;
     public class NullSafetyDemo
     {
         public static void Demo()
@@ -2553,8 +2525,7 @@ namespace Fundamentos.NullSafety
 El namespace `System.Globalization` proporciona clases para manejar diferentes culturas, formatos de fecha, números y monedas, así como para poder redondear, o formatear fechas y números según la cultura deseada.
 
 ```csharp
-namespace Fundamentos.Culturas
-{
+namespace Fundamentos.Culturas;
     using System.Globalization;
 
     public class CultureDemo

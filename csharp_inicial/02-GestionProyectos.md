@@ -481,8 +481,7 @@ namespace MiAplicacion.Core.Exceptions
 
 ```csharp
 // Namespace tradicional
-namespace MiAplicacion.Core.Entities
-{
+namespace MiAplicacion.Core.Entities;
     public class User
     {
         public int Id { get; set; }

@@ -1,4 +1,4 @@
-- [6. Tipos de Datos Abstractos, Colecciones y Programación Funcional en .NET](#6-tipos-de-datos-abstractos-colecciones-y-programación-funcional-en-net)
+﻿- [6. Tipos de Datos Abstractos, Colecciones y Programación Funcional en .NET](#6-tipos-de-datos-abstractos-colecciones-y-programación-funcional-en-net)
   - [6.1. Tipos de datos abstractos](#61-tipos-de-datos-abstractos)
     - [6.1.1. Concepto y definición formal de TDA](#611-concepto-y-definición-formal-de-tda)
     - [6.1.2. Principios fundamentales de abstracción](#612-principios-fundamentales-de-abstracción)
@@ -180,8 +180,7 @@ La historia de la pila como estructura de datos se remonta a los primeros días 
 La interfaz de una pila típicamente incluye las operaciones Push (añadir elemento), Pop (extraer elemento), Peek (observar elemento superior), y propiedades como Count (número de elementos) e IsEmpty (verificar si está vacía). Algunas implementaciones también incluyen operaciones como Clear (vaciar pila), Contains (verificar existencia), o ToArray (convertir a array).
 
 ```csharp
-namespace TDAs.Ejemplos
-{
+namespace TDAs.Ejemplos;
     /// <summary>
     /// Implementación genérica del TDA Pila (Stack).
     /// Cumple con el principio LIFO: Last In, First Out.
@@ -267,13 +266,12 @@ namespace TDAs.Ejemplos
 
 La cola es otro TDA fundamental que sigue el principio FIFO (First In, First Out), es decir, "el primero en entrar es el primero en salir". Este comportamiento es análogo a una cola de personas en un banco o supermercado: la primera persona que llega es la primera en ser atendida. Las colas son esenciales en muchos escenarios de programación, incluyendo la gestión de solicitudes en servidores web, la comunicación entre procesos, y la implementación de algoritmos de búsqueda en grafos (BFS).
 
-A diferencia de la pila, la implementación eficiente de una cola presenta desafíos interesantes. Una implementación naive con una lista requiere O(n) para la operación Dequeue porque necesitamos desplazar todos los elementos. Para解决这个问题, existen técnicas como el buffer circular (ring buffer) que mantiene operaciones O(1) para ambas operaciones principales. .NET proporciona Queue<T> con una implementación optimizada que utiliza estas técnicas internamente.
+A diferencia de la pila, la implementación eficiente de una cola presenta desafíos interesantes. Una implementación naive con una lista requiere O(n) para la operación Dequeue porque necesitamos desplazar todos los elementos. Para solucionar este problema, existen técnicas como el buffer circular (ring buffer) que mantiene operaciones O(1) para ambas operaciones principales. .NET proporciona Queue<T> con una implementación optimizada que utiliza estas técnicas internamente.
 
 La interfaz de una cola típicamente incluye Enqueue (añadir al final), Dequeue (extraer del frente), Peek (observar frente), y propiedades similares a las de la pila. Algunas implementaciones también ofrecen TryDequeue y TryPeek como alternativas seguras que no lanzan excepciones.
 
 ```csharp
-namespace TDAs.Ejemplos
-{
+namespace TDAs.Ejemplos;
     /// <summary>
     /// Implementación genérica del TDA Cola (Queue).
     /// Cumple con el principio FIFO: First In, First Out.
@@ -379,8 +377,7 @@ El diseño de clases genéricas requiere comprender cómo los parámetros de tip
 El principio de diseño más importante para clases genéricas es que la clase debe ser **genuinamente genérica**, es decir, la parametrización por tipo debe ser esencial para la funcionalidad que proporciona. Si una clase podría funcionar igual de bien con un único tipo, probablemente no debería ser genérica.
 
 ```csharp
-namespace Generics.Clases
-{
+namespace Generics.Clases;
     /// <summary>
     /// Contenedor genérico que almacena un valor de cualquier tipo.
     /// Ejemplo clásico de clase genérica.
@@ -445,8 +442,7 @@ Los métodos genéricos extienden el concepto de genericidad a nivel de funcione
 Un método genérico se declara especificando uno o más parámetros de tipo en la firma del método, típicamente después del modificador de acceso y antes del tipo de retorno. Estos parámetros pueden tener restricciones, al igual que las clases genéricas.
 
 ```csharp
-namespace Generics.Metodos
-{
+namespace Generics.Metodos;
     /// <summary>
     /// Clase de utilidad con métodos genéricos diversos.
     /// </summary>
@@ -582,8 +578,7 @@ Las restricciones disponibles en C# incluyen:
 - `where T : notnull` - T no puede ser un tipo nullable
 
 ```csharp
-namespace Generics.Restricciones
-{
+namespace Generics.Restricciones;
     /// <summary>
     /// Ejemplos de restricciones de tipos en diferentes contextos.
     /// </summary>
@@ -727,8 +722,7 @@ La varianza es un concepto avanzado en el sistema de tipos que describe cómo lo
 **Contravarianza** (con la palabra clave `in`) permite usar un tipo más general donde se espera uno más específico. Solo es segura cuando el tipo genérico solo **consume** valores del tipo paramétrico, nunca los produce.
 
 ```csharp
-namespace Generics.Varianza
-{
+namespace Generics.Varianza;
     /// <summary>
     /// Ejemplos de covarianza y contravarianza en C#.
     /// </summary>
@@ -1130,8 +1124,7 @@ classDiagram
 El patrón iterador, introducido por Design Patterns de Gang of Four, permite recorrer estructuras de datos sin exponer su representación interna. En .NET, este patrón se manifiesta a través de dos interfaces: `IEnumerator<T>` (que proporciona la lógica de iteración) e `IEnumerable<T>` (que produce enumeradores).
 
 ```csharp
-namespace Colecciones.IEnumerable
-{
+namespace Colecciones.IEnumerable;
     /// <summary>
     /// Ejemplos detallados del uso de IEnumerable<T> y el patrón iterador.
     /// </summary>
@@ -1266,8 +1259,7 @@ namespace Colecciones.IEnumerable
 La implementación de `ICollection<T>` requiere considerar cuidadosamente las invariantes de la colección y los requisitos de thread-safety. Las operaciones de modificación deben mantener la consistencia de la colección, y las colecciones de solo lectura deben lanzar excepciones apropiadas cuando se intenta modificar.
 
 ```csharp
-namespace Colecciones.ICollection
-{
+namespace Colecciones.ICollection;
     /// <summary>
     /// Ejemplos de ICollection<T> y operaciones de modificación.
     /// </summary>
@@ -1367,8 +1359,7 @@ namespace Colecciones.ICollection
 El acceso por índice en `IList<T>` es típicamente O(1) para implementaciones como `List<T>` (que usa arrays internos) pero puede ser O(n) para implementaciones como `LinkedList<T>` (que requiere traversal).
 
 ```csharp
-namespace Colecciones.IList
-{
+namespace Colecciones.IList;
     /// <summary>
     /// Ejemplos de IList<T> y acceso por índice.
     /// </summary>
@@ -1518,8 +1509,7 @@ namespace Colecciones.IList
 `IDictionary<TKey, TValue>` representa una colección de pares clave-valor donde cada clave es única. Esta interfaz es fundamental para implementar tablas hash, que proporcionan acceso O(1) promedio a los valores a través de sus claves. Las claves deben implementar correctamente Equals() y GetHashCode().
 
 ```csharp
-namespace Colecciones.IDictionary
-{
+namespace Colecciones.IDictionary;
     /// <summary>
     /// Ejemplos de IDictionary<TKey, TValue>.
     /// </summary>
@@ -1640,8 +1630,7 @@ namespace Colecciones.IDictionary
 LINQ (Language Integrated Query) revolucionó la forma de trabajar con colecciones en C#, introduciendo una sintaxis declarativa similar a SQL para filtrar, ordenar, transformar y los datos. LINQ funciona con cualquier implementación de `IEnumerable<T>`, lo que lo hace universalmente aplicable.
 
 ```csharp
-namespace Colecciones.Linq
-{
+namespace Colecciones.Linq;
     /// <summary>
     /// Ejemplos de LINQ con colecciones.
     /// </summary>
@@ -1870,8 +1859,7 @@ graph TD
 Un **delegado** es un tipo que representa referencias a métodos con firma específica. Es la base de callbacks y eventos en C#.
 
 ```csharp
-namespace ProgramacionFuncional.Delegados
-{
+namespace ProgramacionFuncional.Delegados;
     // Definición de delegados
     public delegate void Operacion(int a, int b);
     public delegate int Transformacion(int x);
@@ -1970,8 +1958,7 @@ namespace ProgramacionFuncional.Delegados
 Las **expresiones lambda** son funciones anónimas que permiten escribir código funcional conciso. Se usan extensivamente con LINQ y delegados.
 
 ```csharp
-namespace ProgramacionFuncional.Lambdas
-{
+namespace ProgramacionFuncional.Lambdas;
     public class EjemplosLambdas
     {
         public static void Demo()
@@ -2058,8 +2045,7 @@ namespace ProgramacionFuncional.Lambdas
 Las **funciones anónimas** son funciones sin nombre, incluyendo **delegados anónimos** y **métodos anónimos**.
 
 ```csharp
-namespace ProgramacionFuncional.Anonimas
-{
+namespace ProgramacionFuncional.Anonimas;
     public class EjemplosAnonimas
     {
         // Delegate anónimo (C# 2+)
@@ -2130,8 +2116,7 @@ namespace ProgramacionFuncional.Anonimas
 Las **funciones de extensión** permiten agregar métodos a tipos existentes sin modificar el tipo original ni crear un tipo derivado.
 
 ```csharp
-namespace ProgramacionFuncional.ExtensionMethods
-{
+namespace ProgramacionFuncional.ExtensionMethods;
     // Clase estática para métodos de extensión
     public static class StringExtensions
     {
@@ -2306,8 +2291,7 @@ namespace ProgramacionFuncional.ExtensionMethods
 Las **funciones de orden superior** son funciones que reciben otras funciones como parámetros o las devuelven como resultado.
 
 ```csharp
-namespace ProgramacionFuncional.HigherOrder
-{
+namespace ProgramacionFuncional.HigherOrder;
     public class FuncionesOrdenSuperior
     {
         // Función que recibe una función como parámetro
@@ -2436,8 +2420,7 @@ namespace ProgramacionFuncional.HigherOrder
 Los principios de **inmutabilidad** y **funciones puras** son centrales en la programación funcional.
 
 ```csharp
-namespace ProgramacionFuncional.Pureza
-{
+namespace ProgramacionFuncional.Pureza;
     // Registro inmutable (C# 9+)
     public record Producto(string Nombre, decimal Precio, int Stock)
     {
@@ -2589,8 +2572,7 @@ namespace ProgramacionFuncional.Pureza
 El **pattern matching** en C# permite escribir código declarativo que descompone y evalúa estructuras de datos.
 
 ```csharp
-namespace ProgramacionFuncional.PatternMatching
-{
+namespace ProgramacionFuncional.PatternMatching;
     public class PatternMatchingDemo
     {
         public static string Describir(object obj)

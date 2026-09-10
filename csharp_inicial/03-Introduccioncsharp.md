@@ -265,37 +265,34 @@ Vamos a crear un programa que demuestra los conceptos básicos:
 
 ```csharp
 // Program.cs
-using System;
+namespace MiPrimeraApp;
 
-namespace MiPrimeraApp
+// Entry point de la aplicación
+class Program
 {
-    // Entry point de la aplicación
-    class Program
+    static void Main(string[] args)
     {
-        static void Main(string[] args)
+        Console.WriteLine("¡Bienvenido a C#!");
+        Console.WriteLine($"Estás usando .NET {Environment.Version}");
+        
+        // Variables y tipos
+        string nombre = "Estudiante";
+        int edad = 20;
+        bool esActivo = true;
+        
+        Console.WriteLine($"\nDatos del estudiante:");
+        Console.WriteLine($"  Nombre: {nombre}");
+        Console.WriteLine($"  Edad: {edad}");
+        Console.WriteLine($"  Activo: {esActivo}");
+        
+        // Estructura de control
+        if (edad >= 18)
         {
-            Console.WriteLine("¡Bienvenido a C#!");
-            Console.WriteLine($"Estás usando .NET {Environment.Version}");
-            
-            // Variables y tipos
-            string nombre = "Estudiante";
-            int edad = 20;
-            bool esActivo = true;
-            
-            Console.WriteLine($"\nDatos del estudiante:");
-            Console.WriteLine($"  Nombre: {nombre}");
-            Console.WriteLine($"  Edad: {edad}");
-            Console.WriteLine($"  Activo: {esActivo}");
-            
-            // Estructura de control
-            if (edad >= 18)
-            {
-                Console.WriteLine("\nEres mayor de edad.");
-            }
-            else
-            {
-                Console.WriteLine("\nEres menor de edad.");
-            }
+            Console.WriteLine("\nEres mayor de edad.");
+        }
+        else
+        {
+            Console.WriteLine("\nEres menor de edad.");
         }
     }
 }

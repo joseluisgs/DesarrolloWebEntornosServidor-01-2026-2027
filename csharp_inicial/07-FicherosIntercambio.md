@@ -1,4 +1,4 @@
-- [7. Ficheros y Formatos de Intercambio en .NET](#7-ficheros-y-formatos-de-intercambio-en-net)
+﻿- [7. Ficheros y Formatos de Intercambio en .NET](#7-ficheros-y-formatos-de-intercambio-en-net)
   - [7.1. Gestión de recursos y archivos](#71-gestión-de-recursos-y-archivos)
     - [7.1.1. El patrón IDisposable y la gestión de recursos no administrados](#711-el-patrón-idisposable-y-la-gestión-de-recursos-no-administrados)
     - [7.1.2. La declaración using: sintaxis y semántica](#712-la-declaración-using-sintaxis-y-semántica)
@@ -32,8 +32,7 @@ El paradigma de programación en entornos administrados como .NET establece que 
 El patrón **IDisposable** es la solución de .NET para este problema. Define un mecanismo mediante el cual los objetos que adquieren recursos no administrados pueden indicar cuándo deben ser liberados. La interfaz es extremadamente simple, pero su correcta implementación y uso son fundamentales para escribir código robusto.
 
 ```csharp
-namespace GestionRecursos.Ejemplos
-{
+namespace GestionRecursos.Ejemplos;
     /// <summary>
     /// Ejemplos del patrón IDisposable y la gestión de recursos.
     /// </summary>
@@ -87,8 +86,7 @@ La declaración `using` en C# es una construcción sintáctica que garantiza la 
 C# 8 introdujo la **declaración using** (como alternativa a la **sentencia using** tradicional), que permite un código más limpio al eliminar la necesidad de bloques anidados y llaves adicionales.
 
 ```csharp
-namespace GestionRecursos.Using
-{
+namespace GestionRecursos.Using;
     /// <summary>
     /// Ejemplos de la declaración using en C#.
     /// </summary>
@@ -207,8 +205,7 @@ La API está organizada en varias categorías funcionales:
 - **Clases de serialización (BinaryReader, BinaryWriter)**: Formato binario estructurado
 
 ```csharp
-namespace SystemIO.Ejemplos
-{
+namespace SystemIO.Ejemplos;
     /// <summary>
     /// Visión general de las clases principales de System.IO.
     /// </summary>
@@ -262,8 +259,7 @@ namespace SystemIO.Ejemplos
 Los flujos operan fundamentalmente en tres modos: lectura (obtener datos del flujo hacia el programa), escritura (enviar datos del programa hacia el flujo), y búsqueda (modificar la posición actual de lectura/escritura).
 
 ```csharp
-namespace SystemIO.Stream
-{
+namespace SystemIO.Stream;
     /// <summary>
     /// Ejemplos detallados del uso de Stream.
     /// </summary>
@@ -407,8 +403,7 @@ namespace SystemIO.Stream
 **NetworkStream** representa un flujo de datos sobre una conexión de red, típicamente mediante sockets TCP.
 
 ```csharp
-namespace SystemIO.Stream.Derivadas
-{
+namespace SystemIO.Stream.Derivadas;
     /// <summary>
     /// Ejemplos de las principales clases derivadas de Stream.
     /// </summary>
@@ -528,8 +523,7 @@ namespace SystemIO.Stream.Derivadas
 `StreamReader` y `StreamWriter` son clases especializadas que facilitan la lectura y escritura de texto, respectivamente. Manejan automáticamente la codificación de caracteres, las líneas de texto, y proporcionan métodos convenientes para trabajar con strings en lugar de bytes.
 
 ```csharp
-namespace SystemIO.Stream.Texto
-{
+namespace SystemIO.Stream.Texto;
     /// <summary>
     /// Ejemplos de StreamReader y StreamWriter.
     /// </summary>
@@ -643,8 +637,7 @@ namespace SystemIO.Stream.Texto
 La clase `File` proporciona métodos estáticos convenientes para operaciones comunes de archivos. Aunque menos flexible que `FileStream`, es ideal para escenarios donde necesitamos leer o escribir archivos completos de forma simple y directa.
 
 ```csharp
-namespace SystemIO.File
-{
+namespace SystemIO.File;
     /// <summary>
     /// Ejemplos de la clase File.
     /// </summary>
@@ -755,8 +748,7 @@ namespace SystemIO.File
 La clase `Directory` proporciona métodos para manipular directorios, mientras que `Path` ofrece utilidades para trabajar con rutas de archivos de forma multiplataforma.
 
 ```csharp
-namespace SystemIO.Directory
-{
+namespace SystemIO.Directory;
     /// <summary>
     /// Ejemplos de Directory y Path.
     /// </summary>
@@ -907,8 +899,7 @@ namespace SystemIO.Directory
 Para datos binarios estructurados, `BinaryReader` y `BinaryWriter` proporcionan métodos convenientes para leer y escribir tipos primitivos directamente en binario.
 
 ```csharp
-namespace SystemIO.Binary
-{
+namespace SystemIO.Binary;
     /// <summary>
     /// Ejemplos de BinaryReader y BinaryWriter.
     /// </summary>
@@ -1044,8 +1035,7 @@ graph LR
 CSV es el formato más simple y universal para datos tabulares. Su simplicidad lo hace ideal para exportación/importación de datos, logs, y configuraciones simples. Sin embargo, carece de soporte nativo para tipos complejos o estructuras anidadas.
 
 ```csharp
-namespace Formatos.CSV
-{
+namespace Formatos.CSV;
     /// <summary>
     /// Ejemplos de lectura y escritura CSV.
     /// </summary>
@@ -1203,8 +1193,7 @@ JSON se ha convertido en el formato de intercambio predominante en aplicaciones 
 C# proporciona soporte nativo para JSON a través del espacio de nombres `System.Text.Json`, que es eficiente y fácil de usar.
 
 ```csharp
-namespace Formatos.JSON
-{
+namespace Formatos.JSON;
     /// <summary>
     /// Ejemplos de JSON en .NET con System.Text.Json.
     /// </summary>
@@ -1394,8 +1383,7 @@ namespace Formatos.JSON
 XML es un formato verbose pero poderoso que proporciona validación mediante esquemas (XSD), espacios de nombres, y procesamiento estándar mediante XPath/XSLT. Todavía es común en sistemas empresariales, configuración (app.config, web.config), y documentos Office.
 
 ```csharp
-namespace Formatos.XML
-{
+namespace Formatos.XML;
     /// <summary>
     /// Ejemplos de XML en .NET con System.Xml.
     /// </summary>

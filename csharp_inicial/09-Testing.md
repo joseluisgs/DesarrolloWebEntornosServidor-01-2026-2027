@@ -1,4 +1,4 @@
-- [9. Testing en .NET](#9-testing-en-net)
+﻿- [9. Testing en .NET](#9-testing-en-net)
   - [9.1. Fundamentos del testing](#91-fundamentos-del-testing)
     - [9.1.1. 🧠 Analogía: Tests como cinturón de seguridad](#911--analogía-tests-como-cinturón-de-seguridad)
     - [9.1.2. Tipos de tests](#912-tipos-de-tests)
@@ -54,8 +54,7 @@ dotnet add package Microsoft.NET.Test.Sdk
 ```
 
 ```csharp
-namespace Testing.NUnit
-{
+namespace Testing.NUnit;
     [TestFixture]
     public class CalculatorTests
     {
@@ -232,8 +231,7 @@ dotnet add package Moq
 ```
 
 ```csharp
-namespace Testing.Moq
-{
+namespace Testing.Moq;
     [TestFixture]
     public class MoqExamples
     {
@@ -448,8 +446,7 @@ dotnet add package FluentAssertions
 ```
 
 ```csharp
-namespace Testing.FluentAssertions
-{
+namespace Testing.FluentAssertions;
     [TestFixture]
     public class FluentAssertionsExamples
     {
@@ -613,8 +610,7 @@ namespace Testing.FluentAssertions
 ## 9.5. Test de integración
 
 ```csharp
-namespace Testing.Integration
-{
+namespace Testing.Integration;
     [TestFixture]
     public class CustomerRepositoryIntegrationTests
     {
@@ -824,8 +820,7 @@ dotnet add package coverlet.collector
 ```
 
 ```csharp
-namespace Testing.Coverage
-{
+namespace Testing.Coverage;
     [TestFixture]
     public class CoverageExamples
     {

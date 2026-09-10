@@ -1,4 +1,4 @@
-- [8. Bases de Datos Relacionales en .NET](#8-bases-de-datos-relacionales-en-net)
+﻿- [8. Bases de Datos Relacionales en .NET](#8-bases-de-datos-relacionales-en-net)
     - [8.1.0. Instalación de Librerías](#810-instalación-de-librerías)
   - [8.1. Acceso a bases de datos en .NET](#81-acceso-a-bases-de-datos-en-net)
     - [8.1.1. ADO.NET: El nivel más bajo](#811-adonet-el-nivel-más-bajo)
@@ -177,8 +177,7 @@ sequenceDiagram
 ADO.NET es la API fundamental de .NET para acceso a datos. Proporciona clases de bajo nivel para conectarse a bases de datos, ejecutar comandos, y leer resultados.
 
 ```csharp
-namespace BBDD.ADONet
-{
+namespace BBDD.ADONet;
     public class EjemplosADONet
     {
         private const string ConnectionString = "Host=localhost;Database=tienda;Username=user;Password=pass";
@@ -245,8 +244,7 @@ namespace BBDD.ADONet
 Dapper es un micro-ORM desarrollado por Stack Overflow que proporciona mapeo ligero con rendimiento cercano a ADO.NET puro.
 
 ```csharp
-namespace BBDD.Dapper
-{
+namespace BBDD.Dapper;
     public class EjemplosDapper(IDbConnection connection)
     {
         public async Task<List<Customer>> ObtenerTodosClientes()
@@ -325,8 +323,7 @@ namespace BBDD.Dapper
 Entity Framework Core es el ORM de Microsoft que proporciona el mayor nivel de abstracción y productividad.
 
 ```csharp
-namespace BBDD.EFCore
-{
+namespace BBDD.EFCore;
     public class AppDbContext : DbContext
     {
         public DbSet<Customer> Customers { get; set; } = null!;
@@ -524,8 +521,7 @@ public class CustomerService(AppDbContext context)
 EF Core ofrece Fluent API para configuraciones complejas.
 
 ```csharp
-namespace BBDD.EFCore.Configuracion
-{
+namespace BBDD.EFCore.Configuracion;
     public class ConfiguracionAvanzada
     {
         public class ExtendedDbContext : DbContext
@@ -571,8 +567,7 @@ Las relaciones en EF Core pueden configurarse de dos formas:
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace BBDD.EFCore.Relaciones.DataAnnotations
-{
+namespace BBDD.EFCore.Relaciones.DataAnnotations;
     // === RELACIÓN UNO A MUCHOS (Customer -> Orders) ===
     
     public class Customer
@@ -665,8 +660,7 @@ namespace BBDD.EFCore.Relaciones.DataAnnotations
 #### 8.2.4.2. Fluent API (Configuración Avanzada)
 
 ```csharp
-namespace BBDD.EFCore.Relaciones.Fluent
-{
+namespace BBDD.EFCore.Relaciones.Fluent;
     public class ExtendedDbContext : DbContext
     {
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -767,8 +761,7 @@ namespace BBDD.EFCore.Relaciones.Fluent
 🧠 **Analogía**: Las relaciones en EF Core son como las relaciones familiares. Un cliente tiene muchos pedidos (padre → hijos), y los productos pueden pertenecer a múltiples categorías (primos que se visitan en ambas direcciones).
 
 ```csharp
-namespace BBDD.EFCore.Context
-{
+namespace BBDD.EFCore.Context;
     public class ExtendedDbContext(DbContextOptions<ExtendedDbContext> options) : DbContext(options)
     {
         public DbSet<Customer> Customers { get; set; } = null!;
@@ -833,8 +826,7 @@ namespace BBDD.EFCore.Context
 ### 8.3.1. Principios del Repository
 
 ```csharp
-namespace BBDD.Repository
-{
+namespace BBDD.Repository;
     public interface ICustomerRepository
     {
         Task<Customer?> GetByIdAsync(int id);
@@ -922,8 +914,7 @@ namespace BBDD.Repository
 ### 8.3.2. Implementación genérica
 
 ```csharp
-namespace BBDD.Repository.Generic
-{
+namespace BBDD.Repository.Generic;
     public interface IRepository<T> where T : class
     {
         Task<T?> GetByIdAsync(int id);
@@ -1003,8 +994,7 @@ namespace BBDD.Repository.Generic
 ### 8.3.3. Unit of Work
 
 ```csharp
-namespace BBDD.Repository.UoW
-{
+namespace BBDD.Repository.UoW;
     public interface IUnitOfWork : IDisposable
     {
         ICustomerRepository Customers { get; }
@@ -1060,8 +1050,7 @@ namespace BBDD.Repository.UoW
 ### 8.4.1. Operaciones básicas
 
 ```csharp
-namespace BBDD.EFCore.CRUD
-{
+namespace BBDD.EFCore.CRUD;
     public class CrudService(AppDbContext context)
     {
         public async Task<Customer> CreateCustomer(string name, string email, string? city)
@@ -1165,8 +1154,7 @@ namespace BBDD.EFCore.CRUD
 ### 8.4.2. Consultas optimizadas
 
 ```csharp
-namespace BBDD.EFCore.Optimizacion
-{
+namespace BBDD.EFCore.Optimizacion;
     public class QueryOptimizer(AppDbContext context)
     {
         public async Task<List<Customer>> GetCustomersNoTracking()
@@ -1224,8 +1212,7 @@ namespace BBDD.EFCore.Optimizacion
 ### 8.4.3. Concurrency y concurrencia
 
 ```csharp
-namespace BBDD.EFCore.Concurrency
-{
+namespace BBDD.EFCore.Concurrency;
     public class ConcurrencyService(AppDbContext context)
     {
         public async Task<bool> UpdateWithTimestamp(Customer customer)
@@ -1271,8 +1258,7 @@ namespace BBDD.EFCore.Concurrency
 ### 8.5.1. LINQ to Entities
 
 ```csharp
-namespace BBDD.EFCore.Linq
-{
+namespace BBDD.EFCore.Linq;
     public class LinqQueries(AppDbContext context)
     {
         public async Task<List<Order>> GetOrdersByStatus(OrderStatus status)
@@ -1369,8 +1355,7 @@ namespace BBDD.EFCore.Linq
 ### 8.5.2. SQL interpolado y FromSqlRaw
 
 ```csharp
-namespace BBDD.EFCore.SqlRaw
-{
+namespace BBDD.EFCore.SqlRaw;
     public class SqlRawExamples(AppDbContext context)
     {
         public async Task<List<Customer>> GetCustomersFromSql()
@@ -1401,8 +1386,7 @@ namespace BBDD.EFCore.SqlRaw
 ### 8.5.3. Ejecución y optimización
 
 ```csharp
-namespace BBDD.EFCore.Execution
-{
+namespace BBDD.EFCore.Execution;
     public class QueryExecution(AppDbContext context)
     {
         public async Task DemoShowSql()
@@ -1449,8 +1433,7 @@ namespace BBDD.EFCore.Execution
 ### 8.6.1. Code First migrations
 
 ```csharp
-namespace BBDD.EFCore.Migrations
-{
+namespace BBDD.EFCore.Migrations;
     public partial class AddCustomerPhone : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -1484,8 +1467,7 @@ namespace BBDD.EFCore.Migrations
 ### 8.6.2. Gestión del historial
 
 ```csharp
-namespace BBDD.EFCore.MigrationHistory
-{
+namespace BBDD.EFCore.MigrationHistory;
     public class MigrationHistoryService(AppDbContext context)
     {
         public async Task ApplyMigrations()
@@ -1511,8 +1493,7 @@ namespace BBDD.EFCore.MigrationHistory
 Este método guarda los datos en la migración y se ejecuta con `dotnet ef database update`.
 
 ```csharp
-namespace BBDD.EFCore.SeedData.HasData
-{
+namespace BBDD.EFCore.SeedData.HasData;
     public class SeededDbContext(DbContextOptions<SeededDbContext> options) : DbContext(options)
     {
         public DbSet<Product> Products { get; set; } = null!;
@@ -1571,8 +1552,7 @@ namespace BBDD.EFCore.SeedData.HasData
 Este método inserta datos cuando la aplicación starts, sin depender de migraciones.
 
 ```csharp
-namespace BBDD.EFCore.SeedData.Service
-{
+namespace BBDD.EFCore.SeedData.Service;
     public class SeedDataService(AppDbContext context, ILogger<SeedDataService> logger)
     {
         public async Task SeedAsync()
@@ -1614,8 +1594,7 @@ namespace BBDD.EFCore.SeedData.Service
 Puedes cargar datos desde archivos JSON para mantener el código limpio.
 
 ```csharp
-namespace BBDD.EFCore.SeedData.Json
-{
+namespace BBDD.EFCore.SeedData.Json;
     public class JsonSeedDataService(AppDbContext context)
     {
         public async Task SeedFromJsonAsync(string filePath)
