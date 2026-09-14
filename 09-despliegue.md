@@ -1,7 +1,7 @@
 - [9. Despliegue de Aplicaciones Web](#9-despliegue-de-aplicaciones-web)
   - [9.1. ¿Qué es el Despliegue?](#91-qué-es-el-despliegue)
   - [9.2. Escalabilidad: Vertical y Horizontal](#92-escalabilidad-vertical-y-horizontal)
-  - [9.3. Contenedores: Docker](#93-contenedores-docker)
+  - [9.3. Contenedores: Docker y Podman](#93-contenedores-docker-y-podman)
   - [9.4. Orquestación: Kubernetes](#94-orquestación-kubernetes)
   - [9.5. Despliegue en la Nube](#95-despliegue-en-la-nube)
   - [9.6. Integración Continua y Despliegue Continuo (CI/CD)](#96-integración-continua-y-despliegue-continuo-cicd)
@@ -11,13 +11,13 @@
 
 > 💡 **Punto de partida:** Has creado una aplicación web increíble en tu ordenador. Pero, ¿cómo la haces accesible para que todo el mundo la use? ¿Qué pasa cuando llegan 10.000 usuarios al mismo tiempo? ¿Cómo actualizas la aplicación sin que los usuarios noten interrupciones? Todo esto es el **despliegue**, y es donde la teoría se encuentra con la realidad.
 
-En este tema aprenderás los conceptos de despliegue, escalabilidad, contenedores (Docker), orquestación (Kubernetes), la nube y CI/CD.
+En este tema aprenderás los conceptos de despliegue, escalabilidad, contenedores (Docker y Podman), orquestación (Kubernetes), la nube y CI/CD.
 
 **Objetivos de aprendizaje:**
 
 - Comprender qué es el despliegue y sus fases
 - Distinguir entre escalabilidad vertical y horizontal
-- Conocer Docker y cómo empaqueta aplicaciones
+- Conocer Docker y Podman y cómo empaquetan aplicaciones
 - Entender Kubernetes y la orquestación de contenedores
 - Analizar los servicios de la nube (AWS, Azure, Google Cloud)
 - Comprender qué es CI/CD y por qué es importante
@@ -42,7 +42,7 @@ graph LR
 |------|-------------|---------------------|
 | **Desarrollo** | Código en tu ordenador | Rider, VS Code, Git |
 | **Testing** | Pruebas automatizadas | NUnit, Moq, Selenium |
-| **Staging** | Entorno igual al de producción | Docker, Docker Compose |
+| **Staging** | Entorno igual al de producción | Docker, Podman, Docker/Podman Compose |
 | **Producción** | Servidor real accesible por usuarios | Azure, AWS, Nginx |
 
 📌 **Ejemplo real:** Cuando Netflix despliega una nueva versión, no lo hace directamente a todos los usuarios. Primero lo prueba con un 1% de usuarios (Canary Release), si funciona bien, lo amplía al 10%, luego al 50% y finalmente al 100%. Así minimiza el riesgo de errores.
@@ -114,22 +114,23 @@ graph TD
 
 > ⚠️ **Advertencia:** La escalabilidad horizontal requiere que la aplicación sea **stateless** (sin estado). Si guardas sesiones en memoria del servidor, cuando el usuario sea redirigido a otro servidor, perderá la sesión. Usa Redis o una base de datos para las sesiones.
 
-## 9.3. Contenedores: Docker
+## 9.3. Contenedores: Docker y Podman
 
-**Docker** es el estándar actual para empaquetar aplicaciones con todas sus dependencias en un "contenedor" ligero y portable.
+Los **contenedores** empaquetan una aplicación con todas sus dependencias en una unidad ligera y portable. Si funciona en tu contenedor, funciona en cualquier lugar.
 
 | Concepto | Descripción |
 |----------|-------------|
 | **Contenedor** | Unidad de software que incluye código + dependencias + runtime |
 | **Imagen** | Plantilla inmutable del contenedor (como una foto) |
 | **Dockerfile** | Receta para crear la imagen (instrucciones) |
-| **Docker Compose** | Orquestación sencilla de varios contenedores |
+| **Docker** | El estándar actual para contenedores (usa daemon) |
+| **Podman** | Alternativa a Docker, sin daemon, compatible con Dockerfile |
 
-### ¿Por qué Docker?
+### ¿Por qué contenedores?
 
 > "En mi máquina funcionaba" → **Se acabó el problema.**
 
-Si funciona en tu Docker, funciona en el servidor, en la nube, en tu compañero's ordenador. Docker elimina los problemas de "dependencias" y "versiones".
+Si funciona en tu contenedor, funciona en el servidor, en la nube, en tu compañero's ordenador. Los contenedores eliminan los problemas de "dependencias" y "versiones".
 
 ```mermaid
 graph LR
@@ -137,17 +138,21 @@ graph LR
         A1["App"] --> A2["Libs"] --> A3["Guest OS"] --> A4["Hypervisor"] --> A5["Hardware"]
     end
 
-    subgraph DC["📦 CONTENEDOR DOCKER"]
-        B1["App"] --> B2["Libs"] --> B3["Docker Engine"] --> B4["Hardware"]
+    subgraph DC["📦 CONTENEDOR"]
+        B1["App"] --> B2["Libs"] --> B3["Container Engine"] --> B4["Hardware"]
     end
 
     style VM fill:#FF9800,color:#fff
     style DC fill:#4CAF50,color:#fff
 ```
 
-📌 **Ejemplo real:** Docker no tiene "Guest OS" como una Máquina Virtual. Por eso es mucho más ligero y arranca en milisegundos. Un contenedor de Node.js pesa 50MB, una VM completa puede pesar 2GB.
+📌 **Ejemplo real:** Un contenedor de Node.js pesa 50MB, una VM completa puede pesar 2GB. Los contenedores arrancan en milisegundos, las VM en minutos.
 
-### Ejemplo de Dockerfile para ASP.NET Core
+### Docker
+
+**Docker** es el estándar actual para contenedores. Usa un daemon en segundo plano que gestiona las imágenes y contenedores.
+
+#### Dockerfile para ASP.NET Core
 
 ```dockerfile
 # Dockerfile - Receta para crear la imagen
@@ -165,7 +170,7 @@ EXPOSE 5000
 ENTRYPOINT ["dotnet", "MiAplicacion.dll"]
 ```
 
-### Docker Compose para desarrollo local
+#### Docker Compose para desarrollo local
 
 ```yaml
 # docker-compose.yml - Orquestación de contenedores
@@ -193,7 +198,72 @@ services:
       - "6379:6379"
 ```
 
-> 📝 **Nota:** Docker Compose es ideal para desarrollo local. En producción, se usa Kubernetes para gestionar miles de contenedores.
+#### Comandos esenciales de Docker
+
+```bash
+docker build -t miapp:v1 .         # Construir imagen
+docker run -d -p 5000:5000 miapp   # Ejecutar contenedor
+docker ps                          # Ver contenedores activos
+docker stop <nombre>               # Parar contenedor
+docker compose up -d               # Arrancar servicios
+docker compose down                # Parar servicios
+```
+
+### Podman
+
+**Podman** es una alternativa a Docker desarrollada por Red Hat. La principal diferencia es que **no usa daemon** (es daemonless) y funciona **rootless** (sin permisos de administrador) por defecto.
+
+#### Compatibilidad con Dockerfile
+
+Podman usa **exactamente los mismos Dockerfiles** que Docker. No necesitas cambiar nada:
+
+```bash
+# Los mismos comandos, cambiando "docker" por "podman"
+podman build -t miapp:v1 .
+podman run -d -p 5000:5000 miapp
+podman ps
+podman stop <nombre>
+```
+
+#### Podman Compose
+
+Para orquestar varios contenedores, Podman usa `podman compose` con el mismo `docker-compose.yml`:
+
+```bash
+# Misma sintaxis que Docker Compose
+podman compose up -d
+podman compose ps
+podman compose logs -f app
+podman compose down
+```
+
+> 💡 **Consejo:** `podman compose` necesita que instales `podman-compose` o que uses el plugin. En Windows con Podman Desktop, viene incluido.
+
+#### Ventajas de Podman
+
+| Ventaja | Descripción |
+|---------|-------------|
+| **Sin daemon** | No hay un proceso `dockerd` corriendo en segundo plano |
+| **Rootless** | No necesitas permisos de administrador (más seguro) |
+| **Compatible con Dockerfile** | Mismos Dockerfiles, mismas imágenes de Docker Hub |
+| **Compatible con Docker Compose** | Mismos ficheros `docker-compose.yml` |
+
+### Docker vs Podman: ¿cuándo usar cada uno?
+
+| Característica | Docker | Podman |
+|----------------|--------|--------|
+| **Daemon** | Sí (dockerd) | No (daemonless) |
+| **Seguridad** | Requiere daemon con privilegios | Rootless por defecto |
+| **Dockerfile** | ✅ Nativo | ✅ Compatible |
+| **Docker Compose** | ✅ Nativo | ✅ Compatible (podman compose) |
+| **Docker Hub** | ✅ Nativo | ✅ Compatible |
+| **Ecosistema** | Más grande, más herramientas | Creciente, integrado en RHEL/Fedora |
+| **Windows** | Docker Desktop | Podman Desktop |
+| **Uso típico** | Desarrollo y producción | Servidores Linux, entornos seguros |
+
+> 📝 **Nota:** Para desarrollo local, ambos funcionan igual. En servidores Linux, Podman es popular por su seguridad (rootless). En la nube, Docker sigue siendo el más used.
+
+📌 **Ejemplo real:** Red Hat, Fedora y CentOS usan Podman como contenedor por defecto. Docker sigue siendo el estándar en la mayoría de la nube (AWS, Azure, GCP).
 
 ## 9.4. Orquestación: Kubernetes
 
@@ -229,7 +299,7 @@ graph TD
 📌 **Ejemplo real:** Netflix usa Kubernetes para gestionar más de 100.000 contenedores. Cuando hay un pico de tráfico (estreno de una serie popular), Kubernetes añade automáticamente más contenedores para manejar la carga.
 
 > 💡 **Consejo:** Para el examen, recuerda la diferencia:
-> - **Docker** = Empaqueta la aplicación en un contenedor
+> - **Docker / Podman** = Empaquetan la aplicación en un contenedor
 > - **Kubernetes** = Gestiona miles de contenedores (orquestación)
 > - **CI/CD** = Automatiza la creación y envío de esos contenedores
 
@@ -329,6 +399,8 @@ sequenceDiagram
 | **Escalabilidad horizontal** | Añadir más servidores con balanceador de carga |
 | **Docker** | Empaqueta la app con dependencias en un contenedor |
 | **Docker Compose** | Orquestación sencilla de varios contenedores |
+| **Podman** | Alternativa a Docker, sin daemon, compatible con Dockerfile |
+| **Podman Compose** | Orquestación compatible con docker-compose.yml |
 | **Kubernetes** | Orquestación masiva de contenedores (autoescalado, recuperación) |
 | **IaaS** | Alquilar máquinas virtuales (AWS EC2, Azure VM) |
 | **PaaS** | Subir código, el proveedor gestiona todo (Azure App Service) |

@@ -1,6 +1,6 @@
-# Docker — Comandos de Supervivencia
+# Docker y Podman — Comandos de Supervivencia
 
-> Referencia rápida para contenedores, imágenes, Docker Compose y Dockerfile.
+> Referencia rápida para contenedores, imágenes, Docker Compose, Podman Compose y Dockerfile.
 
 ## Contenedores
 
@@ -217,6 +217,30 @@ ENTRYPOINT ["dotnet", "MiProyecto.dll"]
 | `ENTRYPOINT` | Comando de inicio | `ENTRYPOINT ["dotnet", "app.dll"]` |
 | `ENV` | Variable de entorno | `ENV ASPNETCORE_ENVIRONMENT=Production` |
 
+## Podman — Equivalencias
+
+Podman usa **los mismos Dockerfiles** y comandos casi idénticos. Solo cambia `docker` por `podman`:
+
+| Docker | Podman | Descripción |
+|--------|--------|-------------|
+| `docker ps` | `podman ps` | Listar contenedores |
+| `docker run -d ...` | `podman run -d ...` | Ejecutar contenedor |
+| `docker build -t img .` | `podman build -t img .` | Construir imagen |
+| `docker stop <nombre>` | `podman stop <nombre>` | Parar contenedor |
+| `docker rm <nombre>` | `podman rm <nombre>` | Eliminar contenedor |
+| `docker logs <nombre>` | `podman logs <nombre>` | Ver logs |
+| `docker exec -it <nombre> bash` | `podman exec -it <nombre> bash` | Entrar al contenedor |
+| `docker images` | `podman images` | Listar imágenes |
+| `docker pull postgres:16` | `podman pull postgres:16` | Descargar imagen |
+| `docker compose up -d` | `podman compose up -d` | Arrancar servicios |
+| `docker compose down` | `podman compose down` | Parar servicios |
+| `docker compose ps` | `podman compose ps` | Ver servicios |
+| `docker system prune -a` | `podman system prune -a` | Limpieza total |
+
+> 💡 **Ventaja:** Podman es **daemonless** (sin proceso en segundo plano) y **rootless** (sin permisos de administrador). En Windows, usa **Podman Desktop** (equivalente a Docker Desktop).
+
+> ⚠️ **Advertencia:** `podman compose` necesita el plugin o `podman-compose` instalado. En Podman Desktop viene incluido.
+
 ## Errores comunes
 
 | Error | Solución |
@@ -225,3 +249,4 @@ ENTRYPOINT ["dotnet", "MiProyecto.dll"]
 | `no configuration file provided` | Estás en la carpeta equivocada, busca el `docker-compose.yml` |
 | `Cannot connect to the Docker daemon` | Abrir Docker Desktop |
 | `image not found` | Revisar nombre y tag de la imagen |
+| `podman-compose: command not found` | Instalar: `pip install podman-compose` o usar Podman Desktop |

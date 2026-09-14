@@ -25,7 +25,7 @@
       - [Tema 20: Entity Framework Core](#tema-20-entity-framework-core)
       - [Tema 21: SQL y NoSQL](#tema-21-sql-y-nosql)
       - [Tema 22: Testing Profesional](#tema-22-testing-profesional)
-      - [Tema 23: Docker y Contenedores](#tema-23-docker-y-contenedores)
+      - [Tema 23: Docker y Podman: Contenedores](#tema-23-docker-y-podman-contenedores)
       - [Tema 24: Seguridad en .NET](#tema-24-seguridad-en-net)
   - [25.3. Herramientas y Perfiles](#253-herramientas-y-perfiles)
     - [SDK y CLI](#sdk-y-cli)
@@ -92,7 +92,7 @@ graph TD
     SRV --> SRV2[Nginx: Eventos]
     SRV --> SRV3[Kestrel: .NET]
     DES --> DES1[CI/CD: Automatización]
-    DES --> DES2[Docker: Contenedores]
+    DES --> DES2[Docker/Podman: Contenedores]
     DES --> DES3[Nube: AWS,Azure]
     SEG --> SEG1[Autenticación: JWT]
     SEG --> SEG2[Autorización: Roles]
@@ -110,7 +110,7 @@ graph TD
     P2 --> EF[Entity Framework Core]
     P2 --> BD[SQL + NoSQL]
     P2 --> TEST[Testing Profesional]
-    P2 --> DOCKER[Docker + Compose]
+    P2 --> DOCKER[Docker/Podman + Compose]
     P2 --> SEGP[Seguridad + JWT]
 
     DI --> DI1[Transient, Scoped, Singleton]
@@ -139,7 +139,7 @@ graph TD
     BD --> BD2[MongoDB, Redis]
     TEST --> TEST1[NUnit + Moq]
     TEST --> TEST2[FluentAssertions]
-    TEST --> TEST3[TestContainers: Docker]
+    TEST --> TEST3[TestContainers: Docker/Podman]
     DOCKER --> DOCKER1[Dockerfile Multi-etapa]
     DOCKER --> DOCKER2[docker-compose.yml]
     SEGP --> SEGP1[BCrypt: Hash + Salt]
@@ -240,8 +240,9 @@ graph TD
 
 #### Tema 09: Despliegue y Contenedores
 - **Docker:** Empaqueta la app con todo lo que necesita (OS, librerías, config). Funciona igual en cualquier máquina
-- **Dockerfile:** Receta para construir la imagen (FROM, COPY, RUN, EXPOSE, CMD)
-- **docker-compose.yml:** Define múltiples servicios (app + BD + caché) en un solo archivo
+- **Podman:** Alternativa a Docker, sin daemon, compatible con Dockerfile. Rootless por defecto
+- **Dockerfile:** Receta para construir la imagen (FROM, COPY, RUN, EXPOSE, CMD). Mismo formato para Docker y Podman
+- **docker-compose.yml:** Define múltiples servicios (app + BD + caché) en un solo archivo. Compatible con Podman Compose
 - **CI/CD:** Integración Continua (compilar + test automático) → Despliegue Continuo (publicar automático)
 - **Nube:** AWS, Azure, Google Cloud — infraestructura bajo demanda
 - 📌 Netflix despliega +4000 contenedores diarios con CI/CD en AWS
@@ -363,20 +364,20 @@ graph TD
 - **Moq:** Mocking de interfaces. Simula dependencias para aislar lo que se testea
 - **FluentAssertions:** Aserciones legibles. `resultado.Should().Be(esperado)`
 - **Patrón AAA:** Arrange (preparar), Act (ejecutar), Assert (verificar)
-- **TestContainers:** Tests con Docker. BD real, Redis real, todo efímero
+- **TestContainers:** Tests con Docker/Podman. BD real, Redis real, todo efímero
 - **Cobertura:** `dotnet test --collect:"XPlat Code Coverage"`. Objetivo: >80%
 - **Organización:** Misma estructura que el proyecto principal (Models/, Services/, Repositories/)
 - 📌 Un equipo usa TestContainers para testear la BD real sin contaminar datos de desarrollo
 
-#### Tema 23: Docker y Contenedores
-- **Dockerfile:** Receta multi-etapa: build → test → runtime
-- **docker-compose.yml:** Define servicios: app, BD, caché, etc.
+#### Tema 23: Docker y Podman: Contenedores
+- **Dockerfile:** Receta multi-etapa: build → test → runtime. Mismo formato para Docker y Podman
+- **docker-compose.yml:** Define servicios: app, BD, caché, etc. Compatible con Podman Compose
 - **.dockerignore:** Excluir bin/, obj/, .git/ del contexto de build
 - **Multi-etapa:** Build stage compila y testea, runtime stage solo tiene la app
 - **Non-root user:** Ejecutar como usuario no root por seguridad
 - **COPY individual:** NUNCA `COPY . .`. Copiar carpetas una a una
 - **Puertos:** `EXPOSE` en Dockerfile, `ports` en docker-compose.yml
-- 📌 Netflix ejecuta +4000 contenedores diarios con Docker en la nube
+- 📌 Netflix ejecuta +4000 contenedores diarios con Docker/Podman en la nube
 
 #### Tema 24: Seguridad en .NET
 - **BCrypt:** Hash de contraseñas con salt. Resistente a rainbow tables. ¡NUNCA MD5!
@@ -452,7 +453,7 @@ Antes de dar por cerrado el tema, asegúrate de poder responder **SÍ** a estas 
 - [ ] ¿Diferencio entre REST, GraphQL y WebSocket?
 - [ ] ¿Entiendo la diferencia entre SSR y CSR?
 - [ ] ¿Sé qué hacen Apache, Nginx y Kestrel?
-- [ ] ¿Puedo explicar qué es Docker y para qué sirve un contenedor?
+- [ ] ¿Puedo explicar qué es Docker/Podman y para qué sirve un contenedor?
 - [ ] ¿Conozco los conceptos básicos de seguridad: JWT, CORS, HTTPS?
 
 ### Parte 2: C# Avanzado
@@ -468,7 +469,7 @@ Antes de dar por cerrado el tema, asegúrate de poder responder **SÍ** a estas 
 - [ ] ¿Puedo crear un DbContext con EF Core y hacer migraciones?
 - [ ] ¿Sé cuándo usar PostgreSQL, MongoDB, Redis o SQLite?
 - [ ] ¿Puedo escribir tests con NUnit, Moq y FluentAssertions?
-- [ ] ¿Sé crear un Dockerfile multi-etapa y un docker-compose.yml?
+- [ ] ¿Sé crear un Dockerfile multi-etapa y un docker-compose.yml (compatible con Docker y Podman)?
 - [ ] ¿Entiendo JWT, BCrypt y CORS para seguridad?
 
 > 🔧 **Truco:** La mejor forma de aprender es practicando. No leas solo los apuntes: abre el IDE y prueba cada ejemplo. Modifícalos, rompelos, arreglalos. Eso es como se aprende.
@@ -484,6 +485,7 @@ Antes de dar por cerrado el tema, asegúrate de poder responder **SÍ** a estas 
 | **MVC** | Modelo-Vista-Controlador. Patrón de arquitectura para separar responsabilidades |
 | **SOLID** | 5 principios de diseño: SRP, OCP, LSP, ISP, DIP |
 | **Docker** | Plataforma de contenedores. Empaqueta la app con todo lo que necesita |
+| **Podman** | Alternativa a Docker, sin daemon, compatible con Dockerfile |
 | **CI/CD** | Integración Continua / Despliegue Continuo. Automatización de build y deploy |
 | **DI** | Inyección de Dependencias. El contenedor crea e inyecta objetos |
 | **Repository** | Patrón de acceso a datos. Abstrae la fuente de datos |
@@ -512,7 +514,7 @@ Antes de dar por cerrado el tema, asegúrate de poder responder **SÍ** a estas 
 | **NUnit** | Framework de tests para .NET |
 | **Moq** | Librería para crear mocks de interfaces |
 | **FluentAssertions** | Aserciones fluidas y legibles para tests |
-| **TestContainers** | Tests con contenedores Docker efímeros |
+| **TestContainers** | Tests con contenedores Docker/Podman efímeros |
 | **LINQ to DataFrame** | Tablas en memoria para análisis de datos (big data) |
 
 ## 25.7. Ejercicios de Repaso
@@ -531,7 +533,7 @@ Antes de dar por cerrado el tema, asegúrate de poder responder **SÍ** a estas 
 
 7. **EF Core:** Explica la diferencia entre Eager Loading (Include) y Lazy Loading. ¿Por qué el Lazy Loading puede causar el problema N+1?
 
-8. **Docker:** Escribe un Dockerfile multi-etapa para una app .NET. Explica cada instrucción (FROM, COPY, RUN, EXPOSE, CMD).
+8. **Docker/Podman:** Escribe un Dockerfile multi-etapa para una app .NET. Explica cada instrucción (FROM, COPY, RUN, EXPOSE, CMD). ¿Qué diferencia hay entre Docker y Podman?
 
 9. **Seguridad:** ¿Por qué no se debe usar MD5 para contraseñas? ¿Qué es BCrypt y por qué es mejor?
 
@@ -539,7 +541,7 @@ Antes de dar por cerrado el tema, asegúrate de poder responder **SÍ** a estas 
 
 11. **Rx.NET vs IAsyncEnumerable:** ¿Cuándo usarías un flujo caliente y cuándo uno frío? Da un ejemplo de cada caso.
 
-12. **Proyecto integrador:** Diseña la arquitectura de una API para gestionar una biblioteca. Indica: patrones (Repository, Service), tecnologías (EF Core, PostgreSQL), seguridad (JWT), despliegue (Docker), y testing (NUnit + TestContainers).
+12. **Proyecto integrador:** Diseña la arquitectura de una API para gestionar una biblioteca. Indica: patrones (Repository, Service), tecnologías (EF Core, PostgreSQL), seguridad (JWT), despliegue (Docker/Podman), y testing (NUnit + TestContainers).
 
 ## 25.8. ¿Qué viene después?
 
@@ -553,10 +555,10 @@ En la **UD02: Desarrollo de servicios web en .NET** aprenderás a crear APIs RES
 | DI (11) | Inyectar servicios en controllers |
 | EF Core (20) | Conectar la API a PostgreSQL |
 | JWT (24) | Autenticar usuarios |
-| Docker (23) | Desplegar la app en contenedores |
+| Docker/Podman (23) | Desplegar la app en contenedores |
 | Testing (22) | Tests de integración con TestContainers |
 
-📌 **Ejemplo real:** En la UD02 crearás una API REST completa para gestionar productos. Usarás: ASP.NET Core (HTTP/REST), EF Core (PostgreSQL), DI (Scrutor), JWT (autenticación), Serilog (logging), NUnit (tests), y Docker (despliegue). Todo lo que aprendiste en la UD01.
+📌 **Ejemplo real:** En la UD02 crearás una API REST completa para gestionar productos. Usarás: ASP.NET Core (HTTP/REST), EF Core (PostgreSQL), DI (Scrutor), JWT (autenticación), Serilog (logging), NUnit (tests), y Docker/Podman (despliegue). Todo lo que aprendiste en la UD01.
 
 ## 25.9. Mapa de Conexiones entre Temas
 

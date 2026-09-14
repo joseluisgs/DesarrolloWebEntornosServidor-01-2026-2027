@@ -400,7 +400,7 @@ public async Task Guardar_PedidoValido_GuardaEnRepositorio()
 
 ## 22.5. TestContainers: Tests con Docker
 
-**TestContainers** lanza contenedores Docker reales para tests de integración. En vez de mockear una base de datos, usas una real (PostgreSQL, Redis, MongoDB) que se crea y destruye automáticamente.
+**TestContainers** lanza contenedores Docker (o Podman) reales para tests de integración. En vez de mockear una base de datos, usas una real (PostgreSQL, Redis, MongoDB) que se crea y destruye automáticamente.
 
 ### Instalación
 
@@ -543,7 +543,7 @@ public class RedisCacheServiceTests
 }
 ```
 
-> 💡 **Consejo:** Los tests con TestContainers son más lentos que los unitarios (arrancan Docker), pero mucho más fiables. Úsalos para tests de integración donde necesitas una base de datos real.
+> 💡 **Consejo:** Los tests con TestContainers son más lentos que los unitarios (arrancan Docker/Podman), pero mucho más fiables. Úsalos para tests de integración donde necesitas una base de datos real.
 
 ### 22.5.1. Coverlet: Cobertura de Código
 
@@ -657,11 +657,11 @@ dotnet test --collect:"XPlat Code Coverage" --settings coverlet.runsettings
 | **FluentAssertions** | Aserciones legibles: `resultado.Should().Be(5)` |
 | **Moq** | Crear mocks de interfaces: `Setup`, `Verify` |
 | **AAA** | Arrange-Act-Assert: el patrón de organización de tests |
-| **TestContainers** | Contenedores Docker reales para tests de integración |
+| **TestContainers** | Contenedores Docker/Podman reales para tests de integración |
 | **Unit test** | Rápido, aísla componentes, usa mocks |
 | **Integration test** | Prueba componentes juntos, usa BD real |
 
-En el siguiente punto veremos Docker: qué son los contenedores, cómo crear imágenes con Dockerfile y orquestar servicios con Docker Compose.
+En el siguiente punto veremos Docker y Podman en profundidad: cómo crear imágenes con Dockerfile y orquestar servicios con Docker Compose.
 
 ## 22.6. Depuración de Errores en C#
 

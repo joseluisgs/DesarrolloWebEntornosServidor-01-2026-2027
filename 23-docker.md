@@ -1,4 +1,4 @@
-- [23. Docker: Contenedores y Despliegue](#23-docker-contenedores-y-despliegue)
+- [23. Docker y Podman: Contenedores y Despliegue](#23-docker-y-podman-contenedores-y-despliegue)
   - [23.1. ¿Qué son los Contenedores?](#231-qué-son-los-contenedores)
   - [23.2. Dockerfile: La Receta](#232-dockerfile-la-receta)
   - [23.3. Comandos Esenciales de Docker](#233-comandos-esenciales-de-docker)
@@ -7,18 +7,18 @@
   - [23.6. Buenas Prácticas en Dockerfiles](#236-buenas-prácticas-en-dockerfiles)
 
 
-# 23. Docker: Contenedores y Despliegue
+# 23. Docker y Podman: Contenedores y Despliegue
 
-> 💡 **Punto de partida:** En el tema 09 vimos Docker a nivel teórico. Ahora vamos a **usarlo**: crear un Dockerfile para tu app .NET, levantar una base de datos con Docker Compose, gestionar volúmenes para persistir datos y aprender los comandos esenciales. Docker es como una "caja mágica" donde empaquetas tu aplicación con todo lo que necesita para funcionar: el runtime, las librerías, la configuración, los datos. Y esa caja funciona igual en tu portátil, en el servidor de la empresa y en la nube.
+> 💡 **Punto de partida:** En el tema 09 vimos contenedores a nivel teórico. Ahora vamos a **usarlo**: crear un Dockerfile para tu app .NET, levantar una base de datos con Docker Compose, gestionar volúmenes para persistir datos y aprender los comandos esenciales. Docker es como una "caja mágica" donde empaquetas tu aplicación con todo lo que necesita para funcionar: el runtime, las librerías, la configuración, los datos. Y esa caja funciona igual en tu portátil, en el servidor de la empresa y en la nube. Podman es una alternativa a Docker que usa los mismos Dockerfiles y comandos similares.
 
-En este tema aprenderás a crear Dockerfiles, imágenes, contenedores, volúmenes y a orquestar servicios con Docker Compose.
+En este tema aprenderás a crear Dockerfiles, imágenes, contenedores, volúmenes y a orquestar servicios con Docker Compose (y Podman Compose).
 
 **Objetivos de aprendizaje:**
 
 - Entender la diferencia entre imagen y contenedor
 - Crear un Dockerfile para una app .NET
 - Dominar los comandos esenciales: build, run, ps, stop, rm, logs
-- Usar Docker Compose para levantar varios servicios
+- Usar Docker Compose (o Podman Compose) para levantar varios servicios
 - Configurar volúmenes para persistir datos
 - Aplicar buenas prácticas: multi-stage build, .dockerignore
 
@@ -194,6 +194,27 @@ docker run -d --memory=512m --cpus=1.0 miapp:v1
 
 > 💡 **Consejo:** Usa `docker compose` en vez de `docker run` para proyectos con múltiples servicios. Es más fácil de gestionar y documenta la arquitectura.
 
+### Equivalencias con Podman
+
+Podman usa **los mismos Dockerfiles** y comandos casi idénticos (solo cambia `docker` por `podman`):
+
+| Docker | Podman | Descripción |
+|--------|--------|-------------|
+| `docker build -t miapp:v1 .` | `podman build -t miapp:v1 .` | Construir imagen |
+| `docker run -d -p 5000:5000 miapp` | `podman run -d -p 5000:5000 miapp` | Ejecutar contenedor |
+| `docker ps` | `podman ps` | Ver contenedores activos |
+| `docker ps -a` | `podman ps -a` | Ver todos los contenedores |
+| `docker stop miapp` | `podman stop miapp` | Parar contenedor |
+| `docker rm miapp` | `podman rm miapp` | Eliminar contenedor |
+| `docker logs miapp` | `podman logs miapp` | Ver logs |
+| `docker exec -it miapp bash` | `podman exec -it miapp bash` | Entrar al contenedor |
+| `docker images` | `podman images` | Listar imágenes |
+| `docker rmi miapp:v1` | `podman rmi miapp:v1` | Eliminar imagen |
+| `docker pull postgres:16` | `podman pull postgres:16` | Descargar imagen |
+| `docker compose up -d` | `podman compose up -d` | Arrancar servicios |
+
+> 📝 **Nota:** Podman es **daemonless** (sin proceso en segundo plano) y **rootless** (sin permisos de administrador) por defecto. Los comandos son casi idénticos a Docker.
+
 ## 23.4. Docker Compose: Orquestación Local
 
 **Docker Compose** define y ejecuta múltiples contenedores con un solo fichero YAML.
@@ -281,6 +302,23 @@ docker compose build app
 docker compose exec db psql -U admin -d miapp
 ```
 
+### Podman Compose
+
+**Podman Compose** usa el mismo `docker-compose.yml`. Solo cambia el comando:
+
+```bash
+# Mismos comandos, cambiando "docker" por "podman"
+podman compose up -d
+podman compose ps
+podman compose logs -f app
+podman compose down
+podman compose down -v
+podman compose build app
+podman compose exec db psql -U admin -d miapp
+```
+
+> 💡 **Consejo:** Si usas Podman Desktop en Windows, `podman compose` viene incluido. Si usas Linux, instala `podman-compose` con `pip install podman-compose`.
+
 ### Dependencias y health checks
 
 ```yaml
@@ -312,7 +350,7 @@ Los contenedores son **efímeros**: si borras un contenedor, pierdes todos sus d
 
 | Tipo | Descripción | Comando |
 |------|-------------|---------|
-| **Named volume** | Gestorado por Docker | `-v pgdata:/var/lib/postgresql/data` |
+| **Named volume** | Gestorado por Docker/Podman | `-v pgdata:/var/lib/postgresql/data` |
 | **Bind mount** | Mapea una carpeta del host | `-v /mi/carpeta:/app/data` |
 | **Tmpfs** | En memoria (se pierde al parar) | `--tmpfs /app/temp` |
 
@@ -340,7 +378,7 @@ docker run --rm -v pgdata:/data -v $(pwd):/backup alpine \
     tar xzf /backup/pgdata-backup.tar.gz -C /data
 ```
 
-> ⚠️ **Advertencia:** **NUNCA** guardes datos importantes solo en el contenedor. Si ejecutas `docker compose down -v`, los volúmenes se eliminan y los datos se pierden. Usa siempre named volumes para datos persistentes.
+> ⚠️ **Advertencia:** **NUNCA** guardes datos importantes solo en el contenedor. Si ejecutas `docker compose down -v` (o `podman compose down -v`), los volúmenes se eliminan y los datos se pierden. Usa siempre named volumes para datos persistentes.
 
 ## 23.6. Buenas Prácticas en Dockerfiles
 
@@ -396,7 +434,7 @@ ENV ASPNETCORE_ENVIRONMENT=Development
 ENV DOTNET_RUNNING_IN_CONTAINER=true
 ```
 
-> 💡 **Consejo:** Para el examen, recuerda las 3 capas de caché en Docker: **imágenes base** (FROM), **restauración de dependencias** (COPY csproj + RUN restore) y **build** (COPY código + RUN publish). Si no cambian los csproj, Docker reutiliza la caché de la capa de restauración.
+> 💡 **Consejo:** Para el examen, recuerda las 3 capas de caché en Docker/Podman: **imágenes base** (FROM), **restauración de dependencias** (COPY csproj + RUN restore) y **build** (COPY código + RUN publish). Si no cambian los csproj, se reutiliza la caché de la capa de restauración.
 
 ---
 
@@ -409,6 +447,7 @@ ENV DOTNET_RUNNING_IN_CONTAINER=true
 | **Dockerfile** | Receta de texto con instrucciones FROM, COPY, RUN, etc. |
 | **Multi-stage build** | Fase build + fase runtime para imágenes ligeras |
 | **Docker Compose** | Orquestación de varios contenedores con YAML |
+| **Podman Compose** | Alternativa a Docker Compose, mismo formato YAML |
 | **Volúmenes** | Persistencia de datos fuera del contenedor |
 | **Named volume** | Volumen gestionado por Docker (recomendado) |
 | **Bind mount** | Mapeo de carpeta del host al contenedor |
