@@ -239,7 +239,7 @@ Podman usa **los mismos Dockerfiles** y comandos casi idénticos. Solo cambia `d
 
 > 💡 **Ventaja:** Podman es **daemonless** (sin proceso en segundo plano) y **rootless** (sin permisos de administrador). En Windows, usa **Podman Desktop** (equivalente a Docker Desktop).
 
-> ⚠️ **Advertencia:** `podman compose` necesita el plugin o `podman-compose` instalado. En Podman Desktop viene incluido.
+> ⚠️ **Advertencia:** `podman compose` necesita `podman-compose` instalado en Linux (`pip install podman-compose`). En Windows con **Podman Desktop** viene incluido.
 
 ## Errores comunes
 
