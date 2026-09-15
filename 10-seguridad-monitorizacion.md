@@ -417,6 +417,6 @@ graph LR
 
 ---
 
-¡Enhorabuena! Has completado la primera unidad didáctica del módulo de Desarrollo Web en Entorno Servidor. Ahora tienes una visión completa de cómo funciona una aplicación web: desde la arquitectura cliente-servidor hasta la seguridad y monitorización, pasando por los protocolos, tecnologías y despliegue.
+¡Enhorabuena! Has completado la primera parte de la Unidad 01. Ahora tienes una visión completa de cómo funciona una aplicación web: desde la arquitectura cliente-servidor hasta la seguridad y monitorización, pasando por los protocolos, tecnologías y despliegue.
 
-En la siguiente unidad profundizaremos en **ASP.NET Core**, el framework que usaremos durante todo el curso para desarrollar aplicaciones web en C#.
+En el siguiente tema empezamos la **segunda parte** de la unidad, donde profundizaremos en C# de manera avanzada, comenzando por la **Inyección de Dependencias**.
