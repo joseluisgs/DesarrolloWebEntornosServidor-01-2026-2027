@@ -545,7 +545,66 @@ public class RedisCacheServiceTests
 
 > 💡 **Consejo:** Los tests con TestContainers son más lentos que los unitarios (arrancan Docker/Podman), pero mucho más fiables. Úsalos para tests de integración donde necesitas una base de datos real.
 
-> ⚠️ **Advertencia — Docker-in-Docker:** Si ejecutas tests con TestContainers **dentro de un contenedor** (por ejemplo, en una etapa de build de un Dockerfile), necesitas acceso al motor de contenedores. Con Docker, esto requiere exponer el daemon en el puerto `2375 without TLS`, lo cual es una **vulnerabilidad de seguridad** (cualquier proceso puede enviar comandos al daemon). **Podman resuelve esto inherentemente** al ser daemonless y rootless: no hay daemon que exponer ni socket que montar. Si usas Podman, solo necesitas exportar el socket (`DOCKER_HOST`) y deshabilitar Ryuk (`TESTCONTAINERS_RYUK_DISABLED=true`).
+### Docker-in-Docker: El problema del puerto 2375
+
+Cuando ejecutas tests con TestContainers **dentro de un contenedor** (por ejemplo, en una etapa de build de un Dockerfile), se produce un problema conocido como **Docker-in-Docker** (DinD): un contenedor intenta crear otros contenedores.
+
+```mermaid
+graph TD
+    subgraph HOST["🖥️ HOST (tu ordenador)"]
+        subgraph DOCKER["🐳 DAEMON DOCKER"]
+            A["📦 Contenedor Build<br/>(dotnet test)"] -->|"Necesita crear"| B["🐳 Daemon Docker"]
+            B -->|"¿Levantar contenedor?| C["📦 Contenedor PostgreSQL<br/>(TestContainers)"]
+        end
+    end
+
+    B -->|"Puerto 2375<br/>sin TLS ⚠️"| D["🌐 Cualquier proceso<br/>puede enviar comandos"]
+
+    style HOST fill:#2196F3,color:#fff
+    style DOCKER fill:#FF9800,color:#fff
+    style B fill:#f44336,color:#fff
+    style D fill:#f44336,color:#fff
+```
+
+**¿Por qué es un problema?** Para que el contenedor de build pueda crear otros contenedores, necesitas **exponer el daemon de Docker** en el puerto `2375 without TLS`. Esto significa:
+
+| Riesgo | Descripción |
+|--------|-------------|
+| **Sin cifrado** | Toda la comunicación va en texto plano |
+| **Acceso abierto** | Cualquier proceso en la máquina puede enviar comandos al daemon |
+| **Escalada de privilegios** | Quien controla el daemon tiene acceso root a la máquina |
+
+```mermaid
+graph LR
+    subgraph DANGER["⚠️ PUERTO 2375 SIN TLS"]
+        A["anyone"] -->|"tcp://localhost:2375"| B["Docker Daemon<br/>(root)"]
+        B --> C["Crear contenedor<br/>con privilegios"]
+        C --> D["Mount /<br/>→ ROOT"]
+    end
+
+    style DANGER fill:#f44336,color:#fff
+    style B fill:#f44336,color:#fff
+    style D fill:#f44336,color:#fff
+```
+
+**La solución con Podman:** Podman es **daemonless** y **rootless**. No hay daemon que exponer. Cada contenedor es un proceso independiente del usuario:
+
+```mermaid
+graph TD
+    subgraph HOST["🖥️ HOST (tu ordenador)"]
+        subgraph USER["👤 Usuario normal"]
+            A["📦 Contenedor Build<br/>(dotnet test)"] -->|"podman run"| B["📦 Contenedor PostgreSQL<br/>(TestContainers)"]
+        end
+    end
+
+    B -->|"Proceso del usuario<br/>sin daemon ⚠️"| C["✅ Seguro"]
+
+    style HOST fill:#2196F3,color:#fff
+    style USER fill:#4CAF50,color:#fff
+    style C fill:#4CAF50,color:#fff
+```
+
+> ⚠️ **Advertencia:** Si ejecutas tests con TestContainers dentro de un Dockerfile y usas **Docker**, necesitas exponer el daemon en el puerto `2375 without TLS`. Si usas **Podman**, no necesitas nada de esto: no hay daemon, no hay socket, no hay puerto expuesto.
 
 ### 22.5.1. Coverlet: Cobertura de Código
 

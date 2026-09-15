@@ -507,7 +507,44 @@ Rider genera automáticamente el Dockerfile multi-etapa y el `.dockerignore` opt
 
 > 🔧 **Truco:** Si vienes de Docker y quieres probar Podman, solo necesitas `alias docker=podman` en Linux. En Windows, instala Podman Desktop y los comandos son idénticos.
 
-> ⚠️ **Advertencia — Docker-in-Docker y TestContainers:** Si ejecutas `dotnet test` dentro de un Dockerfile (etapa de build) y los tests usan TestContainers, se produce un **Docker-in-Docker**: un contenedor intenta crear otros contenedores. Con Docker, necesitas exponer el daemon en el puerto `2375 without TLS`, lo cual es una **vulnerabilidad de seguridad** (sin cifrado, acceso root al daemon). **Podman resuelve esto** al ser daemonless: no hay daemon que exponer, no hay socket que montar, no hay puerto que abrir. Si usas Podman, solo necesitas exportar el socket de Podman y deshabilitar Ryuk.
+### Docker-in-Docker: Tests dentro de un contenedor
+
+Cuando un Dockerfile tiene una etapa de `dotnet test` y esos tests usan TestContainers, se produce un **Docker-in-Docker**: un contenedor intenta crear otros contenedores.
+
+```mermaid
+graph TD
+    subgraph HOST["🖥️ HOST"]
+        subgraph DAEMON["🐳 DAEMON DOCKER"]
+            A["📦 Contenedor Build<br/>(etapa test)"] -->|"Necesita crear"| B["🐳 dockerd<br/>(root)"]
+            B -->|"¿Levantar otro contenedor?"| C["📦 Contenedor PostgreSQL<br/>(TestContainers)"]
+        end
+    end
+
+    style HOST fill:#2196F3,color:#fff
+    style DAEMON fill:#FF9800,color:#fff
+    style B fill:#f44336,color:#fff
+```
+
+**El problema:** Para que esto funcione con Docker, necesitas exponer el daemon en el puerto `2375 without TLS`. Esto abre una vulnerabilidad de seguridad porque cualquier proceso en la máquina puede enviar comandos al daemon (equivalente a root).
+
+**La solución con Podman:** Podman es daemonless. No hay proceso central que exponer:
+
+```mermaid
+graph TD
+    subgraph HOST["🖥️ HOST"]
+        subgraph USER["👤 Usuario normal"]
+            A["📦 Contenedor Build<br/>(etapa test)"] -->|"podman run"| B["📦 Contenedor PostgreSQL<br/>(TestContainers)"]
+        end
+    end
+
+    B -->|"Proceso del usuario<br/>sin daemon"| C["✅ Seguro"]
+
+    style HOST fill:#2196F3,color:#fff
+    style USER fill:#4CAF50,color:#fff
+    style C fill:#4CAF50,color:#fff
+```
+
+> ⚠️ **Advertencia:** Con Docker, ejecutar tests dentro de un contenedor requiere exponer el daemon en el puerto `2375 without TLS`. Con **Podman**, no hay daemon que exponer: cada contenedor es un proceso independiente del usuario, sin riesgo de seguridad.
 
 ---
 
