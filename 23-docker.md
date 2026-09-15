@@ -507,6 +507,8 @@ Rider genera automáticamente el Dockerfile multi-etapa y el `.dockerignore` opt
 
 > 🔧 **Truco:** Si vienes de Docker y quieres probar Podman, solo necesitas `alias docker=podman` en Linux. En Windows, instala Podman Desktop y los comandos son idénticos.
 
+> ⚠️ **Advertencia — Docker-in-Docker y TestContainers:** Si ejecutas `dotnet test` dentro de un Dockerfile (etapa de build) y los tests usan TestContainers, se produce un **Docker-in-Docker**: un contenedor intenta crear otros contenedores. Con Docker, necesitas exponer el daemon en el puerto `2375 without TLS`, lo cual es una **vulnerabilidad de seguridad** (sin cifrado, acceso root al daemon). **Podman resuelve esto** al ser daemonless: no hay daemon que exponer, no hay socket que montar, no hay puerto que abrir. Si usas Podman, solo necesitas exportar el socket de Podman y deshabilitar Ryuk.
+
 ---
 
 **Resumen del punto:**

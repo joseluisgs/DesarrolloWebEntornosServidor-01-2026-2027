@@ -545,6 +545,8 @@ public class RedisCacheServiceTests
 
 > 💡 **Consejo:** Los tests con TestContainers son más lentos que los unitarios (arrancan Docker/Podman), pero mucho más fiables. Úsalos para tests de integración donde necesitas una base de datos real.
 
+> ⚠️ **Advertencia — Docker-in-Docker:** Si ejecutas tests con TestContainers **dentro de un contenedor** (por ejemplo, en una etapa de build de un Dockerfile), necesitas acceso al motor de contenedores. Con Docker, esto requiere exponer el daemon en el puerto `2375 without TLS`, lo cual es una **vulnerabilidad de seguridad** (cualquier proceso puede enviar comandos al daemon). **Podman resuelve esto inherentemente** al ser daemonless y rootless: no hay daemon que exponer ni socket que montar. Si usas Podman, solo necesitas exportar el socket (`DOCKER_HOST`) y deshabilitar Ryuk (`TESTCONTAINERS_RYUK_DISABLED=true`).
+
 ### 22.5.1. Coverlet: Cobertura de Código
 
 ¿Cómo sabes si tus tests cubren todo el código que deberían? Con **coverlet** — una herramienta que mide qué porcentaje de tu código se ejecuta al correr los tests.
