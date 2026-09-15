@@ -5,6 +5,7 @@
   - [23.4. Docker Compose: Orquestación Local](#234-docker-compose-orquestación-local)
   - [23.5. Volúmenes y Persistencia](#235-volúmenes-y-persistencia)
   - [23.6. Buenas Prácticas en Dockerfiles](#236-buenas-prácticas-en-dockerfiles)
+  - [23.7. Infraestructuras y Entorno de Desarrollo](#237-infraestructuras-y-entorno-de-desarrollo)
 
 
 # 23. Docker y Podman: Contenedores y Despliegue
@@ -436,6 +437,76 @@ ENV DOTNET_RUNNING_IN_CONTAINER=true
 
 > 💡 **Consejo:** Para el examen, recuerda las 3 capas de caché en Docker/Podman: **imágenes base** (FROM), **restauración de dependencias** (COPY csproj + RUN restore) y **build** (COPY código + RUN publish). Si no cambian los csproj, se reutiliza la caché de la capa de restauración.
 
+## 23.7. Infraestructuras y Entorno de Desarrollo
+
+### ¿Dónde se usan Docker y Podman?
+
+Docker y Podman son **técnicamente equivalentes**. Ambos usan los mismos Dockerfiles, los mismos `docker-compose.yml` y los mismos comandos (solo cambia `docker` por `podman`). El formato de contenedor es el mismo (estándar OCI): una imagen creada con Docker funciona con Podman y viceversa.
+
+| Plataforma | Docker | Podman |
+|------------|:------:|:------:|
+| **Windows** | Docker Desktop (WSL2) | Podman Desktop (WSL2) |
+| **macOS** | Docker Desktop (VM) | Podman Machine (VM) |
+| **Linux** | Docker Engine (nativo) | Podman (nativo, rootless) |
+| **AWS** | ✅ ECS, EKS, EC2 | ✅ ECS, EKS, EC2 |
+| **Azure** | ✅ ACI, AKS | ✅ ACI, AKS |
+| **Google Cloud** | ✅ Cloud Run, GKE | ✅ Cloud Run, GKE |
+| **Kubernetes** | ✅ Orquesta contenedores | ✅ Orquesta contenedores |
+| **GitHub Actions** | ✅ `docker build` | ✅ `podman build` |
+| **GitLab CI/CD** | ✅ Docker executor | ✅ Podman executor |
+| **JetBrains Rider** | ✅ Plugin integrado | ✅ Mismo plugin |
+
+### ¿Cuál usa el mercado?
+
+En la práctica, **Docker domina el mercado** (~80% de cuota), pero ambos son válidos:
+
+| | Docker | Podman |
+|--|:------:|:------:|
+| **Cuota de mercado** | ~80% (líder indiscutible) | ~20% y creciendo |
+| **Ninguna empresa rechaza** | ✅ Conocimiento válido | ✅ Conocimiento válido |
+| **Razón principal de elección** | Comunidad, documentación, ecosistema | Licencia gratuita para empresas grandes |
+
+**¿Por qué Podman en empresas?** La razón principal es **económica**: Docker Desktop cobra licencia a empresas con más de 250 empleados o ingresos superiores a $10M. Podman es 100% gratis y open source. Empresas como Red Hat, IBM y Google usan Podman por esto.
+
+**¿Por qué Docker sigue dominando?** Comunidad, documentación y habitad. Si buscas "docker" en Google, hay millones de resultados. Cada tutorial, cada curso y cada respuesta de Stack Overflow usa Docker.
+
+> 📝 **Nota:** Para este módulo, **ambos son equivalentes**. Ninguna empresa te preguntará si usaste Docker o Podman en tus proyectos. Lo que importa es que sepas crear Dockerfiles, orquestar con Compose y desplegar contenedores. Si sabes Docker, sabes Podman con un `alias docker=podman`.
+
+### Docker y Podman en JetBrains Rider
+
+Rider usa **el mismo plugin** para Docker y Podman. No necesitas instalar nada adicional:
+
+![Configuración Docker/Podman en Rider](https://resources.jetbrains.com/help/img/rider/2026.2/03_DockerSettings.png)
+
+**Para conectar Docker:**
+1. `Ctrl+Alt+S` → `Build, Execution, Deployment` → `Docker`
+2. Seleccionar tu conexión Docker
+3. Aparecerá en la ventana `Services` (`Alt+8`)
+
+![Ventana Services de Docker en Rider](https://resources.jetbrains.com/help/img/rider/2026.2/51_DockerConnected.png)
+
+**Para conectar Podman:**
+1. `Ctrl+Alt+S` → `Build, Execution, Deployment` → `Docker`
+2. Seleccionar **Podman** en la lista de conexiones
+3. Elegir tu Podman machine
+
+![Configuración de Podman en Rider](https://resources.jetbrains.com/help/img/rider/2026.2/podman_settings.png)
+
+> 💡 **Consejo:** En Rider, tanto Docker como Podman se gestionan desde la misma ventana de `Services` (`Alt+8`). Puedes ver contenedores, imágenes, volúmenes y redes de ambos sin cambiar de herramienta.
+
+### Añadir soporte Docker/Podman a un proyecto .NET
+
+En Rider puedes añadir soporte de contenedores a tu proyecto con clic derecho:
+
+- **Dockerfile:** Clic derecho en el proyecto → `Add` → `Dockerfile`
+- **Docker Compose:** Clic derecho en el proyecto → `Add` → `Docker Compose File`
+
+Rider genera automáticamente el Dockerfile multi-etapa y el `.dockerignore` optimizados para tu proyecto .NET.
+
+📌 **Ejemplo real:** Netflix, Amazon y Google usan contenedores (Docker o Podman) para desplegar miles de servicios diariamente. La elección entre uno u otro depende del ecosistema del centro o la empresa, no de funcionalidad.
+
+> 🔧 **Truco:** Si vienes de Docker y quieres probar Podman, solo necesitas `alias docker=podman` en Linux. En Windows, instala Podman Desktop y los comandos son idénticos.
+
 ---
 
 **Resumen del punto:**
@@ -453,5 +524,6 @@ ENV DOTNET_RUNNING_IN_CONTAINER=true
 | **Bind mount** | Mapeo de carpeta del host al contenedor |
 | **Health check** | Comprobar que un servicio está listo |
 | **.dockerignore** | Ficheros excluidos del contexto de construcción |
+| **Docker/Podman en Rider** | Mismo plugin, ventana Services (`Alt+8`) |
 
 En el siguiente punto veremos seguridad: autenticación, autorización, JWT, hashing de contraseñas, CORS y OWASP Top 10.
