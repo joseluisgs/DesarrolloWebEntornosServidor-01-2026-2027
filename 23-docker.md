@@ -513,10 +513,10 @@ Cuando un Dockerfile tiene una etapa de `dotnet test` y esos tests usan TestCont
 
 ```mermaid
 graph TD
-    subgraph HOST["🖥️ HOST"]
-        subgraph DAEMON["🐳 DAEMON DOCKER"]
-            A["📦 Contenedor Build<br/>(etapa test)"] -->|"Necesita crear"| B["🐳 dockerd<br/>(root)"]
-            B -->|"¿Levantar otro contenedor?"| C["📦 Contenedor PostgreSQL<br/>(TestContainers)"]
+    subgraph HOST["HOST"]
+        subgraph DAEMON["DAEMON DOCKER"]
+            A["Contenedor Build - etapa test"] -->|"Necesita crear"| B["dockerd - root"]
+            B -->|"Levantar otro contenedor"| C["Contenedor PostgreSQL - TestContainers"]
         end
     end
 
@@ -531,13 +531,13 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph HOST["🖥️ HOST"]
-        subgraph USER["👤 Usuario normal"]
-            A["📦 Contenedor Build<br/>(etapa test)"] -->|"podman run"| B["📦 Contenedor PostgreSQL<br/>(TestContainers)"]
+    subgraph HOST["HOST"]
+        subgraph USER["Usuario normal"]
+            A["Contenedor Build - etapa test"] -->|"podman run"| B["Contenedor PostgreSQL - TestContainers"]
         end
     end
 
-    B -->|"Proceso del usuario<br/>sin daemon"| C["✅ Seguro"]
+    B -->|"Sin daemon, seguro"| C["OK"]
 
     style HOST fill:#2196F3,color:#fff
     style USER fill:#4CAF50,color:#fff

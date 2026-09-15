@@ -551,14 +551,14 @@ Cuando ejecutas tests con TestContainers **dentro de un contenedor** (por ejempl
 
 ```mermaid
 graph TD
-    subgraph HOST["🖥️ HOST (tu ordenador)"]
-        subgraph DOCKER["🐳 DAEMON DOCKER"]
-            A["📦 Contenedor Build<br/>(dotnet test)"] -->|"Necesita crear"| B["🐳 Daemon Docker"]
-            B -->|"¿Levantar contenedor?| C["📦 Contenedor PostgreSQL<br/>(TestContainers)"]
+    subgraph HOST["HOST - tu ordenador"]
+        subgraph DOCKER["DAEMON DOCKER"]
+            A["Contenedor Build - dotnet test"] -->|"Necesita crear"| B["Daemon Docker (dockerd)"]
+            B -->|"Levantar contenedor"| C["Contenedor PostgreSQL - TestContainers"]
         end
     end
 
-    B -->|"Puerto 2375<br/>sin TLS ⚠️"| D["🌐 Cualquier proceso<br/>puede enviar comandos"]
+    B -->|"Puerto 2375 sin TLS"| D["Cualquier proceso puede enviar comandos"]
 
     style HOST fill:#2196F3,color:#fff
     style DOCKER fill:#FF9800,color:#fff
@@ -576,10 +576,10 @@ graph TD
 
 ```mermaid
 graph LR
-    subgraph DANGER["⚠️ PUERTO 2375 SIN TLS"]
-        A["anyone"] -->|"tcp://localhost:2375"| B["Docker Daemon<br/>(root)"]
-        B --> C["Crear contenedor<br/>con privilegios"]
-        C --> D["Mount /<br/>→ ROOT"]
+    subgraph DANGER["PUERTO 2375 SIN TLS"]
+        A["Cualquier proceso"] -->|"tcp://localhost:2375"| B["Docker Daemon (root)"]
+        B --> C["Crear contenedor con privilegios"]
+        C --> D["Mount / - ROOT total"]
     end
 
     style DANGER fill:#f44336,color:#fff
@@ -591,13 +591,13 @@ graph LR
 
 ```mermaid
 graph TD
-    subgraph HOST["🖥️ HOST (tu ordenador)"]
-        subgraph USER["👤 Usuario normal"]
-            A["📦 Contenedor Build<br/>(dotnet test)"] -->|"podman run"| B["📦 Contenedor PostgreSQL<br/>(TestContainers)"]
+    subgraph HOST["HOST - tu ordenador"]
+        subgraph USER["Usuario normal"]
+            A["Contenedor Build - dotnet test"] -->|"podman run"| B["Contenedor PostgreSQL - TestContainers"]
         end
     end
 
-    B -->|"Proceso del usuario<br/>sin daemon ⚠️"| C["✅ Seguro"]
+    B -->|"Proceso del usuario, sin daemon"| C["SEGURO"]
 
     style HOST fill:#2196F3,color:#fff
     style USER fill:#4CAF50,color:#fff
