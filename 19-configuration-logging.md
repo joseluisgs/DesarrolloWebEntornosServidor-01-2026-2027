@@ -103,7 +103,7 @@ public class MiServicio(IConfiguration config)
 }
 ```
 
-### IConfigurationRoot:了解 la fuente
+### IConfigurationRoot: comprender la fuente
 
 ```csharp
 // Ver de dónde viene cada configuración

@@ -593,7 +593,7 @@ public IActionResult Transferir([FromBody] TransferenciaRequest request)
 }
 ```
 
-> 💡 **Consejo:** Para APIs SPA, usa tokens CSRF en cabeceras (no cookies). El于御览.ts de Angular, React o Vue envían el token en cada petición POST/PUT/DELETE.
+> 💡 **Consejo:** Para APIs SPA, usa tokens CSRF en cabeceras (no cookies). El interceptor de Angular, React o Vue envía el token en cada petición POST/PUT/DELETE.
 
 ### Tabla comparativa: CSRF vs XSS vs SQL Injection
 

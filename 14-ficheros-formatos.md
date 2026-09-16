@@ -126,7 +126,7 @@ public class ConexionBD : IDisposable
 ### Operaciones rápidas con File
 
 ```csharp
-// Leer todo el fichero de golpe (适合 ficheros pequeños)
+// Leer todo el fichero de golpe (para ficheros pequeños)
 string contenido = File.ReadAllText("datos.txt");
 
 // Leer todas las líneas

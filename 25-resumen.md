@@ -250,7 +250,7 @@ graph TD
 #### Tema 10: Seguridad Básica
 - **Autenticación:** ¿Quién eres? → JWT, sesiones, OAuth
 - **Autorización:** ¿Qué puedes hacer? → Roles, permisos, ACL
-- **HTTPS:** Cifra la comunicación. Sin él,任何人都 puede ver tus datos en tránsito
+- **HTTPS:** Cifra la comunicación. Sin él, cualquier persona puede ver tus datos en tránsito
 - **CORS:** Controla qué dominios pueden acceder a tu API
 - **SQL Injection:** Inyección de SQL malicioso. Se evita con consultas parametrizadas
 - **XSS:** Cross-Site Scripting. Se evita sanitizando entradas

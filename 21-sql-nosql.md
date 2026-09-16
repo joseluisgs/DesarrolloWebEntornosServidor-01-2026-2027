@@ -1487,7 +1487,7 @@ graph TD
 | **Chat en tiempo real** (mensajes, salas) | MongoDB + Redis | Documentos flexibles, caché de sesiones |
 | **IoT** (sensores, métricas) | InfluxDB + Redis | Timeseries para métricas, Redis para caché |
 | **Búsqueda** (productos, artículos) | PostgreSQL + Elasticsearch | SQL para datos, ES para búsquedas full-text |
-| **Gaming** (ranking, partidas) | Redis | Velocidad extrema,排行榜 en tiempo real |
+| **Gaming** (ranking, partidas) | Redis | Velocidad extrema, clasificación en tiempo real |
 
 ```mermaid
 graph TD

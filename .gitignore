@@ -36,6 +36,7 @@ TestResults/
 /apuntes/
 /evaluacion/
 /ejemplos/
+/dos/
 *.pptx
 .DS_Store
 upload.sh
