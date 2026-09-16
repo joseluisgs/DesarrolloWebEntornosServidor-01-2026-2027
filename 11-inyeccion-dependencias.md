@@ -8,6 +8,7 @@
   - [11.7. DI en Aplicaciones de Consola](#117-di-en-aplicaciones-de-consola)
     - [11.7.1. Estructura de Carpetas de un Proyecto C#](#1171-estructura-de-carpetas-de-un-proyecto-c)
   - [11.8. Scrutor: Assembly Scanning Automático](#118-scrutor-assembly-scanning-automático)
+    - [11.8.1. DI condicional: elegir implementación según configuración](#1181-di-condicional-elegir-implementación-según-configuración)
   - [11.9. Patrones de Diseño con DI](#119-patrones-de-diseño-con-di)
 
 
@@ -490,6 +491,54 @@ public class CacheService : ICacheService, ISingletonService { }
 | 4+ líneas de registro manual | 0 líneas (Scrutor lo hace) |
 
 > 💡 **Consejo:** Lo que no se pueda escanear (configuración condicional, cache con tamaño, factory) se registra manualmente después del `Scan`.
+
+### 11.8.1. DI condicional: elegir implementación según configuración
+
+A veces necesitas elegir qué implementación registrar **según un valor de configuración**. Por ejemplo: en desarrollo usar un repositorio en memoria, en producción usar MongoDB.
+
+```csharp
+// appsettings.json
+{
+  "Pedidos": {
+    "RepositoryType": "MongoDbNative"
+  }
+}
+```
+
+```csharp
+// En Program.cs o en un Config class
+var pedidosRepoType = configuration["Pedidos:RepositoryType"] ?? "MongoDbNative";
+
+if (pedidosRepoType == "MongoDbNative")
+{
+    services.AddScoped<IPedidosRepository, PedidosNativeRepository>();
+}
+else
+{
+    services.AddScoped<IPedidosRepository, PedidosEfCoreRepository>();
+}
+```
+
+📌 Ejemplo real: **TiendaAPI** usa este patrón. La sección `Pedidos:RepositoryType` en `appsettings.json` determina si los pedidos se almacenan con MongoDB Driver nativo o con EF Core. En desarrollo usa uno, en producción puede cambiar sin tocar el código.
+
+> 💡 **Analogía:** Es como un semáforo que decide por ti. Si el configuration dice "MongoDbNative", el contenedor registra ese repositorio. Si dice otra cosa, registra el alternativo. Tú solo configuras, el contenedor decide.
+
+```mermaid
+flowchart TD
+    A["appsettings.json<br/>Pedidos:RepositoryType"] --> B{"¿Valor?"}
+    B -->|MongoDbNative| C["PedidosNativeRepository"]
+    B -->|EfCore| D["PedidosEfCoreRepository"]
+    C --> E["IPedidosRepository"]
+    D --> E
+    E --> F["Servicios que usan IPedidosRepository"]
+
+    style A fill:#2196F3,color:#fff
+    style B fill:#FF9800,color:#fff
+    style C fill:#4CAF50,color:#fff
+    style D fill:#4CAF50,color:#fff
+    style E fill:#9C27B0,color:#fff
+    style F fill:#607D8B,color:#fff
+```
 
 ## 11.9. Patrones de Diseño con DI
 
