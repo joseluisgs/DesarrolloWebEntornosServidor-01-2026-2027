@@ -95,9 +95,9 @@ graph TD
 ```csharp
 // Registro de servicios
 var services = new ServiceCollection();
-services.AddTransient<IPedidoRepository, PedidoRepository>(); // Nueva instancia cada vez
-services.AddScoped<IPedidoService, PedidoService>();          // Una por petición HTTP
-services.AddSingleton<ICacheService, CacheService>();         // Una sola para toda la app
+services.AddScoped<IPedidoRepository, PedidoRepository>();             // Una por petición HTTP
+services.AddScoped<IPedidoService, PedidoService>();                   // Una por petición HTTP
+services.AddSingleton<ICacheService, CacheService>();                  // Una sola para toda la app
 
 // Resolución de servicios
 var provider = services.BuildServiceProvider();
@@ -133,8 +133,8 @@ Cada servicio registrado tiene un **ciclo de vida** que determina cuánto tiempo
 
 | Ciclo | Cuándo se crea | Cuándo se destruye | Ejemplo |
 |-------|---------------|-------------------|---------|
-| **Transient** | Cada vez que se pide | Al finalizar la petición | Repositorios, servicios ligeros |
-| **Scoped** | Una vez por petición HTTP | Al finalizar la petición | DbContext, servicios de negocio |
+| **Transient** | Cada vez que se pide | Al finalizar la petición | Validadores, servicios ligeros |
+| **Scoped** | Una vez por petición HTTP | Al finalizar la petición | Repositorios, DbContext, servicios de negocio |
 | **Singleton** | Una vez al inicio de la app | Cuando la app se cierra | Cache, configuración, logs |
 
 ```mermaid
@@ -161,10 +161,8 @@ graph LR
 ```
 
 ```csharp
-// Transient: nueva instancia cada vez
-services.AddTransient<IPedidoRepository, PedidoRepository>();
-
 // Scoped: una por petición HTTP (misma instancia en la misma request)
+services.AddScoped<IPedidoRepository, PedidoRepository>();
 services.AddScoped<IPedidoService, PedidoService>();
 
 // Singleton: una sola instancia para toda la app
@@ -404,9 +402,9 @@ public static class DependenciesProvider
     {
         var services = new ServiceCollection();
 
-        // Repositories — Transient
-        services.AddTransient<IPedidoRepository, PedidoRepository>();
-        services.AddTransient<IEmailService, EmailService>();
+        // Repositories — Scoped (comparten DbContext por petición)
+        services.AddScoped<IPedidoRepository, PedidoRepository>();
+        services.AddScoped<IEmailService, EmailService>();
 
         // Services — Scoped
         services.AddScoped<IPedidoService, PedidoService>();
@@ -468,14 +466,14 @@ public interface ISingletonService { }
 
 ```csharp
 // ❌ SIN Scrutor: registro manual
-services.AddTransient<IPedidoRepository, PedidoRepository>();
-services.AddTransient<IEmailService, EmailService>();
+services.AddScoped<IPedidoRepository, PedidoRepository>();
+services.AddScoped<IEmailService, EmailService>();
 services.AddScoped<IPedidoService, PedidoService>();
 services.AddSingleton<ICacheService, CacheService>();
 
 // ✅ CON Scrutor: las clases llevan el marcador y Scrutor las registra
-public class PedidoRepository : IPedidoRepository, ITransientService { }
-public class EmailService : IEmailService, ITransientService { }
+public class PedidoRepository : IPedidoRepository, IScopedService { }
+public class EmailService : IEmailService, IScopedService { }
 public class PedidoService : IPedidoService, IScopedService { }
 public class CacheService : ICacheService, ISingletonService { }
 ```
@@ -484,8 +482,8 @@ public class CacheService : ICacheService, ISingletonService { }
 
 | Sin Scrutor | Con Scrutor |
 |-------------|-------------|
-| `services.AddTransient<IPedidoRepository, PedidoRepository>();` | `class PedidoRepository : IPedidoRepository, ITransientService` |
-| `services.AddTransient<IEmailService, EmailService>();` | `class EmailService : IEmailService, ITransientService` |
+| `services.AddScoped<IPedidoRepository, PedidoRepository>();` | `class PedidoRepository : IPedidoRepository, IScopedService` |
+| `services.AddScoped<IEmailService, EmailService>();` | `class EmailService : IEmailService, IScopedService` |
 | `services.AddScoped<IPedidoService, PedidoService>();` | `class PedidoService : IPedidoService, IScopedService` |
 | `services.AddSingleton<ICacheService, CacheService>();` | `class CacheService : ICacheService, ISingletonService` |
 | 4+ líneas de registro manual | 0 líneas (Scrutor lo hace) |
@@ -496,32 +494,43 @@ public class CacheService : ICacheService, ISingletonService { }
 
 A veces necesitas elegir qué implementación registrar **según un valor de configuración**. Por ejemplo: en desarrollo usar un repositorio en memoria, en producción usar MongoDB.
 
-```csharp
-// appsettings.json
-{
-  "Pedidos": {
-    "RepositoryType": "MongoDbNative"
-  }
-}
-```
+**Scrutor** escanea automáticamente lo que puede, pero lo condicional se registra **después del Scan** de forma manual:
 
 ```csharp
-// En Program.cs o en un Config class
-var pedidosRepoType = configuration["Pedidos:RepositoryType"] ?? "MongoDbNative";
+// Program.cs
+var builder = WebApplication.CreateBuilder(args);
+
+// 1. Scrutor: escanea y registra automáticamente todos los Services y Repositories
+builder.Services.Scan(scan => scan
+    .FromAssemblyOf<Program>()
+    .AddClasses(classes => classes.Where(t => t.Name.EndsWith("Repository")))
+        .AsImplementedInterfaces()
+        .WithSingletonLifetime()
+    .AddClasses(classes => classes.Where(t => t.Name.EndsWith("Service")))
+        .AsImplementedInterfaces()
+        .WithScopedLifetime()
+);
+
+// 2. Después de Scrutor: lo condicional (no se puede escanear)
+var pedidosRepoType = builder.Configuration["Pedidos:RepositoryType"] ?? "MongoDbNative";
 
 if (pedidosRepoType == "MongoDbNative")
 {
-    services.AddScoped<IPedidosRepository, PedidosNativeRepository>();
+    builder.Services.AddScoped<IPedidosRepository, PedidosNativeRepository>();
+    Log.Information("Usando PedidosNativeRepository (MongoDB nativo)");
 }
 else
 {
-    services.AddScoped<IPedidosRepository, PedidosEfCoreRepository>();
+    builder.Services.AddScoped<IPedidosRepository, PedidosEfCoreRepository>();
+    Log.Information("Usando PedidosEfCoreRepository (EF Core)");
 }
 ```
 
-📌 Ejemplo real: **TiendaAPI** usa este patrón. La sección `Pedidos:RepositoryType` en `appsettings.json` determina si los pedidos se almacenan con MongoDB Driver nativo o con EF Core. En desarrollo usa uno, en producción puede cambiar sin tocar el código.
+📌 Ejemplo real: **TiendaAPI** usa este patrón en `RepositoriesConfig.cs`. La sección `Pedidos:RepositoryType` en `appsettings.json` determina si los pedidos se almacenan con MongoDB Driver nativo o con EF Core. Scrutor registra los repos normales automáticamente, y el condicional se registra manualmente después.
 
-> 💡 **Analogía:** Es como un semáforo que decide por ti. Si el configuration dice "MongoDbNative", el contenedor registra ese repositorio. Si dice otra cosa, registra el alternativo. Tú solo configuras, el contenedor decide.
+> 💡 **Analogía:** Scrutor es como un conserje que registra a todos los invitados automáticamente. Pero si hay un invitado especial que solo viene si llueve (configuración), lo registras tú a mano después del conserje.
+
+> ⚠️ **Importante:** El `if/else` de registro condicional **debe ir después** del `Scan` de Scrutor. Si lo pones dentro del `Scan`, no funciona porque Scrutor gestiona su propio ciclo.
 
 ```mermaid
 flowchart TD
