@@ -1,6 +1,12 @@
 - [13. LINQ en Colecciones y Base de Datos](#13-linq-en-colecciones-y-base-de-datos)
   - [13.1. LINQ como Lenguaje Declarativo](#131-linq-como-lenguaje-declarativo)
   - [13.2. Operaciones Fundamentales](#132-operaciones-fundamentales)
+    - [Filtrado: Where](#filtrado-where)
+    - [Proyección: Select](#proyección-select)
+    - [Ordenación: OrderBy / ThenBy](#ordenación-orderby--thenby)
+    - [Agregación: Count, Sum, Average, Max, Min](#agregación-count-sum-average-max-min)
+    - [Partitionado: Take, Skip](#partitionado-take-skip)
+    - [Búsqueda: First, Single, Any, All](#búsqueda-first-single-any-all)
   - [13.3. GroupBy: La Operación Más Poderosa](#133-groupby-la-operación-más-poderosa)
   - [13.4. JOINs en LINQ](#134-joins-en-linq)
   - [13.5. LINQ en Base de Datos (Entity Framework Core)](#135-linq-en-base-de-datos-entity-framework-core)
@@ -60,51 +66,127 @@ var resultados = clientes
 
 ### Filtrado: Where
 
+`Where` filtra una colección según una condición. Devuelve solo los elementos que cumplen la condición.
+
 ```csharp
+// Productos con precio mayor a 100
 var caros = productos.Where(p => p.Precio > 100);
+
+// Clientes de Madrid
 var madrid = clientes.Where(c => c.Ciudad == "Madrid");
+
+// Combinar condiciones
+var madridActivo = clientes.Where(c => c.Ciudad == "Madrid" && c.Activo);
 ```
+
+📌 Ejemplo real: **Amazon** usa `Where` para filtrar productos por precio, categoría, valoración, etc. Cuando pones un filtro de "menos de 50€", internamente hace un `Where(p => p.Precio <= 50)`.
 
 ### Proyección: Select
 
+`Select` transforma cada elemento de una colección. Puedes extraer un campo o crear un objeto nuevo.
+
 ```csharp
+// Extraer solo los nombres (Lista<string>)
 var nombres = productos.Select(p => p.Nombre);
+
+// Crear objeto anónimo con solo dos campos
 var resumen = productos.Select(p => new { p.Nombre, p.Precio });
+
+// Transformar a otro tipo
+var nombresMayusculas = productos.Select(p => p.Nombre.ToUpper());
 ```
+
+📌 Ejemplo real: **Netflix** usa `Select` para extraer solo los títulas de las series al mostrar la lista. No necesita toda la información de cada serie, solo el nombre y el póster.
 
 ### Ordenación: OrderBy / ThenBy
 
+`OrderBy` ordena de **menor a mayor** (ascendente). `OrderByDescending` ordena de **mayor a menor** (descendente). `ThenBy` y `ThenByDescending` son ordenaciones secundarias.
+
 ```csharp
+// Ascendente (menor a mayor)
 var ordenados = clientes
-    .OrderBy(c => c.Apellidos)      // Primero por apellidos
-    .ThenBy(c => c.Nombre);         // Luego por nombre
+    .OrderBy(c => c.Apellidos)      // Primero por apellidos (A-Z)
+    .ThenBy(c => c.Nombre);         // Luego por nombre (A-Z)
+
+// Descendente (mayor a menor)
+var caros = productos
+    .OrderByDescending(p => p.Precio);    // Más caros primero
+
+// Combinar: precio descendente, luego nombre ascendente
+var resultado = productos
+    .OrderByDescending(p => p.Precio)     // Caros primero
+    .ThenBy(p => p.Nombre);               // Si mismo precio, A-Z por nombre
 ```
+
+| Operación | Sentido | Ejemplo |
+|-----------|---------|---------|
+| `OrderBy` | Ascendente (A-Z, 0-9) | `OrderBy(p => p.Precio)` — baratos primero |
+| `OrderByDescending` | Descendente (Z-A, 9-0) | `OrderByDescending(p => p.Precio)` — caros primero |
+| `ThenBy` | Secundario ascendente | `ThenBy(p => p.Nombre)` — desempate A-Z |
+| `ThenByDescending` | Secundario descendente | `ThenByDescending(p => p.Nombre)` — desempate Z-A |
+
+📌 Ejemplo real: **Amazon** al ordenar por "Precio: mayor a menor" usa `OrderByDescending(p => p.Precio)`. Si hay varios productos con el mismo precio, desempata por valoración con `ThenByDescending(p => p.Valoracion)`.
 
 ### Agregación: Count, Sum, Average, Max, Min
 
+Estas operaciones reducen toda la colección a **un solo valor**.
+
 ```csharp
-int total = productos.Count();
-decimal suma = productos.Sum(p => p.Precio);
-double media = productos.Average(p => p.Precio);
-decimal maximo = productos.Max(p => p.Precio);
+int total = productos.Count();                    // Cuántos productos hay
+decimal suma = productos.Sum(p => p.Precio);      // Suma total de precios
+double media = productos.Average(p => p.Precio);  // Precio medio
+decimal maximo = productos.Max(p => p.Precio);    // Precio más alto
+decimal minimo = productos.Min(p => p.Precio);    // Precio más bajo
+
+// Count con condición
+int caros = productos.Count(p => p.Precio > 100); // Cuántos cuestan más de 100
 ```
+
+📌 Ejemplo real: **Bankia** usa `Sum` para calcular el saldo total de un cliente, `Average` para la media de gasto mensual, y `Max` para el mayor cargo del mes.
 
 ### Partitionado: Take, Skip
 
+`Take` coge los primeros N elementos. `Skip` salta los primeros N. Juntos hacen paginación.
+
 ```csharp
-var primeraPagina = productos.Take(10);     // Primeros 10
-var segundaPagina = productos.Skip(10).Take(10); // Siguientes 10
+var primeraPagina = productos.Take(10);                    // Primeros 10
+var segundaPagina = productos.Skip(10).Take(10);           // Siguientes 10
+var terceraPagina = productos.Skip(20).Take(10);           // Siguientes 10
+
+// Atajo para paginación
+var pagina = productos.Skip((numPagina - 1) * 10).Take(10);
 ```
+
+📌 Ejemplo real: **Google** muestra 10 resultados por página. Internamente hace `Skip(0).Take(10)` en la primera página, `Skip(10).Take(10)` en la segunda, etc.
 
 ### Búsqueda: First, Single, Any, All
 
 ```csharp
-var primero = productos.First(p => p.Precio > 100);      // Primer elemento o excepción
-var alguno = productos.Any(p => p.Precio > 100);          // true/false
-var todos = productos.All(p => p.Precio > 0);             // true/false
+// First: primer elemento que cumple la condición (o excepción si no hay)
+var primero = productos.First(p => p.Precio > 100);
+
+// FirstOrDefault: igual pero devuelve null si no hay (no lanza excepción)
+var primeroOrNull = productos.FirstOrDefault(p => p.Precio > 100);
+
+// Any: ¿existe al menos uno que cumpla? (devuelve true/false)
+bool hayCaros = productos.Any(p => p.Precio > 100);
+
+// All: ¿todos cumplen la condición?
+bool todosBaratos = productos.All(p => p.Precio < 100);
 ```
 
-> 📝 **Nota:** `First()` lanza excepción si no hay elementos. `FirstOrDefault()` devuelve `null`. Usa `FirstOrDefault()` cuando el elemento puede no existir.
+| Método | ¿Qué hace? | Si no hay resultados |
+|--------|-------------|---------------------|
+| `First()` | Devuelve el primero | Lanza `InvalidOperationException` |
+| `FirstOrDefault()` | Devuelve el primero | Devuelve `null` (o default) |
+| `Single()` | Devuelve el único | Lanza excepción si hay 0 o más de 1 |
+| `SingleOrDefault()` | Devuelve el único | Devuelve `null` si hay 0 |
+| `Any()` | ¿Existe alguno? | Devuelve `false` |
+| `All()` | ¿Todos cumplen? | Devuelve `true` (vacío = verdadero) |
+
+> ⚠️ **Cuidado:** `First()` lanza excepción si no hay elementos. Usa `FirstOrDefault()` cuando el elemento pueda no existir. `Single()` lanza excepción si hay más de uno.
+
+📌 Ejemplo real: **Netflix** usa `Any()` para comprobar si un usuario tiene contenido en la lista de favoritos antes de mostrar el botón de "Eliminar de favoritos".
 
 ## 13.3. GroupBy: La Operación Más Poderosa
 
