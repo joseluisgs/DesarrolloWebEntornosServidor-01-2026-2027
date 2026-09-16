@@ -1,16 +1,17 @@
 - [15. Patrón Result vs Excepciones (ROP)](#15-patrón-result-vs-excepciones-rop)
   - [15.1. El Problema de las Excepciones](#151-el-problema-de-las-excepciones)
-  - [15.2. La Metáfora del Tren](#152-la-metáfora-del-tren)
-  - [15.3. Errores de Dominio](#153-errores-de-dominio)
-  - [15.4. El Tipo Result](#154-el-tipo-result)
-  - [15.5. CSharpFunctionalExtensions](#155-csharpfunctionalextensions)
-  - [15.6. Operaciones con Result](#156-operaciones-con-result)
-  - [15.7. El Tipo Maybe](#157-el-tipo-maybe)
-  - [15.8. Result vs Excepciones: Cuándo Usar Cada Uno](#158-result-vs-excepciones-cuándo-usar-cada-uno)
-  - [15.9. Result con Async/Await](#159-result-con-asyncawait)
-  - [15.10. Patrón Validator con Result.Combine](#1510-patrón-validator-con-resultcombine)
-  - [15.11. Maybe vs Result vs Nullable](#1511-maybe-vs-result-vs-nullable)
-  - [15.12. Ejemplo Completo](#1512-ejemplo-completo)
+  - [15.2. Union Types: un tipo que puede ser dos cosas](#152-union-types-un-tipo-que-puede-ser-dos-cosas)
+  - [15.3. La Metáfora del Tren](#153-la-metáfora-del-tren)
+  - [15.4. Errores de Dominio](#154-errores-de-dominio)
+  - [15.5. El Tipo Result](#155-el-tipo-result)
+  - [15.6. CSharpFunctionalExtensions](#156-csharpfunctionalextensions)
+  - [15.7. Operaciones con Result](#157-operaciones-con-result)
+  - [15.8. El Tipo Maybe](#158-el-tipo-maybe)
+  - [15.9. Result vs Excepciones: Cuándo Usar Cada Uno](#159-result-vs-excepciones-cuándo-usar-cada-uno)
+  - [15.10. Result con Async/Await](#1510-result-con-asyncawait)
+  - [15.11. Patrón Validator con Result.Combine](#1511-patrón-validator-con-resultcombine)
+  - [15.12. Maybe vs Result vs Nullable](#1512-maybe-vs-result-vs-nullable)
+  - [15.13. Ejemplo Completo](#1513-ejemplo-completo)
 
 
 # 15. Patrón Result vs Excepciones (ROP)
@@ -56,7 +57,119 @@ public Persona GetPersona(int id)
 
 > 📝 **Nota:** Lanzar una excepción es como usar un martillo para matar una mosca. Funciona, pero es excesivo. Las excepciones deberían ser para situaciones realmente excepcionales (base de datos no disponible, archivo corrupto), no para "el usuario no existe".
 
-## 15.2. La Metáfora del Tren
+## 15.2. Union Types: un tipo que puede ser dos cosas
+
+Antes de entender `Result`, necesitas entender qué es un **Union Type**.
+
+Un **Union Type** es un tipo que puede contener **exactamente uno** de varios tipos posibles. No es una clase con varias propiedades, sino un tipo que está en **uno u otro estado**, nunca en ambos.
+
+### Union Types en C# 15 (nuevo)
+
+C# 15 introduce el keyword `union` para declarar union types de forma nativa. Veámoslo con un dominio real: gestionar productos.
+
+**Paso 1: Definir los casos (estados posibles)**
+
+```csharp
+// Los estados posibles de crear un producto
+public record class ProductoCreado(string Nombre, decimal Precio);
+public record class NombreVacio();
+public record class PrecioNegativo(decimal Precio);
+public record class NombreDuplicado(string Nombre);
+```
+
+**Paso 2: Declarar la unión**
+
+```csharp
+// CrearProductoResult puede ser UNO de estos casos, nunca más de uno
+public union CrearProductoResult(
+    ProductoCreado,
+    NombreVacio,
+    PrecioNegativo,
+    NombreDuplicado
+);
+```
+
+**Paso 3: Usar en un servicio**
+
+```csharp
+public class ProductoService
+{
+    public CrearProductoResult CrearProducto(string nombre, decimal precio)
+    {
+        // Validar nombre
+        if (string.IsNullOrWhiteSpace(nombre))
+            return new NombreVacio();
+
+        // Validar precio
+        if (precio < 0)
+            return new PrecioNegativo(precio);
+
+        // Comprobar duplicado
+        if (_repository.Existe(nombre))
+            return new NombreDuplicado(nombre);
+
+        // Todo OK
+        _repository.Crear(new Producto(nombre, precio));
+        return new ProductoCreado(nombre, precio);
+    }
+}
+```
+
+**Paso 4: Consumir con pattern matching**
+
+```csharp
+var resultado = service.CrearProducto("Laptop", 999);
+
+string mensaje = resultado switch
+{
+    ProductoCreado p => $"✅ Producto '{p.Nombre}' creado con precio {p.Precio}€",
+    NombreVacio     => "❌ El nombre del producto es obligatorio",
+    PrecioNegativo n => $"❌ El precio {n.Precio} no puede ser negativo",
+    NombreDuplicado d => $"❌ Ya existe un producto llamado '{d.Nombre}'",
+};
+// Si añades un nuevo caso a la unión y olvidas cubrirlo, el compilador da WARNING
+```
+
+📌 Ejemplo real: **Rust** usa discriminated unions (`enum`) en todo momento. `Option<T>` y `Result<T, E>` son union types nativos. C# 15 se acerca a este nivel de expresividad.
+
+### La ventaja: exhaustiveness checking
+
+La gran ventaja de los Union Types es que el compilador **te obliga** a cubrir todos los casos. Si añades un nuevo estado a la unión y olvidas manejarlo en algún `switch`, el compilador te avisa:
+
+```
+warning CS8509: The switch expression does not handle all possible values
+of its input type (it is not exhaustive).
+```
+
+Esto es algo que **no puedes hacer** con clases heredadas o interfaces: el compilador nunca te avisa si olvidas un `case` en un `switch` sobre una interfaz.
+
+### Comparación: Union Types vs herencia
+
+| Enfoque | Sintaxis | Exhaustiveness | Cerrado |
+|---------|----------|----------------|---------|
+| **Union Types** | `public union Result<T>(Success<T>, Failure);` | ✅ Compilador avisa | ✅ Solo los casos declarados |
+| **Herencia** | `abstract class Result { class Success : Result; class Failure : Result; }` | ❌ No avisa | ❌ Puede haber subtipos nuevos |
+| **Interfaz** | `interface IResult { class Success : IResult; }` | ❌ No avisa | ❌ Cualquiera puede implementar |
+
+### ¿Por qué no usamos `union` en este curso?
+
+Porque estamos en **C# 14 / .NET 10**, y `union` es una feature de **C# 15 / .NET 11** (aún en preview). Si intentamos usarlo ahora:
+
+```csharp
+// ❌ Esto NO compila en C# 14 — error de sintaxis
+public union CrearProductoResult(ProductoCreado, NombreVacio, PrecioNegativo);
+```
+
+En su lugar, usamos `CSharpFunctionalExtensions` que implementa el mismo patrón de forma manual:
+
+```csharp
+// ✅ Esto SÍ compila en C# 14 — con la librería
+Result<Producto, DomainError> resultado = service.CrearProducto(dto);
+```
+
+> 📝 **Nota:** Cuando .NET 11 salga de preview y sea estable, podremos usar `union` nativo. Mientras tanto, el patrón con librería funciona perfectamente y es lo que se usa en producción. El concepto es el mismo: un tipo que puede ser éxito O error, nunca ambos.
+
+## 15.3. La Metáfora del Tren
 
 **Railway Oriented Programming (ROP)** modela el flujo como un tren con dos vías:
 
@@ -95,7 +208,7 @@ flowchart LR
 
 > 💡 **Analogía:** ROP es como un semáforo con dos luces: verde (éxito) y rojo (error). Si un semáforo en tu ruta está en rojo, no necesitas revisar todos los demás: el error se detiene en ese punto.
 
-## 15.3. Errores de Dominio
+## 15.4. Errores de Dominio
 
 Los errores de dominio se definen como `abstract record` con nested records. Un **factory** evita el casting explícito:
 
@@ -136,7 +249,7 @@ public static class DomainErrors
 
 > 📝 **Nota:** C# no permite covarianza implícita con tipos genéricos heredados. Al usar `Result<T, DomainError>`, no podemos hacer `new DomainError.NotFound()` directamente porque el compilador no infiere el tipo base automáticamente. Los factory methods resuelven esto.
 
-## 15.4. El Tipo Result
+## 15.5. El Tipo Result
 
 `Result<TValue, TError>` representa éxito o fracaso:
 
@@ -157,7 +270,7 @@ if (fail.IsFailure)
 }
 ```
 
-## 15.5. CSharpFunctionalExtensions
+## 15.6. CSharpFunctionalExtensions
 
 ### Instalación
 
@@ -181,7 +294,7 @@ dotnet add package CSharpFunctionalExtensions
 }
 ```
 
-## 15.6. Operaciones con Result
+## 15.7. Operaciones con Result
 
 ### Tabla Completa de Operaciones
 
@@ -313,7 +426,7 @@ public Result<Persona, DomainError> GetById(int id)
 
 > 💡 **Consejo:** `OnFailureCompensate` es útil para patrones de recuperación. Si el cache falla, intenta en la BD. Si la BD primaria falla, intenta en la secundaria.
 
-## 15.7. El Tipo Maybe
+## 15.8. El Tipo Maybe
 
 **Maybe** (también llamado Option) representa un valor que puede existir o no. Es la alternativa funcional a `null`:
 
@@ -372,7 +485,7 @@ Result<Persona, DomainError> resultado = persona
 | Null significa "no encontrado" | `Maybe<T>` → `ToResult()` |
 | Error con contexto (validación, negocio) | `Result<T, Error>` |
 
-## 15.8. Result vs Excepciones: Cuándo Usar Cada Uno
+## 15.9. Result vs Excepciones: Cuándo Usar Cada Uno
 
 | Situación | Usar | Ejemplo |
 |-----------|------|---------|
@@ -385,7 +498,7 @@ Result<Persona, DomainError> resultado = persona
 
 > 💡 **Regla simple:** Si el usuario puede resolver el error (rellenar un campo, elegir otro email), usa `Result`. Si es un error del sistema que requiere intervención técnica, usa excepción.
 
-## 15.9. Result con Async/Await
+## 15.10. Result con Async/Await
 
 En aplicaciones reales, la mayoría de operaciones son asíncronas (lectura de BD, llamadas a API). CSharpFunctionalExtensions soporta `async/await` con `Task<Result<T, E>>`.
 
@@ -438,7 +551,7 @@ sequenceDiagram
 
 > ⚠️ **Advertencia:** No mezcles `Result` con `async void`. Siempre usa `async Task<Result<T, E>>` para que el error se propague correctamente.
 
-## 15.10. Patrón Validator con Result.Combine
+## 15.11. Patrón Validator con Result.Combine
 
 `Result.Combine` permite validar múltiples condiciones y agrupar los errores. Es ideal para formularios donde quieres mostrar **todos** los errores de golpe, no solo el primero.
 
@@ -490,7 +603,7 @@ flowchart TD
 
 > 💡 **Consejo:** `Result.Combine` es útil para formularios web donde quieres mostrar todos los errores al usuario de una vez, no ir campo por campo.
 
-## 15.11. Maybe vs Result vs Nullable
+## 15.12. Maybe vs Result vs Nullable
 
 | Tipo | Qué representa | Cuándo usarlo | Ejemplo |
 |------|----------------|---------------|---------|
@@ -535,7 +648,7 @@ resultado.Match(
 
 > 💡 **Regla:** Si solo necesitas "existe/no existe" → `Maybe<T>`. Si necesitas saber **por qué** falló → `Result<T, E>`. Si es un campo simple que puede ser null → `T?`.
 
-## 15.12. Ejemplo Completo
+## 15.13. Ejemplo Completo
 
 ### Errores de Dominio
 
