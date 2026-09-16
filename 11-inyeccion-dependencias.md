@@ -111,23 +111,19 @@ Cuando pides un servicio, el contenedor resuelve **recursivamente** todas sus de
 
 ```mermaid
 sequenceDiagram
-    participant C as 🧵 Cliente
-    participant P as 📦 IServiceProvider
-    participant S as ⚙️ PedidoService
-    participant R as 🗄️ PedidoRepository
-    participant D as 🐘 DbContext
+    participant C as Cliente
+    participant P as IServiceProvider
+    participant S as PedidoService
+    participant R as PedidoRepository
+    participant D as DbContext
 
-    C->>P: GetRequiredService<IPedidoService>()
-    P->>P: ¿PedidoService tiene dependencias?
-    P->>P: Sí: IPedidoRepository + IEmailService
-    P->>P: ¿PedidoRepository tiene dependencias?
-    P->>P: Sí: AppDbContext
+    C->>P: GetRequiredService IPedidoService
+    P->>P: IPedidoService depende de IPedidoRepository y IEmailService
+    P->>P: IPedidoRepository depende de AppDbContext
     P->>D: new AppDbContext(options)
     P->>R: new PedidoRepository(context)
     P->>S: new PedidoService(repository, email)
-    P-->>C: PedidoService listo ✅
-
-    style P fill:#4CAF50,color:#fff
+    P-->>C: PedidoService listo
 ```
 
 ## 11.4. Ciclo de Vida de los Servicios
@@ -381,6 +377,12 @@ services.Decorate<IPedidoService, PedidoServiceConLog>();
 | `services.AddTransient<IPedidoRepo, PedidoRepo>();` | Escanea y registra automáticamente |
 | `services.AddTransient<IClienteRepo, ClienteRepo>();` | Un solo `services.Scan(...)` |
 | `services.AddTransient<IEmailService, EmailService>();` | Convierte más de 50 registros en uno solo |
+
+> ⚠️ **Requisito obligatorio para Scrutor:** Cada clase que quieras que Scrutor registre **DEBE** implementar dos cosas:
+> 1. **Su interfaz de negocio** (`IProductoRepository`, `IProductoService`, etc.)
+> 2. **Una interfaz de marcador de ciclo de vida** (`ITransientService`, `IScopedService` o `ISingletonService`)
+>
+> Si una clase no implementa ninguna de las interfaces marcadoras, Scrutor la ignora silenciosamente. Esto es lo que permite que Scrutor sepa qué ciclo de vida asignar a cada servicio.
 
 > 💡 **Consejo:** Usa interfaces auxiliares como `ITransientService`, `IScopedService` e `ISingletonService` como marcadores. Scrutor las usa para filtrar qué clases registrar.
 
