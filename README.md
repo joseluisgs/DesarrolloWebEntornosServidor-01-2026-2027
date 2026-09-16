@@ -51,7 +51,7 @@ UD01. Introducción al desarrollo de software en Servidor. 2DAW. Curso 2026-2027
 - [SQL vs NoSQL: ACID vs BASE](https://youtu.be/ro2bNNb4k2Q)
 - [Inyección de Dependencias y Patrones](https://youtu.be/oNAHN_ofXFk)
 - [Entity Framework Core](https://youtu.be/Noj_7CQWnUI)
-- [Lista de Reproducción](https://www.youtube.com/playlist?list=PLK1PMlIrqj3c)
+- [Lista de Reproducción](https://www.youtube.com/playlist?list=PLLiuVpAc3Gv4)
 
 ## Resultados de Aprendizaje y Criterios de Evaluación
 
