@@ -400,7 +400,7 @@ foreach (var porcion in porciones)
 
 ## 13.8. DataFrames en C# con Microsoft.Data.Analysis
 
-Un **DataFrame** es una estructura de datos tabular, similar a una tabla SQL o un Excel. Microsoft提供 `Microsoft.Data.Analysis` para trabajar con datos tabulares en C#.
+Un **DataFrame** es una estructura de datos tabular, similar a una tabla SQL o un Excel. Microsoft ofrece `Microsoft.Data.Analysis` para trabajar con datos tabulares en C#.
 
 ### Instalación
 
