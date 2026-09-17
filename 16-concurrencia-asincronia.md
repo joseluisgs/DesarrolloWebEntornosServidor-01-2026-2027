@@ -45,18 +45,15 @@ Una operación síncrona es aquella que **bloquea el hilo** hasta que termina. E
 
 ```mermaid
 sequenceDiagram
-    participant H as 🧵 Hilo de ejecución
-    participant O as ⏳ Operación (red/disco/BD)
+    participant H as Hilo de ejecucion
+    participant O as Operacion (red/disco/BD)
 
-    H->>O: Inicio petición
-    Note over H: 🔒 Hilo BLOQUEADO — no puede hacer nada
-    Note over H: 🔒 Hilo BLOQUEADO — el usuario espera...
-    Note over H: 🔒 Hilo BLOQUEADO — la app se congela...
+    H->>O: Inicio peticion
+    Note over H: Hilo BLOQUEADO - no puede hacer nada
+    Note over H: Hilo BLOQUEADO - el usuario espera...
+    Note over H: Hilo BLOQUEADO - la app se congela...
     O-->>H: Resultado
-    Note over H: ✅ Hilo LIBRE — continúa ejecutando
-
-    style H fill:#f44336,color:#fff
-    style O fill:#FF9800,color:#fff
+    Note over H: Hilo LIBRE - continua ejecutando
 ```
 
 ```csharp
@@ -124,28 +121,23 @@ Aquí viene lo que normalmente no te explican. Cuando tu hilo hace una operació
 
 ```mermaid
 sequenceDiagram
-    participant TP as 🧵 Thread Pool
-    participant H as 🧵 Hilo asignado
-    participant OS as ⚙️ Sistema Operativo
-    participant IO as 💾 Recurso I/O (disco/red/BD)
+    participant TP as Thread Pool
+    participant H as Hilo asignado
+    participant OS as Sistema Operativo
+    participant IO as Recurso I/O (disco/red/BD)
 
-    TP->>H: Asigna hilo a tu código
-    H->>OS: "Quiero leer este fichero"
-    OS->>IO: Envía petición al hardware
+    TP->>H: Asigna hilo a tu codigo
+    H->>OS: Quiero leer este fichero
+    OS->>IO: Envia peticion al hardware
     
-    Note over H: 🔒 Hilo BLOQUEADO<br/>No puede hacer nada<br/>Ocupa memoria (~1MB)
-    Note over IO: ⏳ Esperando respuesta<br/>del hardware...
+    Note over H: Hilo BLOQUEADO<br/>No puede hacer nada<br/>Ocupa memoria (~1MB)
+    Note over IO: Esperando respuesta<br/>del hardware...
     
     IO-->>OS: Datos listos
-    OS-->>H: "Aquí tienes los datos"
-    Note over H: ✅ Hilo LIBRE de nuevo<br/>Procesa el resultado
+    OS-->>H: Aqui tienes los datos
+    Note over H: Hilo LIBRE de nuevo<br/>Procesa el resultado
     
     Note over TP: El hilo vuelve al pool<br/>listo para otro trabajo
-
-    style H fill:#f44336,color:#fff
-    style IO fill:#FF9800,color:#fff
-    style OS fill:#607D8B,color:#fff
-    style TP fill:#4CAF50,color:#fff
 ```
 
 **El problema real no es la velocidad. Es el RECURSO desperdiciado:**
@@ -169,22 +161,20 @@ La **asincronía** es la capacidad de **iniciar una operación y seguir haciendo
 
 ```mermaid
 sequenceDiagram
-    participant U as 👤 Usuario
-    participant A as 🖥️ App (hilo principal)
-    participant R as 🌐 API Remota
+    participant U as Usuario
+    participant A as App (hilo principal)
+    participant R as API Remota
 
-    Note over A: Estado: RECIBIENDO petición
+    Note over A: Estado: RECIBIENDO peticion
 
-    U->>A: "Dame mis datos"
+    U->>A: Dame mis datos
     A->>R: Fetch datos (async)
-    Note over A: 🟢 Hilo LIBRE — puede procesar otros usuarios
-    A-->>U: "Tus datos están en proceso"
+    Note over A: Hilo LIBRE - puede procesar otros usuarios
+    A-->>U: Tus datos estan en proceso
 
     Note over R: ...500ms pasan...
     R-->>A: Datos recibidos
-    Note over A: ✅ Procesa resultado y responde
-
-    style A fill:#4CAF50,color:#fff
+    Note over A: Procesa resultado y responde
 ```
 
 ```csharp
@@ -204,32 +194,28 @@ Cuando el compilador encuentra un `await`, esto es lo que **realmente** pasa pas
 
 ```mermaid
 sequenceDiagram
-    participant Main as 🧵 Hilo Principal
-    participant Compilador as 🔧 Compilador C#
-    participant TP as 🧵 Thread Pool
-    participant OS as ⚙️ Sistema Operativo
-    participant IO as 💾 Recurso I/O
+    participant Main as Hilo Principal
+    participant Compilador as Compilador C#
+    participant TP as Thread Pool
+    participant OS as Sistema Operativo
+    participant IO as Recurso I/O
 
-    Main->>Compilador: "Llama a await LeerFicheroAsync()"
+    Main->>Compilador: Llama a await LeerFicheroAsync()
     Compilador->>Main: 1. Ejecuta hasta el primer await
-    Main->>OS: 2. Lanza la operación de I/O (NO bloquea)
-    Main->>TP: 3. DEVUELVE el hilo al pool ← ¡Clave!
+    Main->>OS: 2. Lanza la operacion de I/O (NO bloquea)
+    Main->>TP: 3. DEVUELVE el hilo al pool
     
-    Note over Main: 🟢 Hilo principal LIBRE<br/>Puede atender otros usuarios,<br/>procesar peticiones, etc.
+    Note over Main: Hilo principal LIBRE<br/>Puede atender otros usuarios,<br/>procesar peticiones, etc.
     
-    Note over IO: ⏳ Esperando respuesta del hardware...
+    Note over IO: Esperando respuesta del hardware...
     
     IO-->>OS: 4. Datos listos
-    OS-->>TP: 5. "Hay un trabajo pendiente"
+    OS-->>TP: 5. Hay un trabajo pendiente
     TP->>Main: 6. Asigna CUALQUIER hilo disponible
     
-    Note over Main: ✅ Reanuda después del await<br/>Con los datos en la variable
+    Note over Main: Reanuda despues del await<br/>Con los datos en la variable
     
-    Main->>Main: 7. Continúa ejecutando
-
-    style Main fill:#4CAF50,color:#fff
-    style TP fill:#2196F3,color:#fff
-    style IO fill:#FF9800,color:#fff
+    Main->>Main: 7. Continua ejecutando
 ```
 
 **Lo clave del diagrama:**
@@ -306,9 +292,9 @@ graph TB
 
 ```mermaid
 sequenceDiagram
-    participant S as 🔴 Secuencial
-    participant C as 🔵 Concurrencia
-    participant P as 🟠 Paralelismo
+    participant S as Secuencial
+    participant C as Concurrencia
+    participant P as Paralelismo
 
     Note over S: Cocina paella (30min)
     Note over S: Cocina postre (20min)
@@ -325,10 +311,6 @@ sequenceDiagram
         Note over P: Cocina postre (20min)
     end
     Note over P: Total: 30min
-
-    style S fill:#f44336,color:#fff
-    style C fill:#2196F3,color:#fff
-    style P fill:#FF9800,color:#fff
 ```
 
 📌 **Ejemplo real:** Cuando haces scroll en Instagram y se cargan imágenes, la app no se bloquea. Usa **asincronía** para cargar las imágenes mientras tú sigues navegando. Si cargara todo de golpe, la pantalla se congelaría. Y si además descarga 10 imágenes a la vez, usa **concurrencia** (las 10 en progreso). Si tuviera 2 núcleos de CPU trabajando en decode de imagen, sería **paralelismo**.
@@ -466,15 +448,15 @@ Cuando ejecutas `Task.Run(() => Algo())`, esto es lo que **realmente** pasa:
 
 ```mermaid
 sequenceDiagram
-    participant C as 👨‍🍳 Chef (tu código)
-    participant R as 📋 Recepción (ThreadPool)
-    participant H as 👨‍🍳 Hilo
+    participant C as Chef (tu codigo)
+    participant R as Recepcion (ThreadPool)
+    participant H as Hilo
 
-    C->>R: "Necesito un cocinero para este plato"
+    C->>R: Necesito un cocinero para este plato
     Note over R: Busca cocinero libre... (0.1ms)
     R->>H: Asigna cocinero 2
     Note over H: Prepara plato (2ms)
-    H-->>R: "Terminé, vuelvo al pool"
+    H-->>R: Termine, vuelvo al pool
     Note over R: Recicla cocinero (0.05ms)
     
     Note over C: Total: 2ms plato + 0.15ms overhead
@@ -616,13 +598,13 @@ Console.WriteLine(texto);
 
 ```mermaid
 sequenceDiagram
-    participant M as 🧵 Método Principal
-    participant A as ⏳ Operación Asíncrona
+    participant M as Metodo Principal
+    participant A as Operacion Asincrona
 
     M->>A: Inicio (await)
     Note over M: Hilo LIBRE (puede hacer otras cosas)
     A-->>M: Resultado listo
-    Note over M: Reanuda ejecución
+    Note over M: Reanuda ejecucion
 ```
 
 ### Diferencia: síncrono vs asíncrono
@@ -1069,8 +1051,8 @@ await foreach (var linea in LeerLineasAsync("datos.csv"))
 
 ```mermaid
 sequenceDiagram
-    participant C as 🧵 Consumidor
-    participant P as 📡 Productor
+    participant C as Consumidor
+    participant P as Productor
 
     C->>P: Siguiente elemento
     Note over P: Procesando...
@@ -1080,9 +1062,6 @@ sequenceDiagram
     Note over P: Procesando...
     P-->>C: Elemento 2
     Note over C: Procesa elemento 2
-
-    style C fill:#4CAF50,color:#fff
-    style P fill:#2196F3,color:#fff
 ```
 
 📌 **Ejemplo real:** Cuando descargas un fichero grande con Chrome, ves la barra de progreso avanzando poco a poco. Eso es streaming con `IAsyncEnumerable` — no espera a tener todo el fichero para mostrarlo, va emitiendo porciones a medida que llegan.
