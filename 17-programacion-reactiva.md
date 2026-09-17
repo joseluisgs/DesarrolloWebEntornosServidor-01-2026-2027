@@ -49,6 +49,42 @@ graph LR
 
 📌 **Ejemplo real:** Instagram no te envía una notificación cada vez que hay una foto nueva. Te suscribes a tu feed y los datos fluyen hacia ti automáticamente. Eso es programación reactiva.
 
+### Flujos Fríos vs Calientes
+
+Hay dos tipos de flujos. La diferencia es **cuándo empiezan a emitir datos**:
+
+```mermaid
+graph LR
+    subgraph FRIO["FLUJO FRÍO (IAsyncEnumerable)"]
+        A1["Alguien consume"] --> A2["Empieza a producir"]
+        A2 --> A3["Dato 1"]
+        A3 --> A4["Dato 2"]
+    end
+
+    subgraph CALIENTE["FLUJO CALIENTE (IObservable)"]
+        B1["Empieza a producir"] --> B2["Dato 1"]
+        B2 --> B3["Dato 2"]
+        B3 --> B4["Dato 3"]
+        B5["Suscriptor 1 entra"] --> B3
+        B6["Suscriptor 2 entra"] --> B4
+    end
+
+    style FRIO fill:#2196F3,color:#fff
+    style CALIENTE fill:#FF9800,color:#fff
+```
+
+| Característica | Frío (IAsyncEnumerable) | Caliente (IObservable) |
+|----------------|------------------------|------------------------|
+| **¿Cuándo empieza?** | Cuando alguien lo consume | Siempre, ya está emitiendo |
+| **¿Qué pasa si te suscribes tarde?** | Nada, receivedes todo desde el inicio | Pierdes lo que ya pasó |
+| **Analogía** | Netflix (ves cuando quieres) | TV en directo (si llegas tarde, te lo pierdes) |
+
+> 💡 **Analogía:**
+> - **Flujo frío** = Netflix: eliges cuándo ver la serie, la ves desde el principio.
+> - **Flujo caliente** = TV en directo: si te conectas a las 21:30 y la peli empezó a las 21:00, te la has perdido.
+
+📌 **Ejemplo real:** Un sensor de temperatura emite datos cada segundo (flujo caliente). Si tu app se conecta a las 10:00:05, no recibirá los datos de 10:00:00 a 10:00:04. Pero un fichero CSV es un flujo frío: siempre puedes leerlo desde la primera línea.
+
 ## 17.2. IAsyncEnumerable: Flujos Fríos
 
 Un **flujo frío** es como una receta: se ejecuta cada vez que alguien lo consume. `IAsyncEnumerable<T>` es el flujo frío por defecto en C#.
@@ -174,6 +210,45 @@ Task.Run(() =>
 // Consumidor: recibe datos
 subject.Subscribe(Console.WriteLine);
 ```
+
+### Ciclo de vida de un observable
+
+Todo observable sigue este ciclo: **Crear → Suscribir → Emitir → Dispose**
+
+```mermaid
+stateDiagram-v2
+    [*] --> Creado: new Subject / Observable
+    Creado --> Suscrito: Subscribe()
+    Suscrito --> Emitiendo: OnNext()
+    Emitiendo --> Emitiendo: OnNext() (repite)
+    Emitiendo --> Completado: OnCompleted()
+    Emitiendo --> Error: OnError()
+    Completado --> Dispuesto: Dispose()
+    Error --> Dispuesto: Dispose()
+    Dispuesto --> [*]
+    
+    note right of Suscrito
+        El observable empieza a
+        emitir datos al suscriptor
+    end note
+    
+    note right of Dispuesto
+        SIEMPRE debes liberar
+        la suscripción
+    end note
+```
+
+**Los 3 eventos que puede emitir un observable:**
+
+| Evento | Método | Significado |
+|--------|--------|-------------|
+| **OnNext** | `subject.OnNext(valor)` | Emitir un dato |
+| **OnError** | `subject.OnError(ex)` | Error, flujo terminado |
+| **OnCompleted** | `subject.OnCompleted()` | Flujo terminado correctamente |
+
+> ⚠️ **Advertencia:** Si no haces `Dispose()`, la suscripción permanece activa y el observable sigue emitiendo datos. Esto causa **memory leaks** en servidores.
+
+📌 **Ejemplo real:** Cuando abres Netflix y te suscribes a una serie, es como hacer `Subscribe()`. Cuando terminas de ver (o cancelas la suscripción), es como hacer `Dispose()`. Si no cancelas, Netflix sigue descargando episodios que no ves.
 
 ## 17.4. Rx.NET: Programación Reactiva
 
@@ -357,6 +432,55 @@ Observable.Interval(TimeSpan.FromSeconds(1))
 
 > 💡 **Consejo:** Rx.NET tiene más de 400 operadores. No necesitas memorizarlos todos. Los más usados son: `Where`, `Select`, `Merge`, `CombineLatest`, `Throttle`, `Buffer`, `Switch` y `DistinctUntilChanged`.
 
+### Manejo de errores: OnError, Catch, Retry
+
+```csharp
+// OnError: notificar un error y terminar el flujo
+var subject = new Subject<string>();
+subject.Subscribe(
+    onNext: Console.WriteLine,
+    onError: ex => Console.WriteLine($"Error: {ex.Message}"),
+    onCompleted: () => Console.WriteLine("Completado")
+);
+
+subject.OnNext("Dato 1");
+subject.OnError(new InvalidOperationException("Algo falló"));
+// El flujo TERMINA aquí. No se emiten más datos.
+
+// Catch: capturar error y continuar con otro flujo
+var fallback = Observable.Return("Valor por defecto");
+var conFallback = subject.Catch(fallback);
+
+// Retry: reintentar automáticamente
+var observable = Observable.Throw<int>(new Exception("Error de red"))
+    .Retry(3); // Reintenta 3 veces antes de fallar
+```
+
+> ⚠️ **Advertencia:** Si un observable lanza `OnError`, la suscripción **termina automáticamente**. No recibirás más datos. Es como una excepción que mata el hilo.
+
+### Dispose: Cancelar suscripciones
+
+Siempre debes hacer `Dispose()` de las suscripciones para evitar **memory leaks**:
+
+```csharp
+// ❌ MAL: La suscripción nunca se cancela
+subject.OnNext += handler; // Memory leak!
+
+// ✅ BIEN: Usar using para dispose automático
+using var subscription = subject
+    .Throttle(TimeSpan.FromSeconds(1))
+    .Subscribe(Console.WriteLine);
+
+// Cuando sales del scope, se cancela automáticamente
+
+// ✅ BIEN: Dispose manual
+var subscription = subject.Subscribe(Console.WriteLine);
+// ... más tarde ...
+subscription.Dispose(); // Cancelar
+```
+
+📌 **En producción:** En un servidor ASP.NET, si no haces `Dispose()` de las suscripciones, cada petición crea una suscripción nueva que nunca se libera. Después de 1000 peticiones, tienes 1000 suscripciones activas quemando memoria.
+
 ## 17.7. Cuándo Usar Cada Uno
 
 | Característica | IAsyncEnumerable | IObservable (Rx.NET) |
@@ -401,6 +525,27 @@ input
 ```
 
 📌 **Ejemplo real:** La barra de búsqueda de Google usa exactamente este patrón: espera a que dejes de escribir (throttle), ignora si escribes lo mismo (distinctUntilChanged), busca solo si hay al menos 2 caracteres (where), y cancela la búsqueda anterior si escribes algo nuevo (switch).
+
+### Ejemplo práctico: Filtrar eventos por tipo
+
+El ejemplo `14-ReactividadRxNet` muestra un patrón real: un sensor emite notificaciones de diferentes tipos (Create, Update, Delete, Error) y cada consumidor filtra lo que le interesa:
+
+```csharp
+// Productor: Subject que emite notificaciones
+var subject = new Subject<Notificacion>();
+
+// Consumidor 1: solo CREATE y UPDATE (filtra DELETE y ERROR)
+subject
+    .Where(n => n.Tipo != NotificacionTipo.Error && n.Tipo != NotificacionTipo.Delete)
+    .Subscribe(n => Console.WriteLine($"Consumidor-1: {n.Mensaje}"));
+
+// Consumidor 2: solo CREATE, DELETE y ERROR (filtra UPDATE)
+subject
+    .Where(n => n.Tipo != NotificacionTipo.Update)
+    .Subscribe(n => Console.WriteLine($"Consumidor-2: {n.Mensaje}"));
+```
+
+📌 **Clave del ejemplo 14:** El segundo consumidor se conecta **8 segundos tarde**. Como es un flujo caliente (Subject), **pierde los primeros 8 segundos de datos**. Solo ve los eventos desde el momento de su suscripción. ¡Eso es la diferencia entre frío y caliente!
 
 > 📝 **Nota:** Para la mayoría de casos en ASP.NET Core, `IAsyncEnumerable` es suficiente. Rx.NET es más potente pero también más complejo. Úsalo cuando necesites operaciones temporales (throttle, debounce) o combinación de múltiples flujos.
 
