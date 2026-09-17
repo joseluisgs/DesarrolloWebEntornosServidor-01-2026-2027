@@ -151,6 +151,117 @@ sequenceDiagram
 
 📌 **Ejemplo real:** Imagina un servidor web con 5000 usuarios conectados. Si cada petición bloquea un hilo durante 200ms leyendo de la BD, necesitas 5000 hilos simultáneos. Cada hilo consume ~1MB de RAM. Son **5GB de RAM solo en hilos esperando**. Con asincronía, esos mismos 5000 usuarios se atienden con ~200 hilos que se reutilizan constantemente. **25x menos memoria.**
 
+### ¿Cómo maneja el SO los hilos? (CPU, núcleos y context switch)
+
+Antes de entender el ThreadPool, necesitas entender cómo funciona tu ordenador a nivel de hardware.
+
+#### CPU y núcleos
+
+Un procesador moderno tiene **varios núcleos** (cores). Cada núcleo puede ejecutar **un hilo a la vez**:
+
+```
+Procesador Intel i7 (4 núcleos, 8 hilos por Hyper-Threading):
+
+  Núcleo 1: [Hilo A]
+  Núcleo 2: [Hilo B]
+  Núcleo 3: [Hilo C]
+  Núcleo 4: [Hilo D]
+
+  → 4 hilos ejecutándose REALMENTE al mismo tiempo
+```
+
+Pero tu ordenador tiene **docenas de hilos** activos (navegador, sistema operativo, tu app, antivirus...). ¿Cómo maneja 50 hilos con solo 4 núcleos?
+
+#### El Sistema Operativo como "director de orquesta"
+
+El SO (Windows, Linux) usa un algoritmo de **planificación** (scheduler) que:
+
+1. **Divide el tiempo** en trozos pequeños (~1-10 ms = "quantum")
+2. **Asigna cada trozo** a un hilo diferente
+3. **Cambia rápidamente** entre hilos para dar la **ilusión** de que ejecutan todos a la vez
+
+```mermaid
+gantt
+    title 4 núcleos, 8 hilos (Hyper-Threading)
+    dateFormat X
+    axisFormat %s
+    
+    section Nucleo 1
+    Hilo A (5ms)    :0, 5
+    Hilo E (5ms)    :5, 10
+    Hilo A (5ms)    :10, 15
+    
+    section Nucleo 2
+    Hilo B (5ms)    :0, 5
+    Hilo F (5ms)    :5, 10
+    Hilo B (5ms)    :10, 15
+    
+    section Nucleo 3
+    Hilo C (5ms)    :0, 5
+    Hilo G (5ms)    :5, 10
+    Hilo C (5ms)    :10, 15
+    
+    section Nucleo 4
+    Hilo D (5ms)    :0, 5
+    Hilo H (5ms)    :5, 10
+    Hilo D (5ms)    :10, 15
+```
+
+📌 **Ejemplo real:** Tu PC tiene 4 núcleos pero 200 procesos activos. El SO ejecuta ~50 hilos por segundo por núcleo. Si cada hilo solo trabaja 5ms, en 1 segundo cada núcleo atiende ~200 hilos. Por eso parece que "van todos a la vez".
+
+#### ¿Qué es el context switch (cambio de contexto)?
+
+Cuando el SO cambia de un hilo a otro, tiene que:
+
+1. **Guardar** el estado del hilo actual (registros, puntero de instrucción, pila)
+2. **Cargar** el estado del siguiente hilo
+3. **Ejecutar** el siguiente hilo
+
+Este proceso se llama **context switch** y cuesta ~0.01-0.1 ms.
+
+```
+Timeline de un context switch:
+
+  Hilo A ejecutando... (5ms)
+       ↓
+  [GUARDAR estado de A] → ~0.01ms
+       ↓
+  [CARGAR estado de B] → ~0.01ms
+       ↓
+  Hilo B ejecutando... (5ms)
+```
+
+> 💡 **Analogía — El Chef multitasco:**
+> Imagina un chef que prepara 8 platos a la vez. Cada 2 minutos cambia de plato:
+> - Guarda dónde estaba (¿cuánta sal le puso al primero?)
+> - Coge el siguiente plato
+> - Recuerda dónde estaba (¿ya echó ajo al segundo?)
+> - Sigue cocinando
+> 
+> El tiempo de "guardar y recordar" es el **context switch**. Si cambias muy rápido, pierdes tiempo solo en recordar dónde estabas.
+
+#### ¿Por qué existe el ThreadPool?
+
+Crear un hilo nuevo cuesta ~0.5 ms y ~1MB de memoria. Destruirlo también. Si tu app crea y destruye miles de hilos por segundo, estás perdiendo tiempo y memoria en "crear y destruir" en vez de "trabajar".
+
+El **ThreadPool** resuelve esto:
+
+```
+Sin ThreadPool (costoso):
+  Crear hilo 1 → Ejecutar → Destruir hilo 1
+  Crear hilo 2 → Ejecutar → Destruir hilo 2
+  Crear hilo 3 → Ejecutar → Destruir hilo 3
+  Total: 3 creaciones + 3 destrucciones = 6 operaciones de ~0.5ms = 3ms perdidas
+
+Con ThreadPool (eficiente):
+  Hilo 1 listo → Ejecutar tarea 1 → Volver al pool
+  Hilo 1 listo → Ejecutar tarea 2 → Volver al pool
+  Hilo 1 listo → Ejecutar tarea 3 → Volver al pool
+  Total: 0 creaciones + 0 destrucciones = 0ms perdidos
+```
+
+📌 **En producción:** Un servidor web recibe 1000 peticiones/segundo. Sin ThreadPool, crearía 1000 hilos y los destruiría cada segundo (1000 × 0.5ms = 500ms solo en crear hilos). Con ThreadPool, reutiliza ~200 hilos constantemente (0ms de overhead).
+
 ### ¿Por qué los hilos son finitos y qué pasa cuando se acaban?
 
 Cada hilo tiene un **coste real** en recursos del sistema:
