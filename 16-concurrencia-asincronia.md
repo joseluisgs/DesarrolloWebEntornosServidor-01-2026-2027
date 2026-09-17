@@ -3,6 +3,7 @@
   - [16.2. Operaciones de E/S: El Verdadero Enemigo](#162-operaciones-de-e-s-el-verdadero-enemigo)
   - [16.3. Asíncronía: No Bloquear Mientras Esperas](#163-asincronía-no-bloquear-mientras-esperas)
   - [16.4. Concurrencia vs Paralelismo vs Sincronía vs Asíncronía](#164-concurrencia-vs-paralelismo-vs-sincronía-vs-asíncronía)
+    - [16.4.1. Diseñar en paralelo: Los 3 errores clásicos](#1641-diseñar-en-paralelo-los-3-errores-clásicos)
   - [16.5. Async/Await: La Base de la Asincronía en C#](#165-asyncawait-la-base-de-la-asincronía-en-c)
   - [16.6. Task y Task\<T\>: El Resultado de una Operación Asíncrona](#166-task-y-taskt-el-resultado-de-una-operación-asíncrona)
   - [16.7. CancellationToken: Cancelar Operaciones en Marcha](#167-cancellationtoken-cancelar-operaciones-en-marcha)
@@ -22,7 +23,7 @@ En este tema aprenderás qué es la sincronía, por qué las operaciones de E/S 
 **Objetivos de aprendizaje:**
 
 - Entender qué es la sincronía y por qué bloquea el hilo
-- Distinguir operaciones de CPU vs operaciones de E/S
+- Distinguir operaciones de CPU vs operaciones de I/O
 - Distinguir concurrencia, paralelismo y asíncrono
 - Dominar `async/await` y cuándo usarlo
 - Entender `Task` y `Task<T>` como promesas de C#
@@ -30,6 +31,7 @@ En este tema aprenderás qué es la sincronía, por qué las operaciones de E/S 
 - Evitar los peligros de `async void`
 - Aplicar patrones de concurrencia: `WhenAll`, `WhenAny`, `Parallel.For`
 - Diferenciar `Task`, `ValueTask` e `IAsyncEnumerable`
+- Diseñar operaciones paralelas correctamente (los 3 errores clásicos)
 
 ## 16.1. Sincronía: La Base para Entender la Asincronía
 
@@ -114,38 +116,46 @@ Las operaciones de entrada/salida (I/O) son las que más afectan al rendimiento 
 > 💡 **Analogía — El Supermercado:**
 > Piensa en la CPU como tú, en tu cocina. Leer un dato de la RAM es como coger una especia de la estantería (instantáneo). Leer de disco es como ir al garaje a buscar una caja (lento). Hacer una petición a Internet es como ir al supermercado a comprar los ingredientes (muy lento). Si fueras **síncrono**, te quedarías sentado en la cocina esperando a que vuelvas del supermercado. Con **asincronía**, mandas a alguien al supermercado y tú sigues cocinando con lo que tienes.
 
-### ¿Por qué es tan grave bloquear en I/O?
+### ¿Qué pasa internamente cuando bloqueas en I/O?
 
-Cuando un hilo se bloquea en una operación de I/O:
-1. **No puede hacer nada más** — la app se congela
-2. **Ocupa memoria** — el hilo sigue consumiendo recursos mientras "duerme"
-3. **Escalabilidad** — si 1000 usuarios hacen peticiones a la vez, necesitas 1000 hilos bloqueados
+Aquí viene lo que normalmente no te explican. Cuando tu hilo hace una operación de I/O (leer disco, petición HTTP, consulta a BD), esto es lo que **realmente** pasa:
 
 ```mermaid
-graph TD
-    subgraph SIN_ASYNC["❌ SIN async/await"]
-        A1["Usuario 1 pide datos"] --> B1["Hilo 1 BLOQUEADO esperando BD"]
-        A2["Usuario 2 pide datos"] --> B2["Hilo 2 BLOQUEADO esperando BD"]
-        A3["Usuario 3 pide datos"] --> B3["Hilo 3 BLOQUEADO esperando BD"]
-        B1 --> C1["Memoria: 3 hilos ocupados"]
-        B2 --> C1
-        B3 --> C1
-    end
+sequenceDiagram
+    participant TP as 🧵 Thread Pool
+    participant H as 🧵 Hilo asignado
+    participant OS as ⚙️ Sistema Operativo
+    participant IO as 💾 Recurso I/O (disco/red/BD)
 
-    subgraph CON_ASYNC["✅ CON async/await"]
-        D1["Usuario 1 pide datos"] --> E1["Hilo 1 LIBRE tras lanzar tarea"]
-        D2["Usuario 2 pide datos"] --> E2["Hilo 2 LIBRE tras lanzar tarea"]
-        D3["Usuario 3 pide datos"] --> E3["Hilo 3 LIBRE tras lanzar tarea"]
-        E1 --> F1["Mismo hilo reutilizado"]
-        E2 --> F1
-        E3 --> F1
-    end
+    TP->>H: Asigna hilo a tu código
+    H->>OS: "Quiero leer este fichero"
+    OS->>IO: Envía petición al hardware
+    
+    Note over H: 🔒 Hilo BLOQUEADO<br/>No puede hacer nada<br/>Ocupa memoria (~1MB)
+    Note over IO: ⏳ Esperando respuesta<br/>del hardware...
+    
+    IO-->>OS: Datos listos
+    OS-->>H: "Aquí tienes los datos"
+    Note over H: ✅ Hilo LIBRE de nuevo<br/>Procesa el resultado
+    
+    Note over TP: El hilo vuelve al pool<br/>listo para otro trabajo
 
-    style SIN_ASYNC fill:#f44336,color:#fff
-    style CON_ASYNC fill:#4CAF50,color:#fff
+    style H fill:#f44336,color:#fff
+    style IO fill:#FF9800,color:#fff
+    style OS fill:#607D8B,color:#fff
+    style TP fill:#4CAF50,color:#fff
 ```
 
-📌 **Ejemplo real:** ASP.NET Core puede manejar miles de peticiones simultáneas con solo ~200 hilos del ThreadPool, gracias a que las operaciones de I/O son asíncronas. Si fueran síncronas, necesitaría un hilo por petición y se quedaría sin hilos rápidamente.
+**El problema real no es la velocidad. Es el RECURSO desperdiciado:**
+
+| Recurso | Mientras bloquea en I/O | Coste |
+|---------|------------------------|-------|
+| **Hilo** | Ocupado, no puede hacer nada | ~1MB de stack |
+| **Memoria** | El hilo sigue vivo en RAM | 1000 hilos = 1GB |
+| **CPU** | 0% de uso (esperando) | Desperdicio total |
+| **Escalabilidad** | 1 hilo por petición | 1000 peticiones = 1000 hilos muertos |
+
+📌 **Ejemplo real:** Imagina un servidor web con 5000 usuarios conectados. Si cada petición bloquea un hilo durante 200ms leyendo de la BD, necesitas 5000 hilos simultáneos. Cada hilo consume ~1MB de RAM. Son **5GB de RAM solo en hilos esperando**. Con asincronía, esos mismos 5000 usuarios se atienden con ~200 hilos que se reutilizan constantemente. **25x menos memoria.**
 
 ## 16.3. Asíncronía: No Bloquear Mientras Esperas
 
@@ -186,14 +196,73 @@ public async Task<string> ObtenerDatosAsync()
 }
 ```
 
-### ¿Cómo funciona internamente?
+### ¿Cómo funciona internamente? El ciclo de vida de un `await`
 
-Cuando el compilador encuentra un `await`:
-1. **Lanza** la operación asíncrona
-2. **Libera** el hilo actual (vuelve al ThreadPool)
-3. Cuando la operación termina, el **ThreadPool asigna un hilo** para continuar la ejecución después del `await`
+Cuando el compilador encuentra un `await`, esto es lo que **realmente** pasa paso a paso:
 
-No es magia. Es como mandar a alguien a buscar pan y mientras tanto seguir haciendo cafe. Cuando vuelva el de pan, el cocinero (cualquier hilo disponible) continúa.
+```mermaid
+sequenceDiagram
+    participant Main as 🧵 Hilo Principal
+    participant Compilador as 🔧 Compilador C#
+    participant TP as 🧵 Thread Pool
+    participant OS as ⚙️ Sistema Operativo
+    participant IO as 💾 Recurso I/O
+
+    Main->>Compilador: "Llama a await LeerFicheroAsync()"
+    Compilador->>Main: 1. Ejecuta hasta el primer await
+    Main->>OS: 2. Lanza la operación de I/O (NO bloquea)
+    Main->>TP: 3. DEVUELVE el hilo al pool ← ¡Clave!
+    
+    Note over Main: 🟢 Hilo principal LIBRE<br/>Puede atender otros usuarios,<br/>procesar peticiones, etc.
+    
+    Note over IO: ⏳ Esperando respuesta del hardware...
+    
+    IO-->>OS: 4. Datos listos
+    OS-->>TP: 5. "Hay un trabajo pendiente"
+    TP->>Main: 6. Asigna CUALQUIER hilo disponible
+    
+    Note over Main: ✅ Reanuda después del await<br/>Con los datos en la variable
+    
+    Main->>Main: 7. Continúa ejecutando
+
+    style Main fill:#4CAF50,color:#fff
+    style TP fill:#2196F3,color:#fff
+    style IO fill:#FF9800,color:#fff
+```
+
+**Lo clave del diagrama:**
+
+1. **Paso 3:** El hilo VUELVE al pool. No se queda esperando. No ocupa memoria.
+2. **Paso 6:** Puede ser **OTRO hilo** distinto. Por eso el Thread ID cambia.
+3. **El resultado** se guarda en la variable `datos` como si hubiera sido síncrono.
+
+> 💡 **Analogía — La promesa:**
+> `await` es como un **vale por un resultado futuro**. Le dices al sistema: "Necesito esto, pero no puedo quedarme aquí esperando. Cuando lo tengas, llámame." El sistema te devuelve un **vale** (un `Task`). Mientras tanto, tú sigues haciendo otras cosas. Cuando el resultado está listo, el sistema te dice "ya puedes continuar" y tú coges el resultado del vale.
+
+```mermaid
+graph LR
+    subgraph TAREA["Task = Vale por un resultado"]
+        A["Lanzas la tarea"] --> B["Task en progreso..."]
+        B --> C["Task completado"]
+        C --> D["Accedes al resultado"]
+    end
+
+    subgraph HILO["El hilo mientras tanto"]
+        E["Hilo original"] -->|"Devuelve al pool"| F["Hilo libre"]
+        F -->|"Resultado listo"| G["Cualquier hilo continúa"]
+    end
+
+    TAREA --> HILO
+
+    style A fill:#2196F3,color:#fff
+    style B fill:#FF9800,color:#fff
+    style C fill:#4CAF50,color:#fff
+    style E fill:#f44336,color:#fff
+    style F fill:#4CAF50,color:#fff
+    style G fill:#4CAF50,color:#fff
+```
+
+📌 **Ejemplo real:** Cuando abres Netflix y carga tu lista de series, la app hace 15 peticiones HTTP a la vez (thumbnails, recomendaciones, historial). Cada petición es un `await`. El hilo principal no espera: lanza las 15 peticiones (crea 15 Tasks), se devuelve al pool, y cuando cada respuesta llega, el pool asigna un hilo para procesarla. Si fueran síncronas, la app estaría congelada 15 x 200ms = **3 segundos**. Con asincronía, tarda lo que la más lenta: **~200ms**.
 
 > 💡 **Consejo:** Usa `async/await` en operaciones de I/O (red, disco, BD). **NO** lo uses para operaciones de CPU puro (calcular primos, procesar imagen) — para eso usa `Task.Run` o `Parallel.For`.
 
@@ -262,6 +331,108 @@ sequenceDiagram
 
 📌 **Ejemplo real:** Cuando haces scroll en Instagram y se cargan imágenes, la app no se bloquea. Usa **asincronía** para cargar las imágenes mientras tú sigues navegando. Si cargara todo de golpe, la pantalla se congelaría. Y si además descarga 10 imágenes a la vez, usa **concurrencia** (las 10 en progreso). Si tuviera 2 núcleos de CPU trabajando en decode de imagen, sería **paralelismo**.
 
+### 16.4.1. Diseñar en paralelo: Los 3 errores clásicos
+
+Cuando tienes varias operaciones de I/O independientes, el instinto es hacerlas secuenciales. Pero eso es un error de diseño que cuesta **multiplicar el tiempo de respuesta**. Vamos a ver los 3 patrones y por qué fallan.
+
+> 💡 **Punto de partida:** Tienes que leer un CSV (1000 filas), un JSON (500 elementos) y una BD SQLite (100 registros). Cada operación tarda ~50ms. ¿Cómo lo haces?
+
+#### Error 1: Await secuencial (el más común)
+
+```csharp
+// ❌ MAL: await secuencial — cada uno ESPERA al anterior
+var csv = await LeerCsvAsync("productos.csv");       // 50ms
+var json = await LeerJsonAsync("productos.json");    // 50ms
+var sqlite = await LeerSqliteAsync("productos.db");  // 50ms
+// Total: 150ms — ¡3x más lento de lo necesario!
+```
+
+```mermaid
+gantt
+    title Error 1: Await secuencial
+    dateFormat X
+    axisFormat %s
+    
+    section CSV
+    Leer CSV (50ms)     :0, 50
+    section JSON
+    Espera...           :0, 50
+    Leer JSON (50ms)    :50, 100
+    section SQLite
+    Espera...           :50, 100
+    Leer SQLite (50ms)  :100, 150
+```
+
+**Por qué falla:** Cada `await` pausa la ejecución hasta que termine. Es como ir al supermercado y hacer 3 viajes separados: uno por leche, otro por pan, otro por huevos. Total = 3 viajes.
+
+#### Error 2: Fire-and-forget (olvidar el resultado)
+
+```csharp
+// ❌ MAL: Lanzas sin await — no sabes cuándo terminan
+_ = LeerCsvAsync("productos.csv");
+_ = LeerJsonAsync("productos.json");
+_ = LeerSqliteAsync("productos.db");
+// ¡No tienes los resultados! Y si falla, no te enteras.
+```
+
+**Por qué falla:** Lanzas las tareas pero nunca recoges los resultados. Es como mandar a 3 personas al supermercado y no abrir la puerta cuando vuelven. Los productos se pierden.
+
+#### Error 3: WhenAll + await secuencial (falso paralelo)
+
+```csharp
+// ❌ MAL: Lanzas en paralelo pero luego accedes con .Result
+var tarea1 = LeerCsvAsync("productos.csv");
+var tarea2 = LeerJsonAsync("productos.json");
+var tarea3 = LeerSqliteAsync("productos.db");
+
+await Task.WhenAll(tarea1, tarea2, tarea3); // Paralelo ✓
+
+// Pero luego accedes así (secuencial):
+var csv = await tarea1;  // Espera (ya terminó, pero...)
+var json = await tarea2; // Espera
+var sqlite = await tarea3; // Espera
+```
+
+**Por qué falla:** `WhenAll` sí es paralelo, pero luego acceder con `await` individual es secuencial. Es como cocinar 3 platos a la vez pero servir uno por uno.
+
+#### ✅ El patrón correcto
+
+```csharp
+// ✅ BIEN: Lanzar sin await, WhenAll, y acceder a .Result
+var tareaCsv = LeerCsvAsync("productos.csv");       // Lanza (NO await)
+var tareaJson = LeerJsonAsync("productos.json");     // Lanza (NO await)
+var tareaSqlite = LeerSqliteAsync("productos.db");  // Lanza (NO await)
+
+await Task.WhenAll(tareaCsv, tareaJson, tareaSqlite); // Espera las 3
+
+// Ahora sí accedemos al resultado (ya terminaron)
+var csv = tareaCsv.Result;
+var json = tareaJson.Result;
+var sqlite = tareaSqlite.Result;
+// Total: ~50ms (lo que tarda la más lenta)
+```
+
+```mermaid
+gantt
+    title ✅ Patrón correcto: Task.WhenAll
+    dateFormat X
+    axisFormat %s
+    
+    section CSV
+    Leer CSV (50ms)     :0, 50
+    section JSON
+    Leer JSON (50ms)    :0, 50
+    section SQLite
+    Leer SQLite (50ms)  :0, 50
+    section Resultado
+    WhenAll espera      :0, 50
+    Accede a resultados :50, 51
+```
+
+📌 **Ejemplo real:** El ejemplo `15-SincroniaVsAsyncronia` en la carpeta de ejemplos muestra exactamente esto. Mide el tiempo de cada enfoque y muestra los Thread IDs para que veas la diferencia entre secuencial y paralelo. **¡Ejecútalo y compara los tiempos!**
+
+> 🔧 **Truco:** La regla es simple: **lanza sin await, guarda el Task, y haz await al final**. Si cada operación es independiente de las demás, se ejecutan en paralelo automáticamente.
+
 ## 16.5. Async/Await: La Base de la Asincronía en C#
 
 `async` y `await` son las palabras clave que C# usa para la programación asíncrona. `await` pausa la ejecución del método **sin bloquear el hilo** hasta que termine la operación.
@@ -324,7 +495,49 @@ public async Task<string> ObtenerDatosAsync()
 
 ## 16.6. Task y Task\<T\>: El Resultado de una Operación Asíncrona
 
-Un `Task` representa una operación asíncrona en curso. Es como un "vale por un resultado futuro".
+Un `Task` representa una operación asíncrona en curso. Es como un **vale por un resultado futuro** — una promesa de que obtendrás algo, pero todavía no.
+
+### El ciclo de vida de un Task
+
+```mermaid
+stateDiagram-v2
+    [*] --> Creado: new Task / método async
+    Creado --> Ejecutando: Task.Run / await
+    Ejecutando --> Completado: Resultado listo
+    Ejecutando --> Fallado: Excepción
+    Ejecutando --> Cancelado: CancellationToken
+    
+    Completado --> [*]: Accedes a .Result
+    Fallado --> [*]: Lanza excepción
+    Cancelado --> [*]: OperationCanceledException
+
+    state Completado {
+        [*] --> Valor
+        Valor: El resultado está aquí
+    }
+```
+
+```mermaid
+graph LR
+    subgraph PROMESA["Task = Promesa"]
+        A["📋 Vale por un resultado"] -->|"Esperando..."| B["⏳ En progreso"]
+        B -->|"Resultado listo"| C["✅ Completado"]
+        B -->|"Algo falló"| D["❌ Fallado"]
+    end
+
+    subgraph CODIGO["Tu código"]
+        E["Lanzas la tarea"] -->|"No await"| F["Sigues trabajando"]
+        F -->|"Necesitas el resultado"| G["await la tarea"]
+        G -->|"Obtienes el valor"| H["Usas el resultado"]
+    end
+
+    PROMESA --> CODIGO
+
+    style A fill:#2196F3,color:#fff
+    style C fill:#4CAF50,color:#fff
+    style D fill:#f44336,color:#fff
+    style H fill:#4CAF50,color:#fff
+```
 
 | Tipo | Significado | Ejemplo |
 |------|-------------|---------|
@@ -729,7 +942,7 @@ sequenceDiagram
 | **Paralelismo** | Múltiples tareas ejecutándose al mismo tiempo en varios hilos |
 | **Operaciones de I/O** | Red, disco, BD — las que más benefician de async |
 | **Async/Await** | Mecanismo de C# para programación asíncrona legible |
-| **Task** | Promesa de una operación asíncrona |
+| **Task** | Promesa de una operación asíncrona (vale por un resultado futuro) |
 | **Task\<T\>** | Promesa que devuelve un valor |
 | **ValueTask\<T\>** | Alternativa ligera a Task para hot paths síncronos |
 | **IAsyncEnumerable\<T\>** | Streaming asíncrono de resultados |
@@ -739,5 +952,8 @@ sequenceDiagram
 | **Parallel.For** | Paralelizar operaciones de CPU |
 | **SemaphoreSlim** | Limitar el número de tareas concurrentes |
 | **async void** | Peligroso: solo para eventos de UI |
+| **Los 3 errores clásicos** | Await secuencial, fire-and-forget, WhenAll + await |
 
 En el siguiente punto veremos Programación Reactiva con Rx.NET: flujos de datos asíncronos, Subject, operadores y cuándo usar IObservable vs IAsyncEnumerable.
+
+> 💡 **Ejercicio práctico:** Ejecuta el ejemplo `15-SincroniaVsAsyncronia` de la carpeta de ejemplos. Compara los tiempos de sincrono, async mal y async bien. Fíjate en los Thread IDs del log de Serilog: en sincronismo todos son el mismo, en async bien son distintos. Eso es la diferencia entre secuencial y paralelo.
