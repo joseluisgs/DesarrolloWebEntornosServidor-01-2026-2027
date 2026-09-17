@@ -1,0 +1,10 @@
+services:
+  hello-world:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: docker-hello-world
+    ports:
+      - "5000:8080"    # host:contenedor
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development

@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="12-Docker-HelloWorld/12-Docker-HelloWorld.csproj" />
+  <Project Path="12-Docker-HelloWorld.Test/12-Docker-HelloWorld.Test.csproj" />
+</Solution>
