@@ -6,6 +6,7 @@
   - [Fichero de Datos](#fichero-de-datos)
   - [Estructura de Datos](#estructura-de-datos)
   - [Operaciones Requeridas](#operaciones-requeridas)
+  - [Justificación del Diseño](#justificación-del-diseño)
   - [Tecnologías](#tecnologías)
   - [Estructura de Proyecto](#estructura-de-proyecto)
   - [Comparativa de Tiempos](#comparativa-de-tiempos)
@@ -14,7 +15,12 @@
 
 ## Objetivo
 
-Procesar un fichero CSV con datos reales de accidentes de tráfico en Madrid y realizar consultas avanzadas usando **LINQ**, **PLINQ** y **DataFrames** (`Microsoft.Data.Analysis`). El objetivo es practicar las operaciones de LINQ sobre datos reales, entender cuándo usar PLINQ, y comparar el enfoque de colecciones con el de DataFrames.
+Procesar ficheros CSV con datos reales de accidentes de tráfico en Madrid (2024, 2025 y 2026) y realizar consultas avanzadas usando **LINQ**, **PLINQ** y **DataFrames** (`Microsoft.Data.Analysis`). El objetivo es practicar:
+
+1. Operaciones de LINQ sobre datos reales
+2. Comparar el enfoque de colecciones con el de DataFrames
+3. **Optimizar el rendimiento** del programa usando los recursos del sistema disponibles
+4. **Justificar** las decisiones de diseño en todo momento
 
 > *"Los datos son el nuevo petróleo"* — Clive Humby
 
@@ -22,30 +28,29 @@ Procesar un fichero CSV con datos reales de accidentes de tráfico en Madrid y r
 
 ## Descripción
 
-Dado el fichero `2025_Accidentalidad.csv` del directorio `data`, debemos procesarlo y realizar consultas como si de una base de datos se tratara.
+Dado los ficheros CSV `2024_Accidentalidad.csv`, `2025_Accidentalidad.csv` y `2026_Accidentalidad.csv` del directorio `data`, debemos:
 
-El proyecto debe:
-1. Leer el CSV y mapearlo a objetos de dominio (usando CsvHelper)
-2. Realizar 23 consultas LINQ sobre los datos
-3. Incluir al menos 1 consulta con PLINQ (`AsParallel`)
-4. Demostrar `GroupBy + ToDictionary` vs `GroupBy + Select + ToList`
-5. Realizar al menos 5 consultas equivalentes con DataFrames
-6. Comparar tiempos de ejecución entre LINQ y DataFrames
+1. Leer los 3 ficheros CSV
+2. Combinar los datos en una sola colección
+3. Realizar **30 consultas LINQ** sobre el conjunto combinado
+4. Realizar las **mismas 30 consultas** usando DataFrames
+5. Medir y mostrar los tiempos de ejecución de cada operación
+6. **Optimizar el rendimiento total del programa usando los recursos del sistema disponibles** (debes justificar tus decisiones)
 
 ---
 
 ## Fichero de Datos
 
-El fichero CSV se descarga de los **datos abiertos del Ayuntamiento de Madrid**:
+Los ficheros CSV se descargan de los **datos abiertos del Ayuntamiento de Madrid**:
 
 📥 **URL de descarga:**
 ```
 https://datos.madrid.es/dataset/300228-0-accidentes-trafico-detalle/information
 ```
 
-En esa página encontrarás los ficheros de varios años. Descarga el de **2025** y colócalo en la carpeta `data/` de tu proyecto.
+En esa página encontrarás los ficheros de varios años. Descarga los de **2024, 2025 y 2026** y colócalos en la carpeta `data/` de tu proyecto.
 
-> ⚠️ **Nota:** El fichero es grande (~9 MB, ~46.000 registros).
+> ⚠️ **Nota:** Cada fichero es grande (~6-10 MB, ~30.000-51.000 registros). El total combinado puede superar los 100.000 registros.
 
 **Cabeceras del CSV (separador `;`):**
 ```
@@ -63,12 +68,17 @@ Deduce la estructura del modelo a partir de las cabeceras del CSV. Ten en cuenta
 - `numero` puede contener valores no numéricos
 - `positiva_alcohol` y `positiva_droga` usan "S"/"N" en el CSV
 - Algunos campos pueden estar vacíos
+- `fecha` tiene formato `dd/MM/yyyy` — necesitas extraer año, mes, día y día de la semana
 
 ---
 
 ## Operaciones Requeridas
 
-### LINQ (23 consultas)
+### Lectura de Ficheros (1 punto)
+
+Leer los 3 ficheros CSV del directorio `data/` y combinarlos en una sola colección.
+
+### LINQ (30 consultas)
 
 1. Total de accidentes
 2. Accidentes por distrito (top 5)
@@ -91,18 +101,33 @@ Deduce la estructura del modelo a partir de las cabeceras del CSV. Ten en cuenta
 19. Accidentes con alcohol + droga
 20. Rangos de edad más vulnerables (peatones)
 21. Distritos con más positivos en alcohol
-
-### PLINQ (1 consulta)
-
-22. Accidentes por hora usando `AsParallel()` — justificar por qué esta consulta y no otras
-
-### GroupBy eficiente (1 consulta)
-
-23. Demostrar la diferencia entre `GroupBy + ToDictionary` y `GroupBy + Select + ToList`
+22. Accidentes por código de distrito
+23. Accidentes por año
+24. Evolución mensual por año
+25. Distrito con más accidentes por año
+26. Tendencia de alcohol por año
+27. Comparativa fin de semana vs entre semana por año
+28. Hora pico por año
+29. Lesión más frecuente por año
+30. Evolución de peatones por año
 
 ### DataFrame (Microsoft.Data.Analysis)
 
-Implementar las mismas 23 consultas usando DataFrame para comparar tiempos con LINQ
+Implementar las **mismas 30 consultas** usando DataFrame.
+
+## Justificación del Diseño
+
+El alumno debe incluir un documento o sección en el README justificando **todas** sus decisiones de diseño.
+
+> ⚠️ **Importante:** No basta con mostrar el código. Debes:
+> - **Justificar cada decisión**: por qué elegiste un enfoque u otro
+> - **Mostrar los tiempos de cada ejecución** (lectura de ficheros, LINQ, DataFrames)
+> - **Analizar por qué obtienes esos resultados**: ¿por qué una consulta es más rápida que otra? ¿por qué en algunos casos una técnica empeora?
+
+### Puntos de reflexión
+
+- No hay una única respuesta correcta. Lo importante es que puedas **justificar** tu decisión.
+- ¿Qué aprenderías para la próxima vez que proceses datos masivos?
 
 ---
 
@@ -125,7 +150,9 @@ AccidentesMadrid/
 ├── Program.cs
 ├── AccidentesMadrid.csproj
 ├── data/
-│   └── 2025_Accidentalidad.csv      ← Descargado de datos.madrid.es
+│   ├── 2024_Accidentalidad.csv      ← Descargado de datos.madrid.es
+│   ├── 2025_Accidentalidad.csv      ← Descargado de datos.madrid.es
+│   └── 2026_Accidentalidad.csv      ← Descargado de datos.madrid.es
 ├── Models/
 │   ├── Accidente.cs
 │   ├── Sexo.cs
@@ -136,8 +163,8 @@ AccidentesMadrid/
 │   └── AccidentesRepository.cs
 ├── Services/
 │   ├── IAccidentesAnalyzer.cs
-│   ├── AccidentesLinqAnalyzer.cs     ← LINQ + PLINQ + ToDictionary
-│   └── AccidentesDataFrameAnalyzer.cs ← DataFrames
+│   ├── AccidentesLinqAnalyzer.cs
+│   └── AccidentesDataFrameAnalyzer.cs
 ├── Dockerfile
 ├── docker-compose.yml
 ├── .dockerignore
@@ -146,26 +173,13 @@ AccidentesMadrid/
 
 ### Ejemplo de uso combinado
 
-El proyecto debe combinar las tres aproximaciones (LINQ, PLINQ, DataFrame) y mostrar una comparativa de tiempos al final.
+El proyecto debe mostrar una comparativa de tiempos al final.
 
 ---
 
 ## Comparativa de Tiempos
 
-El ejemplo incluye una comparativa automática de tiempos:
-
-```
-═══════════════════════════════════════════════════
-  COMPARATIVA DE TIEMPOS
-═══════════════════════════════════════════════════
-  LINQ / PLINQ:       171 ms
-  DataFrames:         359 ms
-  Ratio LINQ/DF:   0,48x
-
-LINQ es más rápido para este volumen de datos.
-```
-
-> 💡 **Consejo:** Con 46K registros, LINQ es ~2x más rápido que DataFrames. DataFrames tiene overhead por crear la estructura tabular. Con 100K+ registros y análisis estadístico pesado, DataFrames podría ser mejor.
+El programa debe mostrar una comparativa detallada de tiempos de ejecución.
 
 ---
 
@@ -175,6 +189,10 @@ Sube el proyecto a tu repositorio GitHub con el nombre `AccidentesMadrid`.
 
 Incluye:
 1. Código fuente completo
-2. Fichero CSV en `data/`
+2. Ficheros CSV en `data/` (2024, 2025, 2026)
 3. Dockerfile y docker-compose.yml
-4. README con instrucciones de uso
+4. README con:
+   - Instrucciones de uso
+   - **Justificación del diseño** (todas las decisiones tomadas y por qué)
+   - **Tiempos de ejecución** (lectura de ficheros, LINQ, DataFrames)
+   - **Análisis de resultados** (por qué obtienes esos tiempos)

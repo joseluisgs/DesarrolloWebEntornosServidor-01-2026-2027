@@ -4,6 +4,8 @@
   - [16.3. Asíncronía: No Bloquear Mientras Esperas](#163-asincronía-no-bloquear-mientras-esperas)
   - [16.4. Concurrencia vs Paralelismo vs Sincronía vs Asíncronía](#164-concurrencia-vs-paralelismo-vs-sincronía-vs-asíncronía)
     - [16.4.1. Diseñar en paralelo: Los 3 errores clásicos](#1641-diseñar-en-paralelo-los-3-errores-clásicos)
+    - [16.4.2. El coste invisible de Task.Run y el ThreadPool](#1642-el-coste-invisible-de-taskrun-y-el-threadpool)
+    - [16.4.3. ¿Cuándo NO paralelizar? La regla de oro](#1643-cuándo-no-paralelizar-la-regla-de-oro)
   - [16.5. Async/Await: La Base de la Asincronía en C#](#165-asyncawait-la-base-de-la-asincronía-en-c)
   - [16.6. Task y Task\<T\>: El Resultado de una Operación Asíncrona](#166-task-y-taskt-el-resultado-de-una-operación-asíncrona)
   - [16.7. CancellationToken: Cancelar Operaciones en Marcha](#167-cancellationtoken-cancelar-operaciones-en-marcha)
@@ -432,6 +434,174 @@ gantt
 📌 **Ejemplo real:** El ejemplo `15-SincroniaVsAsyncronia` en la carpeta de ejemplos muestra exactamente esto. Mide el tiempo de cada enfoque y muestra los Thread IDs para que veas la diferencia entre secuencial y paralelo. **¡Ejecútalo y compara los tiempos!**
 
 > 🔧 **Truco:** La regla es simple: **lanza sin await, guarda el Task, y haz await al final**. Si cada operación es independiente de las demás, se ejecutan en paralelo automáticamente.
+
+### 16.4.2. El coste invisible de Task.Run y el ThreadPool
+
+Hemos visto que `Task.WhenAll` es ideal para I/O. Pero, ¿qué pasa cuando usamos `Task.Run` para paralelizar cálculos en memoria? Aquí viene lo que normalmente no te explican.
+
+#### ¿Qué es el ThreadPool?
+
+El **ThreadPool** es un池 de hilos pre-creados que .NET reutiliza. En vez de crear un hilo nuevo para cada tarea (costoso), el ThreadPool mantiene un número fijo de hilos "listos para trabajar".
+
+```
+ThreadPool: [Hilo 1] [Hilo 2] [Hilo 3] [Hilo 4] ... [Hilo N]
+            ↑         ↑         ↑         ↑
+            Listo     Ocupado   Listo     Ocupado
+```
+
+Cuando ejecutas `Task.Run(() => Algo())`, esto es lo que **realmente** pasa:
+
+| Paso | Qué hace | Tiempo |
+|------|----------|--------|
+| 1. Crear tarea | Reservar memoria para el Task | ~0.1-0.5 ms |
+| 2. Buscar hilo | El ThreadPool busca un hilo libre | ~0.05 ms |
+| 3. Programar | Encolar la tarea en ese hilo | ~0.1 ms |
+| 4. Ejecutar | El hilo ejecuta tu código | Variable |
+| 5. Context switch | Guardar/cargar estado del hilo | ~0.01-0.1 ms |
+| 6. Reciclar | Devolver el hilo al pool | ~0.05 ms |
+
+**Total overhead por tarea: ~0.3-1.2 ms**
+
+> 💡 **Analogía:** Imagina un restaurante con 4 cocineros (núcleos). Si un cliente pide un plato rápido (2 ms), pero el chef tiene que:
+
+```mermaid
+sequenceDiagram
+    participant C as 👨‍🍳 Chef (tu código)
+    participant R as 📋 Recepción (ThreadPool)
+    participant H as 👨‍🍳 Hilo
+
+    C->>R: "Necesito un cocinero para este plato"
+    Note over R: Busca cocinero libre... (0.1ms)
+    R->>H: Asigna cocinero 2
+    Note over H: Prepara plato (2ms)
+    H-->>R: "Terminé, vuelvo al pool"
+    Note over R: Recicla cocinero (0.05ms)
+    
+    Note over C: Total: 2ms plato + 0.15ms overhead
+```
+
+¿Ves el problema? Si el plato tarda 2 ms pero el overhead de "buscar cocinero, asignarlo, reciclarlo" cuesta 0.15 ms, estás perdiendo un **7.5%** del tiempo solo en logística.
+
+#### El problema real: 30 tareas, 4 núcleos
+
+Supongamos que tienes 30 consultas LINQ, cada una tarda ~27 ms. Si las lanzas en paralelo con `Task.Run`:
+
+```
+30 tareas ÷ 4 núcleos = 7.5 tareas por núcleo
+```
+
+Cada núcleo debe ejecutar ~8 tareas **una detrás de otra**. Pero ahora tenemos overhead adicional:
+
+| Operación | Tiempo | Total (30 tareas) |
+|-----------|--------|-------------------|
+| Crear tarea | 0.5 ms | 15 ms |
+| Context switch | 0.1 ms | 3 ms |
+| Programar en ThreadPool | 0.2 ms | 6 ms |
+| **Total overhead** | | **~24 ms** |
+
+```mermaid
+graph LR
+    subgraph SECUENCIAL["SECUENCIAL (817 ms)"]
+        S1["Consulta 1<br/>27 ms"] --> S2["Consulta 2<br/>27 ms"] --> S3["..."] --> S4["Consulta 30<br/>27 ms"]
+    end
+
+    subgraph PARALELO["PARALELO (1202 ms)"]
+        P1["Núcleo 1: C1→C2→...→C8"]
+        P2["Núcleo 2: C9→C10→...→C16"]
+        P3["Núcleo 3: C17→C18→...→C24"]
+        P4["Núcleo 4: C25→C26→...→C30"]
+        P1 & P2 & P3 & P4 --> OVERHEAD["+ 24 ms overhead<br/>+ competencia por CPU"]
+    end
+
+    style S1 fill:#4CAF50,color:#fff
+    style S4 fill:#4CAF50,color:#fff
+    style P1 fill:#f44336,color:#fff
+    style P4 fill:#f44336,color:#fff
+    style OVERHEAD fill:#FF9800,color:#fff
+```
+
+**Secuencial**: 30 × 27 ms = **817 ms** (sin overhead, sin competencia)
+**Paralelo**: 817 ms + 24 ms overhead + competencia = **1202 ms** (¡49% más lento!)
+
+#### ¿Por qué la competencia empeora las cosas?
+
+Cuando 30 tareas compiten por 4 núcleos, el sistema operativo hace **context switches** constantemente: guarda el estado de un hilo, carga otro, ejecuta un poco, vuelve a cambiar... Cada cambio cuesta tiempo.
+
+> 💡 **Analogía:** Es como tener 4 cajeros en un supermercado pero 30 clientes esperando. Los cajeros trabajan rápido, pero si cada cliente solo necesita 5 segundos, el tiempo de "llamar al siguiente, acercarse, sentarse" acaba siendo más que el tiempo de compra.
+
+📌 **Ejemplo real:** El ejemplo `09-AccidentesMadrid` ejecuta 30 consultas LINQ secuencial y paralelo. Resultado real:
+
+| Método | Tiempo | Speedup |
+|--------|--------|---------|
+| Secuencial | 817 ms | 1.00x |
+| Paralelo (Task.Run) | 1202 ms | **0.68x** |
+
+**El paralelismo empeoró el rendimiento un 47%.** No porque LINQ sea malo, sino porque las consultas son **demasiado rápidas** para compensar el overhead de `Task.Run`.
+
+### 16.4.3. ¿Cuándo NO paralelizar? La regla de oro
+
+No todo se debe paralelizar. La clave es saber **cuándo** vale la pena y cuándo no.
+
+| Tipo de operación | ¿Paralelizar? | ¿Por qué? | Ejemplo |
+|-------------------|---------------|-----------|---------|
+| **E/S** (disco, red, BD) | **SÍ** ✅ | El hilo **espera** sin usar CPU. Otro puede trabajar. | Leer ficheros, llamadas HTTP, consultas BD |
+| **Cálculo simple** (en memoria) | **NO** ❌ | El hilo **usa la CPU** todo el tiempo. El overhead de Task.Run supera el beneficio. | Count, Where, Take, Select simple |
+| **Cálculo pesado** (>50 ms) | **SÍ** ✅ | Cada tarea tarda bastante. El overhead de Task.Run se compensa. | GroupBy con millones de registros, procesamiento de imagen |
+
+```mermaid
+flowchart TD
+    A["¿Qué tipo de operación?"] --> B{"¿Es E/S?<br/>(disco, red, BD)"}
+    B -->|"SÍ"| C["✅ Paralelizar<br/>Task.WhenAll"]
+    B -->|"NO: cálculo en memoria"| D{"¿Cada tarea tarda<br/>> 50 ms?"}
+    D -->|"SÍ"| E["✅ Paralelizar<br/>Task.Run + WhenAll"]
+    D -->|"NO: < 50 ms"| F["❌ NO paralelizar<br/>Ejecutar secuencial"]
+    
+    style C fill:#4CAF50,color:#fff
+    style E fill:#4CAF50,color:#fff
+    style F fill:#f44336,color:#fff
+```
+
+#### La "zona muerta" (5-50 ms)
+
+Hay una zona gris donde el resultado es **impredecible**:
+
+- **< 5 ms**: Casi siempre más lento en paralelo (overhead domina)
+- **5-50 ms**: Depende del hardware, número de núcleos, tipo de operación
+- **> 50 ms**: Casi siempre más rápido en paralelo
+
+> ⚠️ **Advertencia:** ¡No blindly paralelices! Siempre **mide** antes de decidir. El ejemplo `09-AccidentesMadrid` te muestra datos reales: 30 consultas LINQ paralelas son un 47% más lentas que secuenciales.
+
+📌 **Ejemplo real:** Netflix no paraleliza el decode de un frame de vídeo (2-3 ms). Pero sí paraleliza la descarga de thumbnails (E/S de red, 100+ ms cada una). Cada herramienta para su trabajo.
+
+#### Resumen visual
+
+```mermaid
+graph TB
+    subgraph BUENO["✅ Paralelizar"]
+        E1["E/S: Leer 3 ficheros"]
+        E2["E/S: 10 peticiones HTTP"]
+        E3["CPU pesado: GroupBy 1M registros"]
+    end
+
+    subgraph MALO["❌ NO paralelizar"]
+        M1["Cálculo: Count, Where, Take"]
+        M2["Cálculo: Select simple"]
+        M3["Cálculo: GroupBy con pocos grupos"]
+    end
+
+    style BUENO fill:#4CAF50,color:#fff
+    style MALO fill:#f44336,color:#fff
+```
+
+📌 **Ejemplo real con datos del ejemplo 09:**
+
+| Operación | Secuencial | Paralelo | ¿Paralelizar? |
+|-----------|------------|----------|---------------|
+| Leer 3 ficheros CSV (E/S) | 1583 ms | 590 ms | ✅ SÍ (2.68x) |
+| 30 consultas LINQ (< 50 ms c/u) | 817 ms | 1202 ms | ❌ NO (0.68x) |
+| 22 consultas DataFrames (> 50 ms c/u) | 1204 ms | 323 ms | ✅ SÍ (3.73x) |
+
+> 💡 **Consejo para el examen:** Si te preguntan "¿cuándo usar Task.Run?", la respuesta es: **solo para I/O o cálculos pesados (> 50 ms)**. Para todo lo demás, ejecuta secuencial. Más código, menos sorpresas.
 
 ## 16.5. Async/Await: La Base de la Asincronía en C#
 
