@@ -9,6 +9,8 @@ using _11_PatronesDiseno.Patterns.Builder;
 // ============================================================
 // Ejemplo 11: Patrones de Diseño y SOLID
 // ============================================================
+
+Console.OutputEncoding = System.Text.Encoding.UTF8;
 Console.WriteLine("=== Ejemplo 11: Patrones de Diseño y SOLID ===\n");
 
 // ============================================================
