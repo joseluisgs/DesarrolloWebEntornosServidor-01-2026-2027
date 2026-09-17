@@ -1,0 +1,5 @@
+[
+  { "Id": 1, "Nombre": "Portátil Dell XPS 15", "Precio": 1299.99, "Categoria": "Informática" },
+  { "Id": 2, "Nombre": "Monitor LG UltraWide 34\"", "Precio": 449.99, "Categoria": "Periféricos" },
+  { "Id": 3, "Nombre": "Teclado Mecánico Logitech", "Precio": 89.99, "Categoria": "Periféricos" }
+]

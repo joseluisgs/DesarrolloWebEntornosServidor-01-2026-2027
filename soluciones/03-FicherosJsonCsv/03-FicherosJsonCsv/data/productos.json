@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "nombre": "Portátil ASUS",
+    "precio": 899.99,
+    "categoria": "Electrónica"
+  },
+  {
+    "id": 2,
+    "nombre": "Teclado Mecánico",
+    "precio": 79.50,
+    "categoria": "Periféricos"
+  },
+  {
+    "id": 3,
+    "nombre": "Monitor 27\"",
+    "precio": 349.00,
+    "categoria": "Electrónica"
+  },
+  {
+    "id": 4,
+    "nombre": "Ratón Gaming",
+    "precio": 45.99,
+    "categoria": "Periféricos"
+  },
+  {
+    "id": 5,
+    "nombre": "Disco SSD 1TB",
+    "precio": 89.90,
+    "categoria": "Almacenamiento"
+  }
+]

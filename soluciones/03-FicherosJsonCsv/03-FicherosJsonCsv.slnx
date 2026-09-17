@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="03-FicherosJsonCsv/03-FicherosJsonCsv.csproj" />
+  <Project Path="03-FicherosJsonCsv.Tests/03-FicherosJsonCsv.Tests.csproj" />
+</Solution>

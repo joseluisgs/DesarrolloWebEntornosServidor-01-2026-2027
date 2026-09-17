@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "nombre": "Port\u00E1til ASUS",
+    "precio": 899.99,
+    "categoria": "Electr\u00F3nica"
+  },
+  {
+    "id": 2,
+    "nombre": "Teclado Mec\u00E1nico",
+    "precio": 79.50,
+    "categoria": "Perif\u00E9ricos"
+  },
+  {
+    "id": 3,
+    "nombre": "Monitor 27\u0022",
+    "precio": 349.00,
+    "categoria": "Electr\u00F3nica"
+  },
+  {
+    "id": 4,
+    "nombre": "Rat\u00F3n Gaming",
+    "precio": 45.99,
+    "categoria": "Perif\u00E9ricos"
+  },
+  {
+    "id": 5,
+    "nombre": "Disco SSD 1TB",
+    "precio": 89.90,
+    "categoria": "Almacenamiento"
+  }
+]
