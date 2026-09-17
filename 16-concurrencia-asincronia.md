@@ -319,15 +319,15 @@ sequenceDiagram
 
 Cuando tienes varias operaciones de I/O independientes, el instinto es hacerlas secuenciales. Pero eso es un error de diseño que cuesta **multiplicar el tiempo de respuesta**. Vamos a ver los 3 patrones y por qué fallan.
 
-> 💡 **Punto de partida:** Tienes que leer un CSV (1000 filas), un JSON (500 elementos) y una BD SQLite (100 registros). Cada operación tarda ~50ms. ¿Cómo lo haces?
+> 💡 **Punto de partida:** Tienes que consultar una API REST, leer un fichero de imagen y comprimir una imagen. Cada operación tarda ~50ms. ¿Cómo lo haces?
 
 #### Error 1: Await secuencial (el más común)
 
 ```csharp
 // ❌ MAL: await secuencial — cada uno ESPERA al anterior
-var csv = await LeerCsvAsync("productos.csv");       // 50ms
-var json = await LeerJsonAsync("productos.json");    // 50ms
-var sqlite = await LeerSqliteAsync("productos.db");  // 50ms
+var datos = await ConsultarApiAsync("https://api.ejemplo.com/users");  // 50ms
+var imagen = await LeerFicheroAsync("foto.jpg");                       // 50ms
+var comprimido = await ComprimirAsync("documento.zip");                // 50ms
 // Total: 150ms — ¡3x más lento de lo necesario!
 ```
 
@@ -337,14 +337,14 @@ gantt
     dateFormat X
     axisFormat %s
     
-    section CSV
-    Leer CSV (50ms)     :0, 50
-    section JSON
-    Espera...           :0, 50
-    Leer JSON (50ms)    :50, 100
-    section SQLite
-    Espera...           :50, 100
-    Leer SQLite (50ms)  :100, 150
+    section API REST
+    Consultar API (50ms)     :0, 50
+    section Fichero
+    Espera...                :0, 50
+    Leer fichero (50ms)      :50, 100
+    section Compresion
+    Espera...                :50, 100
+    Comprimir (50ms)         :100, 150
 ```
 
 **Por qué falla:** Cada `await` pausa la ejecución hasta que termine. Es como ir al supermercado y hacer 3 viajes separados: uno por leche, otro por pan, otro por huevos. Total = 3 viajes.
@@ -353,9 +353,9 @@ gantt
 
 ```csharp
 // ❌ MAL: Lanzas sin await — no sabes cuándo terminan
-_ = LeerCsvAsync("productos.csv");
-_ = LeerJsonAsync("productos.json");
-_ = LeerSqliteAsync("productos.db");
+_ = ConsultarApiAsync("https://api.ejemplo.com/users");
+_ = LeerFicheroAsync("foto.jpg");
+_ = ComprimirAsync("documento.zip");
 // ¡No tienes los resultados! Y si falla, no te enteras.
 ```
 
@@ -365,16 +365,16 @@ _ = LeerSqliteAsync("productos.db");
 
 ```csharp
 // ❌ MAL: Lanzas en paralelo pero luego accedes con .Result
-var tarea1 = LeerCsvAsync("productos.csv");
-var tarea2 = LeerJsonAsync("productos.json");
-var tarea3 = LeerSqliteAsync("productos.db");
+var tarea1 = ConsultarApiAsync("https://api.ejemplo.com/users");
+var tarea2 = LeerFicheroAsync("foto.jpg");
+var tarea3 = ComprimirAsync("documento.zip");
 
 await Task.WhenAll(tarea1, tarea2, tarea3); // Paralelo ✓
 
 // Pero luego accedes así (secuencial):
-var csv = await tarea1;  // Espera (ya terminó, pero...)
-var json = await tarea2; // Espera
-var sqlite = await tarea3; // Espera
+var datos = await tarea1;   // Espera (ya terminó, pero...)
+var imagen = await tarea2;  // Espera
+var comprimido = await tarea3; // Espera
 ```
 
 **Por qué falla:** `WhenAll` sí es paralelo, pero luego acceder con `await` individual es secuencial. Es como cocinar 3 platos a la vez pero servir uno por uno.
@@ -383,34 +383,34 @@ var sqlite = await tarea3; // Espera
 
 ```csharp
 // ✅ BIEN: Lanzar sin await, WhenAll, y acceder a .Result
-var tareaCsv = LeerCsvAsync("productos.csv");       // Lanza (NO await)
-var tareaJson = LeerJsonAsync("productos.json");     // Lanza (NO await)
-var tareaSqlite = LeerSqliteAsync("productos.db");  // Lanza (NO await)
+var tareaApi = ConsultarApiAsync("https://api.ejemplo.com/users");  // Lanza (NO await)
+var tareaFichero = LeerFicheroAsync("foto.jpg");                    // Lanza (NO await)
+var tareaCompresion = ComprimirAsync("documento.zip");              // Lanza (NO await)
 
-await Task.WhenAll(tareaCsv, tareaJson, tareaSqlite); // Espera las 3
+await Task.WhenAll(tareaApi, tareaFichero, tareaCompresion); // Espera las 3
 
 // Ahora sí accedemos al resultado (ya terminaron)
-var csv = tareaCsv.Result;
-var json = tareaJson.Result;
-var sqlite = tareaSqlite.Result;
+var datos = tareaApi.Result;
+var imagen = tareaFichero.Result;
+var comprimido = tareaCompresion.Result;
 // Total: ~50ms (lo que tarda la más lenta)
 ```
 
 ```mermaid
 gantt
-    title ✅ Patrón correcto: Task.WhenAll
+    title Patrón correcto: Task.WhenAll
     dateFormat X
     axisFormat %s
     
-    section CSV
-    Leer CSV (50ms)     :0, 50
-    section JSON
-    Leer JSON (50ms)    :0, 50
-    section SQLite
-    Leer SQLite (50ms)  :0, 50
+    section API REST
+    Consultar API (50ms)     :0, 50
+    section Fichero
+    Leer fichero (50ms)      :0, 50
+    section Compresion
+    Comprimir (50ms)         :0, 50
     section Resultado
-    WhenAll espera      :0, 50
-    Accede a resultados :50, 51
+    WhenAll espera           :0, 50
+    Accede a resultados      :50, 51
 ```
 
 📌 **Ejemplo real:** El ejemplo `15-SincroniaVsAsyncronia` en la carpeta de ejemplos muestra exactamente esto. Mide el tiempo de cada enfoque y muestra los Thread IDs para que veas la diferencia entre secuencial y paralelo. **¡Ejecútalo y compara los tiempos!**
