@@ -151,6 +151,62 @@ sequenceDiagram
 
 📌 **Ejemplo real:** Imagina un servidor web con 5000 usuarios conectados. Si cada petición bloquea un hilo durante 200ms leyendo de la BD, necesitas 5000 hilos simultáneos. Cada hilo consume ~1MB de RAM. Son **5GB de RAM solo en hilos esperando**. Con asincronía, esos mismos 5000 usuarios se atienden con ~200 hilos que se reutilizan constantemente. **25x menos memoria.**
 
+### ¿Por qué los hilos son finitos y qué pasa cuando se acaban?
+
+Cada hilo tiene un **coste real** en recursos del sistema:
+
+| Recurso | Coste por hilo | 1000 hilos | 10.000 hilos |
+|---------|----------------|------------|--------------|
+| **Stack de memoria** | ~1 MB | ~1 GB | ~10 GB |
+| **Context switch** | ~0.01 ms | 10 ms por cambio | 100 ms por cambio |
+| **Tiempo de creación** | ~0.5 ms | 500 ms | 5.000 ms |
+
+El **ThreadPool** de .NET tiene límites por defecto:
+
+```
+ThreadPool por defecto:
+  Mínimo: 4 hilos (se adapta al número de núcleos)
+  Máximo: ~1000-10.000 hilos (depende del hardware)
+```
+
+> ⚠️ **Lo que no te cuentan:** Cuando el ThreadPool se llena (todos los hilos están ocupados), .NET **no crea hilos nuevos inmediatamente**. Hay un periodo de enfriamiento (~500ms) donde las peticiones **esperan en cola**. Si llegan 1000 peticiones simultáneas y solo tienes 200 hilos, 800 peticiones esperan medio segundo **antes de empezar a ejecutarse**.
+
+📌 **Ejemplo real — Un servidor web sin asincronía:**
+
+```mermaid
+graph TD
+    subgraph SERVIDOR["Servidor web (200 hilos)"]
+        H1["Hilo 1: Esperando BD..."]
+        H2["Hilo 2: Esperando BD..."]
+        H3["Hilo 3: Esperando BD..."]
+        HN["Hilo 200: Esperando BD..."]
+    end
+    
+    subgraph COLA["Cola de peticiones"]
+        P1["Peticion 201: Esperando..."]
+        P2["Peticion 202: Esperando..."]
+        PN["Peticion 1000: Esperando..."]
+    end
+    
+    SERVIDOR --> COLA
+    
+    style SERVIDOR fill:#f44336,color:#fff
+    style COLA fill:#FF9800,color:#fff
+```
+
+**Qué pasa cuando un usuario hace petición:**
+
+1. **Sin asincronía**: El hilo se bloquea 200ms esperando la BD. Mientras tanto, el usuario ve "Cargando...". Si hay 1000 usuarios, 800 esperan en cola **sin ser atendidos**.
+
+2. **Con asincronía**: El hilo se libera inmediatamente. Puede atender **otra petición** mientras la primera espera la BD. Con 200 hilos puedes atender **1000+ peticiones/segundo**.
+
+📌 **En producción:** Un servidor Node.js atiende **10.000 peticiones/segundo** con un solo hilo (por eso es asíncrono por defecto). Un servidor ASP.NET síncrono necesitaría **1000 servidores** para la misma carga.
+
+> 💡 **Analogía — El hospital:**
+> Imagina un hospital con 20 camas (hilos). Si cada paciente ocupa la cama 2 horas (bloqueo), puedes atender 10 pacientes al día. Pero si los pacientes **no necesitan cama** mientras esperan análisis (asincronía), puedes atender **100 pacientes al día** con las mismas 20 camas. Las camas se reutilizan constantemente.
+
+**La regla de oro para servidores:** Nunca bloquees un hilo en operaciones de I/O. Usa `async/await` siempre que hagas una petición a BD, lectura de fichero, o llamada a API externa.
+
 ## 16.3. Asíncronía: No Bloquear Mientras Esperas
 
 La **asincronía** es la capacidad de **iniciar una operación y seguir haciendo otras cosas** mientras esperas el resultado. No es paralelismo (no es hacer dos cosas al mismo tiempo), es **no quedarse parado esperando**.
