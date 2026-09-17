@@ -482,9 +482,9 @@ sequenceDiagram
 
 ¿Ves el problema? Si el plato tarda 2 ms pero el overhead de "buscar cocinero, asignarlo, reciclarlo" cuesta 0.15 ms, estás perdiendo un **7.5%** del tiempo solo en logística.
 
-#### El problema real: 30 tareas, 4 núcleos
+#### El problema real: muchas tareas, pocos núcleos
 
-Supongamos que tienes 30 consultas LINQ, cada una tarda ~27 ms. Si las lanzas en paralelo con `Task.Run`:
+Supongamos que tienes 30 tareas de cálculo, cada una tarda ~27 ms. Si las lanzas en paralelo con `Task.Run` en un ordenador con 4 núcleos:
 
 ```
 30 tareas ÷ 4 núcleos = 7.5 tareas por núcleo
@@ -501,16 +501,16 @@ Cada núcleo debe ejecutar ~8 tareas **una detrás de otra**. Pero ahora tenemos
 
 ```mermaid
 graph LR
-    subgraph SECUENCIAL["SECUENCIAL (817 ms)"]
-        S1["Consulta 1<br/>27 ms"] --> S2["Consulta 2<br/>27 ms"] --> S3["..."] --> S4["Consulta 30<br/>27 ms"]
+    subgraph SECUENCIAL["SECUENCIAL"]
+        S1["Tarea 1<br/>27 ms"] --> S2["Tarea 2<br/>27 ms"] --> S3["..."] --> S4["Tarea 30<br/>27 ms"]
     end
 
-    subgraph PARALELO["PARALELO (1202 ms)"]
-        P1["Núcleo 1: C1→C2→...→C8"]
-        P2["Núcleo 2: C9→C10→...→C16"]
-        P3["Núcleo 3: C17→C18→...→C24"]
-        P4["Núcleo 4: C25→C26→...→C30"]
-        P1 & P2 & P3 & P4 --> OVERHEAD["+ 24 ms overhead<br/>+ competencia por CPU"]
+    subgraph PARALELO["PARALELO"]
+        P1["Núcleo 1: T1→T2→...→T8"]
+        P2["Núcleo 2: T9→T10→...→T16"]
+        P3["Núcleo 3: T17→T18→...→T24"]
+        P4["Núcleo 4: T25→T26→...→T30"]
+        P1 & P2 & P3 & P4 --> OVERHEAD["+ overhead<br/>+ competencia por CPU"]
     end
 
     style S1 fill:#4CAF50,color:#fff
@@ -520,23 +520,18 @@ graph LR
     style OVERHEAD fill:#FF9800,color:#fff
 ```
 
-**Secuencial**: 30 × 27 ms = **817 ms** (sin overhead, sin competencia)
-**Paralelo**: 817 ms + 24 ms overhead + competencia = **1202 ms** (¡49% más lento!)
+**Secuencial**: 30 × 27 ms = **810 ms** (sin overhead, sin competencia)
+**Paralelo**: 810 ms + 24 ms overhead + competencia ≈ **más lento** (depende de la carga)
 
 #### ¿Por qué la competencia empeora las cosas?
 
-Cuando 30 tareas compiten por 4 núcleos, el sistema operativo hace **context switches** constantemente: guarda el estado de un hilo, carga otro, ejecuta un poco, vuelve a cambiar... Cada cambio cuesta tiempo.
+Cuando muchas tareas compiten por pocos núcleos, el sistema operativo hace **context switches** constantes: guarda el estado de un hilo, carga otro, ejecuta un poco, vuelve a cambiar... Cada cambio cuesta tiempo.
 
 > 💡 **Analogía:** Es como tener 4 cajeros en un supermercado pero 30 clientes esperando. Los cajeros trabajan rápido, pero si cada cliente solo necesita 5 segundos, el tiempo de "llamar al siguiente, acercarse, sentarse" acaba siendo más que el tiempo de compra.
 
-📌 **Ejemplo real:** El ejemplo `09-AccidentesMadrid` ejecuta 30 consultas LINQ secuencial y paralelo. Resultado real:
+**El paralelismo empeora el rendimiento** no porque la herramienta sea mala, sino porque las tareas son **demasiado rápidas** para compensar el overhead de `Task.Run`.
 
-| Método | Tiempo | Speedup |
-|--------|--------|---------|
-| Secuencial | 817 ms | 1.00x |
-| Paralelo (Task.Run) | 1202 ms | **0.68x** |
-
-**El paralelismo empeoró el rendimiento un 47%.** No porque LINQ sea malo, sino porque las consultas son **demasiado rápidas** para compensar el overhead de `Task.Run`.
+📌 **Ejemplo real:** Netflix no paraleliza el decode de un frame de vídeo (2-3 ms, cálculo rápido). Pero sí paraleliza la descarga de thumbnails (E/S de red, 100+ ms cada una). Cada herramienta para su trabajo.
 
 ### 16.4.3. ¿Cuándo NO paralelizar? La regla de oro
 
@@ -569,7 +564,7 @@ Hay una zona gris donde el resultado es **impredecible**:
 - **5-50 ms**: Depende del hardware, número de núcleos, tipo de operación
 - **> 50 ms**: Casi siempre más rápido en paralelo
 
-> ⚠️ **Advertencia:** ¡No blindly paralelices! Siempre **mide** antes de decidir. El ejemplo `09-AccidentesMadrid` te muestra datos reales: 30 consultas LINQ paralelas son un 47% más lentas que secuenciales.
+> ⚠️ **Advertencia:** ¡No blindly paralelices! Siempre **mide** antes de decidir. El paralelismo puede empeorar el rendimiento si las tareas son demasiado rápidas.
 
 📌 **Ejemplo real:** Netflix no paraleliza el decode de un frame de vídeo (2-3 ms). Pero sí paraleliza la descarga de thumbnails (E/S de red, 100+ ms cada una). Cada herramienta para su trabajo.
 
@@ -578,13 +573,13 @@ Hay una zona gris donde el resultado es **impredecible**:
 ```mermaid
 graph TB
     subgraph BUENO["✅ Paralelizar"]
-        E1["E/S: Leer 3 ficheros"]
-        E2["E/S: 10 peticiones HTTP"]
-        E3["CPU pesado: GroupBy 1M registros"]
+        E1["E/S: Leer ficheros"]
+        E2["E/S: Peticiones HTTP"]
+        E3["CPU pesado: GroupBy con millones de registros"]
     end
 
     subgraph MALO["❌ NO paralelizar"]
-        M1["Cálculo: Count, Where, Take"]
+        M1["Cálculo simple: Count, Where, Take"]
         M2["Cálculo: Select simple"]
         M3["Cálculo: GroupBy con pocos grupos"]
     end
@@ -592,14 +587,6 @@ graph TB
     style BUENO fill:#4CAF50,color:#fff
     style MALO fill:#f44336,color:#fff
 ```
-
-📌 **Ejemplo real con datos del ejemplo 09:**
-
-| Operación | Secuencial | Paralelo | ¿Paralelizar? |
-|-----------|------------|----------|---------------|
-| Leer 3 ficheros CSV (E/S) | 1583 ms | 590 ms | ✅ SÍ (2.68x) |
-| 30 consultas LINQ (< 50 ms c/u) | 817 ms | 1202 ms | ❌ NO (0.68x) |
-| 22 consultas DataFrames (> 50 ms c/u) | 1204 ms | 323 ms | ✅ SÍ (3.73x) |
 
 > 💡 **Consejo para el examen:** Si te preguntan "¿cuándo usar Task.Run?", la respuesta es: **solo para I/O o cálculos pesados (> 50 ms)**. Para todo lo demás, ejecuta secuencial. Más código, menos sorpresas.
 
