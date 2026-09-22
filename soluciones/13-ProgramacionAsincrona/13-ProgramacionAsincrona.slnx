@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="13-ProgramacionAsincrona/13-ProgramacionAsincrona.csproj" />
+  <Project Path="13-ProgramacionAsincrona.Test/13-ProgramacionAsincrona.Test.csproj" />
+</Solution>

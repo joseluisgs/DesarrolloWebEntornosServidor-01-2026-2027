@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="04-PostgreSQL-Dapper-EFCore/04-PostgreSQL-Dapper-EFCore.csproj" />
+  <Project Path="04-PostgreSQL-Dapper-EFCore.Tests/04-PostgreSQL-Dapper-EFCore.Tests.csproj" />
+</Solution>
