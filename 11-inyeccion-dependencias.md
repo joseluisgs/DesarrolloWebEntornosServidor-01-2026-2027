@@ -8,6 +8,7 @@
   - [11.7. DI en Aplicaciones de Consola](#117-di-en-aplicaciones-de-consola)
     - [11.7.1. Estructura de Carpetas de un Proyecto C#](#1171-estructura-de-carpetas-de-un-proyecto-c)
   - [11.8. Scrutor: Assembly Scanning Automático](#118-scrutor-assembly-scanning-automático)
+  - [11.9. Buenas Prácticas](#119-buenas-prácticas)
     - [11.8.1. DI condicional: elegir implementación según configuración](#1181-di-condicional-elegir-implementación-según-configuración)
   - [11.9. Patrones de Diseño con DI](#119-patrones-de-diseño-con-di)
 
@@ -585,6 +586,13 @@ public class PedidoService(IPedidoRepository repository) : IPedidoService
 ```
 
 > 📝 **Nota:** En el tema 12 profundizaremos en los patrones Repository y Service. Ahora solo necesitas entender que la DI es el mecanismo que los hace posibles.
+
+## 11.9. Buenas Prácticas
+
+- **SIEMPRE usar DI**: Nunca crear instancias con `new` dentro de clases. Inyectar por constructor
+- **Scoped para repositories**: Una instancia por petición HTTP. Singleton para cache/config
+- **Registrar interfaces, no implementaciones**: Facilita testing y cambio de implementación
+- **Scrutor para proyectos grandes**: Registro automático por escaneo de ensamblados
 
 ---
 

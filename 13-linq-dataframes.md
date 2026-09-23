@@ -696,6 +696,13 @@ graph TD
 
 > 💡 **Consejo para el examen:** Si te preguntan "¿qué usas para procesar un CSV?", la respuesta correcta es: "Depende. Si son pocos datos, LINQ. Si son muchos y necesito paralelismo, PLINQ. Si son muchísimos y necesito estadísticas, DataFrame."
 
+## 13.7. Buenas Prácticas
+
+- **LINQ para colecciones pequeñas** (<10K): Rápido y legible
+- **PLINQ para grandes con operaciones pesadas**: Paralelizar con cuidado
+- **DataFrame para análisis y estadística**: Como pandas pero en C#
+- **Evitar N+1 queries**: Usar `Include()` para carga eager en EF Core
+
 ---
 
 **Resumen del punto:**

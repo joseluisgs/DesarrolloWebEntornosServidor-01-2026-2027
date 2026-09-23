@@ -6,6 +6,7 @@
   - [17.5. Subject y Subject Specialized](#175-subject-y-subject-specialized)
   - [17.6. Operadores de Rx.NET](#176-operadores-de-rxnet)
   - [17.7. Cuándo Usar Cada Uno](#177-cuándo-usar-cada-uno)
+  - [17.8. Buenas Prácticas](#178-buenas-prácticas)
 
 
 # 17. Programación Reactiva en C#
@@ -548,6 +549,13 @@ subject
 📌 **Clave del ejemplo 14:** El segundo consumidor se conecta **8 segundos tarde**. Como es un flujo caliente (Subject), **pierde los primeros 8 segundos de datos**. Solo ve los eventos desde el momento de su suscripción. ¡Eso es la diferencia entre frío y caliente!
 
 > 📝 **Nota:** Para la mayoría de casos en ASP.NET Core, `IAsyncEnumerable` es suficiente. Rx.NET es más potente pero también más complejo. Úsalo cuando necesites operaciones temporales (throttle, debounce) o combinación de múltiples flujos.
+
+## 17.8. Buenas Prácticas
+
+- **Rx.NET para flujos complejos**: Múltiples fuentes, transformaciones, combinaciones
+- **IAsyncEnumerable para datos secuenciales**: Más simple que Rx para IoT/SSE
+- **Throttle para limitar velocidad**: No sobrecargar el sistema
+- **Subjects en producción con cuidado**: Preferir `Observable.Create`
 
 ---
 

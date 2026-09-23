@@ -5,6 +5,7 @@
   - [9.4. Orquestación: Kubernetes](#94-orquestación-kubernetes)
   - [9.5. Despliegue en la Nube](#95-despliegue-en-la-nube)
   - [9.6. Integración Continua y Despliegue Continuo (CI/CD)](#96-integración-continua-y-despliegue-continuo-cicd)
+  - [9.7. Buenas Prácticas](#97-buenas-prácticas)
 
 
 # 9. Despliegue de Aplicaciones Web
@@ -387,6 +388,13 @@ sequenceDiagram
 > ⚠️ **Advertencia:** Nunca despliegues a producción sin pasar por entornos de prueba. El flujo correcto es: **Desarrollo → Tests → Staging → Producción**. Saltarse pasos es la causa principal de errores en producción.
 
 > 💡 **Consejo:** Para el examen, recuerda que CI/CD automatiza el proceso de "código → tests → build → despliegue". Es fundamental para trabajar en equipo y mantener la calidad del código.
+
+## 9.7. Buenas Prácticas
+
+- **Contenedores desde el día 1**: Docker para desarrollo. Kubernetes solo cuando sea necesario
+- **CI/CD automatizado**: Commit → Tests → Build → Deploy. Nunca desplegar manualmente
+- **Nunca desplegar directamente**: Usa pipelines automatizados. El desarrollador no despliega
+- **Cloud managed services**: Azure, AWS simplifican el despliegue. No reinventes la infraestructura
 
 ---
 

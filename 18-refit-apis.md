@@ -4,6 +4,7 @@
   - [18.3. Refit: Interfaces Tipadas para APIs](#183-refit-interfaces-tipadas-para-apis)
   - [18.4. Polly: Resiliencia y Reintentos](#184-polly-resiliencia-y-reintentos)
   - [18.5. Ejemplo Completo: API con Refit y Polly](#185-ejemplo-completo-api-con-refit-y-polly)
+  - [18.6. Buenas Prácticas](#186-buenas-prácticas)
 
 
 # 18. Consumo de APIs: HttpClient, Refit y Polly
@@ -405,6 +406,13 @@ app.Run();
 ```
 
 > 💡 **Consejo:** Para el examen, recuerda la combinación ideal: **Refit** (para código limpio) + **IHttpClientFactory** (para gestión de sockets) + **Polly** (para resiliencia). Es el patrón estándar en producción.
+
+## 18.6. Buenas Prácticas
+
+- **Refit para APIs externas**: Interfaces tipadas, sin código repetitivo
+- **IHttpClientFactory siempre**: Nunca crear HttpClient con `new`
+- **Polly para resiliencia**: Retry, Circuit Breaker, Timeout
+- **Cliente tipado vs con nombre**: Tipado para una API, con nombre para múltiples
 
 ---
 

@@ -5,6 +5,7 @@
   - [12.4. Patrón Decorator](#124-patrón-decorator)
   - [12.5. Clean Architecture](#125-clean-architecture)
   - [12.6. Organización de Carpetas](#126-organización-de-carpetas)
+  - [12.7. Buenas Prácticas](#127-buenas-prácticas)
 
 
 # 12. Patrones y Arquitecturas en ASP.NET Core
@@ -219,6 +220,13 @@ MiProyecto/
 ```
 
 > 📝 **Nota:** No hay una estructura "correcta" universal. Lo importante es que sea **consistente** en todo el proyecto. Si usas `Repositories/`, no mezcles con `Repository/`.
+
+## 12.7. Buenas Prácticas
+
+- **Repository para datos, Service para negocio**: No mezclar responsabilidades
+- **Clean Architecture**: Dependencias hacia adentro. Nunca hacia afuera
+- **No crear interfaces por crear**: Solo cuando hay múltiples implementaciones o se necesita mocking
+- **SOLID progresivamente**: No todo desde el primer día, pero siempre con dirección correcta
 
 ---
 

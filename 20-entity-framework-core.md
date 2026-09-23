@@ -7,6 +7,7 @@
   - [20.6. SQL Raw](#206-sql-raw)
   - [20.7. Migraciones](#207-migraciones)
   - [20.8. Seed Data](#208-seed-data)
+  - [20.9. Buenas Prácticas](#209-buenas-prácticas)
 
 
 # 20. Entity Framework Core: ORM de .NET
@@ -474,7 +475,7 @@ await context.Database
         DateTime.Now);
 ```
 
-### ⚠️ SQL Injection — NUNCA Concatenes Strings
+### SQL Injection — NUNCA Concatenes Strings
 
 ```csharp
 // ❌ MALO: SQL Injection vulnerable
@@ -638,6 +639,13 @@ protected override void OnModelCreating(ModelBuilder modelBuilder)
 ```
 
 > 📝 **Nota:** Después de añadir seed data, necesitas crear una nueva migración: `dotnet ef migrations add "SeedData"`. Los datos se insertan al aplicar la migración.
+
+## 20.9. Buenas Prácticas
+
+- **DbContext en Entity/**: SIEMPRE en la capa de persistencia, NUNCA en Repositories/
+- **Migraciones para esquema**: Nunca scripts SQL manuales en producción
+- **UseNoTracking() para solo lectura**: Mejora el rendimiento
+- **Include() para relaciones**: Evitar N+1 queries
 
 ---
 

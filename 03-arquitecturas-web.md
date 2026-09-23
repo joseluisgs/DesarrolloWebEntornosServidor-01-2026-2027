@@ -3,6 +3,7 @@
   - [3.2. Modelos de Arquitectura Software](#32-modelos-de-arquitectura-software)
   - [3.3. Patrón MVC (Modelo-Vista-Controlador)](#33-patrón-mvc-modelo-vista-controlador)
   - [3.4. Principios SOLID](#34-principios-solid)
+  - [3.5. Buenas Prácticas](#35-buenas-prácticas)
 
 
 
@@ -383,6 +384,13 @@ services.AddScoped<IEmailService, EmailServiceGmail>();
 > - Un empleado puede **sustituir a otro** del mismo departamento (LSP)
 > - Cada departamento tiene **sus propias herramientas** (ISP)
 > - Los empleados dependen de **instrucciones claras**, no de saber todo (DIP)
+
+## 3.5. Buenas Prácticas
+
+- **Empieza monolítico**: No uses microservicios desde el principio. Escala cuando sea necesario
+- **SOLID desde el diseño**: Los 5 principios se aplican al diseñar, no al refactorizar después
+- **Separación por capas**: Presentación → Negocio → Datos. Cada capa solo depende de la inferior
+- **Acoplamiento hacia adentro**: Clean Architecture facilita tests y mantenimiento
 
 ---
 

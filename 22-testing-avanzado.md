@@ -7,6 +7,7 @@
     - [22.5.1. Coverlet: Cobertura de Código](#2251-coverlet-cobertura-de-código)
   - [22.6. Depuración de Errores en C#](#226-depuración-de-errores-en-c)
   - [22.7. Regla: Nada se Entrega sin Tests](#227-regla-nada-se-entrega-sin-tests)
+  - [22.8. Buenas Prácticas](#228-buenas-prácticas)
 
 
 # 22. Testing Avanzado en .NET
@@ -877,6 +878,13 @@ reportgenerator -reports:coverage.cobertura.xml -targetdir:coverage
 | **Utilidades** | 80%+ | Helpers, extensiones |
 
 > 💡 **Consejo:** La cobertura no lo es todo — un test que solo hace `Assert.Pass()` no cubre nada. Pero sin cobertura, no tienes ni idea de qué partes de tu código están protegidas.
+
+## 22.8. Buenas Prácticas
+
+- **Tests obligatorios**: No se entrega código sin tests verdes
+- **Cobertura mínima del 80%**: En código de negocio
+- **TestContainers para BD real**: PostgreSQL efímero en Docker
+- **AAA siempre**: Arrange-Act-Assert. Comentar las secciones
 
 ---
 

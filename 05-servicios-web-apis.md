@@ -5,6 +5,7 @@
   - [5.4. WebSocket: Comunicación en Tiempo Real](#54-websocket-comunicación-en-tiempo-real)
   - [5.5. Otros Protocolos](#55-otros-protocolos)
   - [5.6. Comparativa de Protocolos](#56-comparativa-de-protocolos)
+  - [5.7. Buenas Prácticas](#57-buenas-prácticas)
 
 
 
@@ -277,6 +278,13 @@ sequenceDiagram
 | Microservicios internos de alta performance | **gRPC** |
 | Sistemas bancarios legacy | **SOAP** |
 | Notificaciones push simples | **SSE** |
+
+## 5.7. Buenas Prácticas
+
+- **REST por defecto**: Es el estándar para APIs públicas. Úsalo como opción por defecto
+- **GraphQL solo cuando sea necesario**: Apps móviles que necesitan flexibilidad en consultas
+- **WebSocket para tiempo real**: Chats, notificaciones, juegos. No para todo
+- **Documenta siempre**: Swagger/OpenAPI desde el primer endpoint
 
 ---
 

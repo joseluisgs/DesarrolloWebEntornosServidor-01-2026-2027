@@ -3,6 +3,7 @@
   - [1.2. Front-end y Back-end: Los Dos Lados de la Moneda](#12-front-end-y-back-end-los-dos-lados-de-la-moneda)
   - [1.3. Modelos de Ejecución de Código](#13-modelos-de-ejecución-de-código)
   - [1.4. El Despliegue: Del Desarrollo a la Producción](#14-el-despliegue-del-desarrollo-a-la-producción)
+  - [1.5. Buenas Prácticas](#15-buenas-prácticas)
 
 
 # 1. Introducción al Desarrollo Web en Entorno Servidor
@@ -210,6 +211,13 @@ graph LR
 > 📝 **Nota:** El despliegue continuo (CI-CD) permite que cada cambio de código se pruebe y despliegue automáticamente. Esto reduce errores y acelera las entregas.
 
 > 💡 **Consejo:** En el tema 09 profundizaremos en despliegue con Docker y CI-CD. Ahora solo necesitas entender el concepto.
+
+## 1.5. Buenas Prácticas
+
+- **Separación de responsabilidades**: Front-end para interfaz, Back-end para lógica de negocio. No mezclar ambos
+- **Back-end agnóstico**: Diseña el Back-end para servir a cualquier cliente (web, móvil, escritorio), no solo al navegador
+- **HTTPS siempre**: Incluso en desarrollo local. La seguridad empieza desde el primer día
+- **Escalabilidad desde el diseño**: Piensa cómo crecerá tu aplicación antes de escribir código
 
 ---
 

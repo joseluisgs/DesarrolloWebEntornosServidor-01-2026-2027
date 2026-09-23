@@ -5,6 +5,7 @@
   - [14.4. CSV con CsvHelper](#144-csv-con-csvhelper)
   - [14.5. JSON con System.Text.Json](#145-json-con-systemtextjson)
   - [14.6. Comparativa de Formatos](#146-comparativa-de-formatos)
+  - [14.7. Buenas Prácticas](#147-buenas-prácticas)
 
 
 # 14. Ficheros y Formatos de Intercambio
@@ -358,7 +359,7 @@ var config = new CsvConfiguration(CultureInfo.InvariantCulture)
 
 **JSON** (JavaScript Object Notation) es el formato estándar para APIs web y configuración. `System.Text.Json` es la librería oficial de .NET (rápida, moderna, sin dependencias externas).
 
-### Serialización (objeto → JSON)
+### Serialización (objeto a JSON)
 
 ```csharp
 using System.Text.Json;
@@ -413,7 +414,7 @@ Salida:
 }
 ```
 
-### Deserialización (JSON → objeto)
+### Deserialización (JSON a objeto)
 
 ```csharp
 string json = """
@@ -526,6 +527,13 @@ Console.WriteLine($"Convertidos {personas.Count} registros de CSV a JSON");
 ```
 
 > ⚠️ **Advertencia:** CSV no maneja bien datos con comas, saltos de línea o caracteres especiales sin comillas. Si tus datos pueden contener estos caracteres, usa JSON. CSV solo es seguro cuando los datos son simples y tabulares.
+
+## 14.7. Buenas Prácticas
+
+- **SIEMPRE implementar IDisposable**: Para recursos no manejados (ficheros, conexiones)
+- **JSON con System.Text.Json**: Moderno, rápido y seguro. Opciones con `JsonSerializerOptions`
+- **CSV con CsvHelper**: Nunca parsear CSV a mano. Siempre usa una librería
+- **UTF-8 como encoding**: Compatibilidad universal. Nunca asumes otro encoding
 
 ---
 

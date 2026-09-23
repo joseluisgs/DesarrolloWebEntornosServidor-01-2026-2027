@@ -4,6 +4,7 @@
   - [6.3. Tecnologías de Generación de Contenido Dinámico](#63-tecnologías-de-generación-de-contenido-dinámico)
   - [6.4. Ejemplo "Hola Mundo" en ASP.NET Core](#64-ejemplo-hola-mundo-en-aspnet-core)
   - [6.5. Comparativa de Tecnologías](#65-comparativa-de-tecnologías)
+  - [6.6. Buenas Prácticas](#66-buenas-prácticas)
 
 
 # 6. Páginas Web Dinámicas y Generación de Contenido
@@ -279,6 +280,13 @@ record Usuario(int Id, string Nombre, string Email, int Edad);
 | **Empresas que lo usan** | Wikipedia, WordPress | Netflix, LinkedIn | Microsoft, Stack Overflow | Instagram, Spotify | Netflix, Uber |
 
 📌 **Ejemplo real:** Netflix usa Java para su Back-end, Spotify usa Python para recomendaciones y Microsoft usa ASP.NET Core para Azure. No hay un lenguaje "mejor": cada uno tiene su nicho.
+
+## 6.6. Buenas Prácticas
+
+- **ASP.NET Core para Back-end en .NET**: Moderno, rápido y multiplataforma. Es la opción recomendada
+- **No generar HTML en el servidor para todo**: Usa APIs REST + SPA (React, Vue, Angular)
+- **Separar presentación de negocio**: Incluso en PHP y Python, mantén lógica y vista separadas
+- **Frameworks actualizados**: Nunca uses frameworks sin soporte activo
 
 ---
 

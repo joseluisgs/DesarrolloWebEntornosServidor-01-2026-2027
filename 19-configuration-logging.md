@@ -5,6 +5,7 @@
   - [19.4. Serilog: Logging Estructurado](#194-serilog-logging-estructurado)
   - [19.5. ILogger en Apps de Consola](#195-ilogger-en-apps-de-consola)
   - [19.6. Logging con Dependencias y Enrichers](#196-logging-con-dependencias-y-enrichers)
+  - [19.7. Buenas Prácticas](#197-buenas-prácticas)
 
 
 # 19. Configuración y Logging en .NET
@@ -454,6 +455,13 @@ app.UseSerilogRequestLogging(options =>
 📌 **Ejemplo real:** En producción, Seq o Elasticsearch reciben los logs de Serilog. Puedes hacer queries como `SELECT * FROM Logs WHERE Nivel = 'Error' AND Propiedades.ClienteId = 42` para encontrar todos los errores de un cliente específico. Con logs de texto plano, tendrías que usar `grep` y rezar.
 
 > ⚠️ **Advertencia:** **NUNCA** logues datos sensibles: contraseñas, números de tarjeta de crédito, DNI. Los logs pueden ser accedidos por personas no autorizadas. Si necesitas logear parte de un dato sensible, enmascara: `"****-****-****-" + ultimosCuatro`.
+
+## 19.7. Buenas Prácticas
+
+- **Serilog para logging estructurado**: Más potente que Console.WriteLine
+- **IOptions<T> para configuración tipada**: Nunca leer appsettings directamente
+- **appsettings por entorno**: Development, Staging, Production
+- **User Secrets para desarrollo**: NUNCA secretos en appsettings.json
 
 ---
 

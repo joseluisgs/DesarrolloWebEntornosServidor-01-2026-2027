@@ -9,6 +9,7 @@
   - [24.8. Security Headers](#248-security-headers)
   - [24.9. CSRF: Cross-Site Request Forgery](#249-csrf-cross-site-request-forgery)
   - [24.10. OWASP Top 10](#2410-owasp-top-10)
+  - [24.11. Buenas Prácticas](#2411-buenas-prácticas)
 
 
 # 24. Seguridad en Aplicaciones Web
@@ -644,6 +645,13 @@ builder.Services.AddRateLimiter(options =>
 ```
 
 > 💡 **Consejo:** Para el examen, recuerda los 3 pilares de la seguridad web: **Confidencialidad** (solo los autorizados ven los datos), **Integridad** (los datos no se modifican), **Disponibilidad** (el servicio está accesible). Y la regla de oro: **NUNCA confíes en el cliente**.
+
+## 24.11. Buenas Prácticas
+
+- **JWT con Refresh Token**: Access Token corto (15min), Refresh Token largo (7días)
+- **NUNCA passwords en texto plano**: BCrypt o Argon2 siempre
+- **CORS restrictivo**: Solo orígenes conocidos en producción
+- **Rate Limiting**: Protege contra fuerza bruta y abusos
 
 ---
 

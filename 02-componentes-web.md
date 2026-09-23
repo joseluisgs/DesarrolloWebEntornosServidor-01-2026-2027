@@ -2,6 +2,7 @@
   - [2.1. Front-end y Back-end: La División del Trabajo](#21-front-end-y-back-end-la-división-del-trabajo)
   - [2.2. El Back-end es Universal](#22-el-back-end-es-universal)
   - [2.3. Página Web vs. Aplicación Web](#23-página-web-vs-aplicación-web)
+  - [2.4. Buenas Prácticas](#24-buenas-prácticas)
 
 
 
@@ -108,6 +109,13 @@ No es lo mismo una página web que una aplicación web. Es una diferencia fundam
 > 💡 **Consejo:** En el ámbito profesional, casi todo son **aplicaciones web**. Las páginas web estáticas son poco comunes hoy en día. Incluso una web corporativa tiene un panel de administración (Back-end) para gestionar contenido.
 
 > ⚠️ **Advertencia:** No confundas "página web" con "sitio web". Un sitio web es un conjunto de páginas web. Un blog puede ser un sitio web de páginas web estáticas, pero un foro es un sitio web con una aplicación web.
+
+## 2.4. Buenas Prácticas
+
+- **Separación clara**: Front-end y Back-end con responsabilidades distintas. Nunca mezclar presentación con lógica de negocio
+- **Back-end agnóstico**: Diseña APIs que sirvan a cualquier cliente (web, móvil, escritorio)
+- **JSON como estándar**: Usa JSON para comunicar Front-end y Back-end. Es el formato universal
+- **Documenta la API**: Swagger/OpenAPI desde el primer día. Tu futuro yo te lo agradecerá
 
 ---
 

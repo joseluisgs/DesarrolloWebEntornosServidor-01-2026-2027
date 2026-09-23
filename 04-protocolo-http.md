@@ -6,6 +6,7 @@
   - [4.5. Códigos de Estado HTTP](#45-códigos-de-estado-http)
   - [4.6. Cabeceras HTTP](#46-cabeceras-http)
   - [4.7. HTTPS: HTTP Seguro](#47-https-http-seguro)
+  - [4.8. Buenas Prácticas](#48-buenas-prácticas)
 
 
 
@@ -259,6 +260,13 @@ sequenceDiagram
 > ⚠️ **Advertencia:** Hoy en día, **todas** las aplicaciones web deben usar HTTPS. Google Chrome marca como "No seguro" las webs sin HTTPS. Los certificados SSL son gratuitos con Let's Encrypt.
 
 > 💡 **Consejo:** Para el examen, recuerda que HTTP es la base de las APIs REST. Cada petición HTTP lleva un verbo (GET, POST...) y devuelve un código de estado (200, 404...). Esto es fundamental para entender cómo funcionan las aplicaciones web modernas.
+
+## 4.8. Buenas Prácticas
+
+- **HTTPS siempre**: Nunca HTTP plano en producción. SSL/TLS es obligatorio
+- **Códigos de estado precisos**: 201 para crear, 204 para eliminar, 404 para no encontrado. No uses 200 para todo
+- **Nunca exponer errores internos**: Usa 500 genérico al cliente, loggear el detalle en servidor
+- **Rate limiting**: Limita peticiones por usuario para proteger contra abusos
 
 ---
 

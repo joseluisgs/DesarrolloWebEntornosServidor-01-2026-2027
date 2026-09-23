@@ -13,6 +13,7 @@
   - [21.10. Dapper vs EF Core vs ADO.NET](#2110-dapper-vs-ef-core-vs-ado)
   - [21.11. Escalabilidad Vertical vs Horizontal](#2111-escalabilidad-vertical-vs-horizontal)
   - [21.12. Comparativa y Cuándo Usar Cada Uno](#2112-comparativa-y-cuándo-usar-cada-uno)
+  - [21.13. Buenas Prácticas](#2113-buenas-prácticas)
 
 
 # 21. Bases de Datos SQL y NoSQL
@@ -964,7 +965,7 @@ cache.Set(key, value, new MemoryCacheEntryOptions()
     .SetAbsoluteExpiration(TimeSpan.FromMinutes(30)));
 ```
 
-### ⚠️ Errores comunes
+### Errores comunes
 
 ```csharp
 // ❌ MALO: Olvidar SetSize cuando hay SizeLimit
@@ -1530,6 +1531,13 @@ public class PedidoService(PedidoRepository pedidoRepo, PostRepository postRepo,
 ```
 
 > 📝 **Nota:** En producción, la mayoría de sistemas usan una combinación: PostgreSQL para datos transaccionales, Redis para caché, y a veces MongoDB para contenido flexible. No es "uno o otro", sino "el correcto para cada tipo de dato".
+
+## 21.13. Buenas Prácticas
+
+- **PostgreSQL para datos transaccionales**: Relaciones fuertes, integridad referencial
+- **MongoDB para documentos flexibles**: Datos autocontenidos, esquema variable
+- **Redis para caché y sesiones**: TTL para expiración automática
+- **Consistencia eventual en microservicios**: No intentar consistencia fuerte entre servicios
 
 ---
 

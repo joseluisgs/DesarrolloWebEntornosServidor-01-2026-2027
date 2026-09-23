@@ -12,6 +12,7 @@
   - [15.11. Patrón Validator con Result.Combine](#1511-patrón-validator-con-resultcombine)
   - [15.12. Maybe vs Result vs Nullable](#1512-maybe-vs-result-vs-nullable)
   - [15.13. Ejemplo Completo](#1513-ejemplo-completo)
+  - [15.14. Buenas Prácticas](#1514-buenas-prácticas)
 
 
 # 15. Patrón Result vs Excepciones (ROP)
@@ -792,6 +793,13 @@ error.Match(
     onFailure: e => Console.WriteLine($"Errores: {e.Message}")
 );
 ```
+
+## 15.14. Buenas Prácticas
+
+- **Result en vez de excepciones**: Para errores controlados. Más explícito y funcional
+- **Never para unit**: Para operaciones que no retornan valor. Evita confusión con null
+- **Maybe para "puede que no exista"**: Más claro que retornar null
+- **No mezclar Result con async void**: Siempre `async Task<Result<T, E>>`
 
 ---
 

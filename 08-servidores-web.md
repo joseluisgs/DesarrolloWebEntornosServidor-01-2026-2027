@@ -7,6 +7,7 @@
   - [8.6. Kestrel: El Servidor de ASP.NET Core](#86-kestrel-el-servidor-de-aspnet-core)
   - [8.7. Gestores de Bases de Datos](#87-gestores-de-bases-de-datos)
   - [8.8. Arquitectura Completa de un Servidor Web](#88-arquitectura-completa-de-un-servidor-web)
+  - [8.9. Buenas Prácticas](#89-buenas-prácticas)
 
 
 # 8. Servidores Web y de Aplicaciones
@@ -363,6 +364,13 @@ graph TD
 | **Caché** | Almacena datos frecuentes | Redis, Memcached |
 | **Base de datos** | Persiste datos | PostgreSQL, MySQL, MongoDB |
 | **CDN** | Archivos estáticos cercanos al usuario | Cloudflare, AWS CloudFront |
+
+## 8.9. Buenas Prácticas
+
+- **Kestrel para desarrollo**: Es suficiente. En producción, usa Nginx o Apache como reverse proxy
+- **Separar servidor web de aplicaciones**: Escalabilidad y seguridad
+- **Bases de datos con versiones estables**: PostgreSQL 17, MongoDB 7.0, Redis 7
+- **Monitoriza siempre**: Herramientas específicas para cada componente de la arquitectura
 
 ---
 

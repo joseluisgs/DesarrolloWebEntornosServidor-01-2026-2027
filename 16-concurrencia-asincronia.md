@@ -14,6 +14,7 @@
   - [16.10. Errores en Código Asíncrono](#1610-errores-en-código-asíncrono)
   - [16.11. Parallel.For vs Task.WhenAll](#1611-parallelfor-vs-taskwhenall)
   - [16.12. Task vs ValueTask vs IAsyncEnumerable](#1612-task-vs-valuetask-vs-iasyncenumerable)
+  - [16.13. Buenas Prácticas](#1613-buenas-prácticas)
 
 
 # 16. Concurrencia y Asincronía en C#
@@ -1232,6 +1233,13 @@ sequenceDiagram
 ```
 
 📌 **Ejemplo real:** Cuando descargas un fichero grande con Chrome, ves la barra de progreso avanzando poco a poco. Eso es streaming con `IAsyncEnumerable` — no espera a tener todo el fichero para mostrarlo, va emitiendo porciones a medida que llegan.
+
+## 16.13. Buenas Prácticas
+
+- **NUNCA async void**: Siempre async Task para que se propague correctamente
+- **CancellationToken SIEMPRE**: Permite cancelar operaciones largas
+- **ConfigureAwait(false) en bibliotecas**: Evita deadlocks
+- **Task.WhenAll para paralelo independiente**: Ahorra tiempo de espera
 
 ---
 

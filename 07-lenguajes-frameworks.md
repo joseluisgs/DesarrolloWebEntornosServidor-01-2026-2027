@@ -4,6 +4,7 @@
   - [7.3. Tecnologías para el Desarrollo de Servicios](#73-tecnologías-para-el-desarrollo-de-servicios)
   - [7.4. Integración del Código con Lenguajes de Marcas](#74-integración-del-código-con-lenguajes-de-marcas)
   - [7.5. Comparativa de Tecnologías](#75-comparativa-de-tecnologías)
+  - [7.6. Buenas Prácticas](#76-buenas-prácticas)
 
 
 # 7. Lenguajes y Frameworks de Programación en Entorno Servidor
@@ -221,6 +222,13 @@ Una técnica fundamental para crear páginas web dinámicas es integrar código 
 > - ¿Es un CMS o web sencilla con hosting barato? → **PHP / Laravel**
 > - ¿Tratas datos, IA o machine learning? → **Python / Django**
 > - ¿Necesitas tiempo real y APIs rápidas? → **Node.js / Express**
+
+## 7.6. Buenas Prácticas
+
+- **Elegir según el problema**: No uses el lenguaje que mejor conoces si no es el adecuado
+- **Un framework bien elegido ahorra meses**: Evalúa comunidad, soporte y documentación
+- **No inventar la rueda**: Usa frameworks maduros en vez de código custom
+- **La comunidad importa**: Un lenguaje con buena comunidad = más soluciones, más librerías
 
 ---
 
