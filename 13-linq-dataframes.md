@@ -713,4 +713,7 @@ graph TD
 | **DataFrame** | Datos tabulares, CSV, análisis estadístico |
 | **Decisión** | LINQ (<10K) → PLINQ (10K-100K, pesado) → DataFrame (>100K, stats) |
 
+**¿Qué viene después?**
+
 En el siguiente punto veremos cómo trabajar con ficheros y formatos de intercambio: IDisposable, System.IO, CSV con CsvHelper y JSON con System.Text.Json.
+

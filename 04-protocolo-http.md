@@ -273,4 +273,7 @@ sequenceDiagram
 | **Códigos** | 2xx (éxito), 4xx (error cliente), 5xx (error servidor) |
 | **HTTPS** | HTTP con cifrado SSL/TLS, seguro |
 
+**¿Qué viene después?**
+
 En el siguiente punto veremos los servicios web y las APIs: qué son, cómo funcionan los protocolos REST, GraphQL, WebSocket y por qué son importantes en el ámbito empresarial.
+

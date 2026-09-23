@@ -1257,6 +1257,9 @@ sequenceDiagram
 | **async void** | Peligroso: solo para eventos de UI |
 | **Los 3 errores clásicos** | Await secuencial, fire-and-forget, WhenAll + await |
 
+**¿Qué viene después?**
+
 En el siguiente punto veremos Programación Reactiva con Rx.NET: flujos de datos asíncronos, Subject, operadores y cuándo usar IObservable vs IAsyncEnumerable.
 
 > 💡 **Ejercicio práctico:** Ejecuta el ejemplo `15-SincroniaVsAsyncronia` de la carpeta de ejemplos. Compara los tiempos de sincrono, async mal y async bien. Fíjate en los Thread IDs del log de Serilog: en sincronismo todos son el mismo, en async bien son distintos. Eso es la diferencia entre secuencial y paralelo.
+

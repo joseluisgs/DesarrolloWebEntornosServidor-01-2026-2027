@@ -420,4 +420,7 @@ app.Run();
 | **Retry** | Reintentar automáticamente tras un fallo |
 | **Circuit Breaker** | Parar llamadas si hay demasiados fallos consecutivos |
 
+**¿Qué viene después?**
+
 En el siguiente punto veremos configuración y logging: `appsettings.json`, `IConfiguration`, `IOptions<T>` y Serilog para logging estructurado.
+

@@ -398,4 +398,7 @@ services.AddScoped<IEmailService, EmailServiceGmail>();
 | **MVC** | Patrón: Modelo (datos) + Vista (interfaz) + Controlador (lógica) |
 | **SOLID** | 5 principios para código mantenible y escalable |
 
+**¿Qué viene después?**
+
 En el siguiente punto veremos el protocolo HTTP: cómo se comunican cliente y servidor, qué son las peticiones y respuestas, los verbos HTTP y los códigos de estado.
+

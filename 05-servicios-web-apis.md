@@ -291,4 +291,7 @@ sequenceDiagram
 | **gRPC** | RPC de alto rendimiento con Protocol Buffers |
 | **SOAP** | Protocolo basado en XML, usado en banca |
 
+**¿Qué viene después?**
+
 En el siguiente punto veremos las páginas web dinámicas: qué son, cómo funcionan y las tecnologías que las hacen posibles (PHP, Java, ASP.NET Core, Python).
+

@@ -565,4 +565,7 @@ graph TD
 | **.dockerignore** | Ficheros excluidos del contexto de construcción |
 | **Docker/Podman en Rider** | Mismo plugin, ventana Services (`Alt+8`) |
 
+**¿Qué viene después?**
+
 En el siguiente punto veremos seguridad: autenticación, autorización, JWT, hashing de contraseñas, CORS y OWASP Top 10.
+

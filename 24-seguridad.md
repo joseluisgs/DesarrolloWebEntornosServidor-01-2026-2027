@@ -264,9 +264,6 @@ sequenceDiagram
 
     U->>S: GET /api/datos (nuevo Access Token)
     S-->>U: 200 OK + Datos
-
-    style U fill:#2196F3,color:#fff
-    style S fill:#4CAF50,color:#fff
 ```
 
 > 💡 **Analogía — El Billete y el Carnet:**
@@ -557,11 +554,7 @@ sequenceDiagram
     M->>S: POST /transferir (con cookies de U)
     Note over S: Cookies válidas → ejecuta transferencia
     S-->>M: 200 OK
-    Note over U: 😱 Usuario no se enteró
-
-    style U fill:#2196F3,color:#fff
-    style M fill:#f44336,color:#fff
-    style S fill:#4CAF50,color:#fff
+    Note over U: Usuario no se enteró
 ```
 
 ### Prevención con Anti-Forgery Tokens
@@ -672,4 +665,7 @@ builder.Services.AddRateLimiter(options =>
 | **XSS** | Cross-Site Scripting, se previene sanitizando entradas |
 | **Rate Limiting** | Limitar peticiones por usuario/timeframe |
 
+**¿Qué viene después?**
+
 En el siguiente punto veremos un resumen de la Parte 2 y cómo todo conecta con ASP.NET Core en la Unidad 02.
+

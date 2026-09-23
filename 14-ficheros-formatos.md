@@ -545,4 +545,7 @@ Console.WriteLine($"Convertidos {personas.Count} registros de CSV a JSON");
 | **JSON** | Para APIs y configuración, el más versátil |
 | **XML** | Para documentos y sistemas enterprise, el más verboso |
 
+**¿Qué viene después?**
+
 En el siguiente punto veremos el patrón Result con CSharpFunctionalExtensions: cómo manejar errores sin excepciones usando `Result<T>`, `Maybe<T>`, `Guard`, `Bind` y `Map`.
+

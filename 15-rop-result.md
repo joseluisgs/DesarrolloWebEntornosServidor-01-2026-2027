@@ -545,8 +545,6 @@ sequenceDiagram
     else Validación falla
         S-->>C: Result.Failure(Validation)
     end
-
-    style S fill:#4CAF50,color:#fff
 ```
 
 > ⚠️ **Advertencia:** No mezcles `Result` con `async void`. Siempre usa `async Task<Result<T, E>>` para que el error se propague correctamente.
@@ -818,4 +816,7 @@ error.Match(
 | **Result con async** | `Task<Result<T, E>>` para operaciones asíncronas |
 | **Maybe vs Result** | Maybe para "no existe", Result para "error con contexto" |
 
+**¿Qué viene después?**
+
 En el siguiente punto veremos concurrencia y asincronía: async/await, Task, CancellationToken y por qué no debemos usar `async void`.
+

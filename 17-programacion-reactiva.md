@@ -566,4 +566,7 @@ subject
 | **Merge** | Unir dos flujos en uno |
 | **CombineLatest** | Combinar el último valor de cada flujo |
 
+**¿Qué viene después?**
+
 En el siguiente punto veremos cómo consumir APIs externas: HttpClient, IHttpClientFactory, Refit para interfaces tipadas y Polly para resiliencia.
+

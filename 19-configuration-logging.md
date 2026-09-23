@@ -472,4 +472,7 @@ app.UseSerilogRequestLogging(options =>
 | **Enrichers** | Añaden contexto automático a los logs |
 | **Request Logging** | Log automático de cada petición HTTP |
 
+**¿Qué viene después?**
+
 En el siguiente punto veremos Entity Framework Core: el ORM de .NET para trabajar con bases de datos de forma elegante y tipada.
+

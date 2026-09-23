@@ -224,4 +224,7 @@ graph LR
 | **Seguridad** | Protección de datos y servicios |
 | **HTTP** | Protocolo de comunicación entre cliente y servidor |
 
+**¿Qué viene después?**
+
 En el siguiente punto veremos los componentes que forman una aplicación web: cliente, servidor, protocolos y bases de datos.
+

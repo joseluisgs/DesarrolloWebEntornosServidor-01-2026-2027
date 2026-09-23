@@ -296,4 +296,7 @@ record Usuario(int Id, string Nombre, string Email, int Edad);
 | **Python** | Sintaxis limpia, potente en IA y datos |
 | **Node.js** | JavaScript en servidor, asíncrono, no-bloqueante |
 
+**¿Qué viene después?**
+
 En el siguiente punto veremos los lenguajes y frameworks de programación en entorno servidor: tipos de ejecución (scripting, compilado, bytecode), plataformas web (LAMP, MEAN, WISA) y comparativa de tecnologías.
+

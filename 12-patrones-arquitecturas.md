@@ -232,4 +232,7 @@ MiProyecto/
 | **Decorator** | Añade funcionalidad sin modificar el servicio original |
 | **Clean Architecture** | Organización en capas con dependencias hacia adentro |
 
+**¿Qué viene después?**
+
 En el siguiente punto veremos LINQ: consultas declarativas en colecciones y bases de datos, Parallel LINQ y operaciones avanzadas.
+

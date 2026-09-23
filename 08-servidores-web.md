@@ -381,4 +381,7 @@ graph TD
 | **Redis** | BD en memoria para caché y sesiones |
 | **MongoDB** | BD NoSQL por documentos JSON flexible |
 
+**¿Qué viene después?**
+
 En el siguiente punto veremos el despliegue de aplicaciones web: escalabilidad, Docker, Kubernetes, la nube y CI/CD.
+

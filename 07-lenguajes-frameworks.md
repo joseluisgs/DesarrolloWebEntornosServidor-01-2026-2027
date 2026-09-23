@@ -238,4 +238,7 @@ Una técnica fundamental para crear páginas web dinámicas es integrar código 
 | **ASP.NET Core** | Framework C# para servicios web de alto rendimiento |
 | **Laravel** | Framework PHP moderno y elegante |
 
+**¿Qué viene después?**
+
 En el siguiente punto veremos los servidores web y de aplicaciones: Apache, Nginx, Tomcat, Kestrel y los gestores de bases de datos.
+

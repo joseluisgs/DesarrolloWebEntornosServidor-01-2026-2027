@@ -122,4 +122,7 @@ No es lo mismo una página web que una aplicación web. Es una diferencia fundam
 | **Aplicación web** | Herramienta interactiva que procesa datos |
 | **API REST** | Forma en que Front-end y Back-end se comunican |
 
+**¿Qué viene después?**
+
 En el siguiente punto veremos las arquitecturas web: desde la arquitectura Cliente-Servidor hasta los microservicios, pasando por MVC y los principios SOLID.
+

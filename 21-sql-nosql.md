@@ -1257,9 +1257,6 @@ sequenceDiagram
     end
 
     Note over CA: Próxima vez: CACHE HIT (rápido)
-
-    style CA fill:#FF9800,color:#fff
-    style BD fill:#2196F3,color:#fff
 ```
 
 **Flujo:**
@@ -1293,10 +1290,6 @@ sequenceDiagram
 
     U->>S2: Leer perfil
     S2-->>U: nombre = "María" ✅
-
-    style U fill:#2196F3,color:#fff
-    style S1 fill:#4CAF50,color:#fff
-    style S2 fill:#FF9800,color:#fff
 ```
 
 > 💡 **Analogía — El Grupo de WhatsApp:**
@@ -1553,4 +1546,7 @@ public class PedidoService(PedidoRepository pedidoRepo, PostRepository postRepo,
 | **Cache-Aside** | Patrón: buscar en caché → si no está, buscar en BD → guardar en caché |
 | **Híbrido** | Usar PostgreSQL + Redis + MongoDB según el tipo de dato |
 
+**¿Qué viene después?**
+
 En el siguiente punto veremos testing avanzado: NUnit, FluentAssertions, Moq y TestContainers para tests profesionales.
+

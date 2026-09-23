@@ -599,4 +599,7 @@ public class PedidoService(IPedidoRepository repository) : IPedidoService
 | **Singleton** | Una sola instancia para toda la app |
 | **Scrutor** | Escanea ensamblados y registra servicios automáticamente |
 
+**¿Qué viene después?**
+
 En el siguiente punto veremos los patrones de diseño más usados en ASP.NET Core: Repository, Service y Factory, y cómo se aplican en la arquitectura de una aplicación real.
+

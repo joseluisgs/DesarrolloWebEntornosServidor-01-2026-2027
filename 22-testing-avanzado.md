@@ -722,6 +722,8 @@ dotnet test --collect:"XPlat Code Coverage" --settings coverlet.runsettings
 | **Unit test** | Rápido, aísla componentes, usa mocks |
 | **Integration test** | Prueba componentes juntos, usa BD real |
 
+**¿Qué viene después?**
+
 En el siguiente punto veremos Docker y Podman en profundidad: cómo crear imágenes con Dockerfile y orquestar servicios con Docker Compose.
 
 ## 22.6. Depuración de Errores en C#
@@ -887,3 +889,4 @@ reportgenerator -reports:coverage.cobertura.xml -targetdir:coverage
 | **dotnet-trace** | Diagnóstico avanzado desde consola |
 | **Tests obligatorios** | No se entrega nada sin tests verdes |
 | **Cobertura** | Mínimo 80% en código de negocio, informe incluido |
+

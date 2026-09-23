@@ -407,4 +407,7 @@ sequenceDiagram
 | **SaaS** | Usar software listo (Gmail, Drive) |
 | **CI/CD** | Automatizar: commit → tests → build → despliegue |
 
+**¿Qué viene después?**
+
 En el siguiente punto veremos los conceptos clave de seguridad y monitorización: autenticación, autorización, JWT, HTTPS y gestión de logs.
+

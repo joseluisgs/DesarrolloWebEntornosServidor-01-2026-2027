@@ -656,4 +656,7 @@ protected override void OnModelCreating(ModelBuilder modelBuilder)
 | **Migraciones** | Mantener la BD sincronizada con los modelos |
 | **Seed Data** | Datos iniciales insertados con HasData |
 
+**¿Qué viene después?**
+
 En el siguiente punto veremos bases de datos SQL y NoSQL: PostgreSQL, MongoDB y Redis, con ejemplos C# para cada una.
+
