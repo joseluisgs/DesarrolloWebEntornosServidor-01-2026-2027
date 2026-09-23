@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="08-TestContainers/08-TestContainers.csproj" />
+  <Project Path="08-TestContainers.Tests/08-TestContainers.Tests.csproj" />
+</Solution>

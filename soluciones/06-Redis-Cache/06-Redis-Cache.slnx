@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="06-Redis-Cache/06-Redis-Cache.csproj" />
+  <Project Path="06-Redis-Cache.Tests/06-Redis-Cache.Tests.csproj" />
+</Solution>

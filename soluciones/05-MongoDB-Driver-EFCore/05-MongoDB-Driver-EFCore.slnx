@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="05-MongoDB-Driver-EFCore/05-MongoDB-Driver-EFCore.csproj" />
+  <Project Path="05-MongoDB-Driver-EFCore.Tests/05-MongoDB-Driver-EFCore.Tests.csproj" />
+</Solution>
