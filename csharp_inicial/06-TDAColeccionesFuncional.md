@@ -1,4 +1,4 @@
-﻿- [6. Tipos de Datos Abstractos, Colecciones y Programación Funcional en .NET](#6-tipos-de-datos-abstractos-colecciones-y-programación-funcional-en-net)
+- [6. Tipos de Datos Abstractos, Colecciones y Programación Funcional en .NET](#6-tipos-de-datos-abstractos-colecciones-y-programación-funcional-en-net)
   - [6.1. Tipos de datos abstractos](#61-tipos-de-datos-abstractos)
     - [6.1.1. Concepto y definición formal de TDA](#611-concepto-y-definición-formal-de-tda)
     - [6.1.2. Principios fundamentales de abstracción](#612-principios-fundamentales-de-abstracción)
@@ -27,9 +27,20 @@
     - [6.6.5. Funciones de Orden Superior](#665-funciones-de-orden-superior)
     - [6.6.6. Inmutabilidad y Funciones Puras](#666-inmutabilidad-y-funciones-puras)
     - [6.6.7. Pattern Matching Funcional](#667-pattern-matching-funcional)
-  - [6.5. Resumen](#65-resumen)
+
+
 
 # 6. Tipos de Datos Abstractos, Colecciones y Programación Funcional en .NET
+
+> 💡 **Punto de partida:** ¿Alguna vez has tenido que guardar una lista de amigos y no sabías si usar un array o una lista enlazada? Los Tipos de Datos Abstractos (TDAs), las colecciones y la programación funcional son las herramientas que te permiten elegir la estructura adecuada y escribir código más expresivo en C#.
+
+**Objetivos de aprendizaje:**
+
+- Comprender el concepto de TDA y sus principios de abstracción
+- Dominar los genéricos y las colecciones de .NET
+- Aplicar los fundamentos de la programación funcional en C#
+
+📌 Ejemplo real: Netflix usa colecciones y programación funcional para gestionar el catálogo de películas y calcular recomendaciones; la Tienda de la práctica usa `List<T>` y LINQ para filtrar productos.
 
 Este capítulo constituye uno de los pilares fundamentales de la programación avanzada en C# y .NET. A lo largo de este módulo, exploraremos en profundidad tres conceptos interrelacionados que son esenciales para cualquier desarrollador que aspire a dominar este ecosistema: los Tipos de Datos Abstractos (TDAs), las colecciones de datos y los principios de programación funcional. Estos conceptos no son meras características técnicas del lenguaje, sino que representan formas de pensar y estructurar el código que tienen profundas implicaciones en la calidad, mantenibilidad y eficiencia del software que desarrollamos.
 
@@ -41,7 +52,7 @@ La comprensión profunda de estos temas permitirá al estudiante diseñar estruc
 
 Un Tipo de Dato Abstracto, conocido comúnmente por sus siglas TDA (Abstract Data Type en inglés), constituye un concepto fundamental en la teoría de la programación y el diseño de software. Formalmente, un TDA se define como un modelo matemático que especifica un tipo de dato junto con las operaciones que pueden realizarse sobre dicho tipo, independientemente de cómo estas operaciones estén implementadas a nivel técnico. Esta separación entre la interfaz pública (qué puede hacer el tipo) y la implementación interna (cómo lo hace) es lo que otorga a los TDAs su poder y versatilidad en el diseño de sistemas software complejos.
 
-El concepto de abstracción es central en la ingeniería de software moderna, y los TDAs representan una de las formas más puras de implementar este principio. Cuando utilizamos un TDA, no necesitamos conocer ni nos preocupamos por los detalles internos de cómo se almacenan los datos o cómo se ejecutan las operaciones. Simplemente confiamos en que la interfaz pública proporcionada será consistente, eficiente y correcta. Esta separación de concerns permite que los desarrolladores trabajen a diferentes niveles de abstracción, facilitando el mantenimiento, la evolución y las pruebas del código.
+El concepto de abstracción es central en la ingeniería de software moderna, y los TDAs representan una de las formas más puras de implementar este principio. Cuando utilizamos un TDA, no necesitamos conocer ni nos preocupamos por los detalles internos de cómo se almacenan los datos o cómo se ejecutan las operaciones. Simplemente confiamos en que la interfaz pública proporcionada será consistente, eficiente y correcta. Esta separación de responsabilidades permite que los desarrolladores trabajen a diferentes niveles de abstracción, facilitando el mantenimiento, la evolución y las pruebas del código.
 
 La importancia histórica de los TDAs radica en que surgieron como una respuesta a la creciente complejidad del software en las décadas de 1960 y 1970. Investigadores como Barbara Liskov y outros pioneros de la informática formalizaron estos conceptos, estableciendo las bases teóricas que hoy utilizamos diariamente. En el contexto de .NET, los TDAs se implementan principalmente a través de interfaces y clases abstractas, aunque el lenguaje ha evolucionado para ofrecer mecanismos adicionales como los registros (records) que proporcionan semánticas de valor.
 
@@ -99,9 +110,9 @@ graph LR
     I2 --> E2
     I3 --> E3
     
-    style C1 fill:#81D4FA
-    style I1 fill:#FFF59D
-    style E1 fill:#FFAB91
+    style C1 fill:#2196F3,color:#fff
+    style I1 fill:#FF9800,color:#fff
+    style E1 fill:#f44336,color:#fff
 ```
 
 ### 6.1.3. Interfaz vs implementación: el contrato público
@@ -124,24 +135,24 @@ public interface IPila<T>
     void Push(T elemento);
     
     /// <summary>
-    /// Removes and returns the top element of the stack.
+    /// Quita y devuelve el elemento superior de la pila.
     /// </summary>
     /// <returns>El elemento en la parte superior.</returns>
     /// <exception cref="InvalidOperationException">Si la pila está vacía.</exception>
     T Pop();
     
     /// <summary>
-    /// Returns the top element without removing it.
+    /// Devuelve el elemento superior sin quitarlo.
     /// </summary>
     T Peek();
     
     /// <summary>
-    /// Indicates whether the stack is empty.
+    /// Indica si la pila está vacía.
     /// </summary>
     bool IsEmpty { get; }
     
     /// <summary>
-    /// Gets the number of elements in the stack.
+    /// Obtiene el número de elementos de la pila.
     /// </summary>
     int Count { get; }
 }
@@ -266,7 +277,7 @@ namespace TDAs.Ejemplos;
 
 La cola es otro TDA fundamental que sigue el principio FIFO (First In, First Out), es decir, "el primero en entrar es el primero en salir". Este comportamiento es análogo a una cola de personas en un banco o supermercado: la primera persona que llega es la primera en ser atendida. Las colas son esenciales en muchos escenarios de programación, incluyendo la gestión de solicitudes en servidores web, la comunicación entre procesos, y la implementación de algoritmos de búsqueda en grafos (BFS).
 
-A diferencia de la pila, la implementación eficiente de una cola presenta desafíos interesantes. Una implementación naive con una lista requiere O(n) para la operación Dequeue porque necesitamos desplazar todos los elementos. Para solucionar este problema, existen técnicas como el buffer circular (ring buffer) que mantiene operaciones O(1) para ambas operaciones principales. .NET proporciona Queue<T> con una implementación optimizada que utiliza estas técnicas internamente.
+A diferencia de la pila, la implementación eficiente de una cola presenta desafíos interesantes. Una implementación ingenua con una lista requiere O(n) para la operación Dequeue porque necesitamos desplazar todos los elementos. Para solucionar este problema, existen técnicas como el buffer circular (ring buffer) que mantiene operaciones O(1) para ambas operaciones principales. .NET proporciona Queue<T> con una implementación optimizada que utiliza estas técnicas internamente.
 
 La interfaz de una cola típicamente incluye Enqueue (añadir al final), Dequeue (extraer del frente), Peek (observar frente), y propiedades similares a las de la pila. Algunas implementaciones también ofrecen TryDequeue y TryPeek como alternativas seguras que no lanzan excepciones.
 
@@ -329,13 +340,13 @@ string texto = (string)lista[1];  // Funciona
 int valorIncorrecto = (int)lista[1];  // InvalidCastException
 ```
 
-Este código ilustra dos problemas graves. Primero, el **boxing** de tipos por valor (como `int`) introduce overhead de memoria y procesamiento. Segundo, el casting desde `object` no es verificado en tiempo de compilación, lo que significa que los errores de tipo se descubren solo en tiempo de ejecución, cuando el usuario ya está ejecutando la aplicación.
+Este código ilustra dos problemas graves. Primero, el **boxing** de tipos por valor (como `int`) introduce sobrecoste de memoria y procesamiento. Segundo, el casting desde `object` no es verificado en tiempo de compilación, lo que significa que los errores de tipo se descubren solo en tiempo de ejecución, cuando el usuario ya está ejecutando la aplicación.
 
 Los genéricos, introducidos en C# 2.0 (2005), resolvieron estos problemas de manera elegante. Ahora podemos especificar el tipo exacto de elementos que una colección contendrá, permitiendo al compilador verificar la corrección del código y eliminando la necesidad de boxing para tipos por valor.
 
 ```csharp
 // C# 2.0+ - Enfoque con genéricos (correcto)
-List<int> listaEnteros = List<int>();
+List<int> listaEnteros = new List<int>();
 listaEnteros.Add(42);  // Sin boxing, directo
 
 // listaEnteros.Add("texto");  // ERROR de compilación - imposible de cometer
@@ -343,21 +354,21 @@ listaEnteros.Add(42);  // Sin boxing, directo
 int valor = listaEnteros[0];  // Sin casting, seguro
 ```
 
-La introducción de genéricos requirió cambios significativos en el CLR y el compilador de C#. El CLR fue extendido para soportar instrucciones IL específicas para operaciones genéricas, y se implementó un mecanismo de **reificación de tipos** que preserva la información de tipo genérico en tiempo de ejecución, permitiendo optimizaciones como el avoidance de boxing.
+La introducción de genéricos requirió cambios significativos en el CLR y el compilador de C#. El CLR fue extendido para soportar instrucciones IL específicas para operaciones genéricas, y se implementó un mecanismo de **reificación de tipos** que preserva la información de tipo genérico en tiempo de ejecución, permitiendo optimizaciones como la evitación del boxing.
 
 ### 6.2.2. Fundamentos teóricos de la genericidad
 
 La genericidad es un concepto teórico fundamental en la teoría de tipos y el diseño de lenguajes de programación. Formalmente, se define como la capacidad de un lenguaje para parametrizar tipos por otros tipos, creando estructuras de datos y algoritmos que pueden operar sobre cualquier tipo que satisfaga ciertas restricciones. Esta parametrización permite la reutilización de código sin sacrificar la seguridad de tipos.
 
-En el contexto de la teoría de tipos, los genéricos implementan lo que se conoce como **polimorfismo paramétrico**. A diferencia del polimorfismo basado en herencia (que requiere que los tipos estén en una relación de subtipado), el polimorfismo paramétrico permite que una función o tipo funcione uniformemente sobre un conjunto无限 de tipos, sin requerir ninguna relación entre ellos más allá de satisfacer las restricciones impuestas.
+En el contexto de la teoría de tipos, los genéricos implementan lo que se conoce como **polimorfismo paramétrico**. A diferencia del polimorfismo basado en herencia (que requiere que los tipos estén en una relación de subtipado), el polimorfismo paramétrico permite que una función o tipo funcione uniformemente sobre un conjunto infinito de tipos, sin requerir ninguna relación entre ellos más allá de satisfacer las restricciones impuestas.
 
-.NET implementa lo que se llama **genericidad reificada**, donde los tipos genéricos son "reales" en tiempo de ejecución, no solo "sintácticos" como en algunos lenguajes que realizan erasure. Esto significa que en tiempo de ejecución podemos inspeccionar el tipo genérico, y diferentes especializaciones de un tipo genérico producen diferentes códigos generados.
+.NET implementa lo que se llama **genericidad reificada**, donde los tipos genéricos son "reales" en tiempo de ejecución, no solo "sintácticos" como en algunos lenguajes que realizan borrado de tipos (erasure). Esto significa que en tiempo de ejecución podemos inspeccionar el tipo genérico, y diferentes especializaciones de un tipo genérico producen diferentes códigos generados.
 
 ```csharp
 // Diferentes especializaciones generan diferentes tipos en tiempo de ejecución
-List<int> listaInt = List<int>();
-List<string> listaString = List<string>();
-List<Customer> listaCustomer = List<Customer>();
+List<int> listaInt = new List<int>();
+List<string> listaString = new List<string>();
+List<Customer> listaCustomer = new List<Customer>();
 
 // ¿Son del mismo tipo?
 Console.WriteLine(listaInt.GetType());    // System.Collections.Generic.List`1[[System.Int32]]
@@ -368,7 +379,7 @@ Console.WriteLine(listaCustomer.GetType()); // System.Collections.Generic.List`1
 Console.WriteLine(typeof(List<int>) == typeof(List<string>));  // False
 ```
 
-Esta reificación tiene implicaciones importantes: permite el uso de genéricos en contextos que requieren metadatos de tipo (como reflexión, serialización y comparación de tipos), y facilita el debugging al mantener información de tipo clara. Sin embargo, también significa que cada especialización genera código separado, lo que puede aumentar el tamaño del assembly resultante.
+Esta reificación tiene implicaciones importantes: permite el uso de genéricos en contextos que requieren metadatos de tipo (como reflexión, serialización y comparación de tipos), y facilita la depuración al mantener información de tipo clara. Sin embargo, también significa que cada especialización genera código separado, lo que puede aumentar el tamaño del assembly resultante.
 
 ### 6.2.3. Clases genéricas: diseño y implementación
 
@@ -505,7 +516,7 @@ namespace Generics.Metodos;
             IEnumerable<TInput> coleccion,
             Func<TInput, TOutput> conversor)
         {
-            var resultado = List<TOutput>();
+            var resultado = new List<TOutput>();
             foreach (var item in coleccion)
             {
                 resultado.Add(conversor(item));
@@ -739,7 +750,7 @@ namespace Generics.Varianza;
         // Puedes iterar sobre IEnumerable<Perro> como IEnumerable<Animal>
         public static void DemoCovarianza()
         {
-            IEnumerable<Perro> perros = List<Perro>();
+            IEnumerable<Perro> perros = new List<Perro>();
             
             // Covarianza permite esta asignación
             IEnumerable<Animal> animales = perros;
@@ -1133,7 +1144,7 @@ namespace Colecciones.IEnumerable;
         // IEnumerable<T> permite LINQ y foreach
         public static void DemoEnumerable()
         {
-            List<int> numeros = List<int> { 1, 2, 3, 4, 5 };
+            List<int> numeros = new List<int> { 1, 2, 3, 4, 5 };
             
             // foreach internamente usa GetEnumerator()
             foreach (var n in numeros)
@@ -1178,7 +1189,7 @@ namespace Colecciones.IEnumerable;
             {
                 for (int i = inicio; i <= fin; i++)
                 {
-                    // yield return pausa la ejecución y возвращает el valor
+                    // yield return pausa la ejecución y devuelve el valor
                     yield return i;
                     // La ejecución continúa aquí en la siguiente llamada
                 }
@@ -1256,7 +1267,7 @@ namespace Colecciones.IEnumerable;
 
 `ICollection<T>` extiende `IEnumerable<T>` añadiendo la capacidad de modificar la colección. Esta interfaz define operaciones para agregar, remover y limpiar elementos, así como propiedades que proporcionan información sobre la colección como el conteo de elementos y si la colección es de solo lectura.
 
-La implementación de `ICollection<T>` requiere considerar cuidadosamente las invariantes de la colección y los requisitos de thread-safety. Las operaciones de modificación deben mantener la consistencia de la colección, y las colecciones de solo lectura deben lanzar excepciones apropiadas cuando se intenta modificar.
+La implementación de `ICollection<T>` requiere considerar cuidadosamente las invariantes de la colección y los requisitos de seguridad en hilos (thread-safety). Las operaciones de modificación deben mantener la consistencia de la colección, y las colecciones de solo lectura deben lanzar excepciones apropiadas cuando se intenta modificar.
 
 ```csharp
 namespace Colecciones.ICollection;
@@ -1268,7 +1279,7 @@ namespace Colecciones.ICollection;
         // ICollection<T> añade operaciones de modificación
         public static void DemoColeccion()
         {
-            List<int> lista = List<int> { 1, 2, 3 };
+            List<int> lista = new List<int> { 1, 2, 3 };
             
             // Propiedades de ICollection<T>
             int conteo = lista.Count;  // O(1)
@@ -1356,7 +1367,7 @@ namespace Colecciones.ICollection;
 
 `IList<T>` extiende `ICollection<T>` añadiendo operaciones específicas para colecciones indexadas. Esto incluye la capacidad de acceder a elementos por su posición ordinal, insertar en posiciones específicas, y remover por índice. `List<T>` es la implementación más común de esta interfaz.
 
-El acceso por índice en `IList<T>` es típicamente O(1) para implementaciones como `List<T>` (que usa arrays internos) pero puede ser O(n) para implementaciones como `LinkedList<T>` (que requiere traversal).
+El acceso por índice en `IList<T>` es típicamente O(1) para implementaciones como `List<T>` (que usa arrays internos) pero puede ser O(n) para implementaciones como `LinkedList<T>` (que requiere un recorrido).
 
 ```csharp
 namespace Colecciones.IList;
@@ -1367,7 +1378,7 @@ namespace Colecciones.IList;
     {
         public static void DemoIList()
         {
-            List<string> frutas = List<string>
+            List<string> frutas = new List<string>
             {
                 "Manzana", "Plátano", "Naranja", "Uva", "Mango"
             };
@@ -1892,7 +1903,7 @@ namespace ProgramacionFuncional.Delegados;
             Predicate<int> esPar = n => n % 2 == 0;
             Console.WriteLine(esPar(4));  // True
 
-            // Delegate многократного действия
+            // Delegate de acción repetida
             Operacion[] operaciones = 
             {
                 (a, b) => Console.WriteLine($"Suma: {a + b}"),
@@ -2070,7 +2081,7 @@ namespace ProgramacionFuncional.Anonimas;
             };
 
             // Usos comunes
-            var numeros = List<int> { 1, 2, 3, 4, 5 };
+            var numeros = new List<int> { 1, 2, 3, 4, 5 };
             
             // Filtrado con método anónimo
             var pares = numeros.FindAll(delegate (int n) { return n % 2 == 0; });
@@ -2223,7 +2234,7 @@ namespace ProgramacionFuncional.ExtensionMethods;
         public static IEnumerable<T[]> DividirEnChunks<T>(
             this IEnumerable<T> coleccion, int tamanoChunk)
         {
-            var lista = List<T>();
+            var lista = new List<T>();
             foreach (var item in coleccion)
             {
                 lista.Add(item);
@@ -2266,7 +2277,7 @@ namespace ProgramacionFuncional.ExtensionMethods;
             Console.WriteLine(numero.Factorial());  // 5040
 
             // Collection extensions
-            var numeros = List<int> { 1, 2, 3, 4, 5 };
+            var numeros = new List<int> { 1, 2, 3, 4, 5 };
             numeros.ConIndice().ForEach(t => 
                 Console.WriteLine($"[{t.Indice}] = {t.Item}"));
 
@@ -2663,7 +2674,16 @@ namespace ProgramacionFuncional.PatternMatching;
 }
 ```
 
-## 6.5. Resumen
+**Buenas prácticas:**
+
+- Elige la colección adecuada según el patrón de acceso (búsqueda, inserción, orden)
+- Prefiere genéricos frente a `object`: evitan boxing y casts inseguros
+- Usa LINQ para consultas declarativas, pero cuida el rendimiento en bucles calientes
+- Mantén funciones puras y estados inmutables cuando sea posible
+
+---
+
+**Resumen del punto:**
 
 Los Tipos de Datos Abstractos, las colecciones y la programación funcional forman un trinomio esencial en el desarrollo profesional con C# y .NET.
 
@@ -2699,4 +2719,8 @@ Los Tipos de Datos Abstractos, las colecciones y la programación funcional form
 - **Funciones de orden superior**: Reciben/devuelven funciones
 - **Inmutabilidad**: Records, with expressions, funciones puras
 - **Pattern Matching**: Descomposición declarativa de datos
+
+**¿Qué viene después?**
+
+En el siguiente punto veremos la gestión de ficheros y los formatos de intercambio de datos (CSV, JSON y XML) en .NET.
 

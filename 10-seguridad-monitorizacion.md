@@ -50,7 +50,7 @@ graph TD
 
 > 💡 **Analogía — El Pasaporte y la Pulsera del Hotel:**
 > - **Autenticación (Pasaporte):** Demuestras quién eres en el mostrador del hotel. Te validan y te dan acceso.
-> - **Autorización (Pulsera TI):** Una vez dentro, la pulsera dice qué puedes hacer. ¿Tienes la pulsera "Todo Incluido" (Admin) o la "Solo Desayuno" (User)? Puedes ser Obama (Autenticado), pero si no tienes la pulsera VIP (Autorizado), no entras a la zona VIP.
+> - **Autorización (Pulsera TI):** Una vez dentro, la pulsera dice qué puedes hacer. ¿Tienes la pulsera "Todo Incluido" (Admin) o la "Solo Desayuno" (User)? Puedes haber identificado perfectamente al huésped (autenticado), pero si su pulsera no da acceso a la zona VIP (autorizado), no entra.
 
 ## 10.2. Autenticación: ¿Quién Eres?
 
@@ -62,9 +62,9 @@ La **autenticación** es el proceso de verificar la identidad de un usuario. "¿
 |--------|-------------|-----------|---------------|
 | **HTTP Basic** | Usuario/Contraseña en Base64 | ⚠️ Baja (solo con HTTPS) | APIs internas, desarrollo |
 | **HTTP Digest** | Envía hash, no la contraseña | Media | Sistemas legacy |
-| **Cookies/Session** | Cookie con ID de sesión en servidor | Alta | Web apps tradicionales |
+| **Cookies/Sesión** | Cookie con ID de sesión en servidor | Alta | Web apps tradicionales |
 | **Token (JWT)** | Token firmado con datos del usuario | Alta | APIs REST, SPA, móviles |
-| **OAuth 2.0** | Login con Google, GitHub, etc. | Muy alta | SSO, apps de terceros |
+| **OAuth 2.0** | Acceso con Google, GitHub, etc. | Muy alta | SSO, apps de terceros |
 
 ```mermaid
 sequenceDiagram
@@ -183,7 +183,7 @@ Un JWT tiene tres partes separadas por puntos: `HEADER.PAYLOAD.SIGNATURE`
 | Parte | Contenido | Ejemplo |
 |-------|-----------|---------|
 | **Header** | Algoritmo de firma y tipo de token | `{"alg":"HS256","typ":"JWT"}` |
-| **Payload** | Datos del usuario (claims) | `{"sub":1,"name":"Ana","role":"admin"}` |
+| **Payload** | Datos del usuario (claims) | `{"sub":"1","name":"Ana","role":"admin"}` |
 | **Signature** | Firma digital para verificar integridad | `HMACSHA256(base64(header)+"."+base64(payload), secret)` |
 
 ```mermaid
@@ -234,7 +234,7 @@ sequenceDiagram
 | Puerto 80 | Puerto 443 |
 | Datos en texto plano | Datos cifrados (SSL/TLS) |
 | No autentica al servidor | Autentica al servidor (certificado) |
-| Vulnerable a interceptación | Protegido contra ataques Man-in-the-Middle |
+| Vulnerable a interceptación | Protegido contra el hombre del medio (Man-in-the-Middle) |
 | Google lo marca "No seguro" | Google lo marca "Seguro" |
 
 ### Certificados SSL/TLS
@@ -242,9 +242,9 @@ sequenceDiagram
 | Tipo | Descripción | Coste |
 |------|-------------|-------|
 | **Let's Encrypt** | Certificado gratuito, automático | Gratis |
-| **Certificado comercial** | Más opciones, soporte | 10-200€/año |
-| **Wildcard** | Cubre todos los subdominios | 50-300€/año |
-| **EV (Extended Validation)** | Máxima verificación, barra verde | 100-500€/año |
+| **Certificado comercial** | Más opciones, soporte | 10-200 €/año |
+| **Wildcard** | Cubre todos los subdominios | 50-300 €/año |
+| **EV (Extended Validation)** | Máxima verificación, barra verde | 100-500 €/año |
 
 > ⚠️ **Advertencia:** Hoy en día, **todas** las aplicaciones web deben usar HTTPS. Google Chrome marca como "No seguro" las webs sin HTTPS. Los certificados SSL son gratuitos con Let's Encrypt.
 
@@ -259,16 +259,17 @@ sequenceDiagram
 | **SQL Injection** | Inyectar código SQL en formularios | Usar parámetros (nunca concatenar strings) |
 | **XSS** | Inyectar JavaScript malicioso | Sanitizar entradas, Content Security Policy |
 | **CSRF** | Forzar acciones no deseadas | Tokens CSRF, SameSite cookies |
-| **Brute Force** | Probar contraseñas automáticamente | Rate limiting, bloqueo de cuenta |
-| **Man-in-the-Middle** | Interceptación de comunicaciones | HTTPS, certificados SSL |
+| **Fuerza bruta (Brute Force)** | Probar contraseñas automáticamente | Limitación de tasa (rate limiting), bloqueo de cuenta |
+| **Hombre del medio (MitM)** | Interceptación de comunicaciones | HTTPS, certificados SSL |
 
 ```csharp
 // ❌ MALO: SQL Injection - NUNCA concatenar strings
-var query = $"SELECT * FROM Usuarios WHERE Email = '{email}'";
+var consultaMala = $"SELECT * FROM Usuarios WHERE Email = '{email}'";
 // Un atacante podría enviar: email = "'; DROP TABLE Usuarios; --"
 
 // ✅ BUENO: Usar parámetros
-var query = "SELECT * FROM Usuarios WHERE Email = @Email";
+var consultaBuena = "SELECT * FROM Usuarios WHERE Email = @Email";
+using var command = new SqlCommand(consultaBuena, conexion);
 command.Parameters.AddWithValue("@Email", email);
 ```
 
@@ -277,7 +278,7 @@ command.Parameters.AddWithValue("@Email", email);
 | Práctica | Descripción |
 |----------|-------------|
 | **Hash de contraseñas** | Usar bcrypt, scrypt o Argon2 (NUNCA MD5/SHA1) |
-| **Rate limiting** | Limitar peticiones por IP/timeframe |
+| **Limitación de tasa (rate limiting)** | Limitar peticiones por IP y ventana de tiempo |
 | **Validación de entradas** | Sanitizar todos los datos que llegan del usuario |
 | **CORS** | Configurar orígenes permitidos |
 | **Headers de seguridad** | Content-Security-Policy, X-Frame-Options |
@@ -295,7 +296,7 @@ Los **logs** son la "caja negra" del servidor. Si algo falla, lo primero que se 
 |------|-----------|----------------|
 | **Access Log** | Quién entra, qué pide, código de estado | Analizar tráfico, detectar ataques |
 | **Error Log** | Errores del servidor, excepciones | Diagnosticar fallos |
-| **Application Log** | Logs de la aplicación (custom) | Seguimiento de procesos de negocio |
+| **Application Log** | Registros de la aplicación (personalizados) | Seguimiento de procesos de negocio |
 | **Security Log** | Intentos de login, accesos no autorizados | Detectar intrusiones |
 
 ### Formato de Log CLF (Common Log Format)
@@ -321,7 +322,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Configurar logging
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
-builder.Logging.AddFile("logs/app-{Date}.txt");
+builder.Logging.AddFile("logs/app-{Date}.txt"); // Requiere Serilog.Extensions.Logging.File
 
 var app = builder.Build();
 
@@ -377,7 +378,7 @@ Los logs ocupan espacio. Si no se gestionan, el disco duro se llena y el servido
 | **logrotate** | Rotación de logs en Linux | Sistemas Unix/Linux |
 | **Serilog** | Logging estructurado en .NET | ASP.NET Core |
 | **ELK Stack** | Elasticsearch + Logstash + Kibana | Análisis de logs a gran escala |
-| **Splunk** | Plataforma de monitorización | Enterprise |
+| **Splunk** | Plataforma de monitorización | Entornos empresariales |
 
 ```mermaid
 graph LR
@@ -414,8 +415,6 @@ graph LR
 | **Access Log** | Quién entra, qué pide, código de estado |
 | **Error Log** | Errores y excepciones del servidor |
 | **Rotación de logs** | Archivar, comprimir y borrar logs antiguos |
-
----
 
 ¡Enhorabuena! Has completado la primera parte de la Unidad 01. Ahora tienes una visión completa de cómo funciona una aplicación web: desde la arquitectura cliente-servidor hasta la seguridad y monitorización, pasando por los protocolos, tecnologías y despliegue.
 

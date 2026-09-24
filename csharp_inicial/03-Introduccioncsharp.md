@@ -3,15 +3,27 @@
     - [3.1.1. 🧠 Analogía: C# como un idioma universal](#311--analogía-c-como-un-idioma-universal)
     - [3.1.2. Historia de C#](#312-historia-de-c)
   - [3.2. Evolución de .NET: De .NET Framework a .NET 10](#32-evolución-de-net-de-net-framework-a-net-10)
-  - [3.3. El y ejecución: El papel del CLR proceso de compilación](#33-el-y-ejecución-el-papel-del-clr-proceso-de-compilación)
+  - [3.3. Compilación y ejecución: El papel del CLR](#33-compilación-y-ejecución-el-papel-del-clr)
     - [3.3.1. 🧠 Analogía: El proceso de traducción](#331--analogía-el-proceso-de-traducción)
     - [3.3.2. Optimizaciones del JIT](#332-optimizaciones-del-jit)
   - [3.4. Instalación y herramientas de desarrollo](#34-instalación-y-herramientas-de-desarrollo)
   - [3.5. Tu primer programa en C#](#35-tu-primer-programa-en-c)
     - [3.5.1. 🧠 Analogía: Desglose del código](#351--analogía-desglose-del-código)
-  - [3.6. Resumen](#36-resumen)
+
+
 
 # 3. Introducción a C# y .NET
+
+> 💡 **Punto de partida:** ¿Sabías que la misma app de Netflix puede correr en Windows, Linux y macOS sin reescribirse? Detrás hay un lenguaje (C#) y una plataforma (.NET). En este punto aprenderás qué son, de dónde vienen y cómo tu código pasa de texto a un programa en ejecución.
+
+En este punto aprenderás qué es C#, cómo ha evolucionado hasta .NET 10, qué hace el CLR al compilar y ejecutar, y crearás tu primer programa en C#.
+
+**Objetivos de aprendizaje:**
+
+- Distinguir lenguaje (C#), plataforma (.NET) y runtime (CLR)
+- Situar la evolución de C# y .NET en el tiempo
+- Entender el proceso de compilación en dos etapas (Roslyn → CLR/JIT)
+- Instalar el SDK y crear tu primer programa
 
 ## 3.1. ¿Qué es C# y por qué usarlo?
 
@@ -44,7 +56,7 @@ graph LR
 
 📝 **Nota del Profesor**: C# es actualmente uno de los lenguajes más versátiles del mercado. Desde desarrollo web con ASP.NET Core, hasta aplicaciones móviles con MAUI, juegos con Unity, y microservicios en la nube. Dominar C# abre puertas a múltiples sectores.
 
-💡 **Tip del Examinador**: En el examen,know the diferencia entre:
+💡 **Tip del Examinador**: En el examen, ten claro la diferencia entre:
 - **Lenguaje**: C# (la sintaxis que escribimos)
 - **Plataforma**: .NET (el entorno de ejecución)
 - **Runtime**: CLR (el motor que ejecuta el código)
@@ -66,6 +78,7 @@ graph LR
 | 2022 | C# 11.0 | Raw string literals, static abstract members |
 | 2023 | C# 12.0 | Primary constructors, collection expressions |
 | 2024 | C# 13.0 | Params collections, ref struct improvements |
+| 2025 | C# 14.0 | Extension members, partial properties |
 
 📝 **Nota del Profesor**: Cada versión de C# añade características que simplifican el código. Por ejemplo, lo que antes requería 10 líneas de código ahora puede hacerse en 2 gracias a las nuevas características.
 
@@ -76,33 +89,33 @@ graph LR
 ```mermaid
 timeline
     2002 : .NET Framework 1.0
-           : Windows-only
+           : Solo Windows
     2005 : .NET Framework 2.0
-           : Generics
+           : Genéricos
     2008 : .NET Framework 3.5
            : LINQ, WPF, WCF
     2010 : .NET Framework 4.0
-           : Parallel PLINQ
+           : PLINQ paralelo
     2015 : .NET Framework 4.6
-           : Roslyn compiler
+           : Compilador Roslyn
     2016 : .NET Core 1.0
-           : Cross-platform, open source
+           : Multiplataforma, código abierto
     2017 : .NET Core 2.0
-           : Unified platform vision
+           : Visión de plataforma unificada
     2019 : .NET Core 3.0
-           : Windows desktop apps
+           : Aplicaciones de escritorio Windows
     2020 : .NET 5
-           : One .NET
+           : Un solo .NET
     2021 : .NET 6
-           : LTS, minimal APIs
+           : LTS, API mínimas
     2022 : .NET 7
-           : Performance, Orleans
+           : Rendimiento, Orleans
     2023 : .NET 8
-           : Cloud-native, AI
+           : Nube nativa, IA
     2024 : .NET 9
            : .NET Aspire
     2025 : .NET 10
-           : Latest innovation
+           : Últimas innovaciones
 ```
 
 **¿Qué es .NET 10?**
@@ -129,9 +142,9 @@ graph TD
     CLR --> CLS["CLS<br/>(Common Language Spec)"]
 ```
 
-💡 **Tip del Examinador**: .NET 5 unificó .NET Framework, .NET Core y .NET Standard. A partir de .NET 5, solo existe ".NET" (no ".NET Core"). Always use the latest version for new projects.
+💡 **Tip del Examinador**: .NET 5 unificó .NET Framework, .NET Core y .NET Standard. A partir de .NET 5, solo existe ".NET" (no ".NET Core"). Usa siempre la última versión estable en proyectos nuevos.
 
-## 3.3. El y ejecución: El papel del CLR proceso de compilación
+## 3.3. Compilación y ejecución: El papel del CLR
 
 Comprender este proceso es fundamental para entender cómo funciona .NET. C# utiliza un proceso de compilación en dos etapas, similar al modelo de Java pero con optimizaciones adicionales.
 
@@ -167,7 +180,7 @@ dotnet build
 
 Esto creará un archivo `MiAplicacion.dll` en la carpeta `bin/Debug/net10.0/`.
 
-📝 **Nota del Profesor**: El CIL es como el "esperanto" de los lenguajes .NET. Cualquier lenguaje .NET (C#, VB.NET, F#) se compila a CIL, y el CLR puede ejecutarlo. This is why you can mix languages in a single project!
+📝 **Nota del Profesor**: El CIL es como el "esperanto" de los lenguajes .NET. Cualquier lenguaje .NET (C#, VB.NET, F#) se compila a CIL, y el CLR puede ejecutarlo. Por eso puedes mezclar lenguajes .NET en un mismo proyecto.
 
 **Etapa 2: Ejecución**
 
@@ -200,7 +213,7 @@ Imagina que eres un hablante de español (C#) que quiere dar una conferencia en 
 El compilador JIT de .NET 10 incluye varias optimizaciones:
 
 - **Inlining**: Elimina llamadas a métodos pequeños insertando el código directamente.
-- **Loop unrolling**: Desenrolla bucles para reducir overhead.
+- **Loop unrolling**: Desenrolla bucles para reducir la sobrecarga.
 - **Tiered compilation**: Compila código "tibio" primero y luego "caliente" con más optimizaciones.
 - **Branch prediction**: Predice saltos para optimizar el flujo.
 
@@ -230,8 +243,8 @@ MiProyecto/
 ├── MiProyecto.csproj    # Archivo de proyecto
 ├── Program.cs           # Punto de entrada
 ├── README.md
-└── obj/                # Archivos temporales de compilación
-    └── bin/            # Salida compilada
+├── bin/                 # Salida compilada (ejecutables, DLLs)
+└── obj/                 # Archivos temporales de compilación
 ```
 
 **El archivo .csproj:**
@@ -250,6 +263,13 @@ MiProyecto/
 ```
 
 📝 **Nota del Profesor**: El archivo `.csproj` es el corazón de tu proyecto. Define el SDK, el framework objetivo, y las dependencias. Desde .NET Core, el formato es muy minimalista comparado con el antiguo formato XML pesado.
+
+**IDE recomendados:**
+
+- **JetBrains Rider** (principal): IDE completo para C#, Java, Python y C/C++
+- **Visual Studio Code** (ligero): multiplataforma, ideal para empezar
+
+📌 Ejemplo real: Abre cualquier solución de la Tienda (TiendaDawApi-NetCore) en Rider: ves la solución `.slnx`, los proyectos y puedes ejecutar `dotnet run` desde el IDE sin salir de él.
 
 ## 3.5. Tu primer programa en C#
 
@@ -308,11 +328,25 @@ Console.WriteLine("¡Hola, mundo!");
 
 📝 **Nota del Profesor**: Los "top-level statements" permiten escribir código directamente sin necesidad de una clase Main(). Esto es ideal para scripts y aprendizaje, pero en proyectos grandes se recomienda la estructura tradicional.
 
-## 3.6. Resumen
-En este capítulo hemos cubierto los fundamentos de C# y .NET, incluyendo su historia, evolución, y el proceso de compilación y ejecución. También hemos creado nuestro primer programa en C#. Aquí tienes algunos puntos clave para recordar:
-- C# es un lenguaje moderno, seguro y versátil, ideal para múltiples tipos de aplicaciones.
-- .NET 10 es una plataforma unificada y multiplataforma que soporta C# y otros lenguajes.
-- El proceso de compilación en dos etapas (Roslyn y CLR) permite que el código C# se ejecute eficientemente en cualquier sistema operativo.
-- Herramientas como el SDK de .NET y Visual Studio facilitan el desarrollo y la gestión de proyectos.
-- Crear programas en C# es sencillo y directo, con una sintaxis clara y poderosa.
-- Dominar estos conceptos te preparará para avanzar en el desarrollo de aplicaciones robustas y eficientes con C# y .NET.
+**Buenas prácticas:**
+
+- Usa siempre la última versión LTS estable de .NET en proyectos nuevos
+- Mantén `bin/` y `obj/` fuera de Git (son artefactos de compilación)
+- Aprende el flujo `dotnet new` → `dotnet build` → `dotnet run` antes de abrir el IDE
+
+---
+
+**Resumen del punto:**
+
+| Concepto | Descripción |
+|----------|-------------|
+| **C#** | Lenguaje de programación de Microsoft (sintaxis que escribimos) |
+| **.NET** | Plataforma unificada de ejecución (runtime + librerías + SDK) |
+| **CLR / Roslyn** | Traducen C# → CIL (compilación) y CIL → código máquina (ejecución) |
+| **JIT (RyuJIT)** | Compila "en caliente" solo el código que se ejecuta |
+| **bin/ y obj/** | bin = salida compilada; obj = temporales de compilación |
+| **Top-level statements** | Código directo en Program.cs sin clase Main (C# 9+) |
+
+**¿Qué viene después?**
+
+En el siguiente punto veremos las bases de la sintaxis de C#: variables, tipos de datos, operadores y estructuras de control con las que escribirás tu primer algoritmo real.

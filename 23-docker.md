@@ -85,12 +85,18 @@ WORKDIR /app
 # Copiar solo lo necesario del build
 COPY --from=build /app/publish .
 
+# Puerto de la app: las imágenes .NET 8+ escuchan en 8080 por defecto,
+# pero ASPNETCORE_URLS tiene prioridad, así fijamos 5000 de forma explícita
+ENV ASPNETCORE_URLS=http://+:5000
+
 # Puerto que expone la app
 EXPOSE 5000
 
 # Comando de inicio
 ENTRYPOINT ["dotnet", "MiAplicacion.dll"]
 ```
+
+> 📝 **Nota:** `COPY *.csproj .` asume un único proyecto en la raíz del contexto. Si la solución tiene varios `.csproj`, copia primero el `.slnx` (o `.sln`) y todos los proyectos, y ejecuta `dotnet restore MiSolucion.slnx` para seguir aprovechando la caché de capas.
 
 ### Explicación de cada instrucción
 
@@ -238,7 +244,7 @@ services:
       db:
         condition: service_healthy
       cache:
-        condition: service_started
+        condition: service_healthy
     networks:
       - app-network
 
@@ -266,6 +272,11 @@ services:
       - "6379:6379"
     volumes:
       - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - app-network
 
@@ -277,6 +288,10 @@ networks:
   app-network:
     driver: bridge
 ```
+
+> ⚠️ **Advertencia:** Los puertos `5432` (PostgreSQL) y `6379` (Redis) solo se publican para desarrollo local. En producción, **no expongas** los puertos de la base de datos ni de la caché al host: la app se comunica con ellas por la red interna (`db:5432`, `cache:6379`).
+
+> 📝 **Nota:** El puerto `5000` del contenedor funciona porque la app define `ASPNETCORE_URLS=http://+:5000` en el Dockerfile. Si no lo defines, las imágenes .NET 8+ escuchan en el puerto `8080` por defecto y tendrías que mapear `5000:8080`.
 
 ### Comandos de Docker Compose
 
@@ -329,11 +344,18 @@ services:
       db:
         condition: service_healthy  # Esperar a que la BD esté lista
       cache:
-        condition: service_started
+        condition: service_healthy  # Esperar a que Redis responda
 
   db:
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U admin"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  cache:
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -391,8 +413,12 @@ docker run --rm -v pgdata:/data -v $(pwd):/backup alpine \
 **/obj/
 **/.vs/
 **/.idea/
+**/.vscode/
 **/node_modules/
+**/TestResults/
 **/*.md
+**/*.user
+**/*.userprefs
 **/.git/
 **/docker-compose*.yml
 **/Dockerfile*
@@ -422,6 +448,9 @@ RUN adduser --disabled-password --gecos "" appuser
 USER appuser
 
 COPY --from=build --chown=appuser:appuser /app/publish .
+
+# Puerto de la app (ASPNETCORE_URLS tiene prioridad sobre el 8080 por defecto)
+ENV ASPNETCORE_URLS=http://+:5000
 EXPOSE 5000
 ENTRYPOINT ["dotnet", "MiAplicacion.dll"]
 ```
@@ -468,7 +497,7 @@ En la práctica, **Docker domina el mercado** (~80% de cuota), pero ambos son v�
 
 **¿Por qué Podman en empresas?** La razón principal es **económica**: Docker Desktop cobra licencia a empresas con más de 250 empleados o ingresos superiores a $10M. Podman es 100% gratis y open source. Empresas como Red Hat, IBM y Google usan Podman por esto.
 
-**¿Por qué Docker sigue dominando?** Comunidad, documentación y habitad. Si buscas "docker" en Google, hay millones de resultados. Cada tutorial, cada curso y cada respuesta de Stack Overflow usa Docker.
+**¿Por qué Docker sigue dominando?** Comunidad, documentación y hábito. Si buscas "docker" en Google, hay millones de resultados. Cada tutorial, cada curso y cada respuesta de Stack Overflow usa Docker.
 
 > 📝 **Nota:** Para este módulo, **ambos son equivalentes**. Ninguna empresa te preguntará si usaste Docker o Podman en tus proyectos. Lo que importa es que sepas crear Dockerfiles, orquestar con Compose y desplegar contenedores. Si sabes Docker, sabes Podman con un `alias docker=podman`.
 
@@ -509,14 +538,14 @@ Rider genera automáticamente el Dockerfile multi-etapa y el `.dockerignore` opt
 
 ### Docker-in-Docker: Tests dentro de un contenedor
 
-Cuando un Dockerfile tiene una etapa de `dotnet test` y esos tests usan TestContainers, se produce un **Docker-in-Docker**: un contenedor intenta crear otros contenedores.
+Cuando un Dockerfile tiene una etapa de `dotnet test` y esos tests usan Testcontainers, se produce un **Docker-in-Docker**: un contenedor intenta crear otros contenedores.
 
 ```mermaid
 graph TD
     subgraph HOST["HOST"]
         subgraph DAEMON["DAEMON DOCKER"]
             A["Contenedor Build - etapa test"] -->|"Necesita crear"| B["dockerd - root"]
-            B -->|"Levantar otro contenedor"| C["Contenedor PostgreSQL - TestContainers"]
+            B -->|"Levantar otro contenedor"| C["Contenedor PostgreSQL - Testcontainers"]
         end
     end
 
@@ -525,15 +554,15 @@ graph TD
     style B fill:#f44336,color:#fff
 ```
 
-**El problema:** Para que esto funcione con Docker, necesitas exponer el daemon en el puerto `2375 without TLS`. Esto abre una vulnerabilidad de seguridad porque cualquier proceso en la máquina puede enviar comandos al daemon (equivalente a root).
+**El problema:** Para que esto funcione con Docker, necesitas exponer el daemon en el puerto `2375` sin TLS. Esto abre una vulnerabilidad de seguridad porque cualquier proceso en la máquina puede enviar comandos al daemon (equivalente a root).
 
-**La solución con Podman:** Podman es daemonless. No hay proceso central que exponer:
+**La solución con Podman:** Podman **no usa demonio (daemonless)**: no hay proceso central que exponer:
 
 ```mermaid
 graph TD
     subgraph HOST["HOST"]
         subgraph USER["Usuario normal"]
-            A["Contenedor Build - etapa test"] -->|"podman run"| B["Contenedor PostgreSQL - TestContainers"]
+            A["Contenedor Build - etapa test"] -->|"podman run"| B["Contenedor PostgreSQL - Testcontainers"]
         end
     end
 
@@ -544,7 +573,7 @@ graph TD
     style C fill:#4CAF50,color:#fff
 ```
 
-> ⚠️ **Advertencia:** Con Docker, ejecutar tests dentro de un contenedor requiere exponer el daemon en el puerto `2375 without TLS`. Con **Podman**, no hay daemon que exponer: cada contenedor es un proceso independiente del usuario, sin riesgo de seguridad.
+> ⚠️ **Advertencia:** Con Docker, ejecutar tests dentro de un contenedor requiere exponer el daemon en el puerto `2375` sin TLS. Con **Podman**, no hay daemon que exponer: cada contenedor es un proceso independiente del usuario, sin riesgo de seguridad.
 
 ---
 

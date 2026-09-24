@@ -43,7 +43,7 @@ APPEND nombre " García"    # "José García"
 STRLEN nombre              # 12
 ```
 
-> 💡 **Consejo:** `INCR` es atómico — seguro para contadores concurrentes (likes, visitas). No necesitas locks.
+> 💡 **Consejo:** `INCR` es atómico — seguro para contadores concurrentes (likes, visitas). No necesitas bloqueos.
 
 > 🔧 **Truco:** Usa `EX` en `SET` para auto-expirar claves: `SET sesion:abc123 "datos" EX 3600` (1 hora). Redis se encarga de borrarla.
 
@@ -238,7 +238,7 @@ MONITOR
 MEMORY USAGE clave
 ```
 
-> ⚠️ **Advertencia:** `MONITOR` muestra TODOS los comandos en tiempo real. Úsalo solo para debugging — ralentiza el servidor significativamente.
+> ⚠️ **Advertencia:** `MONITOR` muestra TODOS los comandos en tiempo real. Úsalo solo para depurar — ralentiza el servidor significativamente.
 
 > 🔧 **Truco:** `INFO memory` te dice cuánta memoria usa Redis y cuándo va a empezar a eliminar claves según la política `maxmemory-policy`.
 

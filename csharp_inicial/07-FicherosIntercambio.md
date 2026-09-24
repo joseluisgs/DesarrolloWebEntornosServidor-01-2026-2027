@@ -1,4 +1,4 @@
-﻿- [7. Ficheros y Formatos de Intercambio en .NET](#7-ficheros-y-formatos-de-intercambio-en-net)
+- [7. Ficheros y Formatos de Intercambio en .NET](#7-ficheros-y-formatos-de-intercambio-en-net)
   - [7.1. Gestión de recursos y archivos](#71-gestión-de-recursos-y-archivos)
     - [7.1.1. El patrón IDisposable y la gestión de recursos no administrados](#711-el-patrón-idisposable-y-la-gestión-de-recursos-no-administrados)
     - [7.1.2. La declaración using: sintaxis y semántica](#712-la-declaración-using-sintaxis-y-semántica)
@@ -15,9 +15,20 @@
     - [7.2.3. JSON: JavaScript Object Notation](#723-json-javascript-object-notation)
     - [7.2.4. XML: Extensible Markup Language](#724-xml-extensible-markup-language)
     - [7.2.5. Comparativa técnica de formatos](#725-comparativa-técnica-de-formatos)
-  - [7.3. Resumen](#73-resumen)
+
+
 
 # 7. Ficheros y Formatos de Intercambio en .NET
+
+> 💡 **Punto de partida:** ¿Alguna vez te has preguntado cómo guarda tu app los datos entre sesiones o cómo intercambia información con otra? La respuesta está en ficheros y formatos de intercambio como CSV, JSON y XML.
+
+**Objetivos de aprendizaje:**
+
+- Gestionar recursos no administrados con IDisposable y using
+- Leer y escribir ficheros con la API System.IO de .NET
+- Elegir el formato de intercambio adecuado (CSV, JSON, XML)
+
+📌 Ejemplo real: Cada vez que guardas la configuración de una app o una API devuelve JSON a tu navegador, se están usando los conceptos de este punto; la Tienda persiste datos y configura su comportamiento con `appsettings.json`.
 
 El manejo de archivos y la serialización de datos son competencias fundamentales para cualquier desarrollador. A lo largo de este capítulo, exploraremos en profundidad las APIs de .NET para la gestión de archivos y los tres formatos de intercambio más utilizados en el desarrollo moderno: CSV, JSON y XML. Estos conocimientos son esenciales para aplicaciones que necesitan persistir datos, intercambiar información con otros sistemas, o configurar su comportamiento mediante archivos externos.
 
@@ -957,7 +968,7 @@ namespace SystemIO.Binary;
         
         public static List<Persona> LeerRegistros(string archivo)
         {
-            var personas = List<Persona>();
+            var personas = new List<Persona>();
             
             using var stream = new FileStream(archivo, FileMode.Open);
             using var reader = new BinaryReader(stream);
@@ -1001,13 +1012,13 @@ Los formatos de intercambio de datos son estándares que permiten representar in
 - **Legibilidad humana**: Que los desarrolladores puedan entender el contenido
 - **Eficiencia de parsing**: Tiempo y recursos para procesar el formato
 - **Tamaño**: Ocupación de almacenamiento y ancho de banda
-- **Typed support**:表达能力 de tipos complejos y estructuras anidadas
+- **Soporte tipado**: Capacidad de expresar tipos complejos y estructuras anidadas
 - **Schema evolution**: Capacidad de añadir campos sin romper compatibilidad
 - **Ecosistema**: Bibliotecas disponibles en diferentes lenguajes
 
 **Los tres grandes formatos:**
 - **CSV**: Simple, universal, pero limitado en estructura
-- **JSON**: Equilibrio entre simplicidad y表达能力
+- **JSON**: Equilibrio entre simplicidad y expresividad
 - **XML**: Potente, autocontenido, pero verboso
 
 ```mermaid
@@ -1069,7 +1080,7 @@ namespace Formatos.CSV;
             // Instalación: Install-Package CsvHelper
             
             // Escritura
-            var registros = List<Persona>
+            var registros = new List<Persona>
             {
                 new Persona("Ana", 25, "Madrid"),
                 new Persona("Carlos", 30, "Barcelona")
@@ -1122,7 +1133,7 @@ namespace Formatos.CSV;
         // Lectura manual con manejo de edge cases
         public static List<Persona> LecturaManual()
         {
-            var personas = List<Persona>();
+            var personas = new List<Persona>();
             var lineas = File.ReadAllLines("personas.csv");
             
             // Saltar header
@@ -1144,7 +1155,7 @@ namespace Formatos.CSV;
         
         private static string[] ParseCSVLine(string linea)
         {
-            var campos = List<string>();
+            var campos = new List<string>();
             var campoActual = new StringBuilder();
             bool entreComillas = false;
             
@@ -1236,7 +1247,7 @@ namespace Formatos.JSON;
             {
                 Nombre = "TechCorp",
                 Fundacion = new DateTime(2020, 1, 15),
-                Empleados = List<Empleado>
+                Empleados = new List<Empleado>
                 {
                     new Empleado { Nombre = "Ana", Cargo = " CTO", Salario = 80000 },
                     new Empleado { Nombre = "Carlos", Cargo = " Developer", Salario = 60000 }
@@ -1441,7 +1452,7 @@ namespace Formatos.XML;
             {
                 Id = 123,
                 Cliente = "Ana",
-                Items = List<Item>
+                Items = new List<Item>
                 {
                     new Item { Producto = "Laptop", Cantidad = 1 },
                     new Item { Producto = "Mouse", Cantidad = 2 }
@@ -1609,17 +1620,25 @@ graph TB
 | **Tamaño** | Pequeño | Medio | Grande |
 | **Parsing speed** | Rápido | Rápido | Lento |
 | **Ecosistema** | Universal | Muy grande | Grande |
-| **Casos de uso** | Exports, logs | APIs web, config | Enterprise, config |
+| **Casos de uso** | Exportaciones, registros | APIs web, configuración | Empresa, configuración |
 
+**Buenas prácticas:**
 
-## 7.3. Resumen
+- Envuelve siempre los `Stream` en `using` para liberar recursos
+- Prefiere `System.Text.Json` sobre `Newtonsoft.Json` por rendimiento
+- Valida el esquema de los ficheros JSON/XML de configuración al iniciar
+- Usa streaming para ficheros grandes en lugar de cargarlos en memoria
+
+---
+
+**Resumen del punto:**
 
 La gestión de archivos y formatos de intercambio son competencias fundamentales que todo desarrollador debe dominar.
 
 **Gestión de Recursos y Archivos**
 - El patrón `IDisposable` es esencial para liberar recursos no administrados
 - La declaración `using` garantiza la liberación incluso con excepciones
-- `Stream` es la abstracción central para读写 datos
+- `Stream` es la abstracción central para leer y escribir datos
 - `File`, `Directory` y `Path` proporcionan operaciones de alto nivel
 - `BinaryReader`/`BinaryWriter` para datos binarios estructurados
 
@@ -1632,3 +1651,7 @@ La gestión de archivos y formatos de intercambio son competencias fundamentales
 - Para archivos grandes, usar streaming (`JsonSerializer.DeserializeAsyncEnumerable`)
 - Preferir `System.Text.Json` sobre `Newtonsoft.Json` para rendimiento
 - Considerar compresión para transferencia de datos
+
+**¿Qué viene después?**
+
+En el siguiente punto veremos las bases de datos relacionales en .NET: ADO.NET, Dapper y Entity Framework Core.

@@ -142,7 +142,7 @@ dig google.com
 
 > 💡 **Consejo:** `ss -tuln` es la versión moderna de `netstat`. Muestra puertos TCP/UDP en escucha sin resolución de nombres (más rápido).
 
-## Compressión y descompresión
+## Compresión y descompresión
 
 ```bash
 # TAR + GZ

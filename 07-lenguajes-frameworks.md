@@ -60,7 +60,7 @@ graph TD
 > - **Interpretado (PHP/Python):** Es como cocinar con una receta que vas leyendo paso a paso. Si te equivocas en el último paso, te das cuenta al final. Flexible pero más lento.
 > - **Compilado (C++/Go):** Es como memorizar la receta entera antes de cocinar. Tardas más en prepararte, pero una vez memorizada, cocinas rapidísimo. Si hay un error en la receta, no empiezas a cocinar hasta corregirlo.
 
-> 📝 **Nota:** C# y Java son lenguajes compilados a bytecode. Su código se compila a un formato intermedio que luego ejecuta una máquina virtual (CLR para C#, JVM para Java). Esto les da portabilidad: "Write Once, Run Anywhere".
+> 📝 **Nota:** C# y Java son lenguajes compilados a bytecode. Su código se compila a un formato intermedio que luego ejecuta una máquina virtual (CLR para C#, JVM para Java). Esto les da portabilidad: «Write Once, Run Anywhere» ("escribe una vez, ejecuta en cualquier lugar").
 
 ## 7.2. Plataformas Web: LAMP, MEAN, WISA
 
@@ -71,7 +71,7 @@ Una **plataforma web** (o **stack**) es el conjunto de tecnologías que se usan 
 | **LAMP** | **L**inux + **A**pache + **M**ySQL + **P**HP | Open Source | WordPress, Wikipedia, Facebook (al inicio) |
 | **MEAN** | **M**ongoDB + **E**xpress + **A**ngular + **N**ode.js | Full JavaScript | Apps real-time, prototipos rápidos |
 | **MERN** | **M**ongoDB + **E**xpress + **R**eact + **N**ode.js | Full JavaScript | SPAs modernas, e-commerce |
-| **WISA** | **W**indows + **I**IS + **S**QL Server + **A**SP.NET | Microsoft | Enterprise, aplicaciones corporativas |
+| **WISA** | **W**indows + **I**IS + **S**QL Server + **A**SP.NET | Microsoft | Empresarial, aplicaciones corporativas |
 | **XAMPP/WAMP** | Versión local de LAMP | Desarrollo | Aprender en local, prototipos |
 
 ```mermaid
@@ -108,7 +108,7 @@ graph TD
 
 📌 **Ejemplo real:** WordPress (que usa el 43% de las webs del mundo) funciona sobre LAMP. Netflix usa Java sobre Linux. Microsoft Teams usa ASP.NET Core sobre Windows/Azure.
 
-> 💡 **Consejo:** En este ciclo formativo nos centraremos en **LAMP** (Linux + Apache + PHP) y en **ASP.NET Core** (C#). Son estándares industriales abiertos que te servirán para entender cualquier otra tecnología.
+> 💡 **Consejo:** En este ciclo formativo nos centraremos en la plataforma **LAMP** (Linux + Apache + MySQL + PHP) y en **ASP.NET Core** (C#). Son estándares industriales abiertos que te servirán para entender cualquier otra tecnología.
 
 > ⚠️ **Advertencia:** No confundas **XAMPP/WAMP** con un entorno de producción. Son herramientas de desarrollo local. En producción, se usan servidores reales con configuración específica.
 
@@ -118,11 +118,11 @@ El desarrollo de servicios se centra en la creación de APIs para que las aplica
 
 | Tecnología | Lenguaje | Framework principal | Uso principal |
 |------------|----------|-------------------|---------------|
-| **Java** | Java | **Spring Boot** | Enterprise, Microservicios |
-| **C#** | C# | **ASP.NET Core** | Enterprise, Cloud Azure |
+| **Java** | Java | **Spring Boot** | Empresarial, microservicios |
+| **C#** | C# | **ASP.NET Core** | Empresarial, nube Azure |
 | **PHP** | PHP | **Laravel**, Symfony | Webs rápidas, CMS |
-| **JavaScript** | JavaScript | **Express**, NestJS | I/O intensivo, Realtime |
-| **Python** | Python | **Django**, FastAPI | Data Science, IA, Backend |
+| **JavaScript** | JavaScript | **Express**, NestJS | E/S intensivo, tiempo real |
+| **Python** | Python | **Django**, FastAPI | Ciencia de datos, IA, back-end |
 | **Go** | Go | **Gin**, Echo | Microservicios de alto rendimiento |
 
 ```csharp
@@ -157,7 +157,7 @@ app.Run();
 
 📌 **Ejemplo real:** Si accedes a `/api/notas/7,8,9,6`, el servidor devuelve: `{"Notas":[7,8,9,6], "Media":7.5, "Estado":"Aprobado"}`. Es un servicio web dinámico que procesa datos en tiempo real.
 
-> 📝 **Nota:** La tendencia actual es crear APIs REST que devuelvan datos en formato JSON, y que el Front-end (React, Angular, Vue) se encargue de mostrarlos. Esta separación se llama **arquitectura decoupled** o **headless**.
+> 📝 **Nota:** La tendencia actual es crear APIs REST que devuelvan datos en formato JSON, y que el Front-end (React, Angular, Vue) se encargue de mostrarlos. Esta separación se llama **arquitectura desacoplada** (**decoupled**) o **headless**.
 
 ## 7.4. Integración del Código con Lenguajes de Marcas
 
@@ -202,11 +202,11 @@ Una técnica fundamental para crear páginas web dinámicas es integrar código 
 
 | Característica | PHP | Java | C# | Python | JavaScript (Node.js) |
 |----------------|-----|------|----|--------|---------------------|
-| **Curva aprendizaje** | Baja | Alta | Media | Baja | Media |
+| **Curva de aprendizaje** | Baja | Alta | Media | Baja | Media |
 | **Rendimiento** | Bajo | Alto | Muy alto | Medio | Alto |
 | **Portabilidad** | Alta | Alta | Alta | Alta | Alta |
 | **Empresas que usan** | Wikipedia, WordPress | Netflix, LinkedIn | Microsoft, Stack Overflow | Instagram, Spotify | Netflix, Uber |
-| **Ideal para** | CMS, webs sencillas | Enterprise, gran escala | Enterprise, Azure | IA, Data Science | APIs, Realtime |
+| **Ideal para** | CMS, webs sencillas | Empresarial, gran escala | Empresarial, Azure | IA, ciencia de datos | APIs, tiempo real |
 | **Hosting disponible** | Casi todos | Especializado | Azure, especializado | Especializado | Especializado |
 
 📌 **Ejemplo real de comparativa:**
@@ -227,8 +227,8 @@ Una técnica fundamental para crear páginas web dinámicas es integrar código 
 
 - **Elegir según el problema**: No uses el lenguaje que mejor conoces si no es el adecuado
 - **Un framework bien elegido ahorra meses**: Evalúa comunidad, soporte y documentación
-- **No inventar la rueda**: Usa frameworks maduros en vez de código custom
-- **La comunidad importa**: Un lenguaje con buena comunidad = más soluciones, más librerías
+- **No inventar la rueda**: Usa frameworks maduros en vez de código a medida desde cero
+- **La comunidad importa**: Un lenguaje con buena comunidad = más soluciones, más bibliotecas reutilizables
 
 ---
 

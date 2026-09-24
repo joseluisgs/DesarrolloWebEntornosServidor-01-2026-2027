@@ -3,7 +3,7 @@
   - [16.2. Operaciones de E/S: El Verdadero Enemigo](#162-operaciones-de-e-s-el-verdadero-enemigo)
   - [16.3. Asíncronía: No Bloquear Mientras Esperas](#163-asincronía-no-bloquear-mientras-esperas)
   - [16.4. Concurrencia vs Paralelismo vs Sincronía vs Asíncronía](#164-concurrencia-vs-paralelismo-vs-sincronía-vs-asíncronía)
-    - [16.4.1. Diseñar en paralelo: Los 3 errores clásicos](#1641-diseñar-en-paralelo-los-3-errores-clásicos)
+    - [16.4.1. Diseñar en paralelo: Los 2 errores clásicos](#1641-diseñar-en-paralelo-los-2-errores-clásicos)
     - [16.4.2. El coste invisible de Task.Run y el ThreadPool](#1642-el-coste-invisible-de-taskrun-y-el-threadpool)
     - [16.4.3. ¿Cuándo NO paralelizar? La regla de oro](#1643-cuándo-no-paralelizar-la-regla-de-oro)
   - [16.5. Async/Await: La Base de la Asincronía en C#](#165-asyncawait-la-base-de-la-asincronía-en-c)
@@ -34,7 +34,7 @@ En este tema aprenderás qué es la sincronía, por qué las operaciones de E/S 
 - Evitar los peligros de `async void`
 - Aplicar patrones de concurrencia: `WhenAll`, `WhenAny`, `Parallel.For`
 - Diferenciar `Task`, `ValueTask` e `IAsyncEnumerable`
-- Diseñar operaciones paralelas correctamente (los 3 errores clásicos)
+- Diseñar operaciones paralelas correctamente (los 2 errores clásicos)
 
 ## 16.1. Sincronía: La Base para Entender la Asincronía
 
@@ -62,7 +62,7 @@ sequenceDiagram
 public string ObtenerDatosSync()
 {
     using var client = new HttpClient();
-    // GetStringAsync internamente usa .Result → BLOQUEA el hilo
+    // GetStringAsync es async, pero el .Result EXTERNO bloquea el hilo esperando
     string datos = client.GetStringAsync("https://api.ejemplo.com").Result;
     return datos;
 }
@@ -356,6 +356,8 @@ public async Task<string> ObtenerDatosAsync()
 }
 ```
 
+> 📝 **Nota:** Crear un `HttpClient` en cada llamada es válido para un ejemplo, pero en producción agota los sockets (socket exhaustion). En el tema 18 veremos `IHttpClientFactory`, la forma correcta de gestionar `HttpClient` en ASP.NET Core.
+
 ### ¿Cómo funciona internamente? El ciclo de vida de un `await`
 
 Cuando el compilador encuentra un `await`, esto es lo que **realmente** pasa paso a paso:
@@ -483,9 +485,9 @@ sequenceDiagram
 
 📌 **Ejemplo real:** Cuando haces scroll en Instagram y se cargan imágenes, la app no se bloquea. Usa **asincronía** para cargar las imágenes mientras tú sigues navegando. Si cargara todo de golpe, la pantalla se congelaría. Y si además descarga 10 imágenes a la vez, usa **concurrencia** (las 10 en progreso). Si tuviera 2 núcleos de CPU trabajando en decode de imagen, sería **paralelismo**.
 
-### 16.4.1. Diseñar en paralelo: Los 3 errores clásicos
+### 16.4.1. Diseñar en paralelo: Los 2 errores clásicos
 
-Cuando tienes varias operaciones de I/O independientes, el instinto es hacerlas secuenciales. Pero eso es un error de diseño que cuesta **multiplicar el tiempo de respuesta**. Vamos a ver los 3 patrones y por qué fallan.
+Cuando tienes varias operaciones de I/O independientes, el instinto es hacerlas secuenciales. Pero eso es un error de diseño que cuesta **multiplicar el tiempo de respuesta**. Vamos a ver los 2 patrones que fallan y, después, el patrón correcto.
 
 > 💡 **Punto de partida:** Tienes que leer un CSV (1000 filas), un JSON (500 elementos) y una BD SQLite (100 registros). Cada operación tarda ~50ms. ¿Cómo lo haces?
 
@@ -529,40 +531,44 @@ _ = LeerSqliteAsync("productos.db");
 
 **Por qué falla:** Lanzas las tareas pero nunca recoges los resultados. Es como mandar a 3 personas al supermercado y no abrir la puerta cuando vuelven. Los productos se pierden.
 
-#### Error 3: WhenAll + await secuencial (falso paralelo)
+#### No es un error: recuperar resultados con `await` tras `WhenAll`
+
+Un patrón muy extendido (y **correcto**) es lanzar las tareas, esperar con `WhenAll` y luego recoger cada resultado con `await`:
 
 ```csharp
-// ❌ MAL: Lanzas en paralelo pero luego accedes con .Result
+// ✅ VÁLIDO: WhenAll + await individual para recoger resultados
 var tarea1 = LeerCsvAsync("productos.csv");
 var tarea2 = LeerJsonAsync("productos.json");
 var tarea3 = LeerSqliteAsync("productos.db");
 
-await Task.WhenAll(tarea1, tarea2, tarea3); // Paralelo ✓
+await Task.WhenAll(tarea1, tarea2, tarea3); // Ejecución paralela ✓
 
-// Pero luego accedes así (secuencial):
-var csv = await tarea1;  // Espera (ya terminó, pero...)
-var json = await tarea2; // Espera
-var sqlite = await tarea3; // Espera
+// Tras WhenAll las 3 tasks YA terminaron: estos await son instantáneos
+var csv = await tarea1;
+var json = await tarea2;
+var sqlite = await tarea3;
 ```
 
-**Por qué falla:** `WhenAll` sí es paralelo, pero luego acceder con `await` individual es secuencial. Es como cocinar 3 platos a la vez pero servir uno por uno.
+**Por qué SÍ es correcto:** cuando `await Task.WhenAll(...)` devuelve, las tres tareas han terminado. Los `await tareaN` posteriores no esperan nada: solo recuperan el resultado (o relanzan la excepción) de forma inmediata. Es como recoger los platos cuando los tres cocineros ya han terminado: no espera a nadie.
 
 #### ✅ El patrón correcto
 
 ```csharp
-// ✅ BIEN: Lanzar sin await, WhenAll, y acceder a .Result
+// ✅ BIEN: Lanzar sin await, WhenAll, y recuperar resultados con await
 var tareaCsv = LeerCsvAsync("productos.csv");       // Lanza (NO await)
 var tareaJson = LeerJsonAsync("productos.json");     // Lanza (NO await)
 var tareaSqlite = LeerSqliteAsync("productos.db");  // Lanza (NO await)
 
 await Task.WhenAll(tareaCsv, tareaJson, tareaSqlite); // Espera las 3
 
-// Ahora sí accedemos al resultado (ya terminaron)
-var csv = tareaCsv.Result;
-var json = tareaJson.Result;
-var sqlite = tareaSqlite.Result;
+// Las tasks ya terminaron: await solo recoge el resultado (instantáneo)
+var csv = await tareaCsv;
+var json = await tareaJson;
+var sqlite = await tareaSqlite;
 // Total: ~50ms (lo que tarda la más lenta)
 ```
+
+> ⚠️ **Advertencia:** jamás uses `.Result` o `.Wait()` para recoger estos resultados: bloquean el hilo y pueden provocar deadlocks en UI y starvation del ThreadPool en ASP.NET Core. Tras `WhenAll`, un simple `await tareaN` es suficiente e instantáneo.
 
 ```mermaid
 gantt
@@ -591,7 +597,7 @@ Hemos visto que `Task.WhenAll` es ideal para I/O. Pero, ¿qué pasa cuando usamo
 
 #### ¿Qué es el ThreadPool?
 
-El **ThreadPool** es un池 de hilos pre-creados que .NET reutiliza. En vez de crear un hilo nuevo para cada tarea (costoso), el ThreadPool mantiene un número fijo de hilos "listos para trabajar".
+El **ThreadPool** es un pool de hilos pre-creados que .NET reutiliza. En vez de crear un hilo nuevo para cada tarea (costoso), el ThreadPool mantiene un número fijo de hilos "listos para trabajar".
 
 ```
 ThreadPool: [Hilo 1] [Hilo 2] [Hilo 3] [Hilo 4] ... [Hilo N]
@@ -671,7 +677,7 @@ graph LR
 ```
 
 **Secuencial**: 30 × 27 ms = **810 ms** (sin overhead, sin competencia)
-**Paralelo**: 810 ms + 24 ms overhead + competencia ≈ **más lento** (depende de la carga)
+**Paralelo ideal**: 810 ms ÷ 4 núcleos ≈ **240 ms** + ~24 ms de overhead ≈ **264 ms** (si las tareas duraran lo justo y no hubiera competencia). En la práctica, con tareas de solo 27 ms el overhead y los context switches se comen buena parte de esa ganancia: el beneficio real es **mucho menor que el teórico** (y en el peor de los casos, con mucha competencia por CPU, puede acabar siendo hasta más lento que secuencial).
 
 #### ¿Por qué la competencia empeora las cosas?
 
@@ -714,7 +720,7 @@ Hay una zona gris donde el resultado es **impredecible**:
 - **5-50 ms**: Depende del hardware, número de núcleos, tipo de operación
 - **> 50 ms**: Casi siempre más rápido en paralelo
 
-> ⚠️ **Advertencia:** ¡No blindly paralelices! Siempre **mide** antes de decidir. El paralelismo puede empeorar el rendimiento si las tareas son demasiado rápidas.
+> ⚠️ **Advertencia:** ¡No paralelices a ciegas! Siempre **mide** antes de decidir. El paralelismo puede empeorar el rendimiento si las tareas son demasiado rápidas.
 
 📌 **Ejemplo real:** Netflix no paraleliza el decode de un frame de vídeo (2-3 ms). Pero sí paraleliza la descarga de thumbnails (E/S de red, 100+ ms cada una). Cada herramienta para su trabajo.
 
@@ -738,7 +744,7 @@ graph TB
     style MALO fill:#f44336,color:#fff
 ```
 
-> 💡 **Consejo para el examen:** Si te preguntan "¿cuándo usar Task.Run?", la respuesta es: **solo para I/O o cálculos pesados (> 50 ms)**. Para todo lo demás, ejecuta secuencial. Más código, menos sorpresas.
+> 💡 **Consejo para el examen:** Si te preguntan "¿cuándo usar `Task.Run` o `Parallel.For`?", la respuesta es: **solo para cálculos CPU-bound pesados (> 50 ms)**. Para operaciones de I/O no hace falta `Task.Run`: usa `async/await` directamente (el proveedor de I/O ya libera el hilo mientras espera). Para todo lo demás, ejecuta secuencial. Más código, menos sorpresas.
 
 ## 16.5. Async/Await: La Base de la Asincronía en C#
 
@@ -798,7 +804,7 @@ public async Task<string> ObtenerDatosAsync()
 | `.Result` / `.Wait()` | Bloqueado | Lenta (congelación) | Normal |
 | `await` | Libre | Rápida (responsiva) | Normal |
 
-> ⚠️ **Advertencia:** **NUNCA** uses `.Result` o `.Wait()` en código de UI o en ASP.NET Core. Pueden causar **deadlocks** (el hilo de UI espera a que termine algo que necesita el hilo de UI para terminar). Usa siempre `await`.
+> ⚠️ **Advertencia:** **NUNCA** uses `.Result` o `.Wait()`. En código de UI (WinForms, WPF) pueden causar **deadlocks** (el hilo de UI espera a que termine algo que necesita el hilo de UI para terminar). En ASP.NET Core no hay deadlock (no hay hilo de UI), pero bloquear provoca **starvation del ThreadPool**: los hilos ocupados no se liberan y otras peticiones esperan en cola. Usa siempre `await`.
 
 ## 16.6. Task y Task\<T\>: El Resultado de una Operación Asíncrona
 
@@ -884,8 +890,8 @@ Task<int> tarea3 = ContarLineasAsync("fichero3.txt");
 // Esperar a que terminen las tres (en paralelo)
 await Task.WhenAll(tarea1, tarea2, tarea3);
 
-// Obtener resultados
-int total = tarea1.Result + tarea2.Result + tarea3.Result;
+// Obtener resultados (con await, nunca .Result)
+int total = (await tarea1) + (await tarea2) + (await tarea3);
 Console.WriteLine($"Total líneas: {total}");
 ```
 
@@ -1095,7 +1101,7 @@ catch (TaskCanceledException ex)
 ### Excepciones en Task.WhenAll
 
 ```csharp
-// WhenAll lanza AggregateException si alguna tarea falla
+// ⚠️ await WhenAll propaga la PRIMERA excepción (no AggregateException)
 var tareas = new[]
 {
     ExitosoAsync(),
@@ -1107,16 +1113,37 @@ try
 {
     await Task.WhenAll(tareas);
 }
-catch (AggregateException ae)
+catch (Exception ex)
 {
-    foreach (var ex in ae.InnerExceptions)
-    {
-        Console.WriteLine($"Error: {ex.Message}");
-    }
+    // Solo recibes la primera excepción fallida
+    Console.WriteLine($"Error: {ex.Message}");
 }
 ```
 
-> 📝 **Nota:** En .NET 8+, `Task.WhenAll` lanza la primera excepción directamente (sin `AggregateException`). Para capturar todas, usa `Task.WhenAll(tareas).ConfigureAwait(false)` o captura cada tarea individualmente.
+**Forma correcta de capturar TODAS las excepciones:**
+
+```csharp
+// Opción A: await a cada tarea en su propio try/catch
+var tareas = new[] { ExitosoAsync(), FallidoAsync(), ExitosoAsync2() };
+var whenAllTask = Task.WhenAll(tareas);
+
+try
+{
+    await whenAllTask;
+}
+catch
+{
+    // Ignoramos aquí: inspeccionamos abajo todas las fallidas
+}
+
+// Opción B: inspeccionar la AggregateException de la tarea WhenAll
+foreach (var ex in whenAllTask.Exception?.InnerExceptions ?? Enumerable.Empty<Exception>())
+{
+    Console.WriteLine($"Error: {ex.Message}");
+}
+```
+
+> 📝 **Nota:** El `await` de `Task.WhenAll` **siempre** relanza la primera excepción (como excepción individual, no como `AggregateException`). Por eso un `catch (AggregateException)` tras el `await` **nunca se ejecuta**. Para ver todas las falladas, haz `await` a cada tarea en su `try/catch` propio o lee `tareaWhenAll.Exception?.InnerExceptions` (esa propiedad sí está rellena de AggregateException cuando el `WhenAll` ha terminado).
 
 ## 16.11. Parallel.For vs Task.WhenAll
 
@@ -1263,7 +1290,7 @@ sequenceDiagram
 | **Parallel.For** | Paralelizar operaciones de CPU |
 | **SemaphoreSlim** | Limitar el número de tareas concurrentes |
 | **async void** | Peligroso: solo para eventos de UI |
-| **Los 3 errores clásicos** | Await secuencial, fire-and-forget, WhenAll + await |
+| **Los 2 errores clásicos** | Await secuencial, fire-and-forget |
 
 **¿Qué viene después?**
 

@@ -37,7 +37,7 @@ graph LR
 |---------|-------------|
 | **Centralización** | Los datos y la lógica están en un solo lugar |
 | **Mantenimiento** | Se actualiza el servidor, no todos los clientes |
-| **Seguridad** | Los datos no salen del servidor |
+| **Seguridad** | Los datos sensibles permanecen en el servidor |
 | **Escalabilidad** | Se pueden añadir más servidores según la demanda |
 
 > 💡 **Analogía:** El modelo Cliente-Servidor es como una biblioteca. Tú (el cliente) vas al mostrador y pides un libro. El bibliotecario (el servidor) busca el libro, te lo da y lo registra. Tú no vas directamente a los estantes a buscarlo.
@@ -62,7 +62,7 @@ graph TD
     style MONOLITO fill:#FF9800,color:#fff
 ```
 
-📌 **Ejemplo real:** Many startups empiezan con monolitos porque es rápido de desarrollar y desplegar. Etsy (tienda online de artesanías) sigue usando un monolito PHP bien estructurado.
+📌 **Ejemplo real:** Muchas startups empiezan con monolitos porque es rápido de desarrollar y desplegar. Etsy (tienda online de artesanías) sigue usando un monolito PHP bien estructurado.
 
 ### 3.2.2. Arquitectura por Capas
 
@@ -152,7 +152,7 @@ graph TD
     B -->|"Renderiza"| D["🖥️ Vista"]
     D -->|"Respuesta"| A
 
-    style A fill:#7c3aed,color:#fff
+    style A fill:#9C27B0,color:#fff
     style B fill:#4CAF50,color:#fff
     style C fill:#FF9800,color:#fff
     style D fill:#2196F3,color:#fff
@@ -174,7 +174,7 @@ SOLID son cinco principios de diseño que hacen que el código sea más mantenib
 |-----------|-------------|---------|
 | **S** — Single Responsibility | Una clase, una responsabilidad | `PersonaService` solo gestiona personas |
 | **O** — Open/Closed | Abierto a extensión, cerrado a modificación | Usar interfaces para añadir funcionalidad |
-| **L** — Liskov Substitution | Las subtipos deben ser sustituibles por sus padres | `Estudiante` puede usarse donde se espere `Persona` |
+| **L** — Liskov Substitution | Los subtipos deben ser sustituibles por sus tipos base | `Estudiante` puede usarse donde se espere `Persona` |
 | **I** — Interface Segregation | Interfaces pequeñas y específicas | `IReadOnlyRepository` separado de `IWriteRepository` |
 | **D** — Dependency Inversion | Depender de abstracciones, no de implementaciones | Inyectar `IPersonaRepository`, no `PersonaRepository` |
 
@@ -300,7 +300,7 @@ public class Pinguino : INadador
 }
 ```
 
-📌 **Ejemplo real:** Si tienes una función `ProcesarPago(IAutenticable usuario)`, cualquier subtipo de `IAutenticable` debe poder usarse sin sorpresas. Si `UsuarioAnonimo` lanza excepción en `Autenticar(),` viola LSP.
+📌 **Ejemplo real:** Si tienes una función `ProcesarPago(IAutenticable usuario)`, cualquier subtipo de `IAutenticable` debe poder usarse sin sorpresas. Si `UsuarioAnonimo` lanza excepción en `Autenticar()`, viola LSP.
 
 ### ISP: Interface Segregation Principle
 
@@ -374,9 +374,9 @@ services.AddScoped<IPedidoRepository, PedidoRepositorySql>();
 services.AddScoped<IEmailService, EmailServiceGmail>();
 ```
 
-📌 **Ejemplo real:** ASP.NET Core usa DIP internamente. Cuando escribes `appDbContext.Services.AddDbContext<AppDbContext>()`, estás configurando qué implementación usar sin modificar el código que la consume.
+📌 **Ejemplo real:** ASP.NET Core usa DIP internamente. Cuando escribes `builder.Services.AddDbContext<AppDbContext>()`, estás configurando qué implementación usar sin modificar el código que la consume.
 
-> 💡 **Consejo:** No memorices SOLID de memoria. Entiende el sentido: **un código limpio es fácil de cambiar**. Si para añadir una funcionalidad tienes que tocar 10 archivos, algo está mal diseñado.
+> 💡 **Consejo:** No te limites a memorizar SOLID sin entenderlo. Entiende el sentido: **un código limpio es fácil de cambiar**. Si para añadir una funcionalidad tienes que tocar 10 archivos, algo está mal diseñado.
 
 > 💡 **Analogía — SOLID como una empresa:** Imagina una empresa donde:
 > - Cada empleado tiene **una función clara** (SRP)
@@ -390,7 +390,7 @@ services.AddScoped<IEmailService, EmailServiceGmail>();
 - **Empieza monolítico**: No uses microservicios desde el principio. Escala cuando sea necesario
 - **SOLID desde el diseño**: Los 5 principios se aplican al diseñar, no al refactorizar después
 - **Separación por capas**: Presentación → Negocio → Datos. Cada capa solo depende de la inferior
-- **Acoplamiento hacia adentro**: Clean Architecture facilita tests y mantenimiento
+- **Dependencias hacia dentro**: Apunta las dependencias hacia las capas internas (Clean Architecture); facilita tests y mantenimiento
 
 ---
 

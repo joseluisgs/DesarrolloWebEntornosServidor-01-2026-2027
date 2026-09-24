@@ -49,7 +49,7 @@ La interfaz `IDisposable` tiene un solo método: `Dispose()`. Cuando usas `using
 
 ```csharp
 // Lo que C# hace internamente con using
-StreamWriter writer = null;
+StreamWriter? writer = null;
 try
 {
     writer = new StreamWriter("datos.txt");
@@ -62,7 +62,7 @@ finally
 ```
 
 | Enfoque | Recursos liberados | Excepciones seguras | Código limpio |
-|---------|-------------------|--------------------|---------------| 
+|---------|-------------------|--------------------|---------------|
 | `Close()` manual | Sí, solo si no hay excepción | ❌ No | Verboso |
 | `Dispose()` manual | Sí, pero hay que recordar | ⚠️ Con try/finally | Verboso |
 | `using` | Sí, SIEMPRE | ✅ Sí | Conciso |
@@ -121,7 +121,7 @@ public class ConexionBD : IDisposable
 | `Directory` | Métodos estáticos para directorios | Crear, borrar, listar |
 | `StreamReader` | Leer texto línea a línea | Ficheros grandes, streaming |
 | `StreamWriter` | Escribir texto línea a línea | Logs, exportaciones |
-| `FileStream` | Acceso raw a bytes | Ficheros binarios |
+| `FileStream` | Acceso directo a bytes | Ficheros binarios |
 | `Path` | Utilidades para rutas | Combinar, obtener extensión |
 
 ### Operaciones rápidas con File
@@ -146,7 +146,7 @@ if (File.Exists("datos.txt"))
 }
 ```
 
-> ⚠️ **Advertencia:** `File.ReadAllText` carga todo el fichero en memoria. Si el fichero tiene 2GB, tu aplicación consumirá 2GB de RAM. Para ficheros grandes, usa `StreamReader`.
+> ⚠️ **Advertencia:** `File.ReadAllText` carga todo el fichero en memoria. Si el fichero tiene 2 GB, tu aplicación consumirá 2 GB de RAM. Para ficheros grandes, usa `StreamReader`.
 
 ### StreamReader y StreamWriter
 
@@ -170,7 +170,7 @@ while ((linea = reader.ReadLine()) is not null)
 
 ```csharp
 // Escribir bytes
-byte[] datos = [0x48, 0x65, 0x6C, 0x6C, 0x6F]; // "Hello"
+byte[] datos = [0x48, 0x6F, 0x6C, 0x61]; // "Hola"
 File.WriteAllBytes("datos.bin", datos);
 
 // Leer bytes
@@ -224,7 +224,7 @@ graph TD
 | `FileStream` | Fichero en disco | Leer/escribir un `.txt` |
 | `MemoryStream` | Memoria RAM | Procesamiento intermedio |
 | `NetworkStream` | Red (TCP/IP) | Comunicación cliente-servidor |
-| `CryptoStream` | Cifrado/descifrado | Encriptar datos |
+| `CryptoStream` | Cifrado/descifrado | Cifrar datos |
 
 ### Composición de streams (Patrón Decorator)
 
@@ -267,7 +267,7 @@ Console.WriteLine(contenido); // "Datos en memoria"
 
 ## 14.4. CSV con CsvHelper
 
-**CSV** (Comma-Separated Values) es el formato más sencillo para datos tabulares. Pero parsear CSV manualmente es un infierno (comillas, comas dentro de campos, saltos de línea...). Por eso usamos **CsvHelper**.
+**CSV** (Comma-Separated Values) es el formato más sencillo para datos tabulares. Pero analizar CSV a mano es un infierno (comillas, comas dentro de campos, saltos de línea...). Por eso usamos **CsvHelper**.
 
 ### Instalación
 
@@ -292,6 +292,7 @@ public record PersonaCsv(
 using CsvHelper;
 using CsvHelper.Configuration;
 using System.Globalization;
+using System.Text;
 
 // Configuración del escritor
 var config = new CsvConfiguration(CultureInfo.InvariantCulture)
@@ -351,13 +352,13 @@ var config = new CsvConfiguration(CultureInfo.InvariantCulture)
 };
 ```
 
-> 📝 **Nota:** CsvHelper maneja automáticamente los casos complejos: campos con comas dentro, campos entre comillas, saltos de línea en campos, etc. No intentes parsear CSV con `Split(',')`: es un error clásico que causa bugs difíciles de encontrar.
+> 📝 **Nota:** CsvHelper maneja automáticamente los casos complejos: campos con comas dentro, campos entre comillas, saltos de línea en campos, etc. No intentes analizar CSV con `Split(',')`: es un error clásico que causa bugs difíciles de encontrar.
 
 📌 **Ejemplo real:** Cuando una empresa exporta datos de su ERP a Excel, el formato más común es CSV. CsvHelper genera ficheros CSV que Excel puede abrir directamente, con codificación UTF-8 y separador correcto.
 
 ## 14.5. JSON con System.Text.Json
 
-**JSON** (JavaScript Object Notation) es el formato estándar para APIs web y configuración. `System.Text.Json` es la librería oficial de .NET (rápida, moderna, sin dependencias externas).
+**JSON** (JavaScript Object Notation) es el formato estándar para APIs web y configuración. `System.Text.Json` es la biblioteca oficial de .NET (rápida, moderna, sin dependencias externas).
 
 ### Serialización (objeto a JSON)
 
@@ -410,7 +411,7 @@ Salida:
   "edad": 25,
   "ciudad": "Madrid",
   "activo": true,
-  "fechaRegistro": "2026-09-06T10:30:00"
+  "fecha_registro": "2026-09-06T10:30:00"
 }
 ```
 
@@ -481,7 +482,7 @@ int edad = root.GetProperty("edad").GetInt32();
 | **Tipos de datos** | ❌ Todo es texto | ✅ Números, booleanos, null | ✅ Con esquema (XSD) |
 | **Tamaño** | 🟢 El más pequeño | 🟡 Mediano | 🔴 El más grande |
 | **Velocidad lectura** | 🟢 Muy rápido | 🟡 Rápido | 🔴 Lento |
-| **Soporte herramientas** | ✅ Excel, cualquier lenguaje | ✅ Universal | ✅ Enterprise |
+| **Soporte herramientas** | ✅ Excel, cualquier lenguaje | ✅ Universal | ✅ Empresarial |
 | **Uso típico** | Exportaciones, datos tabulares | APIs REST, configuración | SOAP, documentos, configuración legacy |
 
 ```mermaid
@@ -530,10 +531,10 @@ Console.WriteLine($"Convertidos {personas.Count} registros de CSV a JSON");
 
 ## 14.7. Buenas Prácticas
 
-- **SIEMPRE implementar IDisposable**: Para recursos no manejados (ficheros, conexiones)
+- **Implementa `IDisposable` si tu clase mantiene recursos**: Ficheros, conexiones, streams
 - **JSON con System.Text.Json**: Moderno, rápido y seguro. Opciones con `JsonSerializerOptions`
-- **CSV con CsvHelper**: Nunca parsear CSV a mano. Siempre usa una librería
-- **UTF-8 como encoding**: Compatibilidad universal. Nunca asumes otro encoding
+- **CSV con CsvHelper**: Nunca analizar CSV a mano. Siempre usa una biblioteca
+- **UTF-8 como codificación**: Compatibilidad universal. Nunca asumas otra codificación
 
 ---
 
@@ -547,11 +548,11 @@ Console.WriteLine($"Convertidos {personas.Count} registros de CSV a JSON");
 | **File** | Métodos estáticos para operaciones rápidas con ficheros |
 | **StreamReader/Writer** | Lectura/escritura línea a línea |
 | **Stream** | Secuencia de bytes (FileStream, MemoryStream, etc.) |
-| **CsvHelper** | Librería para leer/escribir CSV de forma segura |
+| **CsvHelper** | Biblioteca para leer/escribir CSV de forma segura |
 | **System.Text.Json** | Serialización/deserialización JSON integrada en .NET |
 | **CSV** | Para datos tabulares simples, el más ligero |
 | **JSON** | Para APIs y configuración, el más versátil |
-| **XML** | Para documentos y sistemas enterprise, el más verboso |
+| **XML** | Para documentos y sistemas empresariales, el más verboso |
 
 **¿Qué viene después?**
 

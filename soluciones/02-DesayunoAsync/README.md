@@ -2,7 +2,7 @@
 
 ## ¿Qué aprenderás?
 
-- Por qué `async/await` **solo no mejora** el rendimiento
+- Por qué `async/await` **por sí solo no mejora** el rendimiento
 - Cómo el **diseño** de qué paralelizamos marca la diferencia
 - Uso de `Task.WhenAll` con **grupos de tareas**
 - `CancellationToken` para abortar operaciones que se pasan de tiempo
@@ -160,7 +160,7 @@ Un `CancellationToken` es un **mecanismo de aborto controlado**. Permite cancela
 | Escenario | Timeout | Acción al cancelar |
 |-----------|---------|-------------------|
 | API con timeout | 5s | Devolver 408 Request Timeout |
-| Llamada a base de datos | 3s | Cerrar conexión y retry |
+| Llamada a base de datos | 3s | Cerrar conexión y reintentar |
 | Descarga de fichero | 30s | Eliminar fichero parcial |
 | Café frío ☕ | 500ms | "¡El café se ha enfriado!" |
 
@@ -192,7 +192,7 @@ dotnet run
 | `await` secuencial | Sin paralelismo, lento | Usar `Task.WhenAll` |
 | No pasar `CancellationToken` | No se puede cancelar | Siempre pasar el token |
 | Paralelizar dependencias | Error o resultado incorrecto | Diseñar el grafo de dependencias |
-| `.Result` o `.Wait()` | Deadlock en UI/ASP.NET | Usar `await` |
+| `.Result` o `.Wait()` | Bloqueo mutuo (deadlock) en UI/ASP.NET | Usar `await` |
 
 ## Lección clave
 

@@ -33,7 +33,7 @@ docker run -it --rm ubuntu bash
 
 > 🔧 **Truco:** `docker run -it --rm` es perfecto para probar algo rápido sin dejar basura. El contenedor se borra al salir.
 
-> ⚠️ **Advertencia:** El flag `-f` en `docker rm -f` fuerza la eliminación de un contenedor en ejecución. Puede causar pérdida de datos si no tienes volumen.
+> ⚠️ **Advertencia:** La opción `-f` en `docker rm -f` fuerza la eliminación de un contenedor en ejecución. Puede causar pérdida de datos si no tienes volumen.
 
 ```bash
 # Arrancar un contenedor parado

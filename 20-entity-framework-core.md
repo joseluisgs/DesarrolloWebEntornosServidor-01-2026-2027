@@ -27,6 +27,22 @@ En este tema aprenderás Entity Framework Core: `DbContext`, configuración con 
 - Crear y aplicar migraciones
 - Sembrar datos iniciales con Seed Data
 
+**Prerrequisitos:** Antes de empezar —y en particular antes de usar `dotnet ef` en la §20.7— instala el proveedor de base de datos (PostgreSQL, el proveedor del curso, o SQLite para probar sin instalar servidor), el paquete de diseño y la CLI de EF Core:
+
+```bash
+# 1. Proveedor de base de datos (elige uno)
+dotnet add package Npgsql.EntityFrameworkCore.PostgreSQL
+# o bien: dotnet add package Microsoft.EntityFrameworkCore.Sqlite
+
+# 2. Paquete de diseño (obligatorio para generar migraciones)
+dotnet add package Microsoft.EntityFrameworkCore.Design
+
+# 3. CLI de EF Core (se instala una sola vez en tu máquina)
+dotnet tool install --global dotnet-ef
+```
+
+> 📝 **Nota:** Sin `Microsoft.EntityFrameworkCore.Design` y la CLI `dotnet-ef`, los comandos `dotnet ef migrations ...` de la §20.7 fallarán.
+
 ## 20.1. ¿Qué es un ORM?
 
 Un **ORM** (Object-Relational Mapping) mapea entre clases C# y tablas de base de datos. Cada clase es una tabla, cada propiedad es una columna.
@@ -59,7 +75,7 @@ graph LR
 | `command.ExecuteNonQuery();` | `context.SaveChangesAsync();` |
 | Errores en runtime (strings) | Errores en compile-time (tipado) |
 | SQL diferente por cada SGBD | LINQ se traduce automáticamente |
-| Mapeo manual de resultados | `ToList<Persona>()` directo |
+| Mapeo manual de resultados | `ToListAsync()` directo |
 
 📌 **Ejemplo real:** Cuando usas Instagram, cada vez que guardas un comentario, EF Core traduce `context.Comentarios.Add(comentario)` a `INSERT INTO Comentarios (Texto, UsuarioId, Fecha) VALUES (...)`. No escribes SQL, pero se ejecuta SQL.
 
@@ -123,13 +139,18 @@ public class Pedido
 
 ```csharp
 // Program.cs
+// PostgreSQL (proveedor del curso)
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite("Data Source=app.db"));
-    // options.UseSqlServer(connectionString);  // Para SQL Server
-    // options.UseNpgsql(connectionString);    // Para PostgreSQL
+    options.UseNpgsql(connectionString));
+
+// Otros proveedores:
+// options.UseSqlite("Data Source=app.db");   // SQLite: fichero local, sin servidor
+// options.UseSqlServer(connectionString);    // SQL Server
 ```
 
-> 💡 **Consejo:** Usa `Set<Persona>()` en vez de `DbSet<Persona>` como propiedad autoimplementada. Es más limpio y evita problemas con el tracking de EF Core.
+> 💡 **Consejo:** En el curso usamos **PostgreSQL** (`UseNpgsql`, paquete `Npgsql.EntityFrameworkCore.PostgreSQL`). SQLite es útil para pruebas rápidas porque no requiere instalar nada: es un simple fichero.
+
+> 💡 **Consejo:** Usa `Set<Persona>()` en vez de una propiedad `DbSet<Persona>` autoimplementada. Es más limpio: siempre devuelve el `DbSet` real del contexto y evitas dejar la propiedad sin inicializar (`null`).
 
 ## 20.3. Configuración: Data Annotations vs Fluent API
 
@@ -262,8 +283,8 @@ if (persona is not null)
 }
 
 // Forma 2: Actualizar sin tracking
-var persona = new Persona { Id = 1, Nombre = "Ana María", Email = "ana@email.com" };
-context.Personas.Update(persona);
+var personaEditada = new Persona { Id = 1, Nombre = "Ana María", Email = "ana@email.com" };
+context.Personas.Update(personaEditada);
 await context.SaveChangesAsync();
 ```
 
@@ -338,7 +359,7 @@ var personaCompleta = await context.Personas
     .FirstOrDefaultAsync(p => p.Id == 1);
 ```
 
-> ⚠️ **Advertencia:** Sin `Include`, EF Core NO carga las relaciones por defecto (N+1 problem). Si intentas acceder a `persona.Pedidos` sin incluirlos, recibirás una colección vacía o una excepción.
+> ⚠️ **Advertencia:** Por defecto EF Core **no** activa el lazy loading: sin `Include`, la colección `persona.Pedidos` viene **vacía**, no lanza excepción. Y cuidado con el problema **N+1**: si recorres 100 personas y en cada una accedes a `.Pedidos` sin `Include`, EF lanza 1 consulta para la lista **+ 100 consultas más** (una por cada persona). Con `Include` haces un solo JOIN y resuelves el N+1.
 
 ### Proyección a DTOs
 
@@ -361,7 +382,7 @@ Cuando LINQ no es suficiente (consultas complejas, optimización, consultas lega
 
 ### FromSqlRaw — Entidades completas
 
-Devuelve entidades completas que EF Core-trackea:
+Devuelve entidades completas con tracking (EF Core las hace seguimiento):
 
 ```csharp
 // SQL con parámetros posicionales
@@ -387,7 +408,7 @@ int total = await context.Database
     .SqlQueryRaw<int>("SELECT COUNT(*) FROM Personas")
     .SingleAsync();
 
-// Obtener soloSome campos en un DTO
+// Obtener solo algunos campos en un DTO
 var resumen = await context.Database
     .SqlQueryRaw<ResumenPersona>(
         "SELECT Id, Nombre, Email FROM Personas WHERE Activo = true")
@@ -410,7 +431,7 @@ Ambos devuelven tipos no-entidad, pero se diferencian en cómo pasas los paráme
 
 ```csharp
 // SqlQueryRaw — parámetros posicionales {0}, {1}
-var resultado = await context.Database
+var resultadoRaw = await context.Database
     .SqlQueryRaw<ResumenPersona>(
         "SELECT Id, Nombre FROM Personas WHERE Edad > {0} AND Activo = {1}",
         25, true)
@@ -419,7 +440,7 @@ var resultado = await context.Database
 // SqlQuery — string interpolado, parametrizado automático ✅ RECOMENDADO
 int edad = 25;
 bool activo = true;
-var resultado = await context.Database
+var resultadoInterpolado = await context.Database
     .SqlQuery<ResumenPersona>(
         $"SELECT Id, Nombre FROM Personas WHERE Edad > {edad} AND Activo = {activo}")
     .ToListAsync();
@@ -457,21 +478,28 @@ await context.Database
 
 ### Stored Procedures
 
+> 📝 **Nota:** El SQL varía según el SGBD. Ojo: **SQLite NO tiene procedimientos almacenados**; en SQLite tendrías que usar una función o hacerlo con LINQ/SQL directo.
+
 ```csharp
-// Ejecutar stored procedure que devuelve entidades
+// SQL Server: EXECUTE del procedimiento
 var personas = await context.Personas
-    .FromSqlRaw("EXECEDURE GetPersonasActivas @EdadMinima = {0}", 18)
+    .FromSqlRaw("EXECUTE GetPersonasActivas @EdadMinima = {0}", 18)
     .ToListAsync();
 
-// Stored procedure que devuelve un escalar
+// PostgreSQL: misma operación, pero con SELECT sobre la función
+var personasPg = await context.Personas
+    .FromSqlRaw("SELECT * FROM get_personas_activas({0})", 18)
+    .ToListAsync();
+
+// Función que devuelve un escalar (PostgreSQL)
 int total = await context.Database
-    .SqlQueryRaw<int>("EXECEDURE ContarPersonasActivas")
+    .SqlQueryRaw<int>("SELECT contar_personas_activas()")
     .SingleAsync();
 
-// Stored procedure con ExecuteSqlRaw (sin retorno)
+// Procedimiento sin retorno (SQL Server): ExecuteSqlRaw
 await context.Database
     .ExecuteSqlRawAsync(
-        "EXECEDURE ActualizarEstadisticas @Fecha = {0}",
+        "EXECUTE ActualizarEstadisticas @Fecha = {0}",
         DateTime.Now);
 ```
 
@@ -479,17 +507,17 @@ await context.Database
 
 ```csharp
 // ❌ MALO: SQL Injection vulnerable
-var personas = await context.Personas
+var personasInyectadas = await context.Personas
     .FromSqlRaw($"SELECT * FROM Personas WHERE Nombre = '{nombre}'")  // ¡PELIGRO!
     .ToListAsync();
 
 // ✅ BUENO: Parametrizado automáticamente
-var personas = await context.Personas
+var personasParametrizadas = await context.Personas
     .FromSqlInterpolated($"SELECT * FROM Personas WHERE Nombre = {nombre}")
     .ToListAsync();
 
 // ✅ BUENO: Parámetros posicionales
-var personas = await context.Personas
+var personasPosicionales = await context.Personas
     .FromSqlRaw("SELECT * FROM Personas WHERE Nombre = {0}", nombre)
     .ToListAsync();
 ```
@@ -503,7 +531,7 @@ var personas = await context.Personas
 | UPDATE/DELETE masivo | `ExecuteSqlRaw` | Más rápido que cargar y modificar |
 | Stored Procedure | SQL Raw | LINQ no soporta SPs directamente |
 | Consulta optimizada para rendimiento | SQL Raw | Control total sobre el SQL |
-| Reports / Estadísticas | `SqlQueryRaw` | No necesitas entidad completa |
+| Informes / Estadísticas | `SqlQueryRaw` | No necesitas entidad completa |
 
 > 💡 **Consejo:** Empieza SIEMPRE con LINQ. Solo recurre a SQL Raw cuando LINQ no funciona o es significativamente más lento. EF Core es muy bueno generando SQL optimizado.
 
@@ -544,6 +572,8 @@ graph LR
 ```
 
 ### Ejemplo de migración generada
+
+> 📝 **Nota:** La anotación de auto-incremento depende del proveedor: con SQLite es `"Sqlite:Autoincrement"` (como abajo) y con PostgreSQL sería `"Npgsql:ValueGenerationStrategy"`.
 
 ```csharp
 // Migrations/20260906_Inicial.cs (generada automáticamente)
@@ -611,7 +641,7 @@ protected override void OnModelCreating(ModelBuilder modelBuilder)
 }
 ```
 
-### Seed Data con Benson (extensión)
+### Seed Data con método de extensión
 
 ```csharp
 // Para datos más complejos, crear un método de extensión

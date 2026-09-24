@@ -141,7 +141,7 @@ ENTRYPOINT ["dotnet", "12-Docker-HelloWorld.dll"]
 |-------------|----------|
 | `FROM aspnet:10.0` | Imagen base con solo el runtime de .NET (~200MB). No tiene SDK. |
 | `WORKDIR /app` | Establece `/app` como directorio de trabajo (se crea si no existe). |
-| `RUN useradd -m appuser` | Crea un usuario llamado `appuser` con home directory. |
+| `RUN useradd -m appuser` | Crea un usuario llamado `appuser` con directorio personal. |
 | `USER appuser` | Cambia el usuario de ejecución de root a `appuser`. |
 | `COPY --from=build` | Copia el binario publicado de la etapa anterior. |
 | `EXPOSE 8080` | **Documenta** que la app usa el puerto 8080 (no abre el puerto, es solo informativo). |

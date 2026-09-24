@@ -34,7 +34,7 @@
 
 14. **¿Qué es `IDisposable` y por qué es importante en la gestión de recursos? Menciona 2 bibliotecas o mecanismos para trabajar con ficheros CSV y JSON en C#. ¿Qué es `System.Text.Json`?**
 
-15. **¿Qué es el patrón Result o ROP (Rail-Oriented Programming)? Define `DomainError`, `Maybe`, `Bind`, `Map` y `Match`. ¿Cuándo usar Result frente a Excepciones?**
+15. **¿Qué es el patrón Result o ROP (Railway-Oriented Programming)? Define `DomainError`, `Maybe`, `Bind`, `Map` y `Match`. ¿Cuándo usar Result frente a Excepciones?**
 
 16. **Explica cómo funciona async/await en C#. ¿Qué es un `Task`? ¿Qué es `CancellationToken` y por qué es importante? ¿Por qué se recomienda evitar `async void`? Menciona al menos 2 patrones de concurrencia.**
 

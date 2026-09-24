@@ -10,13 +10,22 @@
     - [🧠 Analogía: Las ramas como hojas de ruta](#-analogía-las-ramas-como-hojas-de-ruta)
   - [1.7. Resolución de conflictos](#17-resolución-de-conflictos)
   - [1.8. Buenas prácticas](#18-buenas-prácticas)
-    - [📝 Resumen del Capítulo](#-resumen-del-capítulo)
     - [💡 Ejercicio Propuesto](#-ejercicio-propuesto)
-  - [1.9. Resumen](#19-resumen)
+
+
 
 # 1. Control de Versiones
 
+> 💡 **Punto de partida:** ¿Alguna vez has roto un proyecto sin saber qué habías cambiado la noche anterior? Git es tu máquina del tiempo: te permite volver atrás, probar sin miedo y trabajar en equipo sin pisarte.
+
 El control de versiones es una de las habilidades más importantes que debe dominar cualquier desarrollador. Permite rastrear cambios, colaborar en equipo y mantener un historial completo del desarrollo de un proyecto.
+
+**Objetivos de aprendizaje:**
+
+- Entender qué es un Sistema de Control de Versiones y por qué es esencial
+- Diferenciar sistemas centralizados y distribuidos
+- Dominar los comandos básicos de Git y el flujo de trabajo con ramas
+- Saber resolver conflictos de fusión y aplicar buenas prácticas de commit
 
 ## 1.1. ¿Qué es un Sistema de Control de Versiones?
 
@@ -132,11 +141,13 @@ graph LR
 | Plataforma | Características |
 |------------|-----------------|
 | **GitHub** | Más popular, gran comunidad, GitHub Actions |
-| **GitLab** | CI/CD integrado, opción self-hosted |
+| **GitLab** | CI/CD integrado, opción en servidor propio |
 | **Bitbucket** | Integrado con Jira, útil para empresas |
 | **Azure DevOps** | Integrado con ecosistema Microsoft |
 
 📝 **Nota del Profesor**: GitHub tiene más de 100 millones de desarrolladores y más de 400 millones de repositorios. Es fundamental tener presencia en GitHub para tu carrera profesional.
+
+📌 **Ejemplo real**: Cuando colaboras en un proyecto de código abierto como contribuidor de una librería, cada pull request de GitHub es una rama de Git: el mantenedor hace `merge` (o rechaza) tus cambios sin tocar la rama `main` hasta que la revisión está lista.
 
 ## 1.4. Conceptos fundamentales de Git
 
@@ -147,10 +158,10 @@ graph TD
     C -->|git push| D["Remote Repository"]
     D -->|git pull| A
     
-    style A fill:#FFCC80
-    style B fill:#81D4FA
-    style C fill:#4CAF50
-    style D fill:#FF9800
+    style A fill:#607D8B,color:#fff
+    style B fill:#2196F3,color:#fff
+    style C fill:#4CAF50,color:#fff
+    style D fill:#FF9800,color:#fff
 ```
 
 **Estados de un archivo en Git:**
@@ -274,7 +285,7 @@ git branch nombre-rama
 
 # Cambiar a otra rama
 git checkout nombre-rama
-git switch nombre-rama  # C# 10+ (más intuitivo)
+git switch nombre-rama  # Git 2.23+ (más intuitivo)
 
 # Crear y cambiar
 git checkout -b nombre-rama
@@ -416,20 +427,7 @@ graph TD
     F --> F1["Revisión de código"]
 ```
 
-💡 **Tip del Examinador**: Git es tu seguro contra desastres. Committea frecuentemente, incluso cambios pequeños. Es más fácil deshacer cambios pequeños que grandes.
-
-### 📝 Resumen del Capítulo
-
-En este capítulo hemos aprendido:
-
-1. **Control de versiones**: Herramienta esencial para rastrear cambios
-2. **Git**: Sistema distribuido, seguro y rápido
-3. **GitHub**: Plataforma de colaboración más popular
-4. **Estados de Git**: Modified → Staged → Committed
-5. **Comandos básicos**: init, add, commit, push, pull, branch, merge
-6. **Ramas**: Desarrollo paralelo sin afectar main
-7. **Resolución de conflictos**: Comunicación y edición manual
-8. **Buenas prácticas**: Commits atómicos, mensajes descriptivos
+💡 **Tip del Examinador**: Git es tu seguro contra desastres. Haz commits frecuentemente, incluso cambios pequeños. Es más fácil deshacer cambios pequeños que grandes.
 
 ### 💡 Ejercicio Propuesto
 
@@ -438,7 +436,7 @@ En este capítulo hemos aprendido:
 ```bash
 # 1. Configurar Git
 git config --global user.name "Tu Nombre"
-git config --global user.name "tu@email.com"
+git config --global user.email "tu@email.com"
 
 # 2. Crear carpeta de proyecto
 mkdir mi-primer-proyecto
@@ -459,13 +457,20 @@ git remote add origin https://github.com/usuario/repo.git
 git push -u origin main
 ```
 
-## 1.9. Resumen
-Usa Git desde el primer día. Practica los comandos básicos, trabaja con ramas y sigue las buenas prácticas para convertirte en un desarrollador profesional. Aquí tienes un resumen rápido de los puntos clave:
-- Control de versiones es esencial para cualquier proyecto.
-- Git es el sistema distribuido más popular.
-- Usa GitHub para colaborar y alojar tus proyectos.
-- Comprende los estados de los archivos en Git.
-- Domina los comandos básicos: init, add, commit, push, pull, branch, merge.
-- Trabaja con ramas para desarrollar características en paralelo.
-- Resuelve conflictos comunicándote con tu equipo.
-- Sigue buenas prácticas para mantener un historial limpio y comprensible. ¡Feliz codificación con Git!
+---
+
+**Resumen del punto:**
+
+| Concepto | Descripción |
+|----------|-------------|
+| **Sistema de Control de Versiones** | Registra cambios en el tiempo y permite recuperar versiones anteriores |
+| **Git** | VCS distribuido, el estándar de la industria (hash SHA-1, trabajo sin conexión) |
+| **GitHub** | Plataforma en línea para alojar y colaborar con repositorios Git |
+| **Estados de un archivo** | Modified → Staged → Committed |
+| **Ramas** | Líneas de desarrollo paralelas que se fusionan con `merge` o `rebase` |
+| **Conflictos** | Dos ramas modifican lo mismo: se resuelven editando y haciendo `add` + `commit` |
+| **Commits atómicos** | Un cambio por commit, con mensajes descriptivos y en imperativo |
+
+**¿Qué viene después?**
+
+En el siguiente punto veremos cómo organizar proyectos en .NET: soluciones (`.slnx`), proyectos (`.csproj`), la CLI de `dotnet` y NuGet. Usa Git desde el primer día: practica los comandos básicos, trabaja con ramas y sigue las buenas prácticas para convertirte en un desarrollador profesional.

@@ -11,9 +11,9 @@
 
 # 5. Servicios Web y Comunicación con APIs
 
-> 💡 **Punto de partida:** Has visto que HTTP es el idioma que usan cliente y servidor. Pero, ¿cómo se estructuran esos servicios? ¿Por qué Netflix usa REST y no GraphQL? ¿Cómo funciona un chat en tiempo real como WhatsApp Web? Todo se reduce a **cómo se diseñan las APIs**.
+> 💡 **Punto de partida:** Has visto que HTTP es el idioma que usan cliente y servidor. Pero, ¿cómo se estructuran esos servicios? ¿Cuándo conviene REST y cuándo GraphQL? ¿Cómo funciona un chat en tiempo real como WhatsApp Web? Todo se reduce a **cómo se diseñan las APIs**.
 
-En este aprenderás qué es un servicio web, cómo funciona REST (el estándar de la industria), cuándo usar GraphQL, cómo funciona WebSocket para comunicación en tiempo real, y compararás los principales protocolos.
+En este tema aprenderás qué es un servicio web, cómo funciona REST (el estándar de la industria), cuándo usar GraphQL, cómo funciona WebSocket para comunicación en tiempo real, y compararás los principales protocolos.
 
 **Objetivos de aprendizaje:**
 
@@ -52,7 +52,7 @@ Un **servicio web** es una aplicación que se comunica con otras aplicaciones a 
 |-----------|-------------|---------|
 | **Cliente-Servidor** | Separación de responsabilidades | Front-end pide, Back-end sirve |
 | **Sin estado** | Cada petición lleva toda la información | No se guarda sesión en el servidor |
-| **Cacheable** | Las respuestas pueden cachearse | `Cache-Control: max-age=3600` |
+| **Cacheable** | Las respuestas pueden guardarse en caché | `Cache-Control: max-age=3600` |
 | **Uniforme** | Interfaz consistente (verbos + rutas) | `GET /api/usuarios` siempre lee |
 | **Sistema en capas** | Arquitectura escalable | Proxy, balanceador de carga |
 | **Código bajo demanda** | El servidor puede enviar código ejecutable | JavaScript en el navegador |
@@ -142,7 +142,7 @@ record Producto(int Id, string Nombre, decimal Precio, string Categoria);
 | `GET /api/usuarios/1` → Devuelve todo el usuario | `query { usuario(id:1) { nombre, email } }` → Solo nombre y email |
 | Múltiples endpoints | Un solo endpoint (`/graphql`) |
 | Over-fetching (datos de más) | Exactamente lo que pides |
-| Under-fetching (faltan datos) | Una sola query con todo |
+| Under-fetching (faltan datos) | Una sola consulta con todo |
 
 📌 **Ejemplo real:** Facebook y Instagram usan GraphQL. Cuando abres tu perfil, la app pide solo los datos que necesita para esa pantalla: nombre, foto, últimos posts. No descarga todos tus posts, todos tus amigos y toda tu historia.
 
@@ -200,7 +200,7 @@ sequenceDiagram
 | **gRPC** | RPC de alto rendimiento con Protocol Buffers | Microservicios internos, baja latencia |
 | **SOAP** | Protocolo basado en XML, muy estricto | Banca, entornos empresariales legacy |
 | **Webhook** | El servidor avisa al cliente cuando ocurre algo | Notificaciones de pago (Stripe), GitHub |
-| **SSE** | Server-Sent Events, unidireccional en tiempo real | Notificaciones en tiempo real (simpler que WebSocket) |
+| **SSE** | Server-Sent Events, unidireccional en tiempo real | Notificaciones en tiempo real (más simple que WebSocket) |
 
 > 💡 **Consejo:** Para el examen, recuerda que REST es el estándar de la industria. GraphQL es la alternativa cuando necesitas flexibilidad. WebSocket es para comunicación en tiempo real. gRPC es para alto rendimiento entre microservicios.
 
@@ -233,10 +233,10 @@ sequenceDiagram
 |------|---------|
 | El cliente pide exactamente lo que necesita | Más complejo de implementar que REST |
 | Un solo endpoint para todo | No usa el caché HTTP nativo |
-| Ideal para apps móviles con diferentes pantallas | Queries complejas pueden ser lentas (N+1) |
+| Ideal para apps móviles con diferentes pantallas | Consultas complejas pueden ser lentas (N+1) |
 | Auto-documentado con Schema | Curva de aprendizaje mayor |
 
-📌 **Ejemplo real:** Shopify usa GraphQL para su panel de administración. Cada merchants necesita datos diferentes, y GraphQL permite flexibilidad.
+📌 **Ejemplo real:** Shopify usa GraphQL para su panel de administración. Cada comerciante necesita datos diferentes, y GraphQL permite esa flexibilidad.
 
 **WebSocket**
 | Pros | Contras |
@@ -275,7 +275,7 @@ sequenceDiagram
 | API pública simple y bien documentada | **REST** |
 | App móvil con diferentes pantallas | **GraphQL** |
 | Chat en tiempo real, gaming | **WebSocket** |
-| Microservicios internos de alta performance | **gRPC** |
+| Microservicios internos de alto rendimiento | **gRPC** |
 | Sistemas bancarios legacy | **SOAP** |
 | Notificaciones push simples | **SSE** |
 

@@ -1,4 +1,4 @@
-# Ejemplo 07: Tests de Integración con TestContainers
+# Ejemplo 08: Tests de Integración con TestContainers
 
 ## Descripción
 
@@ -8,7 +8,7 @@ Este ejemplo muestra cómo escribir **tests de integración** usando **TestConta
 
 ### ¿Qué es TestContainers?
 
-TestContainers es una librería que levanta contenedores Docker (o Podman) reales durante la ejecución de tests. Cada test suite crea sus propios contenedores, los usa y los destruye automáticamente.
+TestContainers es una librería que levanta contenedores Docker (o Podman) reales durante la ejecución de tests. Cada suite de tests crea sus propios contenedores, los usa y los destruye automáticamente.
 
 ```mermaid
 graph TB
@@ -22,7 +22,7 @@ graph TB
     style C fill:#f44336,color:#fff
 ```
 
-📌 Ejemplo real: **Netflix** usa TestContainers para testear sus servicios que dependen de bases de datos y colas de mensajería. Cada ejecución de tests levanta un entorno completo y aislado.
+📌 Ejemplo real: **Netflix** usa TestContainers para probar sus servicios que dependen de bases de datos y colas de mensajería. Cada ejecución de tests levanta un entorno completo y aislado.
 
 ### ¿Por qué TestContainers?
 
@@ -98,10 +98,10 @@ dotnet test --filter "FullyQualifiedName~Create_InsertsProduct"
 ## Estructura
 
 ```
-07-TestContainers/
-├── 07-TestContainers.slnx
-├── 07-TestContainers/                    # Proyecto principal
-│   ├── 07-TestContainers.csproj
+08-TestContainers/
+├── 08-TestContainers.slnx
+├── 08-TestContainers/                    # Proyecto principal
+│   ├── 08-TestContainers.csproj
 │   ├── Program.cs
 │   ├── Models/
 │   │   └── Producto.cs
@@ -111,8 +111,8 @@ dotnet test --filter "FullyQualifiedName~Create_InsertsProduct"
 │   │   ├── AppDbContext.cs
 │   │   └── ProductoRepository.cs
 │   └── docker-compose.yml
-├── 07-TestContainers.Tests/              # Proyecto de tests
-│   ├── 07-TestContainers.Tests.csproj
+├── 08-TestContainers.Tests/              # Proyecto de tests
+│   ├── 08-TestContainers.Tests.csproj
 │   └── ProductoRepositoryTests.cs
 └── README.md
 ```
@@ -151,7 +151,7 @@ dotnet test --filter "FullyQualifiedName~Create_InsertsProduct"
 
 ## Casos de Uso
 
-- **Tests de repositorio**: Verificar queries correctas contra BD real
+- **Tests de repositorio**: Verificar consultas correctas contra BD real
 - **Tests de servicios**: Verificar lógica de negocio con datos reales
 - **Tests de migraciones**: Verificar que EF Core crea las tablas correctamente
 - **Tests de integración**: Verificar que componentes trabajan juntos

@@ -1,4 +1,4 @@
-# Ejemplo 03: PostgreSQL con Dapper y EF Core
+# Ejemplo 04: PostgreSQL con Dapper y EF Core
 
 ## Descripción
 
@@ -21,7 +21,7 @@ Este ejemplo muestra cómo realizar operaciones CRUD en PostgreSQL usando dos en
 
 ### Cuándo usar cada uno
 
-- **Dapper**: Consultas optimizadas, reports, alta performance
+- **Dapper**: Consultas optimizadas, informes, alto rendimiento
 - **EF Core**: CRUD estándar, prototipado rápido, proyectos medianos
 
 ### Docker Compose
@@ -72,10 +72,10 @@ docker-compose down
 ## Estructura
 
 ```
-03-PostgreSQL-Dapper-EFCore/
-├── 03-PostgreSQL-Dapper-EFCore.slnx
-├── 03-PostgreSQL-Dapper-EFCore/
-│   ├── 03-PostgreSQL-Dapper-EFCore.csproj
+04-PostgreSQL-Dapper-EFCore/
+├── 04-PostgreSQL-Dapper-EFCore.slnx
+├── 04-PostgreSQL-Dapper-EFCore/
+│   ├── 04-PostgreSQL-Dapper-EFCore.csproj
 │   ├── Program.cs
 │   ├── Models/
 │   │   └── Producto.cs

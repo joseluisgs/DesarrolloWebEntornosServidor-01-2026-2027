@@ -10,7 +10,7 @@
 
 # 12. Patrones y Arquitecturas en ASP.NET Core
 
-> 💡 **Punto de partida:** Si construyes una casa, no ponemos tuberías de agua por donde nos da la gana. Hay reglas: las tuberías de agua van juntas, las eléctricas van por otro sitio, y las dos nunca se cruzan. Lo mismo ocurre con el software: hay **patrones** que organizan el código de forma que sea manteniable, testeable y escalable.
+> 💡 **Punto de partida:** Si construyes una casa, no pones tuberías de agua por donde te da la gana. Hay reglas: las tuberías de agua van juntas, las eléctricas van por otro sitio, y las dos nunca se cruzan. Lo mismo ocurre con el software: hay **patrones** que organizan el código de forma que sea mantenible, fácil de probar y escalable.
 
 En este tema aprenderás los patrones más usados en ASP.NET Core (Repository, Service, Factory, Decorator) y cómo se organizan en una arquitectura limpia.
 
@@ -90,6 +90,7 @@ public interface IAcademiaService
 }
 
 // Implementación del Service
+// (GetByDni, Update y Delete se omiten por brevedad)
 public class AcademiaService(IPersonasRepository repository, IValidador<Persona> validador) : IAcademiaService
 {
     public Result<Persona> Save(Persona persona)
@@ -119,20 +120,20 @@ El patrón **Factory** crea objetos sin especificar la clase exacta. Es útil cu
 // Factory que crea el repositorio según la configuración
 public static class RepositoryFactory
 {
-    public static IPersonasRepository Create(string repositoryType)
+    public static IPersonasRepository Create(string repositoryType, AppDbContext context)
     {
         return repositoryType.ToLower() switch
         {
             "memory" => new PersonasMemoryRepository(),
             "json" => new PersonasJsonRepository(),
-            "efcore" => new PersonasEfRepository(),
+            "efcore" => new PersonasEfRepository(context),
             _ => new PersonasMemoryRepository()
         };
     }
 }
 
 // Uso
-var repo = RepositoryFactory.Create(AppConfig.RepositoryType);
+var repo = RepositoryFactory.Create(AppConfig.RepositoryType, context);
 ```
 
 > 📝 **Nota:** En la práctica, el Factory lo reemplaza la DI. En vez de crear un Factory manual, registras múltiples implementaciones en el contenedor de DI y resolves según la configuración.
@@ -160,7 +161,7 @@ public class PedidoServiceConLog(IPedidoService inner, ILogger<PedidoServiceConL
 }
 ```
 
-📌 **Ejemplo real:** `Polly` usa el patrón Decorator para añadir reintentos y circuit breakers a las llamadas HTTP. Envuelve a `HttpClient` con lógica de resiliencia.
+📌 **Ejemplo real:** `Polly` usa el patrón Decorator para añadir reintentos y cortacircuitos (*circuit breakers*) a las llamadas HTTP. Envuelve a `HttpClient` con lógica de resiliencia.
 
 ## 12.5. Clean Architecture
 
@@ -225,7 +226,7 @@ MiProyecto/
 
 - **Repository para datos, Service para negocio**: No mezclar responsabilidades
 - **Clean Architecture**: Dependencias hacia adentro. Nunca hacia afuera
-- **No crear interfaces por crear**: Solo cuando hay múltiples implementaciones o se necesita mocking
+- **No crear interfaces por crear**: Solo cuando hay múltiples implementaciones o se necesita simular (mock)
 - **SOLID progresivamente**: No todo desde el primer día, pero siempre con dirección correcta
 
 ---

@@ -26,9 +26,21 @@
     - [5.5.1. Tipos de APIs Web](#551-tipos-de-apis-web)
     - [5.5.2. REST APIs con Minimal APIs](#552-rest-apis-con-minimal-apis)
     - [5.5.3. WebSockets en ASP.NET Core](#553-websockets-en-aspnet-core)
-  - [5.6. Resumen](#56-resumen)
+
+
 
 # 5. Patrones y Arquitecturas en .NET
+
+> 💡 **Punto de partida:** ¿Por qué el código de un equipo senior en Netflix o Toyota se mantiene durante años y el de otros proyectos se vuelve inmantenible en meses? La diferencia está en principios como SOLID, patrones de diseño reutilizables y una arquitectura bien pensada.
+
+En este punto aprenderás los principios SOLID, los patrones de diseño clásicos (creación, estructurales, de comportamiento) y las arquitecturas modernas (capas, Clean, microservicios) con ejemplos en .NET y ASP.NET Core.
+
+**Objetivos de aprendizaje:**
+
+- Explicar y aplicar los cinco principios SOLID
+- Distinguir patrones de creación, estructurales y de comportamiento
+- Comparar monolítico, capas, Clean Architecture y microservicios
+- Configurar inyección de dependencias y Minimal APIs en ASP.NET Core
 
 Este capítulo aborda los fundamentos del diseño de software profesional: los principios SOLID, los patrones de diseño clásicos y las arquitecturas modernas que se utilizan en aplicaciones .NET.
 
@@ -60,14 +72,30 @@ graph LR
     S --> I["I - Interface Segregation"]
     S --> D["D - Dependency Inversion"]
     
-S1 -->|"Resultado"| M1["Código coherente"]
+    S1 -->|"Resultado"| M1["Código coherente"]
     O -->|"Resultado"| M2["Extensible sin modificar"]
     L -->|"Resultado"| M3["Herencia correcta"]
     I -->|"Resultado"| M4["Interfaces enfocadas"]
     D -->|"Resultado"| M5["Acoplamiento débil"]
 ```
 
-### SRP: Principio de Responsabilidad Única
+### 5.1.1. Analogía: SOLID como construcción de un edificio
+
+Imagina que estás construyendo un edificio de varios pisos:
+
+- **SRP** es como asignar un equipo especializado a cada oficio (electricistas, fontaneros, albañiles) en lugar de que uno haga todo
+- **OCP** es diseñar el edificio para poder añadir más pisos sin tener que reconstruir los existentes
+- **LSP** es usar materiales de sustitución que funcionen igual de bien que los originales
+- **ISP** es dar instrucciones específicas a cada trabajador en lugar de un manual enorme
+- **DIP** es que los pisos altos dependan de "conexiones" no de los materiales específicos del sótano
+
+📝 **Nota del Profesor**: SOLID no es un dogma, es una guía. A veces violas un principio por una buena razón, pero debes poder justificarla. En proyectos pequeños, aplicar SOLID rigurosamente puede ser excesivo.
+
+💡 **Tip del Examinador**: En el examen, ten claro el acrónimo y sé capaz de explicar cada principio con tus propias palabras. Los entrevistadores valoran más la comprensión conceptual que la memorización.
+
+### 5.1.2. SRP: Principio de Responsabilidad Única
+
+Una clase debe tener una, y solo una, razón para cambiar. Esto significa que una clase debe tener solo una tarea o responsabilidad.
 
 ```mermaid
 classDiagram
@@ -100,200 +128,9 @@ classDiagram
     ReportService ..> PrinterService : Refactorizado a
 ```
 
-### OCP: Principio Abierto/Cerrado
-
-```mermaid
-classDiagram
-    class Figura {
-        <<abstract>>
-        +CalcularArea() decimal
-    }
-    class Circulo {
-        +Radio decimal
-        +CalcularArea() decimal
-    }
-    class Cuadrado {
-        +Lado decimal
-        +CalcularArea() decimal
-    }
-    class Triangulo {
-        +Base decimal
-        +Altura decimal
-        +CalcularArea() decimal
-    }
-    class CalculadoraArea {
-        +SumarAreas(figuras List~Figura~) decimal
-    }
-    Figura <|-- Circulo
-    Figura <|-- Cuadrado
-    Figura <|-- Triangulo
-    CalculadoraArea --> Figura : Usa
-```
-
-### LSP: Principio de Sustitución de Liskov
-
-```mermaid
-classDiagram
-    class Ave {
-        <<abstract>>
-        +Volar()
-        +Cant()
-    }
-    class Pato {
-        +Volar()
-        +Cant()
-    }
-    class Aguila {
-        +Volar()
-        +Cant()
-    }
-    class Pinguino {
-        +Cant()  // No puede volar
-        -Nadar()
-    }
-    class Vehiculo {
-        <<abstract>>
-        +Arrancar()
-        +Detener()
-    }
-    class Coche {
-        +Arrancar()
-        +Detener()
-    }
-    class Bicicleta {
-        +Arrancar()
-        +Detener()
-    }
-    Ave <|-- Pato
-    Ave <|-- Aguila
-    Ave <|-- Pinguino
-    Vehiculo <|-- Coche
-    Vehiculo <|-- Bicicleta
-```
-
-### ISP: Principio de Segregación de Interfaces
-
-```mermaid
-classDiagram
-    class IDocumentoCompleto {
-        <<interface>>
-        +Imprimir()
-        +Escanear()
-        +Fax()
-        +Copiar()
-    }
-    class IImprimible {
-        <<interface>>
-        +Imprimir()
-    }
-    class IEscaneable {
-        <<interface>>
-        +Escanear()
-    }
-    class IFax {
-        <<interface>>
-        +Fax()
-    }
-    class ICopiable {
-        <<interface>>
-        +Copiar()
-    }
-    class DocumentoSimple {
-        +Imprimir()
-    }
-    class ImpresoraAvanzada {
-        +Imprimir()
-        +Escanear()
-        +Fax()
-        +Copiar()
-    }
-    class ScannerSimple {
-        +Escanear()
-    }
-    IDocumentoCompleto <|-- IImprimible
-    IDocumentoCompleto <|-- IEscaneable
-    IDocumentoCompleto <|-- IFax
-    IDocumentoCompleto <|-- ICopiable
-    DocumentoSimple --> IImprimible
-    ImpresoraAvanzada --> IImprimible
-    ImpresoraAvanzada --> IEscaneable
-    ImpresoraAvanzada --> IFax
-    ImpresoraAvanzada --> ICopiable
-    ScannerSimple --> IEscaneable
-```
-
-### DIP: Principio de Inversión de Dependencias
-
-```mermaid
-classDiagram
-    class ILogger {
-        <<interface>>
-        +Log(message string)
-    }
-    class FileLogger {
-        +Log(message string)
-    }
-    class DatabaseLogger {
-        +Log(message string)
-    }
-    class ConsoleLogger {
-        +Log(message string)
-    }
-    class OrderService {
-        -logger ILogger
-        +OrderService(logger ILogger)
-        +ProcesarOrden()
-    }
-    ILogger <|.. FileLogger
-    ILogger <|.. DatabaseLogger
-    ILogger <|.. ConsoleLogger
-    OrderService --> ILogger : Depende de
-```
-
-```mermaid
-sequenceDiagram
-    participant C as Cliente
-    participant OS as OrderService
-    participant Log as ILogger
-    participant FL as FileLogger
-
-    Note over C,FL: Dependency Inversion Principle
-
-    C->>OS: new OrderService(logger)
-
-    rect rgb(240, 248, 255)
-    Note over OS,Log: Depende de abstracción, no concreción
-
-    OS->>Log: Log("Orden procesada")
-    Log->>FL: Implementación FileLogger
-    FL-->>Log: Escribe archivo
-    Log-->>OS: Completado
-    end
-
-    OS->>C: Respuesta
-```
-
-### 5.1.1. Analogía: SOLID como construcción de un edificio
-
-Imagina que estás construyendo un edificio de varios pisos:
-
-- **SRP** es como asignar un equipo especializado a cada oficio (electricistas, fontaneros, albañiles) en lugar de que uno haga todo
-- **OCP** es diseñar el edificio para poder añadir más pisos sin tener que reconstruir los existentes
-- **LSP** es usar materiales de sustitución que funcionen igual de bien que los originales
-- **ISP** es dar instrucciones específicas a cada trabajador en lugar de un manual enorme
-- **DIP** es que los pisos altos dependan de "conexiones" no de los materiales específicos del sótano
-
-📝 **Nota del Profesor**: SOLID no es dogma, es guía. A veces violates un principio por una buena razón, pero debes poder justificarla. En proyectos pequeños, aplicar SOLID rigurosamente puede ser overkill.
-
-💡 **Tip del Examinador**: En el examen,know the acrónimo y sepuede explicar cada principio con tus propias palabras. Los entrevistadores valoran más la comprensión conceptual que la memorización.
-
-### 5.1.2. SRP: Principio de Responsabilidad Única
-
-Una clase debe tener una, y solo una, razón para cambiar. Esto significa que una clase debe tener solo una tarea o responsabilidad.
-
 ```mermaid
 graph TD
-    A["Clase con muchas responsabilidades"] -->|Refactorizar| B["Múlti clases especializadas"]
+    A["Clase con muchas responsabilidades"] -->|Refactorizar| B["Múltiples clases especializadas"]
     B --> C1["GenerarInforme"]
     B --> C2["ImprimirInforme"]
     B --> C3["EmailService"]
@@ -350,15 +187,43 @@ public class ServicioEmail
 }
 ```
 
-⚠️ **Advertencia**: No lleves el SRP al extremo. Una clase "Usuario" que solo tenga "ID" y nothing else es ridículo. El contexto importa.
+⚠️ **Advertencia**: No lleves el SRP al extremo. Una clase "Usuario" que solo tenga "ID" y nada más es ridículo. El contexto importa.
 
 ### 5.1.3. OCP: Principio Abierto/Cerrado
 
 Las entidades de software deben estar abiertas para la extensión, pero cerradas para la modificación.
 
 ```mermaid
+classDiagram
+    class Figura {
+        <<abstract>>
+        +CalcularArea() decimal
+    }
+    class Circulo {
+        +Radio decimal
+        +CalcularArea() decimal
+    }
+    class Cuadrado {
+        +Lado decimal
+        +CalcularArea() decimal
+    }
+    class Triangulo {
+        +Base decimal
+        +Altura decimal
+        +CalcularArea() decimal
+    }
+    class CalculadoraArea {
+        +SumarAreas(figuras List~Figura~) decimal
+    }
+    Figura <|-- Circulo
+    Figura <|-- Cuadrado
+    Figura <|-- Triangulo
+    CalculadoraArea --> Figura : Usa
+```
+
+```mermaid
 graph TD
-    A["Sistema cerrado<br/>a modificación"] -->|Abierto a| B["Extensión<br/>via herencia/interfaces"]
+    A["Sistema cerrado<br/>a modificación"] -->|Abierto a| B["Extensión<br/>vía herencia/interfaces"]
     
     subgraph "Extender sin modificar"
         C["Nueva forma: Triangulo"]
@@ -432,6 +297,45 @@ public class Triangulo : Forma
 
 Los objetos de una superclase deben poder ser reemplazados por objetos de una subclase sin afectar la corrección del programa.
 
+```mermaid
+classDiagram
+    class Ave {
+        <<abstract>>
+        +Volar()
+        +Cant()
+    }
+    class Pato {
+        +Volar()
+        +Cant()
+    }
+    class Aguila {
+        +Volar()
+        +Cant()
+    }
+    class Pinguino {
+        +Cant()  // No puede volar
+        -Nadar()
+    }
+    class Vehiculo {
+        <<abstract>>
+        +Arrancar()
+        +Detener()
+    }
+    class Coche {
+        +Arrancar()
+        +Detener()
+    }
+    class Bicicleta {
+        +Arrancar()
+        +Detener()
+    }
+    Ave <|-- Pato
+    Ave <|-- Aguila
+    Ave <|-- Pinguino
+    Vehiculo <|-- Coche
+    Vehiculo <|-- Bicicleta
+```
+
 **Ejemplo práctico:**
 
 ```csharp
@@ -487,11 +391,60 @@ public class Pinguino : Pajaro
 
 ### 🧠 Analogía: El LSP en la vida real
 
-Imagina un contrato que dice "todo vehículo tiene un método acelerar()". Si diseñas un bicycle (bicicleta) que lanza excepción cuando llamas a acelerar(), estás violando el LSP. La solución es: o el bicycle no implementa IVehiculo, o creas una interfaz IMotorizado para vehículos con motor.
+Imagina un contrato que dice "todo vehículo tiene un método acelerar()". Si diseñas una bicicleta que lanza excepción cuando llamas a acelerar(), estás violando el LSP. La solución es: o la bicicleta no implementa IVehiculo, o creas una interfaz IMotorizado para vehículos con motor.
 
 ### 5.1.5. ISP: Principio de Segregación de Interfaces
 
 Los clientes no deben ser forzados a depender de interfaces que no usan.
+
+```mermaid
+classDiagram
+    class IDocumentoCompleto {
+        <<interface>>
+        +Imprimir()
+        +Escanear()
+        +Fax()
+        +Copiar()
+    }
+    class IImprimible {
+        <<interface>>
+        +Imprimir()
+    }
+    class IEscaneable {
+        <<interface>>
+        +Escanear()
+    }
+    class IFax {
+        <<interface>>
+        +Fax()
+    }
+    class ICopiable {
+        <<interface>>
+        +Copiar()
+    }
+    class DocumentoSimple {
+        +Imprimir()
+    }
+    class ImpresoraAvanzada {
+        +Imprimir()
+        +Escanear()
+        +Fax()
+        +Copiar()
+    }
+    class ScannerSimple {
+        +Escanear()
+    }
+    IDocumentoCompleto <|-- IImprimible
+    IDocumentoCompleto <|-- IEscaneable
+    IDocumentoCompleto <|-- IFax
+    IDocumentoCompleto <|-- ICopiable
+    DocumentoSimple --> IImprimible
+    ImpresoraAvanzada --> IImprimible
+    ImpresoraAvanzada --> IEscaneable
+    ImpresoraAvanzada --> IFax
+    ImpresoraAvanzada --> ICopiable
+    ScannerSimple --> IEscaneable
+```
 
 ```mermaid
 graph TD
@@ -563,6 +516,55 @@ public class Robot : ITrabajable
 Los módulos de alto nivel no deben depender de los módulos de bajo nivel. Ambos deben depender de abstracciones.
 
 ```mermaid
+classDiagram
+    class ILogger {
+        <<interface>>
+        +Log(message string)
+    }
+    class FileLogger {
+        +Log(message string)
+    }
+    class DatabaseLogger {
+        +Log(message string)
+    }
+    class ConsoleLogger {
+        +Log(message string)
+    }
+    class OrderService {
+        -logger ILogger
+        +OrderService(logger ILogger)
+        +ProcesarOrden()
+    }
+    ILogger <|.. FileLogger
+    ILogger <|.. DatabaseLogger
+    ILogger <|.. ConsoleLogger
+    OrderService --> ILogger : Depende de
+```
+
+```mermaid
+sequenceDiagram
+    participant C as Cliente
+    participant OS as OrderService
+    participant Log as ILogger
+    participant FL as FileLogger
+
+    Note over C,FL: Dependency Inversion Principle
+
+    C->>OS: new OrderService(logger)
+
+    rect rgb(240, 248, 255)
+    Note over OS,Log: Depende de abstracción, no concreción
+
+    OS->>Log: Log("Orden procesada")
+    Log->>FL: Implementación FileLogger
+    FL-->>Log: Escribe archivo
+    Log-->>OS: Completado
+    end
+
+    OS->>C: Respuesta
+```
+
+```mermaid
 graph TD
     A["Módulo alto nivel"] -->|"Depende de<br/>abstracción"| B["Interfaz IDatabase"]
     B --> C["MySqlDatabase"]
@@ -625,7 +627,9 @@ app.GuardarDatos("Datos importantes");
 
 ## 5.2. Patrones de Diseño
 
-Los patrones de diseño son soluciones probadas a problemas comunes en el desarrollo de software. No son código copy-paste, son plantillas de pensamiento.
+Los patrones de diseño son soluciones probadas a problemas comunes en el desarrollo de software. No son código de copiar y pegar, son plantillas de pensamiento.
+
+📌 Ejemplo real: La Tienda (TiendaDawApi-NetCore) usa el patrón **Strategy** cuando cambia el repositorio de pedidos entre MongoDB y EF Core según `appsettings.json`, y el patrón **Repository** para no pegar SQL en los services. Netflix usa **Observer** cada vez que le das a "Me gusta" y se actualiza el contador para todos los suscriptores.
 
 ### 5.2.1. Patrones de Creación
 
@@ -776,10 +780,10 @@ graph TD
     B --> C["Domain Layer"]
     C --> D["Infrastructure Layer"]
     
-    style A fill:#FFCC80
-    style B fill:#81D4FA
-    style C fill:#4CAF50
-    style D fill:#B39DDB
+    style A fill:#FF9800,color:#fff
+    style B fill:#2196F3,color:#fff
+    style C fill:#4CAF50,color:#fff
+    style D fill:#9C27B0,color:#fff
 ```
 
 ### 5.3.4. Clean Architecture
@@ -818,7 +822,7 @@ graph LR
     style P fill:#4CAF50
     style PE fill:#2196F3
     style I fill:#FF9800
-    style N fill:#00BCD4
+    style N fill:#2196F3
 ```
 
 **Características:**
@@ -954,6 +958,7 @@ public class PedidoService(IInventarioApi inventarioApi)
         });
 
         // Crear pedido...
+        var pedido = new Pedido { ProductoId = request.ProductoId, Cantidad = request.Cantidad };
         return Result.Success(pedido);
     }
 }
@@ -1102,12 +1107,28 @@ async Task Echo(WebSocket webSocket)
 app.Run();
 ```
 
-## 5.6. Resumen
-En este capítulo hemos explorado los principios SOLID, patrones de diseño y arquitecturas de software esenciales para desarrollar aplicaciones .NET robustas y mantenibles. Hemos visto cómo aplicar estos conceptos en proyectos reales, desde la estructura del código hasta la comunicación entre microservicios y la creación de APIs web modernas con ASP.NET Core. Al dominar estos fundamentos, estarás mejor preparado para enfrentar desafíos complejos en el desarrollo de software profesional.
+**Buenas prácticas:**
 
-Los principios SOLID son:
-- SRP: Mantén las clases enfocadas en una sola responsabilidad.
-- OCP: Diseña para la extensión sin modificar el código existente.
-- LSP: Asegura que las subclases puedan sustituir a sus superclases sin problemas.
-- ISP: Crea interfaces específicas y enfocadas.
-- DIP: Invierte las dependencias para lograr un acoplamiento débil.
+- Aplica SOLID donde aporte mantenibilidad; no dogmatizes en prototipos de una tarde
+- Prefiere composición sobre herencia cuando ambas sirvan
+- Empieza con un monolítico bien estructurado; extrae microservicios solo cuando haya una razón real (escalado independiente, equipos separados)
+- Registra siempre las dependencias en `Program.cs` con los `Config` classes
+
+---
+
+**Resumen del punto:**
+
+| Concepto | Descripción |
+|----------|-------------|
+| **SOLID** | SRP, OCP, LSP, ISP, DIP: cinco principios para código mantenible |
+| **Patrones de creación** | Singleton, Factory Method, Abstract Factory, Builder, Prototype |
+| **Patrones estructurales** | Adapter, Bridge, Composite, Decorator, Facade, Proxy |
+| **Patrones de comportamiento** | Strategy, Observer, Command, Iterator, Template Method |
+| **Monolítico / Capas / Clean** | Tres niveles de estructura; Clean separa por dependencias |
+| **Microservicios** | Servicios pequeños e independientes que se comunican por red |
+| **Inyección de dependencias** | Implementación práctica del DIP; integrada en ASP.NET Core |
+| **Minimal APIs / WebSockets** | APIs ligeras por endpoints y comunicación bidireccional |
+
+**¿Qué viene después?**
+
+En el siguiente punto entraremos en los tipos de datos y colecciones de C#: tipos por valor, tipos por referencia, `List<T>`, diccionarios, LINQ y programación funcional.

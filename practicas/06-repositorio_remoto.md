@@ -181,7 +181,7 @@ sequenceDiagram
 | **EF Core + SQLite** | BD local | `Microsoft.EntityFrameworkCore.Sqlite` |
 | **Refit** | Cliente HTTP tipado | `Refit` + `Refit.HttpClientFactory` |
 | **CSharpFunctionalExtensions** | Manejo de errores con Result | `CSharpFunctionalExtensions` |
-| **Serilog** | Logging con rolling files | `Serilog.Extensions.Hosting` + `Serilog.Sinks.Console` + `Serilog.Sinks.File` |
+| **Serilog** | Logging con rotación de ficheros | `Serilog.Extensions.Hosting` + `Serilog.Sinks.Console` + `Serilog.Sinks.File` |
 | **System.Reactive** | Notificaciones con Rx.NET | `System.Reactive` |
 | **NUnit + Moq + FluentAssertions** | Testing | `NUnit` + `Moq` + `FluentAssertions` |
 
@@ -312,7 +312,7 @@ Requisitos:
 - ✅ Modelo de dominio, DTOs (request/response), entidades EF Core
 - ✅ Mapeos entre DTOs, entidades y dominio
 - ✅ Result<T, DomainError> con CSharpFunctionalExtensions
-- ✅ Configuración externa via `appsettings.json` + `IOptions<T>`
+- ✅ Configuración externa vía `appsettings.json` + `IOptions<T>`
 - ✅ Código documentado con XMLDoc
 
 ### Testing:

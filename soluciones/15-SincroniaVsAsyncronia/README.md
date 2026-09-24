@@ -36,7 +36,7 @@ El ejemplo usa **Serilog** con `ILogger` para mostrar el **Thread ID** de cada o
 [13:40:01.458] [DBG] Thread:2 📄 JSON Sync: leyendo...     ← Thread 2 (mismo)
 ```
 
-Mismo thread = secuencial. Distintos threads = paralelo.
+Mismo hilo = secuencial. Distintos hilos = paralelo.
 
 ## Tres enfoques
 
@@ -62,7 +62,7 @@ var sqlite = await LeerSqliteAsync("productos.db");  // Espera...
 // Total ≈ tiempo síncrono (¡NO hay paralelismo!)
 ```
 
-**Error común:** La gente piensa que `async/await` automáticamente paralleliza. **NO.** Cada `await` pausa la ejecución hasta que termine esa tarea antes de pasar a la siguiente.
+**Error común:** La gente piensa que `async/await` automáticamente paraleliza. **NO.** Cada `await` pausa la ejecución hasta que termine esa tarea antes de pasar a la siguiente.
 
 **Analogía:** Es como ir al supermercado pero diciendo "voy a buscar la leche... *espero a que vuelva*... ahora voy a buscar el pan... *espero a que vuelva*...". Sigue siendo secuencial.
 
@@ -110,7 +110,7 @@ flowchart LR
 
 | Escenario | Enfoque | ¿Por qué? |
 |-----------|---------|------------|
-| Script simple, pocos datos | Síncrono | Más fácil de leer y debuggear |
+| Script simple, pocos datos | Síncrono | Más fácil de leer y depurar |
 | Un solo proceso I/O | Async/await | Libera el hilo mientras espera |
 | Varios procesos I/O independientes | Task.WhenAll | Paralelismo real, mucho más rápido |
 | Procesos con dependencias | Async/await | Uno necesita el resultado del otro |

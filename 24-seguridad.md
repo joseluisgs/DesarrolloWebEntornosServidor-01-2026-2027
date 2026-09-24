@@ -383,7 +383,7 @@ public class AuthService(IPersonaRepository repository, PasswordService password
             return Result.Failure<string>("Credenciales incorrectas");
 
         // Generar token
-        string token = _tokenService.GenerarToken(persona.Id, persona.Email, "User");
+        string token = tokenService.GenerarToken(persona.Id, persona.Email, "User");
         return Result.Success(token);
     }
 }
@@ -393,9 +393,9 @@ public class AuthService(IPersonaRepository repository, PasswordService password
 
 📌 **Ejemplo real:** Cuando Instagram guarda tu contraseña, la hashea con BCrypt. Cuando haces login, hashea la contraseña que introduces y la compara con el hash almacenado. Si coinciden, ¡accesas! Si no, "credenciales incorrectas".
 
-## 24.5. CORS: Orígenes Permitidos
+## 24.6. CORS: Orígenes Permitidos
 
-**CORS** (Cross-Origin Resource Sharing) controla qué dominios pueden acceder a tu API. Sin CORS, un script malicioso en `evil.com` no podría hacer peticiones a `tudominio.com`.
+**CORS** (Cross-Origin Resource Sharing) controla qué dominios pueden acceder a tu API desde el navegador. Sin estas cabeceras, un script malicioso en `evil.com` no podría leer la respuesta de `tudominio.com` (aunque el navegador sí llega a enviar la petición simple).
 
 ### Configuración
 
@@ -452,7 +452,7 @@ builder.Services.AddCors(options =>
 | `Access-Control-Allow-Credentials` | Permitir cookies |
 | `Access-Control-Max-Age` | Tiempo de caché del preflight |
 
-## 24.6. HTTPS: Comunicación Segura
+## 24.7. HTTPS: Comunicación Segura
 
 **HTTPS** es HTTP con cifrado SSL/TLS. La "S" significa **Secure**.
 
@@ -606,10 +606,10 @@ El **OWASP Top 10** es la lista de las 10 vulnerabilidades de seguridad más com
 | **A01** | Broken Access Control | Acceso no autorizado a recursos | Autorización en cada endpoint |
 | **A02** | Cryptographic Failures | Datos sensibles mal protegidos | Cifrado en reposo y tránsito |
 | **A03** | Injection | Inyección de código (SQL, XSS) | Validación + parametrización |
-| **A04** | Insecure Design | Diseño sin seguridad | Threat modeling |
-| **A05** | Security Misconfiguration | Configuración por defecto insegura | Hardening + configuración mínima |
+| **A04** | Insecure Design | Diseño sin seguridad | Modelado de amenazas |
+| **A05** | Security Misconfiguration | Configuración por defecto insegura | Endurecimiento (hardening) + configuración mínima |
 | **A06** | Vulnerable Components | Librerías con CVEs conocidos | `dotnet list package --vulnerable` |
-| **A07** | Auth Failures | Autenticación débil | MFA + rate limiting |
+| **A07** | Auth Failures | Autenticación débil | MFA y límite de peticiones (rate limiting) |
 | **A08** | Data Integrity Failures | Fallo en verificación de datos | Firmas digitales |
 | **A09** | Logging Failures | Logs insuficientes | Logging estructurado |
 | **A10** | SSRF | Server-Side Request Forgery | Validar URLs de destino |
@@ -617,12 +617,14 @@ El **OWASP Top 10** es la lista de las 10 vulnerabilidades de seguridad más com
 ### Ejemplos de prevención
 
 ```csharp
+using System.Net; // Al inicio del fichero
+
 // A03: SQL Injection — USAR PARÁMETROS, NUNCA CONCATENAR
 // ❌ MALO
-var query = $"SELECT * FROM Usuarios WHERE Email = '{email}'";
+var queryInsegura = $"SELECT * FROM Usuarios WHERE Email = '{email}'";
 
 // ✅ BUENO
-var query = "SELECT * FROM Usuarios WHERE Email = @Email";
+var querySegura = "SELECT * FROM Usuarios WHERE Email = @Email";
 command.Parameters.AddWithValue("@Email", email);
 
 // A03: XSS — SANITIZAR ENTRADAS
@@ -630,7 +632,6 @@ command.Parameters.AddWithValue("@Email", email);
 string input = "<script>alert('hacked')</script>";
 
 // ✅ BUENO: Sanitizar
-using System.Net;
 string safe = WebUtility.HtmlEncode(input);
 
 // A07: Rate Limiting
@@ -648,8 +649,8 @@ builder.Services.AddRateLimiter(options =>
 
 ## 24.11. Buenas Prácticas
 
-- **JWT con Refresh Token**: Access Token corto (15min), Refresh Token largo (7días)
-- **NUNCA passwords en texto plano**: BCrypt o Argon2 siempre
+- **JWT con Refresh Token**: Access Token corto (15 min), Refresh Token largo (7 días)
+- **NUNCA contraseñas en texto plano**: BCrypt o Argon2 siempre
 - **CORS restrictivo**: Solo orígenes conocidos en producción
 - **Rate Limiting**: Protege contra fuerza bruta y abusos
 
@@ -671,7 +672,7 @@ builder.Services.AddRateLimiter(options =>
 | **OWASP Top 10** | Las 10 vulnerabilidades web más comunes |
 | **SQL Injection** | Inyección de código SQL, se previene con parámetros |
 | **XSS** | Cross-Site Scripting, se previene sanitizando entradas |
-| **Rate Limiting** | Limitar peticiones por usuario/timeframe |
+| **Rate Limiting** | Limitar peticiones por usuario y ventana de tiempo |
 
 **¿Qué viene después?**
 

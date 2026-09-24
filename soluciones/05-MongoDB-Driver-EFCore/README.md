@@ -1,4 +1,4 @@
-# Ejemplo 04: MongoDB con Driver y EF Core
+# Ejemplo 05: MongoDB con Driver y EF Core
 
 ## Descripción
 
@@ -47,7 +47,7 @@ Acceso a Mongo Express: `http://localhost:8081`
 MongoDB usa `ObjectId` como identificador único. Es un valor de 12 bytes que contiene:
 - Timestamp (4 bytes)
 - Machine ID (5 bytes)
-- Process ID (3 bytes)
+- Process ID (2 bytes)
 - Counter (3 bytes)
 
 ```csharp
@@ -82,10 +82,10 @@ docker-compose down
 ## Estructura
 
 ```
-04-MongoDB-Driver-EFCore/
-├── 04-MongoDB-Driver-EFCore.slnx
-├── 04-MongoDB-Driver-EFCore/
-│   ├── 04-MongoDB-Driver-EFCore.csproj
+05-MongoDB-Driver-EFCore/
+├── 05-MongoDB-Driver-EFCore.slnx
+├── 05-MongoDB-Driver-EFCore/
+│   ├── 05-MongoDB-Driver-EFCore.csproj
 │   ├── Program.cs
 │   ├── Models/
 │   │   └── Producto.cs

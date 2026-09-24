@@ -46,16 +46,16 @@ graph LR
 | **Staging** | Entorno igual al de producción | Docker, Podman, Docker/Podman Compose |
 | **Producción** | Servidor real accesible por usuarios | Azure, AWS, Nginx |
 
-📌 **Ejemplo real:** Cuando Netflix despliega una nueva versión, no lo hace directamente a todos los usuarios. Primero lo prueba con un 1% de usuarios (Canary Release), si funciona bien, lo amplía al 10%, luego al 50% y finalmente al 100%. Así minimiza el riesgo de errores.
+📌 **Ejemplo real:** Cuando Netflix despliega una nueva versión, no lo hace directamente a todos los usuarios. Primero lo prueba con un 1 % de usuarios (Canary Release); si funciona bien, lo amplía al 10 %, luego al 50 % y finalmente al 100 %. Así minimiza el riesgo de errores.
 
 Para desplegar una aplicación web necesitas varios elementos:
 
 | Elemento | Descripción | Ejemplo |
 |----------|-------------|---------|
-| **Software** | S.O., servidores, runtimes | Linux, Nginx, .NET Runtime |
+| **Software** | S.O., servidores, entornos de ejecución | Linux, Nginx, .NET Runtime |
 | **Hardware** | CPU, RAM, disco, red | Servidor virtual en Azure |
-| **Dependencias** | Librerías y paquetes | Entity Framework Core, Dapper |
-| **Configuración** | Variables de entorno, secrets | Connection strings, API keys |
+| **Dependencias** | Bibliotecas y paquetes | Entity Framework Core, Dapper |
+| **Configuración** | Variables de entorno, secretos | Connection strings, API keys |
 
 > 💡 **Consejo:** En el tema 01 ya vimos el despliegue. Ahora profundizaremos en cómo hacerlo de forma profesional: con contenedores, orquestación y automatización.
 
@@ -131,7 +131,7 @@ Los **contenedores** empaquetan una aplicación con todas sus dependencias en un
 
 > "En mi máquina funcionaba" → **Se acabó el problema.**
 
-Si funciona en tu contenedor, funciona en el servidor, en la nube, en tu compañero's ordenador. Los contenedores eliminan los problemas de "dependencias" y "versiones".
+Si funciona en tu contenedor, funciona en el servidor, en la nube, en el ordenador de tu compañero. Los contenedores eliminan los problemas de "dependencias" y "versiones".
 
 ```mermaid
 graph LR
@@ -212,7 +212,7 @@ docker compose down                # Parar servicios
 
 ### Podman
 
-**Podman** es una alternativa a Docker desarrollada por Red Hat. La principal diferencia es que **no usa daemon** (es daemonless) y funciona **rootless** (sin permisos de administrador) por defecto.
+**Podman** es una alternativa a Docker desarrollada por Red Hat. La principal diferencia es que **no usa demonio (daemon)** y funciona **sin permisos de administrador (rootless)** por defecto.
 
 #### Compatibilidad con Dockerfile
 
@@ -262,7 +262,7 @@ podman compose down
 | **Windows** | Docker Desktop | Podman Desktop |
 | **Uso típico** | Desarrollo y producción | Servidores Linux, entornos seguros |
 
-> 📝 **Nota:** Para desarrollo local, ambos funcionan igual. En servidores Linux, Podman es popular por su seguridad (rootless). En la nube, Docker sigue siendo el más used.
+> 📝 **Nota:** Para desarrollo local, ambos funcionan igual. En servidores Linux, Podman es popular por su seguridad (rootless). En la nube, Docker sigue siendo el más usado.
 
 📌 **Ejemplo real:** Red Hat, Fedora y CentOS usan Podman como contenedor por defecto. Docker sigue siendo el estándar en la mayoría de la nube (AWS, Azure, GCP).
 
@@ -279,7 +279,7 @@ podman compose down
 
 ```mermaid
 graph TD
-    LB["⚖️ Load Balancer"] --> P1["📦 Pod 1<br/>(Contenedor App)"]
+    LB["⚖️ Balanceador de Carga"] --> P1["📦 Pod 1<br/>(Contenedor App)"]
     LB --> P2["📦 Pod 2<br/>(Contenedor App)"]
     LB --> P3["📦 Pod 3<br/>(Contenedor App)"]
     P1 --> DB["🗄️ Base de Datos"]
@@ -306,7 +306,7 @@ graph TD
 
 ## 9.5. Despliegue en la Nube
 
-Ya no compramos servidores físicos ("On-premise"), los alquilamos por segundos. Esto se conoce como **Cloud Computing**.
+Ya no compramos servidores físicos (en nuestras instalaciones, *on-premise*): los alquilamos por segundos. Esto se conoce como **computación en la nube** (*cloud computing*).
 
 | Modelo | Descripción | Tú gestionas | El proveedor gestiona | Ejemplos |
 |--------|-------------|-------------|----------------------|----------|
@@ -377,13 +377,13 @@ sequenceDiagram
 
 | Herramienta | Tipo | Descripción |
 |-------------|------|-------------|
-| **GitHub Actions** | Cloud | Integrado con GitHub, gratis para repos públicos |
-| **GitLab CI/CD** | Cloud | Integrado con GitLab |
-| **Jenkins** | On-premise | El más popular, open source |
-| **Azure DevOps** | Cloud | Suite completa de Microsoft |
-| **Docker Hub** | Cloud | Almacena imágenes Docker |
+| **GitHub Actions** | Nube | Integrado con GitHub, gratis para repos públicos |
+| **GitLab CI/CD** | Nube | Integrado con GitLab |
+| **Jenkins** | Instalación local | El más popular, código abierto |
+| **Azure DevOps** | Nube | Suite completa de Microsoft |
+| **Docker Hub** | Nube | Almacena imágenes Docker |
 
-📌 **Ejemplo real:** Cuando haces `git push` a GitHub, GitHub Actions ejecuta automáticamente los tests del proyecto. Si pasan, builda una imagen Docker y la publica. Si falla, te envía un email con el error. Todo esto sin intervención manual.
+📌 **Ejemplo real:** Cuando haces `git push` a GitHub, GitHub Actions ejecuta automáticamente los tests del proyecto. Si pasan, genera una imagen Docker y la publica. Si falla, te envía un email con el error. Todo esto sin intervención manual.
 
 > ⚠️ **Advertencia:** Nunca despliegues a producción sin pasar por entornos de prueba. El flujo correcto es: **Desarrollo → Tests → Staging → Producción**. Saltarse pasos es la causa principal de errores en producción.
 
@@ -392,9 +392,9 @@ sequenceDiagram
 ## 9.7. Buenas Prácticas
 
 - **Contenedores desde el día 1**: Docker para desarrollo. Kubernetes solo cuando sea necesario
-- **CI/CD automatizado**: Commit → Tests → Build → Deploy. Nunca desplegar manualmente
+- **CI/CD automatizado**: Commit → Tests → Compilación → Despliegue. Nunca desplegar manualmente
 - **Nunca desplegar directamente**: Usa pipelines automatizados. El desarrollador no despliega
-- **Cloud managed services**: Azure, AWS simplifican el despliegue. No reinventes la infraestructura
+- **Servicios gestionados en la nube**: Azure y AWS simplifican el despliegue. No reinventes la infraestructura
 
 ---
 

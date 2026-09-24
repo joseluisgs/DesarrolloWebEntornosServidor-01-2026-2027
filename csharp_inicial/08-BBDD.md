@@ -1,4 +1,4 @@
-﻿- [8. Bases de Datos Relacionales en .NET](#8-bases-de-datos-relacionales-en-net)
+- [8. Bases de Datos Relacionales en .NET](#8-bases-de-datos-relacionales-en-net)
     - [8.1.0. Instalación de Librerías](#810-instalación-de-librerías)
   - [8.1. Acceso a bases de datos en .NET](#81-acceso-a-bases-de-datos-en-net)
     - [8.1.1. ADO.NET: El nivel más bajo](#811-adonet-el-nivel-más-bajo)
@@ -32,9 +32,20 @@
       - [8.6.3.2. Seed Data con servicio (En tiempo de ejecución)](#8632-seed-data-con-servicio-en-tiempo-de-ejecución)
       - [8.6.3.3. Seed Data con archivos JSON](#8633-seed-data-con-archivos-json)
       - [8.6.3.4. Comparación de métodos de Seed Data](#8634-comparación-de-métodos-de-seed-data)
-  - [8.7. Resumen](#87-resumen)
+
+
 
 # 8. Bases de Datos Relacionales en .NET
+
+> 💡 **Punto de partida:** ¿Dónde guarda Netflix tus favoritos o Glovo tus pedidos anteriores? En una base de datos. En este punto aprenderás a conectar tu app C# a bases de datos relacionales, desde el nivel más bajo (ADO.NET) hasta un ORM completo como EF Core.
+
+**Objetivos de aprendizaje:**
+
+- Conocer las opciones de acceso a datos en .NET (ADO.NET, Dapper, EF Core)
+- Modelar entidades y relaciones con Entity Framework Core
+- Aplicar el patrón Repository y realizar CRUD con migraciones
+
+📌 Ejemplo real: La Tienda (TiendaDawApi-NetCore) usa EF Core con SQLite/PostgreSQL para persistir productos y pedidos, y el patrón Repository para aislar el acceso a datos.
 
 El acceso a datos es uno de los pilares fundamentales de cualquier aplicación empresarial. .NET proporciona un ecosistema completo de tecnologías para interactuar con bases de datos relacionales, desde el acceso de bajo nivel con ADO.NET hasta el mapeo objeto-relacional completo con Entity Framework Core. La elección de la tecnología apropiada depende del contexto del proyecto, los requisitos de rendimiento, y la complejidad del dominio.
 
@@ -274,7 +285,7 @@ namespace BBDD.Dapper;
                     if (!customerDictionary.TryGetValue(customer.Id, out var custEntry))
                     {
                         custEntry = customer;
-                        custEntry.Orders = List<Order>();
+                        custEntry.Orders = new List<Order>();
                         customerDictionary.Add(customer.Id, custEntry);
                     }
                     if (order is not null)
@@ -424,8 +435,8 @@ flowchart TD
     B3 -->|Guarda cambios| C1
     
     style EF fill:#9C27B0
-    style B1 fill:#E8F5E9
-    style B2 fill:#E8F5E9
+    style B1 fill:#4CAF50,color:#fff
+    style B2 fill:#4CAF50,color:#fff
 ```
 
 ### 8.2.2. Partes del DbContext
@@ -640,7 +651,7 @@ namespace BBDD.EFCore.Relaciones.DataAnnotations;
         public decimal Price { get; set; }
 
         // Colección de categorías (sin clave foránea explícita)
-        public ICollection<Category> Categories { get; set; } = List<Category>();
+        public ICollection<Category> Categories { get; set; } = new List<Category>();
     }
 
     public class Category
@@ -652,7 +663,7 @@ namespace BBDD.EFCore.Relaciones.DataAnnotations;
         public string Name { get; set; } = "";
 
         // Colección de productos (bidireccional)
-        public ICollection<Product> Products { get; set; } = List<Product>();
+        public ICollection<Product> Products { get; set; } = new List<Product>();
     }
 }
 ```
@@ -734,14 +745,14 @@ namespace BBDD.EFCore.Relaciones.Fluent;
         public int Id { get; set; }
         public string Name { get; set; } = "";
         public decimal Price { get; set; }
-        public ICollection<Category> Categories { get; set; } = List<Category>();
+        public ICollection<Category> Categories { get; set; } = new List<Category>();
     }
 
     public class Category
     {
         public int Id { get; set; }
         public string Name { get; set; } = "";
-        public ICollection<Product> Products { get; set; } = List<Product>();
+        public ICollection<Product> Products { get; set; } = new List<Product>();
     }
 }
 ```
@@ -1565,7 +1576,7 @@ namespace BBDD.EFCore.SeedData.Service;
 
             logger.LogInformation("Insertando Seed Data...");
 
-            var categorias = List<Category>
+            var categorias = new List<Category>
             {
                 new Category { Name = "Electronics" },
                 new Category { Name = "Accessories" },
@@ -1573,7 +1584,7 @@ namespace BBDD.EFCore.SeedData.Service;
             };
             await context.Categories.AddRangeAsync(categorias);
 
-            var productos = List<Product>
+            var productos = new List<Product>
             {
                 new Product { Name = "Laptop", Price = 999.99m, Stock = 50 },
                 new Product { Name = "Mouse", Price = 29.99m, Stock = 200 },
@@ -1627,7 +1638,16 @@ namespace BBDD.EFCore.SeedData.Json;
 
 💡 **Tip**: Usa **HasData** para datos de referencia (estados, tipos) que cambian poco. Usa **Servicio** para datos que necesitan regenerarse frecuentemente.
 
-## 8.7. Resumen
+**Buenas prácticas:**
+
+- Mantén el SQL crítico fuera de las consultas LINQ generadas cuando necesites control total
+- Usa `AsNoTracking()` en consultas de solo lectura para mejorar el rendimiento
+- Aplica el patrón Repository para aislar el acceso a datos y facilitar los tests
+- Versiona los cambios de esquema con migraciones, nunca a mano en producción
+
+---
+
+**Resumen del punto:**
 
 El acceso a datos en .NET ofrece un espectro de tecnologías:
 
@@ -1654,3 +1674,7 @@ El acceso a datos en .NET ofrece un espectro de tecnologías:
 **Migraciones**
 - Code First migrations versiona el esquema
 - Seed data inicializa datos necesarios
+
+**¿Qué viene después?**
+
+En el siguiente punto veremos el testing en .NET: tests unitarios con NUnit, mocking con Moq y tests de integración.

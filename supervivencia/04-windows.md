@@ -149,7 +149,7 @@ $env:MI_VAR = "valor"
 | `Ctrl + L` | Limpiar pantalla |
 | `F7` | Historial de comandos |
 | `Ctrl + R` | Buscar en historial |
-| `Ctrl + Space` | Intellisense |
+| `Ctrl + Space` | IntelliSense |
 | `F8` | Buscar en historial (por texto) |
 
 ## Comandos útiles de desarrollo

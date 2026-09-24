@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="07-Refit/07-Refit.csproj" />
+  <Project Path="07-Refit.Tests/07-Refit.Tests.csproj" />
+</Solution>

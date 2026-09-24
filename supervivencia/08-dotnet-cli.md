@@ -244,6 +244,7 @@ dotnet-trace collect --process-id <PID> \
 
 > 🔧 **Truco:** SpeedScope es gratis y te muestra un flame graph interactivo. Mucho más claro que leer logs de rendimiento.
 
+```bash
 # ─── DUMP (volcado de memoria) ────────────────────────────────
 # Crear dump de un proceso
 dotnet dump collect --process-id <PID>
@@ -261,6 +262,7 @@ dotnet dump analyze <archivo.dump>
 
 > ⚠️ **Advertencia:** `dotnet dump collect` puede pesar varios MB. No lo dejes corriendo en producción — solo úsalo para diagnosticar un problema concreto.
 
+```bash
 # ─── COUNTERS (métricas en tiempo real) ────────────────────────
 # Monitorizar métricas en vivo
 dotnet-counters monitor --process-id <PID>
@@ -296,7 +298,7 @@ dotnet --version
 
 > 💡 **Consejo:** Si `dotnet --version` muestra algo viejo, puede que tengas varios SDKs instalados. Comprueba con `dotnet --list-sdks` y usa `global.json` para fijar la versión.
 
-> 🔧 **Truco:** Para configurar el nivel de warnings en todo el proyecto, añade `<TreatWarningsAsErrors>true</TreatWarningsAsErrors>` en el `.csproj`. Así compilerá como errores lo que normalmente son warnings — ¡buen hábito!
+> 🔧 **Truco:** Para configurar el nivel de avisos en todo el proyecto, añade `<TreatWarningsAsErrors>true</TreatWarningsAsErrors>` en el `.csproj`. Así compilará como errores lo que normalmente son avisos — ¡buen hábito!
 
 ## Comandos rápidos
 
@@ -310,4 +312,4 @@ dotnet new --help
 dotnet run --help
 ```
 
-> 💡 **Analogía:** `dotnet --help` es como la wikipedia de cada comando. Si no recuerdas un flag, ¡míralo ahí! Es mejor que buscar en Google.
+> 💡 **Analogía:** `dotnet --help` es como la Wikipedia de cada comando. Si no recuerdas una opción, ¡míralo ahí! Es mejor que buscar en Google.

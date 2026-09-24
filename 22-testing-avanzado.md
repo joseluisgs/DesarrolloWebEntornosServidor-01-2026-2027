@@ -3,9 +3,13 @@
   - [22.2. FluentAssertions: Aserciones Expresivas](#222-fluentassertions-aserciones-expresivas)
   - [22.3. Moq: Mocking de Interfaces](#223-moq-mocking-de-interfaces)
   - [22.4. Patrón AAA: Arrange-Act-Assert](#224-patrón-aaa-arrange-act-assert)
-  - [22.5. TestContainers: Tests con Docker](#225-testcontainers-tests-con-docker)
+  - [22.5. Testcontainers: Tests con Docker](#225-testcontainers-tests-con-docker)
     - [22.5.1. Coverlet: Cobertura de Código](#2251-coverlet-cobertura-de-código)
   - [22.6. Depuración de Errores en C#](#226-depuración-de-errores-en-c)
+    - [22.6.1. Leer un Stack Trace](#2261-leer-un-stack-trace)
+    - [22.6.2. Tipos de Error Comunes en C#](#2262-tipos-de-error-comunes-en-c)
+    - [22.6.3. Herramientas de Depuración](#2263-herramientas-de-depuración)
+    - [22.6.4. Depuración de Tests](#2264-depuración-de-tests)
   - [22.7. Regla: Nada se Entrega sin Tests](#227-regla-nada-se-entrega-sin-tests)
   - [22.8. Buenas Prácticas](#228-buenas-prácticas)
 
@@ -14,7 +18,7 @@
 
 > 💡 **Punto de partida:** Has escrito código, funciona... pero ¿y si mañana lo cambias y rompes algo? Los **tests automatizados** son tu red de seguridad: ejecutan tu código automáticamente y te avisan si algo se rompe. Pero no todos los tests son iguales. Hay tests unitarios (rápidos, aíslan componentes), tests de integración (prueban componentes juntos) y tests con contenedores (prueban contra bases de datos reales). Vamos a ver cómo escribir tests profesionales.
 
-En este tema aprenderás NUnit, FluentAssertions, Moq, el patrón AAA y TestContainers para tests robustos y mantenibles.
+En este tema aprenderás NUnit, FluentAssertions, Moq, el patrón AAA y Testcontainers para tests robustos y mantenibles.
 
 **Objetivos de aprendizaje:**
 
@@ -22,7 +26,7 @@ En este tema aprenderás NUnit, FluentAssertions, Moq, el patrón AAA y TestCont
 - Usar FluentAssertions para aserciones legibles
 - Mockear interfaces con Moq: `Setup`, `Verify`
 - Aplicar el patrón AAA (Arrange-Act-Assert)
-- Configurar TestContainers para tests con bases de datos reales
+- Configurar Testcontainers para tests con bases de datos reales
 
 ## 22.1. NUnit: Framework de Tests
 
@@ -83,7 +87,7 @@ public class CalculadoraTests
 | `[SetUp]` | Se ejecuta antes de cada test |
 | `[TearDown]` | Se ejecuta después de cada test |
 | `[OneTimeSetUp]` | Se ejecuta una vez al inicio de la clase |
-| [OneTimeTearDown]` | Se ejecuta una vez al final de la clase |
+| `[OneTimeTearDown]` | Se ejecuta una vez al final de la clase |
 | `[TestCase]` | Test parametrizado |
 | `[TestCaseSource]` | TestCase con datos de una fuente externa |
 
@@ -368,7 +372,7 @@ public void CrearPedido_ProductoDisponible_RetornaPedidoConId()
 }
 ```
 
-### AAA conMocks
+### AAA con mocks
 
 ```csharp
 [Test]
@@ -399,9 +403,9 @@ public async Task Guardar_PedidoValido_GuardaEnRepositorio()
 
 > ⚠️ **Advertencia:** Cada test debe ser **independiente**. No dependas del orden de ejecución ni de datos de otros tests. Usa `SetUp` para reiniciar el estado.
 
-## 22.5. TestContainers: Tests con Docker
+## 22.5. Testcontainers: Tests con Docker
 
-**TestContainers** lanza contenedores Docker (o Podman) reales para tests de integración. En vez de mockear una base de datos, usas una real (PostgreSQL, Redis, MongoDB) que se crea y destruye automáticamente.
+**Testcontainers** lanza contenedores Docker (o Podman) reales para tests de integración. En vez de mockear una base de datos, usas una real (PostgreSQL, Redis, MongoDB) que se crea y destruye automáticamente.
 
 ### Instalación
 
@@ -425,7 +429,7 @@ public class PersonaRepositoryIntegrationTests
     private PersonaRepository _repository = null!;
 
     [OneTimeSetUp]
-    public async Task Setup()
+    public async Task OneTimeSetup()
     {
         // Lanzar contenedor PostgreSQL
         _container = new PostgreSqlBuilder()
@@ -449,6 +453,15 @@ public class PersonaRepositoryIntegrationTests
             )");
 
         _repository = new PersonaRepository(_container.GetConnectionString());
+    }
+
+    [SetUp]
+    public async Task SetUp()
+    {
+        // Limpiar la tabla ANTES de cada test: los tests deben ser
+        // independientes entre sí (si no, el orden de ejecución importa)
+        using var connection = new NpgsqlConnection(_container.GetConnectionString());
+        await connection.ExecuteAsync("DELETE FROM Personas");
     }
 
     [OneTimeTearDown]
@@ -544,18 +557,18 @@ public class RedisCacheServiceTests
 }
 ```
 
-> 💡 **Consejo:** Los tests con TestContainers son más lentos que los unitarios (arrancan Docker/Podman), pero mucho más fiables. Úsalos para tests de integración donde necesitas una base de datos real.
+> 💡 **Consejo:** Los tests con Testcontainers son más lentos que los unitarios (arrancan Docker/Podman), pero mucho más fiables. Úsalos para tests de integración donde necesitas una base de datos real.
 
 ### Docker-in-Docker: El problema del puerto 2375
 
-Cuando ejecutas tests con TestContainers **dentro de un contenedor** (por ejemplo, en una etapa de build de un Dockerfile), se produce un problema conocido como **Docker-in-Docker** (DinD): un contenedor intenta crear otros contenedores.
+Cuando ejecutas tests con Testcontainers **dentro de un contenedor** (por ejemplo, en una etapa de build de un Dockerfile), se produce un problema conocido como **Docker-in-Docker** (DinD): un contenedor intenta crear otros contenedores.
 
 ```mermaid
 graph TD
     subgraph HOST["HOST - tu ordenador"]
         subgraph DOCKER["DAEMON DOCKER"]
             A["Contenedor Build - dotnet test"] -->|"Necesita crear"| B["Daemon Docker (dockerd)"]
-            B -->|"Levantar contenedor"| C["Contenedor PostgreSQL - TestContainers"]
+            B -->|"Levantar contenedor"| C["Contenedor PostgreSQL - Testcontainers"]
         end
     end
 
@@ -567,7 +580,7 @@ graph TD
     style D fill:#f44336,color:#fff
 ```
 
-**¿Por qué es un problema?** Para que el contenedor de build pueda crear otros contenedores, necesitas **exponer el daemon de Docker** en el puerto `2375 without TLS`. Esto significa:
+**¿Por qué es un problema?** Para que el contenedor de build pueda crear otros contenedores, necesitas **exponer el daemon de Docker** en el puerto `2375` sin TLS (sin cifrar). Esto significa:
 
 | Riesgo | Descripción |
 |--------|-------------|
@@ -588,13 +601,13 @@ graph LR
     style D fill:#f44336,color:#fff
 ```
 
-**La solución con Podman:** Podman es **daemonless** y **rootless**. No hay daemon que exponer. Cada contenedor es un proceso independiente del usuario:
+**La solución con Podman:** Podman **no usa demonio (daemonless)** y corre **sin privilegios de root (rootless)**. No hay daemon que exponer. Cada contenedor es un proceso independiente del usuario:
 
 ```mermaid
 graph TD
     subgraph HOST["HOST - tu ordenador"]
         subgraph USER["Usuario normal"]
-            A["Contenedor Build - dotnet test"] -->|"podman run"| B["Contenedor PostgreSQL - TestContainers"]
+            A["Contenedor Build - dotnet test"] -->|"podman run"| B["Contenedor PostgreSQL - Testcontainers"]
         end
     end
 
@@ -605,7 +618,7 @@ graph TD
     style C fill:#4CAF50,color:#fff
 ```
 
-> ⚠️ **Advertencia:** Si ejecutas tests con TestContainers dentro de un Dockerfile y usas **Docker**, necesitas exponer el daemon en el puerto `2375 without TLS`. Si usas **Podman**, no necesitas nada de esto: no hay daemon, no hay socket, no hay puerto expuesto.
+> ⚠️ **Advertencia:** Si ejecutas tests con Testcontainers dentro de un Dockerfile y usas **Docker**, necesitas exponer el daemon en el puerto `2375` sin TLS. Si usas **Podman**, no necesitas nada de esto: no hay daemon, no hay socket, no hay puerto expuesto.
 
 ### 22.5.1. Coverlet: Cobertura de Código
 
@@ -642,10 +655,11 @@ dotnet test --collect:"XPlat Code Coverage"
 El archivo `coverage.cobertura.xml` contiene datos como:
 
 ```xml
-<line_rate="0.85" />  <!-- 85% de cobertura de líneas -->
-<branch_rate="0.78" /> <!-- 78% de cobertura de ramas -->
-<class name="MiProyecto.Services.ProductoService" 
-        line-rate="1.0" />  <!-- 100% en esta clase -->
+<coverage line-rate="0.85" branch-rate="0.78">
+    <!-- 85% de cobertura de líneas, 78% de cobertura de ramas -->
+    <class name="MiProyecto.Services.ProductoService" line-rate="1.0" />
+    <!-- 100% en esta clase -->
+</coverage>
 ```
 
 #### Ver cobertura en HTML (opcional)
@@ -705,27 +719,8 @@ dotnet test --collect:"XPlat Code Coverage" --settings coverlet.runsettings
 | Tipo | Velocidad | Fiabilidad | Dependencias | Ejemplo |
 |------|-----------|------------|-------------|---------|
 | **Unitario** | ⚡ Muy rápido | Media | Mocks | `PersonaService` aíslalo del repositorio |
-| **Integración** | 🐢 Medio | Alta | TestContainers | `PersonaRepository` con PostgreSQL real |
+| **Integración** | 🐢 Medio | Alta | Testcontainers | `PersonaRepository` con PostgreSQL real |
 | **E2E** | 🐌 Lento | Muy alta | App completa | Un usuario real haciendo login |
-
----
-
-**Resumen del punto:**
-
-| Concepto | Descripción |
-|----------|-------------|
-| **NUnit** | Framework de tests con `[TestFixture]`, `[Test]`, `[SetUp]` |
-| **\[TestCase\]** | Tests parametrizados con múltiples entradas |
-| **FluentAssertions** | Aserciones legibles: `resultado.Should().Be(5)` |
-| **Moq** | Crear mocks de interfaces: `Setup`, `Verify` |
-| **AAA** | Arrange-Act-Assert: el patrón de organización de tests |
-| **TestContainers** | Contenedores Docker/Podman reales para tests de integración |
-| **Unit test** | Rápido, aísla componentes, usa mocks |
-| **Integration test** | Prueba componentes juntos, usa BD real |
-
-**¿Qué viene después?**
-
-En el siguiente punto veremos Docker y Podman en profundidad: cómo crear imágenes con Dockerfile y orquestar servicios con Docker Compose.
 
 ## 22.6. Depuración de Errores en C#
 
@@ -803,9 +798,8 @@ dotnet-trace collect --process-id <PID>
 Cuando un test falla, NUnit te muestra:
 
 ```
-Failed Assert.That(resultado).Should().Be(5)
-  Expected: 5
-  But was:  4
+Failed Sumar_DosNumeros_RetornaSuma
+  Expected resultado to be 5, but found 4.
 ```
 
 **Cómo depurar un test:**
@@ -883,7 +877,7 @@ reportgenerator -reports:coverage.cobertura.xml -targetdir:coverage
 
 - **Tests obligatorios**: No se entrega código sin tests verdes
 - **Cobertura mínima del 80%**: En código de negocio
-- **TestContainers para BD real**: PostgreSQL efímero en Docker
+- **Testcontainers para BD real**: PostgreSQL efímero en Docker
 - **AAA siempre**: Arrange-Act-Assert. Comentar las secciones
 
 ---
@@ -892,9 +886,20 @@ reportgenerator -reports:coverage.cobertura.xml -targetdir:coverage
 
 | Concepto | Descripción |
 |----------|-------------|
+| **NUnit** | Framework de tests con `[TestFixture]`, `[Test]`, `[SetUp]` |
+| **\[TestCase\]** | Tests parametrizados con múltiples entradas |
+| **FluentAssertions** | Aserciones legibles: `resultado.Should().Be(5)` |
+| **Moq** | Crear mocks de interfaces: `Setup`, `Verify` |
+| **AAA** | Arrange-Act-Assert: el patrón de organización de tests |
+| **Testcontainers** | Contenedores Docker/Podman reales para tests de integración |
+| **Aislamiento de tests** | Limpiar datos en `[SetUp]` o usar base efímera por fixture |
 | **Stack Trace** | Léelo de abajo a arriba — la línea de tu código es la última |
 | **Breakpoints** | Pausa la ejecución para inspeccionar variables |
 | **dotnet-trace** | Diagnóstico avanzado desde consola |
 | **Tests obligatorios** | No se entrega nada sin tests verdes |
 | **Cobertura** | Mínimo 80% en código de negocio, informe incluido |
+
+**¿Qué viene después?**
+
+En el siguiente punto veremos Docker y Podman en profundidad: cómo crear imágenes con Dockerfile y orquestar servicios con Docker Compose.
 

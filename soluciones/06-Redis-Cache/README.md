@@ -1,4 +1,4 @@
-# Ejemplo 05: Redis con Cache-Aside
+# Ejemplo 06: Redis con Cache-Aside
 
 ## Descripción
 
@@ -11,7 +11,7 @@ Este ejemplo muestra cómo usar **Redis** como caché distribuida con el patrón
 Redis (Remote Dictionary Server) es una base de datos en memoria, ultra-rápida, que almacena datos como pares clave-valor. Es ideal para:
 
 - **Caché**: Resultados de consultas frecuentes
-- **Sesiones**: Estado de usuarios en_APPS web
+- **Sesiones**: Estado de usuarios en apps web
 - **Colas de mensajes**: Comunicación entre servicios
 - **Contadores**: Conteos en tiempo real
 
@@ -95,10 +95,10 @@ docker-compose down
 ## Estructura
 
 ```
-05-Redis-Cache/
-├── 05-Redis-Cache.slnx
-├── 05-Redis-Cache/
-│   ├── 05-Redis-Cache.csproj
+06-Redis-Cache/
+├── 06-Redis-Cache.slnx
+├── 06-Redis-Cache/
+│   ├── 06-Redis-Cache.csproj
 │   ├── Program.cs
 │   ├── Models/
 │   │   └── Producto.cs
@@ -150,7 +150,7 @@ await cache.SetAsync("producto:1", productoActualizado);
 - **APIs REST**: Cachear respuestas de consultas frecuentes
 - **Sesiones de usuario**: Almacenar estado de sesión
 - **Rate Limiting**: Controlar peticiones por IP
-- **Distribución de carga**: Colas de tareas entre workers
+- **Distribución de carga**: Colas de tareas entre procesos en segundo plano
 
 ## Referencias
 

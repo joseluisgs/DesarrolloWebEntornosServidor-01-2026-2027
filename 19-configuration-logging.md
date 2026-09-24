@@ -65,6 +65,8 @@ En este tema aprenderás a gestionar configuración (`appsettings.json`, `IConfi
 
 ### Variables de entorno y User Secrets
 
+> 📝 **Nota:** La sección `Serilog` de este JSON solo se usa si configuras Serilog con `ReadFrom.Configuration` en `Program.cs`. Lo veremos en detalle en el apartado 19.4.
+
 ```bash
 # Variables de entorno (producción)
 export ConnectionStrings__DefaultConnection="Server=prod.db;Database=MiApp;..."
@@ -107,8 +109,9 @@ public class MiServicio(IConfiguration config)
 ### IConfigurationRoot: comprender la fuente
 
 ```csharp
-// Ver de dónde viene cada configuración
-IConfigurationRoot config = (IConfigurationRoot)configuration;
+// Ver de dónde viene cada configuración (en Program.cs,
+// builder.Configuration SÍ es IConfigurationRoot)
+IConfigurationRoot config = (IConfigurationRoot)builder.Configuration;
 
 foreach (var provider in config.Providers)
 {
@@ -121,7 +124,7 @@ foreach (var provider in config.Providers)
 // JsonConfigurationProvider (appsettings.Development.json)
 ```
 
-> 💡 **Consejo:** El orden de los proveedores importa. Los últimos sobreescriben los primeros. Por defecto: `appsettings.json` → `appsettings.{Environment}.json` → Variables de entorno → User Secrets.
+> 💡 **Consejo:** El orden de los proveedores importa. Los últimos sobreescriben los primeros. Por defecto: `appsettings.json` → `appsettings.{Environment}.json` → User Secrets (solo en Development) → Variables de entorno → Argumentos de línea de comandos. Las variables de entorno y la CLI **ganan** a los user secrets.
 
 ## 19.3. IOptions\<T\>: Configuración Tipada
 
@@ -214,7 +217,7 @@ public class MiServicio(IOptionsSnapshot<ApiSettings> options)
 
 ## 19.4. Serilog: Logging Estructurado
 
-**Serilog** es la librería de logging estándar en .NET. Es más potente que el logging por defecto porque soporta **logging estructurado**: los logs son datos queryeables, no solo texto plano.
+**Serilog** es la librería de logging estándar en .NET. Es más potente que el logging por defecto porque soporta **logging estructurado**: los logs son datos consultables, no solo texto plano.
 
 ### Instalación
 
@@ -248,13 +251,13 @@ Log.Logger = new LoggerConfiguration()
     .Enrich.WithEnvironmentName()
     .WriteTo.Console(
         restrictedToMinimumLevel: LogEventLevel.Warning,  // Solo Warning+ en consola
-        outputTemplate: "{Timestamp:HH:mm:ss.fff} [{Level:u3}] [{SourceContext}] {Message:lj}{NewLine}{Exception}")
+        outputTemplate: "{Timestamp:HH:mm:ss.fff} [{Level:u3}] [{SourceContext}] {Message:lj}{Scopes:j}{NewLine}{Exception}")
     .WriteTo.File(
         path: "logs/log-.txt",
         rollingInterval: RollingInterval.Day,              // Fichero nuevo cada 24h
         retainedFileCountLimit: 30,                        // Mantener 30 días
         restrictedToMinimumLevel: LogEventLevel.Information,  // Information+ en fichero
-        outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff} [{Level:u3}] [{SourceContext}] {Message:lj}{NewLine}{Exception}")
+        outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff} [{Level:u3}] [{SourceContext}] {Message:lj}{Scopes:j}{NewLine}{Exception}")
     .CreateLogger();
 
 builder.Host.UseSerilog();  // Reemplazar el logger por defecto
@@ -280,7 +283,7 @@ var app = builder.Build();
         "Name": "Console",
         "Args": {
           "restrictedToMinimumLevel": "Warning",
-          "outputTemplate": "{Timestamp:HH:mm:ss.fff} [{Level:u3}] {Message:lj}{NewLine}{Exception}"
+          "outputTemplate": "{Timestamp:HH:mm:ss.fff} [{Level:u3}] {Message:lj}{Scopes:j}{NewLine}{Exception}"
         }
       },
       {
@@ -290,7 +293,7 @@ var app = builder.Build();
           "rollingInterval": "Day",
           "retainedFileCountLimit": 30,
           "restrictedToMinimumLevel": "Information",
-          "outputTemplate": "{Timestamp:yyyy-MM-dd HH:mm:ss.fff} [{Level:u3}] {Message:lj}{NewLine}{Exception}"
+          "outputTemplate": "{Timestamp:yyyy-MM-dd HH:mm:ss.fff} [{Level:u3}] {Message:lj}{Scopes:j}{NewLine}{Exception}"
         }
       }
     ],
@@ -302,6 +305,16 @@ var app = builder.Build();
 > 📝 **Nota:** `rollingInterval: RollingInterval.Day` crea un fichero nuevo cada 24 horas: `log-20260905.txt`, `log-20260906.txt`, etc. `retainedFileCountLimit: 30` borra los ficheros de más de 30 días automáticamente.
 
 > 💡 **Consejo:** En producción, la consola muestra solo `Warning` y `Error` para no ensuciar. El fichero guarda `Information` y todo lo que está por encima para tener traza completa de debugging.
+
+> ⚠️ **Advertencia:** Este bloque `Serilog` de `appsettings.json` está **inerte por sí solo**: si no lo lees con `ReadFrom.Configuration`, Serilog lo ignora. Para que funcione, configura Serilog desde la configuración en `Program.cs` (y no desde código):
+
+```csharp
+// Program.cs — Serilog lee appsettings.json (sección "Serilog")
+builder.Host.UseSerilog((context, config) => config
+    .ReadFrom.Configuration(context.Configuration));
+```
+
+> 📝 **Nota:** `ReadFrom.Configuration` viene de `Serilog.Settings.Configuration`, que ya incluye `Serilog.AspNetCore`. Elige **un solo enfoque**: o configuras Serilog en código (`LoggerConfiguration()` en `Program.cs`), o lo dejas en `appsettings.json` con `ReadFrom.Configuration`. No mezcles ambos, o no sabrás cuál manda.
 
 ### Uso de ILogger
 
@@ -319,18 +332,6 @@ public class PedidoService(
         {
             var pedido = new Pedido(dto);
             await repository.GuardarAsync(pedido);
-
-            logger.LogInformation("Pedido {PedidoId} creado correctamente", pedido.Id);
-            return pedido;
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Error al crear pedido para cliente {ClienteId}", dto.ClienteId);
-            throw;
-        }
-    }
-}
-```
 
             logger.LogInformation("Pedido {PedidoId} creado correctamente", pedido.Id);
             return pedido;
@@ -387,6 +388,8 @@ servicio.HacerAlgo();
 Log.CloseAndFlush(); // Importante: vaciar los logs pendientes
 ```
 
+> 📝 **Nota:** En una app de consola, `AddSerilog()` sobre `ILoggingBuilder` (el de `services.AddLogging(...)`) viene del paquete `Serilog.Extensions.Logging`. Si compilas fuera de ASP.NET Core, instálalo con `dotnet add package Serilog.Extensions.Logging`.
+
 ### ILogger con Serilog
 
 ```csharp
@@ -418,17 +421,18 @@ Los enrichers añaden automáticamente información a cada log: nombre de máqui
 // Instalar enrichers
 dotnet add package Serilog.Enrichers.Environment
 dotnet add package Serilog.Enrichers.Thread
-dotnet add package Serilog.AspNetCore.RequestLogging
+dotnet add package Serilog.Enrichers.AssemblyName  // Para .Enrich.WithAssemblyName()
+// UseSerilogRequestLogging ya viene en Serilog.AspNetCore (instalado arriba)
 
 Log.Logger = new LoggerConfiguration()
     .Enrich.FromLogContext()
     .Enrich.WithMachineName()          // Nombre del servidor
     .Enrich.WithThreadId()             // ID del hilo
     .Enrich.WithEnvironmentName()       // "Development", "Production"
-    .Enrich.WithAssemblyName()          // Nombre del ensamblado
+    .Enrich.WithAssemblyName()          // Nombre del ensamblado (paquete de arriba)
     .Enrich.WithProperty("AppVersion", "1.0.0") // Propiedad custom
     .WriteTo.Console(outputTemplate:
-        "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{Properties:j}{NewLine}{Exception}")
+        "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{Scopes:j}{Properties:j}{NewLine}{Exception}")
     .CreateLogger();
 ```
 

@@ -20,7 +20,7 @@ La Inyección de Dependencias es un patrón de diseño donde un objeto recibe su
 
 | Tipo | Descripción | Ejemplo |
 |------|-------------|---------|
-| **Transient** | Nueva instancia cada vez que se solicita | Repositorios, servicios stateless |
+| **Transient** | Nueva instancia cada vez que se solicita | Repositorios, servicios sin estado |
 | **Scoped** | Una instancia por petición HTTP | Servicios de negocio |
 | **Singleton** | Una única instancia reutilizada | Caché, configuración |
 
@@ -88,7 +88,7 @@ dotnet test
 
 **Netflix** usa un sistema similar de Inyección de Dependencias para gestionar sus múltiples microservicios:
 - Cada servicio (recomendaciones, pagos, notificaciones) se registra con una duración específica
-- Los servicios stateless usan **Transient**
+- Los servicios sin estado usan **Transient**
 - Los servicios de negocio usan **Scoped**
 - La configuración global usa **Singleton**
 

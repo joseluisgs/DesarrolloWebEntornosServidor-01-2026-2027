@@ -63,7 +63,7 @@ SELECT last_insert_rowid();   -- función interna de SQLite
 ```
 
 > 💡 **Consejo:** En Dapper/C#, para PostgreSQL usa `RETURNING id` directo en el SQL.
-> Para MySQL/SQLite, ejecuta el INSERT y luego `SELECT LAST_INSERT_ID()` o `last_insert_rowid()` como segunda query.
+> Para MySQL/SQLite, ejecuta el INSERT y luego `SELECT LAST_INSERT_ID()` o `last_insert_rowid()` como segunda consulta.
 
 ## Actualizar datos
 
@@ -239,7 +239,7 @@ SELECT
     END AS rango_precio
 FROM productos;
 
---日期
+-- Fecha
 SELECT NOW();                          -- fecha y hora actual
 SELECT CURRENT_DATE;                   -- solo fecha
 SELECT EXTRACT(YEAR FROM created_at);  -- extraer año

@@ -1,4 +1,4 @@
-﻿- [2. Gestión de Proyectos y Construcción en .NET](#2-gestión-de-proyectos-y-construcción-en-net)
+- [2. Gestión de Proyectos y Construcción en .NET](#2-gestión-de-proyectos-y-construcción-en-net)
   - [2.1. Soluciones, Proyectos y Namespaces](#21-soluciones-proyectos-y-namespaces)
     - [2.1.1. ¿Qué es una Solución?](#211-qué-es-una-solución)
     - [2.1.2. Formatos de Solución: .sln vs .slnx](#212-formatos-de-solución-sln-vs-slnx)
@@ -9,18 +9,31 @@
     - [2.1.7. La Directiva using](#217-la-directiva-using)
     - [2.1.8. Using Static y Global Using](#218-using-static-y-global-using)
     - [2.1.9. Referencias entre Proyectos](#219-referencias-entre-proyectos)
-   - [2.2. dotnet CLI y Archivo .csproj](#22-dotnet-cli-y-archivo-csproj)
-     - [2.2.1. Ejemplo de solución (.sln y .slnx)](#221-ejemplo-de-solución-sln-y-slnx)
-     - [2.2.2. NuGet: Gestor de paquetes](#222-nuget-gestor-de-paquetes)
-   - [2.3. Generación de código y reducción de boilerplate](#23-generación-de-código-y-reducción-de-boilerplate)
-     - [2.3.1. Source Generators](#231-source-generators)
-     - [2.3.2. Records para POCOs inmutables](#232-records-para-pocos-inmutables)
-     - [2.3.3. Primary Constructors (C# 12+)](#233-primary-constructors-c-12)
+  - [2.2. dotnet CLI y Archivo .csproj](#22-dotnet-cli-y-archivo-csproj)
+    - [2.2.1. Ejemplo de solución (.sln y .slnx)](#221-ejemplo-de-solución-sln-y-slnx)
+    - [2.2.2. NuGet: Gestor de paquetes](#222-nuget-gestor-de-paquetes)
+  - [2.3. Generación de código y reducción de boilerplate](#23-generación-de-código-y-reducción-de-boilerplate)
+    - [2.3.1. Source Generators](#231-source-generators)
+    - [2.3.2. Records para POCOs inmutables](#232-records-para-pocos-inmutables)
+    - [2.3.3. Primary Constructors (C# 12+)](#233-primary-constructors-c-12)
   - [2.4. Buenas prácticas de organización](#24-buenas-prácticas-de-organización)
-  - [2.5. Resumen](#25-resumen)
     - [💡 Ejercicio Propuesto](#-ejercicio-propuesto)
 
+
+
 # 2. Gestión de Proyectos y Construcción en .NET
+
+> 💡 **Punto de partida:** ¿Alguna vez te has preguntado cómo organizan sus proyectos los equipos profesionales sin acabar perdidos entre ficheros? La respuesta está en agrupar proyectos en soluciones, dejar que la CLI de `dotnet` haga el trabajo pesado y gestionar los paquetes con NuGet.
+
+En este punto aprenderás a estructurar proyectos .NET: soluciones (`.slnx`), proyectos (`.csproj`), namespaces, la CLI de `dotnet` y NuGet.
+
+**Objetivos de aprendizaje:**
+
+- Entender la jerarquía solución → proyecto → namespace
+- Diferenciar los formatos `.sln` y `.slnx` y saber migrar entre ellos
+- Dominar los comandos esenciales de la CLI de `dotnet`
+- Gestionar dependencias con NuGet
+- Reducir boilerplate con records y primary constructors
 
 La gestión eficiente de proyectos y la automatización de builds son fundamentales para el desarrollo profesional. .NET ofrece herramientas integradas que simplifican todo el ciclo de desarrollo.
 
@@ -43,7 +56,7 @@ flowchart TD
 
 ## 2.1. Soluciones, Proyectos y Namespaces
 
-En .NET, el código se organiza en una jerarquía clara: **Soluciones** contienen **Proyectos**, y ** los **Namespaces** agrupan el código dentro de cada proyecto.
+En .NET, el código se organiza en una jerarquía clara: **Soluciones** contienen **Proyectos**, y los **Namespaces** agrupan el código dentro de cada proyecto.
 
 ### 2.1.1. ¿Qué es una Solución?
 
@@ -82,11 +95,11 @@ flowchart TB
 **Comandos para gestionar soluciones:**
 
 ```bash
-# Crear solución (formato .slnx por defecto en .NET 9+)
+# Crear solución (formato .slnx por defecto en .NET 10)
 dotnet new sln -n MiTiendaOnline
 
-# Crear solución legacy (.sln)
-dotnet new sln -n MiTiendaOnline --force
+# Crear solución en formato clásico .sln (si necesitas compatibilidad)
+dotnet new sln -n MiTiendaOnline --format sln
 
 # Agregar proyectos a la solución
 dotnet sln add src/Api/Api.csproj
@@ -99,9 +112,6 @@ dotnet sln list
 
 # Remover proyecto de la solución
 dotnet sln remove src/Old/Old.csproj
-
-# Ver proyectos huérfanos (no en solución)
-dotnet sln list --orphan
 ```
 
 ### 2.1.2. Formatos de Solución: .sln vs .slnx
@@ -173,34 +183,20 @@ EndGlobal
 </Solution>
 ```
 
-**Diferencias clave entre formatos:**
-
-| Aspecto | .sln (Legacy) | .slnx (Nuevo) |
-|---------|---------------|---------------|
-| **Formato** | Texto plano con secciones | XML estructurado |
-| **Legibilidad** | Difícil de leer manualmente | XML claro y formateado |
-| **Versionado Git** | Conflictos frecuentes | Mejor manejo de merge |
-| **Rendimiento** | Parsing más lento | Parsing más rápido |
-| **Compatibilidad** | VS, Rider, VS Code, CLI | VS 2022 17.12+ |
-| **Configuración** | Secciones Global complejas | XML simple |
-
 📝 **Nota del Profesor**: El formato `.slnx` usa **XML**, no JSON. Esto facilita la edición manual y el merge en Git, ya que los conflictos son más fáciles de resolver que en el formato tradicional de Visual Studio.
 
-### 2.1.3. dotnet sln migrate: Migración Automática
+### 2.1.3. Cómo Portar de .sln a .slnx
 
 El comando `dotnet sln migrate` automatiza la conversión de soluciones del formato `.sln` al nuevo formato `.slnx`.
 
 **Comando básico:**
 
 ```bash
-# Migrar una solución existente (genera .slnx automáticamente)
+# Migrar la solución .sln del directorio actual (genera el .slnx automáticamente)
 dotnet sln migrate
 
-# Especificar archivo de entrada
-dotnet sln migrate MiSolucion.sln
-
-# Especificar archivo de salida
-dotnet sln migrate MiSolucion.sln --output MiSolucion.slnx
+# Especificar la solución de entrada (sintaxis oficial)
+dotnet sln MiSolucion.sln migrate
 ```
 
 **Ejemplo de ejecución:**
@@ -225,7 +221,7 @@ PS C:\Users\chethusk\Code\example> cat .\example.slnx
 ```mermaid
 flowchart LR
     A["MiSolucion.sln"] --> B["dotnet sln migrate"]
-    B --> C["MiSolucion.slnnx"]
+    B --> C["MiSolucion.slnx"]
     B --> D["Backup .sln"]
 ```
 
@@ -243,69 +239,13 @@ flowchart LR
 # Ver ayuda del comando
 dotnet sln migrate --help
 
-# Especificar archivo de entrada
-dotnet sln migrate MiSolucion.sln
-
-# Forzar sobreescritura si existe
-dotnet sln migrate MiSolucion.sln --force
+# Especificar la solución de entrada
+dotnet sln MiSolucion.sln migrate
 ```
 
-### 2.1.4. Comandos del dotnet sln
+> 📝 **Nota:** `migrate` no admite las opciones `--output` ni `--force`: genera un `.slnx` con el mismo nombre que el `.sln` y, si ya existe un `.slnx`, el comando falla. El archivo `.sln` original no se elimina.
 
-El comando `dotnet sln` proporciona todas las operaciones necesarias para gestionar soluciones.
-
-**Crear solución:**
-
-```bash
-# Crear solución (formato .slnx por defecto en .NET 9+)
-dotnet new sln -n MiApi
-
-# Crear solución legacy (.sln) si necesitas compatibilidad
-dotnet new sln -n MiApi --force
-```
-
-**Gestionar proyectos:**
-
-```bash
-# Agregar proyectos a la solución
-dotnet sln add src/Api/Api.csproj
-dotnet sln add src/**/*.csproj
-dotnet sln add tests/**/*.csproj
-
-# Listar proyectos en la solución
-dotnet sln list
-
-# Remover proyecto de la solución
-dotnet sln remove src/Old/Old.csproj
-
-# Ver proyectos huérfanos (no en solución)
-dotnet sln list --orphan
-```
-
-**Migración:**
-
-```bash
-# Migrar de .sln a .slnx
-dotnet sln convert MiSolucion.sln --output MiSolucion.slnx
-
-# Convertir solución actual
-dotnet sln convert
-```
-
-**Operaciones de build:**
-
-```bash
-# Compilar toda la solución
-dotnet build
-
-# Compilar configuración específica
-dotnet build --configuration Release
-
-# Restaurar paquetes
-dotnet restore
-```
-
-### 2.1.5. ¿Qué es un Proyecto?
+### 2.1.4. ¿Qué es un Proyecto?
 
 Un **proyecto** es un archivo `.csproj` que define la configuración, dependencias, referencias y estructura del código. Cada proyecto produce un ensamblado (DLL o EXE).
 
@@ -481,7 +421,8 @@ namespace MiAplicacion.Core.Exceptions
 
 ```csharp
 // Namespace tradicional
-namespace MiAplicacion.Core.Entities;
+namespace MiAplicacion.Core.Entities
+{
     public class User
     {
         public int Id { get; set; }
@@ -550,7 +491,7 @@ var fecha = new System.DateTime(2025, 1, 15);
 // Con using - más limpio
 using System.Collections.Generic;
 
-var lista = List<string>();
+var lista = new List<string>();
 var dict = new Dictionary<string, int>();
 var fecha = DateTime.Now;
 ```
@@ -594,8 +535,8 @@ public class DemoUsingStatic
 
 ```csharp
 // Archivo "Usings.cs" o al inicio de cualquier archivo
-global global using System.Collections.Generic;
-global global using System.Threading.Tasks;
+global using System.Collections.Generic;
+global using System.Threading.Tasks;
 global using FluentAssertions;
 
 // Ahora disponible en todos los archivos del proyecto
@@ -604,7 +545,7 @@ public class CualquierClase
     public void Metodo()
     {
         // System está disponible sin escribir using
-        var lista = List<string>();  // Funciona
+        var lista = new List<string>();  // Funciona
         var ahora = DateTime.Now;        // Funciona
     }
 }
@@ -619,7 +560,7 @@ public class CualquierClase
 </PropertyGroup>
 ```
 
-Con `ImplicitUsings` enabled, .NET incluye automáticamente los using más comunes según el tipo de proyecto:
+Con `ImplicitUsings` habilitado, .NET incluye automáticamente los using más comunes según el tipo de proyecto:
 
 ```csharp
 // Console app - incluye System, System.Collections.Generic, etc.
@@ -672,11 +613,8 @@ dotnet add reference ../Infrastructure/Infrastructure.csproj
 **Ver referencias:**
 
 ```bash
-# Listar referencias de un proyecto
+# Listar referencias de un proyecto (ejecutar dentro de la carpeta del proyecto)
 dotnet list reference
-
-# Ver todas las referencias de la solución
-dotnet sln list --include-projects
 ```
 
 **Ciclo de dependencias recomendado:**
@@ -828,34 +766,34 @@ El proyecto **Core** no debe depender de nadie. **Infrastructure** implementa la
 
   <ItemGroup>
     <!-- Framework de testing -->
-    <PackageReference Include="NUnit" Version="4.1.0" />
-    <PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
+    <PackageReference Include="NUnit" Version="4.3.2" />
+    <PackageReference Include="NUnit3TestAdapter" Version="5.0.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.0" />
     
     <!-- Mocking y assertions -->
-    <PackageReference Include="Moq" Version="4.20.0" />
-    <PackageReference Include="FluentAssertions" Version="6.12.0" />
+    <PackageReference Include="Moq" Version="4.20.72" />
+    <PackageReference Include="FluentAssertions" Version="6.12.2" />
     
     <!-- Testcontainers -->
     <PackageReference Include="Testcontainers" Version="3.7.0" />
     <PackageReference Include="Testcontainers.PostgreSql" Version="3.7.0" />
     
     <!-- Cobertura de código -->
-    <PackageReference Include="coverlet.collector" Version="6.0.0">
+    <PackageReference Include="coverlet.collector" Version="6.0.4">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
-    <!-- Proyecto a testear -->
+    <!-- Proyecto a probar -->
     <ProjectReference Include="..\MiAplicacion.Api\MiAplicacion.Api.csproj" />
   </ItemGroup>
 
 </Project>
 ```
 
-⚠️ **Advertencia**: El atributo `Version` en los PackageReference es crítico. Usa versiones específicas en producción para evitar "dependency hell" cuando se actualicen paquetes.
+⚠️ **Advertencia**: El atributo `Version` en los PackageReference es crítico. Usa versiones específicas en producción para evitar el infierno de las dependencias (dependency hell) cuando se actualicen paquetes.
 
 ### 2.2.1. Ejemplo de solución (.sln y .slnx)
 
@@ -916,11 +854,11 @@ MiAplicacion/
 **Comandos para gestionar soluciones:**
 
 ```bash
-# Crear solución (formato .slnx por defecto en .NET 9+)
+# Crear solución (formato .slnx por defecto en .NET 10)
 dotnet new sln -n MiAplicacion
 
-# Crear solución legacy (.sln) si necesitas compatibilidad
-dotnet new sln -n MiAplicacion --force
+# Crear solución en formato clásico .sln (si necesitas compatibilidad)
+dotnet new sln -n MiAplicacion --format sln
 
 # Agregar proyectos a la solución
 dotnet sln add src/MiAplicacion.Api/MiAplicacion.Api.csproj
@@ -934,9 +872,6 @@ dotnet sln list
 # Eliminar proyecto de la solución
 dotnet sln remove tests/MiAplicacion.UnitTests/MiAplicacion.UnitTests.csproj
 
-# Ver proyectos huérfanos (no en solución)
-dotnet sln list --orphan
-
 # Compilar toda la solución
 dotnet build
 
@@ -945,89 +880,6 @@ dotnet test
 ```
 
 💡 **Tip del Examinador**: Mantén la estructura "src/ tests/" para proyectos grandes. Es el estándar de la industria y facilita la navegación.
-
-**Nuevo Formato de Solución: .slnx**
-
-A partir de .NET 9 y Visual Studio 2022 17.12, Microsoft introdujo un nuevo formato de solución con extensión `.slnx` que reemplaza al formato tradicional `.sln`.
-
-```mermaid
-graph TD
-    A["Formatos de Solución"] --> B[".sln (Legacy)<br/>Formato clásico"]
-    A --> C[".slnx (Nuevo)<br/>Formato moderno"]
-    
-    B --> B1["Formato texto plano"]
-    B --> B2["Secciones Guids"]
-    B --> B3["Compatible con todos"]
-    
-    C --> C1["Formato XML estructurado"]
-    C --> C2["Más legible"]
-    C --> C3["Mejor rendimiento"]
-```
-
-**Diferencias entre .sln y .slnx:**
-
-| Aspecto | .sln (Legacy) | .slnx (Nuevo) |
-|---------|---------------|---------------|
-| **Formato** | Texto plano con secciones | XML estructurado |
-| **Legibilidad** | Difícil de leer manualmente | XML claro y formateado |
-| **Versionado** | Conflictos frecuentes en Git | Mejor manejo de merge |
-| **Rendimiento** | Parsing más lento | Parsing más rápido |
-| **Compatibilidad** | VS + CLI + Rider | VS 2022 17.12+ |
-| **Guid** | Secciones Project(GUID) | Paths simples |
-
-**Ejemplo de archivo .slnx:**
-
-```xml
-<Solution>
-  <Configurations>
-    <Platform Name="Any CPU" />
-    <Platform Name="x64" />
-  </Configurations>
-  <Project Path="src/MiApi/MiApi.csproj" />
-  <Project Path="src/MiCore/MiCore.csproj" />
-  <Project Path="src/MiInfrastructure/MiInfrastructure.csproj" />
-  <Project Path="tests/MiApi.Tests/MiApi.Tests.csproj" />
-</Solution>
-```
-
-**Ejemplo real de migración:**
-
-```bash
-PS C:\Users\dev\Code\MiApi> dotnet sln migrate
-.slnx file C:\Users\dev\Code\MiApi\MiApi.slnx generated.
-
-PS C:\Users\dev\Code\MiApi> cat .\MiApi.slnx
-<Solution>
-  <Configurations>
-    <Platform Name="Any CPU" />
-  </Configurations>
-  <Project Path="src/Api/Api.csproj" />
-  <Project Path="src/Core/Core.csproj" />
-</Solution>
-```
-
-**Cómo portar de .sln a .slnx:**
-
-```bash
-# Opción 1: Usar Visual Studio 2022 17.12+
-# Archivo > Convertir a nuevo formato de solución
-
-# Opción 2: Usar dotnet CLI (recomendado)
-dotnet sln migrate
-
-# Especificar archivo de entrada
-dotnet sln migrate MiSolucion.sln
-
-# Especificar archivo de salida
-dotnet sln migrate MiSolucion.sln --output MiSolucion.slnx
-
-# Opción 3: Crear nuevo archivo slnx y migrar proyectos
-dotnet new slnx -n MiSolucion
-dotnet sln add src/**/*.csproj
-dotnet sln add tests/**/*.csproj
-```
-
-📝 **Nota del Profesor**: El nuevo formato `.slnx` usa **XML**, no JSON. Esto facilita la edición manual y reduce los merge conflicts en Git porque los conflictos de XML son más fáciles de resolver que las secciones complejas del formato tradicional de Visual Studio.
 
 ### 2.2.2. NuGet: Gestor de paquetes
 
@@ -1093,7 +945,9 @@ dotnet nuget push bin/Release/MiLibreria.1.0.0.nupkg \
   --source https://api.nuget.org/v3/index.json
 ```
 
-📝 **Nota del Profesor**: NuGet.org es el repositorio público principal. Para paquetes privados, puedes usar Azure Artifacts, GitHub Packages, o self-hosted NuGet Server.
+📝 **Nota del Profesor**: NuGet.org es el repositorio público principal. Para paquetes privados, puedes usar Azure Artifacts, GitHub Packages o un servidor NuGet propio.
+
+📌 Ejemplo real: Cuando instalas `dotnet add package Serilog.AspNetCore` en una API, estás usando NuGet tal y como Netflix o Glovo descargan librerías de terceros sin pegar código ajeno en su repo. En la Tienda de la práctica, cada `PackageReference` de tu `.csproj` es un paquete bajado de NuGet.
 
 ## 2.3. Generación de código y reducción de boilerplate
 
@@ -1251,19 +1105,6 @@ graph TD
 
 💡 **Tip del Examinador**: Usa records para DTOs y entidades de dominio. Son más seguros (inmutables) y menos propensos a errores.
 
-## 2.5. Resumen
-
-En este capítulo hemos aprendido:
-
-1. **dotnet CLI**: Herramienta unificada para todo el ciclo de desarrollo
-2. **Archivo .csproj**: Configuración del proyecto, dependencias y compilación
-3. **Soluciones (.sln)**: Agrupación de múltiples proyectos
-4. **NuGet**: Gestor de paquetes oficial de .NET
-5. **Source Generators**: Generación automática de código
-6. **Records**: POJOs inmutables en una línea
-7. **Primary Constructors**: Eliminación de boilerplate
-8. **Buenas prácticas**: Estructura src/tests, separación de responsabilidades
-
 ### 💡 Ejercicio Propuesto
 
 **Crear una solución completa:**
@@ -1296,4 +1137,23 @@ dotnet add tests/MiTienda.Tests/MiTienda.Tests.csproj reference src/MiTienda.Cor
 # 6. Compilar todo
 dotnet build
 ```
+
+---
+
+**Resumen del punto:**
+
+| Concepto | Descripción |
+|----------|-------------|
+| **Solución (.slnx)** | Contenedor que agrupa múltiples proyectos; XML moderno, default en .NET 10 |
+| **Proyecto (.csproj)** | Configuración, dependencias y compilación de un ensamblado |
+| **dotnet CLI** | `new`, `build`, `test`, `run`, `add package`, `add reference`, `sln` |
+| **NuGet** | Gestor de paquetes oficial de .NET |
+| **Source Generators** | Código generado en tiempo de compilación |
+| **Records** | Tipos inmutables en una línea (C# 9+) |
+| **Primary Constructors** | Parámetros en la declaración de la clase (C# 12+) |
+| **Buenas prácticas** | Estructura src/ y tests/, separación de responsabilidades |
+
+**¿Qué viene después?**
+
+En el siguiente punto veremos C# y .NET por dentro: historia del lenguaje, evolución hasta .NET 10, el papel del CLR en la compilación y cómo crear tu primer programa.
 

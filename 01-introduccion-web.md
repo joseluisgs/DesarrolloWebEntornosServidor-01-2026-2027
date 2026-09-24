@@ -37,7 +37,7 @@ graph TD
     D --> D1["PostgreSQL / MongoDB / Redis"]
     E --> E1["Docker / CI-CD / Nube"]
 
-    style A fill:#7c3aed,color:#fff
+    style A fill:#9C27B0,color:#fff
     style B fill:#2196F3,color:#fff
     style C fill:#4CAF50,color:#fff
     style D fill:#FF9800,color:#fff
@@ -51,7 +51,7 @@ Los principales objetivos del despliegue son garantizar la **accesibilidad**, la
 | Objetivo | Descripción | Ejemplo |
 |----------|-------------|---------|
 | **Accesibilidad** | La app está disponible para todos los usuarios | Netflix funciona en 190 países |
-| **Estabilidad** | La app no cae ni tiene errores graves | Amazon tiene 99.99% de uptime |
+| **Estabilidad** | La app no cae ni tiene errores graves | Amazon garantiza un 99,99 % de disponibilidad |
 | **Escalabilidad** | La app crece con la demanda | Black Friday: Amazon triplica tráfico |
 | **Seguridad** | Los datos de los usuarios están protegidos | HTTPS, encriptación de contraseñas |
 
@@ -85,7 +85,7 @@ graph LR
     C -->|"🔌 Consulta"| E["🗄️ Base de Datos"]
     E -->|"📊 Datos"| C
 
-    style A fill:#7c3aed,color:#fff
+    style A fill:#9C27B0,color:#fff
     style B fill:#2196F3,color:#fff
     style C fill:#4CAF50,color:#fff
     style D fill:#FF9800,color:#fff
@@ -199,7 +199,7 @@ graph LR
     style D fill:#4CAF50,color:#fff
 ```
 
-📌 **Ejemplo real:** Cuando Netflix despliega una nueva versión de su aplicación, no lo hace directamente a todos los usuarios. Primero lo prueba con un 1% de usuarios ( Canary Release), si funciona bien, lo amplía al 10%, luego al 50% y finalmente al 100%. Así minimiza el riesgo de errores.
+📌 **Ejemplo real:** Cuando Netflix despliega una nueva versión de su aplicación, no lo hace directamente a todos los usuarios. Primero lo prueba con un 1 % de usuarios (Canary Release); si funciona bien, lo amplía al 10%, luego al 50% y finalmente al 100%. Así minimiza el riesgo de errores.
 
 | Fase | Descripción | Herramientas |
 |------|-------------|--------------|

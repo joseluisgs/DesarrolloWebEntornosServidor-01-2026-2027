@@ -60,7 +60,7 @@ graph TD
 
 ## 21.2. PostgreSQL: El SQL Potente
 
-PostgreSQL es el SGBD relacional open-source más potente. Soporta JSON, GIS, full-text search y extensiones.
+PostgreSQL es el SGBD relacional de código abierto más potente. Soporta JSON, SIG, búsqueda de texto completo y extensiones.
 
 ### Instalación del driver
 
@@ -111,15 +111,20 @@ public class PersonaRepository(string connectionString)
         return filas > 0;
     }
 
+    // DELETE lógico (soft delete): el modelo tiene el campo Activo,
+    // así que no se borra la fila, solo se marca como inactiva
     public async Task<bool> DeleteAsync(int id)
     {
         using var connection = new NpgsqlConnection(connectionString);
         int filas = await connection.ExecuteAsync(
-            "DELETE FROM Personas WHERE Id = @Id", new { Id = id });
+            "UPDATE Personas SET Activo = false WHERE Id = @Id AND Activo = true",
+            new { Id = id });
         return filas > 0;
     }
 }
 ```
+
+> 📝 **Nota:** Este repositorio usa **soft delete** (borrado lógico): como el modelo tiene el campo `Activo`, el DELETE no elimina la fila, solo la marca `Activo = false`. Así se conserva el histórico y no se rompen las referencias. Las consultas filtran con `WHERE Activo = true` (mira el JOIN de abajo). Si en tu proyecto el borrado debe ser físico, borra la fila de forma explícita y documenta la decisión.
 
 ### JOINs con Dapper
 
@@ -237,13 +242,13 @@ public class PersonaEfRepository(AppDbContext context)
         return true;
     }
 
-    // DELETE
+    // DELETE (soft delete: marcar como inactiva, no borrar la fila)
     public async Task<bool> DeleteAsync(int id)
     {
         var persona = await context.Personas.FindAsync(id);
         if (persona is null) return false;
 
-        context.Personas.Remove(persona);
+        persona.Activo = false;
         await context.SaveChangesAsync();
         return true;
     }
@@ -279,7 +284,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 | **DELETE** | `ExecuteAsync(sql, param)` | `context.Personas.Remove(p)` |
 | **JOIN complejo** | `QueryAsync<T>(sqlJoin)` | `Include()` + LINQ |
 | **Rendimiento** | Más rápido | Más productivo |
-| **Usar cuando** | Consultas complejas, reporting | CRUD rápido, prototipos |
+| **Usar cuando** | Consultas complejas, informes | CRUD rápido, prototipos |
 
 ## 21.3. MongoDB: Documentos Flexibles
 
@@ -367,7 +372,7 @@ public class ProductoMongoRepository(string connectionString, string database)
         return resultado.IsAcknowledged && resultado.ModifiedCount > 0;
     }
 
-    // DELETE
+    // DELETE físico: ProductoMongo no tiene campo Activo, así que se borra el documento
     public async Task<bool> DeleteAsync(string id)
     {
         var resultado = await _productos.DeleteOneAsync(p => p.Id == id);
@@ -397,7 +402,7 @@ var resultados = await pipeline.ToListAsync();
 
 > 📝 **Nota:** MongoDB es ideal cuando los datos son jerárquicos (documentos JSON) y el esquema cambia frecuentemente. No necesitas migraciones: simplemente añades nuevos campos a los documentos.
 
-📌 **Ejemplo real:** Instagram guarda los perfiles de usuario en MongoDB. Cada usuario tiene información diferente: unos tienen linkedin, otros no; unos tienen bio larga, otros vacía. Con MongoDB no necesitas un esquema rígido.
+📌 **Ejemplo real:** Instagram guarda los perfiles de usuario en MongoDB. Cada usuario tiene información diferente: unos tienen LinkedIn, otros no; unos tienen bio larga, otros vacía. Con MongoDB no necesitas un esquema rígido.
 
 ### EF Core con MongoDB: CRUD Completo
 
@@ -488,7 +493,9 @@ public class ProductoMongoEfRepository(MongoDbContext context)
 ```csharp
 // Program.cs
 builder.Services.AddDbContext<MongoDbContext>(options =>
-    options.UseMongoDB(builder.Configuration.GetConnectionString("MongoDB")));
+    options.UseMongoDB(
+        builder.Configuration.GetConnectionString("MongoDB")!, // 1) cadena de conexión
+        "Academia"));                                          // 2) nombre de la base de datos
 ```
 
 ### MongoDB: Driver Nativo vs EF Core
@@ -514,7 +521,7 @@ dotnet add package StackExchange.Redis
 dotnet add package Microsoft.Extensions.Caching.StackExchangeRedis
 ```
 
-### CRUD con StackExchange.Redis (Driver Nativo): CRUD Completo
+### CRUD con StackExchange.Redis (driver nativo)
 
 ```csharp
 using StackExchange.Redis;
@@ -695,7 +702,7 @@ public class PersonaService(
         var persona = await context.Personas.FindAsync(id);
         if (persona is null) return false;
 
-        context.Personas.Remove(persona);
+        persona.Activo = false; // Soft delete: no se borra la fila
         await context.SaveChangesAsync();
         // Invalidar caché
         await cache.RemoveAsync($"persona:{id}");
@@ -808,7 +815,7 @@ public class ProductoService(
 
 | BD | Driver Nativo | EF Core Provider | Cuándo usar nativo | Cuándo usar EF Core |
 |----|---------------|------------------|-------------------|---------------------|
-| **PostgreSQL** | `Npgsql` + Dapper | `Npgsql.EntityFrameworkCore.PostgreSQL` | Consultas complejas, reporting | CRUD rápido, si ya usas EF Core |
+| **PostgreSQL** | `Npgsql` + Dapper | `Npgsql.EntityFrameworkCore.PostgreSQL` | Consultas complejas, informes | CRUD rápido, si ya usas EF Core |
 | **MongoDB** | `MongoDB.Driver` | `MongoDB.EntityFrameworkCore` | Agregaciones complejas | CRUD simple, si ya usas EF Core |
 | **Redis** | `StackExchange.Redis` | ❌ No existe oficialmente | Caché, sesiones, colas | Usar `IDistributedCache` + Redis |
 
@@ -878,7 +885,7 @@ graph TB
 
 ## 21.4.2. Caché Local: Microsoft.Extensions.Caching.Memory
 
-Cuando **NO necesitas Redis** (aplicación single-server, datos poco compartidos), usa `MemoryCache` de .NET. Es más rápido (memoria del proceso) y no requiere infraestructura externa.
+Cuando **NO necesitas Redis** (aplicación de un solo servidor, datos poco compartidos), usa `MemoryCache` de .NET. Es más rápido (memoria del proceso) y no requiere infraestructura externa.
 
 ### Instalación
 
@@ -939,9 +946,8 @@ var options = new MemoryCacheEntryOptions()
     // Prioridad (qué borrar primero cuando se llena)
     .SetPriority(CacheItemPriority.Normal)              // Low, Normal, High, NeverRemove
 
-    // Tamaño (para caches con límite)
-    .SetSize(1)                                         // 1 unidad
-    .SetSize(2)                                         // 2 unidades
+    // Tamaño (para cachés con límite)
+    .SetSize(1)                                         // 1 unidad (obligatorio si hay SizeLimit)
 
     // Callbacks
     .RegisterPostEvictionCallback((key, value, reason, state) =>
@@ -971,11 +977,11 @@ cache.Set(key, value, new MemoryCacheEntryOptions()
 // ❌ MALO: Olvidar SetSize cuando hay SizeLimit
 cache.Set("key", value);  // ¡Excepción si hay SizeLimit!
 
-// ❌ MALO: UsarMemoryCache en app multi-servidor
+// ❌ MALO: Usar MemoryCache en app multi-servidor
 // MemoryCache es LOCAL — cada servidor tiene el suyo
 // Si tienes 3 servidores, cada uno tiene datos diferentes
 
-// ✅ BUENO: UsarMemoryCache en app single-server
+// ✅ BUENO: Usar MemoryCache en app de un solo servidor
 // Si solo tienes 1 servidor, MemoryCache es perfecto
 ```
 
@@ -986,11 +992,11 @@ cache.Set("key", value);  // ¡Excepción si hay SizeLimit!
 | 1 servidor, datos no compartidos | ✅ | ❌ |
 | Múltiples servidores | ❌ | ✅ |
 | Datos que cambian poco | ✅ | ✅ |
-| Sesiones de usuario | ⚠️ Solo 1 server | ✅ |
+| Sesiones de usuario | ⚠️ Solo 1 servidor | ✅ |
 | Colas de mensajes | ❌ | ✅ |
 | Contadores atómicos | ❌ | ✅ |
 
-> 💡 **Consejo:** Empieza con `MemoryCache`. Cuando necesites escalar a múltiples servidores, migra a Redis. El patrón `IDistributedCache` facilita la migración porque cambias el provider sin cambiar el código.
+> 💡 **Consejo:** Empieza con `MemoryCache`. Cuando necesites escalar a múltiples servidores, migra a Redis. El patrón `IDistributedCache` facilita la migración porque cambias el proveedor sin cambiar el código.
 
 ### IDistributedCache: La abstracción .NET
 
@@ -1047,11 +1053,13 @@ CREATE TABLE Pedidos (
 |----------------|-----------|---------|
 | **Claves externas** | ✅ Nativo | ❌ No existe |
 | **Integridad referencial** | ✅ La BD lo garantiza | ❌ La aplicación lo gestiona |
-| **Transacciones** | ✅ ACID completo | ✅ Multi-doc (desde 4.0) |
+| **Transacciones** | ✅ ACID completo | ✅ Multi-doc (desde 4.0, requiere replica set) |
 | **Constraints** | ✅ CHECK, UNIQUE, NOT NULL | ❌ Solo en el código |
 | **Consistencia** | ✅ Fuerte (siempre) | ⚠️ Eventual (puede haber lag) |
 
-> 💡 **Analogía:** PostgreSQL es como un banco: cada movimiento está verificado, tiene restrictions, y si algo no cuadra, no deja pasar la operación. MongoDB es como un Excel: tú controlas qué es válido y qué no.
+> ⚠️ **Advertencia:** Las transacciones multi-documento de MongoDB **solo funcionan en un replica set**. En un servidor standalone (el `mongod` por defecto en local) fallarán con un error tipo `Transaction numbers are only allowed on a replica set member or mongos`. En Docker, inicializa el replica set aunque sea de un solo nodo antes de usar transacciones.
+
+> 💡 **Analogía:** PostgreSQL es como un banco: cada movimiento está verificado, tiene restricciones, y si algo no cuadra, no deja pasar la operación. MongoDB es como un Excel: tú controlas qué es válido y qué no.
 
 ### Embedded vs Referencias en MongoDB
 
@@ -1101,10 +1109,12 @@ var cliente = await collection.Find(c => c.Id == "cliente123").FirstOrDefaultAsy
 El documento hijo tiene una referencia al padre. Similar a las claves externas.
 
 ```json
-// Documento Cliente
 { "_id": "cliente123", "nombre": "Ana" }
+```
 
-// Documento Pedido (referencia al cliente)
+**Documento Pedido (referencia al cliente):**
+
+```json
 { "_id": "pedido456", "clienteId": "cliente123", "producto": "Laptop", "precio": 999 }
 ```
 
@@ -1385,7 +1395,7 @@ graph LR
 > 💡 **Cuándo usar cada uno:**
 > - **ADO.NET:** Consultas complejas, optimización extrema, Stored Procedures
 > - **Dapper:** CRUD rápido, control del SQL, alto rendimiento
-> - **EF Core:** Desarrollo rápido,Change Tracking, migraciones automáticas, LINQ
+> - **EF Core:** Desarrollo rápido, Change Tracking, migraciones automáticas, LINQ
 
 ## 21.11. Escalabilidad Vertical vs Horizontal
 
@@ -1428,10 +1438,12 @@ graph TB
 | **Esquema** | Rígido (migraciones) | Flexible (cambia solo) | Sin esquema |
 | **Rendimiento** | Rápido (con índices) | Muy rápido | Ultrarrápido (memoria) |
 | **Escalabilidad** | Vertical + read replicas | Horizontal (sharding) | Vertical + clustering |
-| **Transacciones** | ✅ ACID completo | ✅ Transacciones multi-doc | ⚠️ Limitadas |
-| **Relaciones** | ✅ JOINs nativos | ⚠️ Embedding/referencing | ❌ No hay |
+| **Transacciones** | ✅ ACID completo | ✅ Transacciones multi-doc (requiere replica set) |
+| **Relaciones** | ✅ JOINs nativos | ⚠️ Embebido/referencias | ❌ No hay |
 | **Uso típico** | Datos relacionales, e-commerce | Contenido, perfiles, IoT | Caché, sesiones, colas |
-| **Coste** | Gratis (open source) | Gratis (open source) | Gratis (open source) |
+| **Coste** | Gratis (código abierto) | Gratis (código abierto) | Gratis (código abierto) |
+
+> ⚠️ **Advertencia:** Las transacciones de MongoDB requieren **replica set**: en un servidor standalone no funcionan (ver la advertencia de integridad y transacciones más arriba).
 
 ### Otras alternativas
 
@@ -1442,10 +1454,10 @@ graph TB
 | **NoSQL Documentos** | CouchDB | Sincronización offline-first |
 | **NoSQL Columnas** | Cassandra | Big data, IoT, alta escritura |
 | **NoSQL Grafo** | Neo4j | Redes sociales, recomendaciones, grafos |
-| **NoSQL Clave-Valor** | DynamoDB | Serverless AWS, escalamiento automático |
+| **NoSQL Clave-Valor** | DynamoDB | Serverless AWS, escalado automático |
 | **NewSQL** | CockroachDB | SQL + escalabilidad horizontal |
-| **Buscador** | Elasticsearch | Búsquedas full-text, logs |
-| **Timeseries** | InfluxDB | Métricas, IoT, monitorización |
+| **Buscador** | Elasticsearch | Búsquedas de texto completo, logs |
+| **Series temporales** | InfluxDB | Métricas, IoT, monitorización |
 
 ```mermaid
 graph TD
@@ -1453,7 +1465,7 @@ graph TD
     A --> C{"Documentos<br/>flexibles"}
     A --> D{"Clave-valor<br/>rápido"}
     A --> E{"Relaciones<br/>entre entidades"}
-    A --> F{"Búsquedas<br/>full-text"}
+    A --> F{"Búsquedas<br/>de texto completo"}
 
     B --> B1["PostgreSQL / MySQL"]
     C --> C1["MongoDB / CouchDB"]
@@ -1479,8 +1491,8 @@ graph TD
 | **Blog / CMS** (posts, comentarios) | MongoDB | Esquema flexible, documentos jerárquicos |
 | **Red social** (amigos, likes, feeds) | Neo4j + Redis | Grafo para relaciones, caché para feeds |
 | **Chat en tiempo real** (mensajes, salas) | MongoDB + Redis | Documentos flexibles, caché de sesiones |
-| **IoT** (sensores, métricas) | InfluxDB + Redis | Timeseries para métricas, Redis para caché |
-| **Búsqueda** (productos, artículos) | PostgreSQL + Elasticsearch | SQL para datos, ES para búsquedas full-text |
+| **IoT** (sensores, métricas) | InfluxDB + Redis | Series temporales para métricas, Redis para caché |
+| **Búsqueda** (productos, artículos) | PostgreSQL + Elasticsearch | SQL para datos, Elasticsearch para texto completo |
 | **Gaming** (ranking, partidas) | Redis | Velocidad extrema, clasificación en tiempo real |
 
 ```mermaid
@@ -1514,7 +1526,7 @@ public class PedidoService(PedidoRepository pedidoRepo, PostRepository postRepo,
     public async Task<Pedido?> ObtenerPedidoAsync(int id)
     {
         // 1. Buscar en caché (Redis)
-        string cached = await cache.GetAsync($"pedido:{id}");
+        string? cached = await cache.GetAsync($"pedido:{id}");
         if (cached is not null)
             return JsonSerializer.Deserialize<Pedido>(cached);
 
@@ -1547,7 +1559,7 @@ public class PedidoService(PedidoRepository pedidoRepo, PostRepository postRepo,
 |----------|-------------|
 | **ACID** | Atomicidad, Consistencia, Aislamiento, Durabilidad (SQL) |
 | **BASE** | Básicamente Disponible, Estado blando, Consistencia eventual (NoSQL) |
-| **PostgreSQL** | SGBD relacional open-source, potente y maduro |
+| **PostgreSQL** | SGBD relacional de código abierto, potente y maduro |
 | **Dapper** | Micro ORM para consultas SQL rápidas |
 | **MongoDB** | Base de datos de documentos BSON sin esquema fijo |
 | **Redis** | Base de datos en memoria para caché y clave-valor |
@@ -1556,5 +1568,5 @@ public class PedidoService(PedidoRepository pedidoRepo, PostRepository postRepo,
 
 **¿Qué viene después?**
 
-En el siguiente punto veremos testing avanzado: NUnit, FluentAssertions, Moq y TestContainers para tests profesionales.
+En el siguiente punto veremos testing avanzado: NUnit, FluentAssertions, Moq y Testcontainers para tests profesionales.
 

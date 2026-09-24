@@ -1,4 +1,4 @@
-# Ejemplo 02: Ficheros JSON y CSV
+# Ejemplo 03: Ficheros JSON y CSV
 
 ## Descripción
 
@@ -48,10 +48,10 @@ public record Producto(int Id, string Nombre, decimal Precio, string Categoria);
 ## Estructura
 
 ```
-02-FicherosJsonCsv/
-├── 02-FicherosJsonCsv.slnx
-├── 02-FicherosJsonCsv/
-│   ├── 02-FicherosJsonCsv.csproj
+03-FicherosJsonCsv/
+├── 03-FicherosJsonCsv.slnx
+├── 03-FicherosJsonCsv/
+│   ├── 03-FicherosJsonCsv.csproj
 │   ├── Program.cs
 │   ├── Models/
 │   │   └── Producto.cs

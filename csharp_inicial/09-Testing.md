@@ -1,4 +1,4 @@
-﻿- [9. Testing en .NET](#9-testing-en-net)
+- [9. Testing en .NET](#9-testing-en-net)
   - [9.1. Fundamentos del testing](#91-fundamentos-del-testing)
     - [9.1.1. 🧠 Analogía: Tests como cinturón de seguridad](#911--analogía-tests-como-cinturón-de-seguridad)
     - [9.1.2. Tipos de tests](#912-tipos-de-tests)
@@ -7,9 +7,20 @@
   - [9.4. FluentAssertions](#94-fluentassertions)
   - [9.5. Test de integración](#95-test-de-integración)
   - [9.6. Coverage y métricas](#96-coverage-y-métricas)
-  - [9.7. Resumen](#97-resumen)
+
+
 
 # 9. Testing en .NET
+
+> 💡 **Punto de partida:** ¿Alguna vez has cambiado una línea "inocente" y has roto algo que funcionaba? Los tests son tu red de seguridad: te permiten refactorizar con confianza y detectar regresiones antes que tus usuarios.
+
+**Objetivos de aprendizaje:**
+
+- Entender los fundamentos y tipos de testing
+- Escribir tests unitarios con NUnit, Moq y FluentAssertions
+- Crear tests de integración y medir la cobertura de código
+
+📌 Ejemplo real: Los equipos profesionales (Netflix, Microsoft) ejecutan miles de tests en cada commit; en la Tienda usarás NUnit + Testcontainers para probar la lógica de negocio sin tocar la base de datos de producción.
 
 El testing es una práctica fundamental en el desarrollo de software profesional. Los tests proporcionan una red de seguridad que permite refactorizar código con confianza, detectar regresiones tempranamente, y documentar el comportamiento esperado del sistema. En el ecosistema .NET, existen múltiples herramientas para implementar una estrategia de testing efectiva.
 
@@ -131,7 +142,7 @@ namespace Testing.NUnit;
         [Test]
         public void Contains_ElementoExistente_RetornaTrue()
         {
-            var lista = List<string> { "a", "b", "c" };
+            var lista = new List<string> { "a", "b", "c" };
             Assert.That(lista, Does.Contain("b"));
         }
 
@@ -482,7 +493,7 @@ namespace Testing.FluentAssertions;
         [Test]
         public void CollectionAssertions()
         {
-            var personas = List<Persona>
+            var personas = new List<Persona>
             {
                 new Persona("Juan", 25),
                 new Persona("Ana", 30),
@@ -579,7 +590,7 @@ namespace Testing.FluentAssertions;
             var resultado = new Resultado
             {
                 Success = true,
-                Data = List<string> { "a", "b" },
+                Data = new List<string> { "a", "b" },
                 Message = "OK"
             };
 
@@ -909,7 +920,16 @@ namespace Testing.Coverage;
 }
 ```
 
-## 9.7. Resumen
+**Buenas prácticas:**
+
+- Nombra los tests con la estructura `Metodo_Condicion_ResultadoEsperado`
+- Sigue el patrón AAA (Arrange-Act-Assert) en cada test
+- No dependas de la base de datos en tests unitarios; usa mocks
+- Ejecuta la suite completa antes de hacer commit
+
+---
+
+**Resumen del punto:**
 
 **Fundamentos del Testing**
 - Los tests proporcionan seguridad al refactorizar y detectar regresiones
@@ -929,3 +949,7 @@ namespace Testing.Coverage;
 **Coverage**
 - El coverage indica qué porcentaje del código está probado
 - Alto coverage no garantiza calidad, pero bajo coverage indica riesgos
+
+**¿Qué viene después?**
+
+En el siguiente punto veremos los patrones de diseño y las arquitecturas web: SOLID, Strategy, Repository y más.

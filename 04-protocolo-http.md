@@ -47,19 +47,20 @@ sequenceDiagram
 
 > 📝 **Nota:** HTTP es **sin estado**. Esto significa que cada petición es independiente. Si haces clic en "Login" y luego en "Perfil", el servidor no sabe que ambas peticiones vienen del mismo usuario. Por eso usamos **cookies** y **tokens JWT** para mantener la sesión.
 
-> 💡 **Analogía:** HTTP es como mandar cartas por correo. Cada carta es independiente. Si mandas dos cartas, el cartero no sabe que vienen de la misma persona a menos que pongas tu nombre en la carta (cookie/header).
+> 💡 **Analogía:** HTTP es como mandar cartas por correo. Cada carta es independiente. Si mandas dos cartas, el cartero no sabe que vienen de la misma persona a menos que pongas tu nombre en la carta (cookie o cabecera).
 
 ## 4.2. Formato de una Petición HTTP
 
 Una petición HTTP tiene tres partes: línea de petición, cabeceras y cuerpo.
 
 ```
-GET /api/usuarios HTTP/1.1        ← Línea de petición (método, ruta, versión)
+POST /api/usuarios HTTP/1.1       ← Línea de petición (método, ruta, versión)
 Host: api.ejemplo.com             ← Cabeceras
+Content-Type: application/json
 Accept: application/json
 Authorization: Bearer eyJhbGci...
                                    ← Línea en blanco
-{ "nombre": "Ana" }               ← Cuerpo (solo en POST/PUT)
+{ "nombre": "Ana" }               ← Cuerpo (opcional; propio de POST/PUT/PATCH)
 ```
 
 | Parte | Descripción | Ejemplo |
@@ -69,6 +70,8 @@ Authorization: Bearer eyJhbGci...
 | **Versión** | Versión del protocolo | `HTTP/1.1` o `HTTP/2` |
 | **Cabeceras** | Información adicional | `Host`, `Accept`, `Authorization` |
 | **Cuerpo** | Datos que envías (opcional) | JSON, XML, formulario |
+
+> 📝 **Nota:** HTTP no prohíbe técnicamente el cuerpo en una petición `GET`, pero **no debe usarse** según la semántica del protocolo: `GET` debe ser seguro e idempotente, y muchos servidores e intermediarios lo ignoran o lo descartan. Para enviar parámetros en un `GET`, usa la **query string** (por ejemplo, `GET /api/usuarios?rol=admin`).
 
 📌 **Ejemplo real:** Cuando haces login en Instagram:
 1. Tu navegador envía `POST /api/auth/login` con usuario y contraseña en el cuerpo
@@ -117,14 +120,14 @@ Cada petición HTTP lleva un **método** (o verbo) que indica qué acción quier
 | **PUT** | Actualizar completo | `PUT /api/usuarios/1` | UPDATE |
 | **PATCH** | Actualizar parcial | `PATCH /api/usuarios/1` | UPDATE parcial |
 | **DELETE** | Eliminar | `DELETE /api/usuarios/1` | DELETE |
-| **QUERY** | Consulta avanzada | `QUERY /api/usuarios` | SELECT con filtros complejos |
+| **QUERY** | Consulta avanzada (**no oficial**) | `QUERY /api/usuarios` | SELECT con filtros complejos |
 
 📌 **Ejemplo real:** En una app de e-commerce:
 - `GET /api/productos` → Ver el catálogo (SELECT)
 - `POST /api/pedidos` → Crear un pedido nuevo (INSERT)
 - `PUT /api/usuarios/5` → Actualizar todos los datos de un usuario (UPDATE)
 - `DELETE /api/carrito/3` → Eliminar un producto del carrito (DELETE)
-- `QUERY /api/productos` → Consulta compleja con filtros, ordenación y paginación
+- `QUERY /api/productos` → Consulta compleja con filtros, ordenación y paginación (método propuesto, aún no oficial)
 
 > 📝 **Nota:** La relación entre verbos HTTP y operaciones CRUD es fundamental. **C**reate = POST, **R**ead = GET, **U**pdate = PUT/PATCH, **D**elete = DELETE. El verbo **QUERY** (propuesto pero no oficial) se usa para consultas complejas que van más allá de GET con parámetros.
 
@@ -263,10 +266,10 @@ sequenceDiagram
 
 ## 4.8. Buenas Prácticas
 
-- **HTTPS siempre**: Nunca HTTP plano en producción. SSL/TLS es obligatorio
+- **HTTPS siempre**: Nunca HTTP sin cifrar en producción. SSL/TLS es obligatorio
 - **Códigos de estado precisos**: 201 para crear, 204 para eliminar, 404 para no encontrado. No uses 200 para todo
-- **Nunca exponer errores internos**: Usa 500 genérico al cliente, loggear el detalle en servidor
-- **Rate limiting**: Limita peticiones por usuario para proteger contra abusos
+- **Nunca exponer errores internos**: Devuelve un 500 genérico al cliente y registra el detalle en el servidor
+- **Limitación de tasa (rate limiting)**: Limita peticiones por usuario para proteger contra abusos
 
 ---
 

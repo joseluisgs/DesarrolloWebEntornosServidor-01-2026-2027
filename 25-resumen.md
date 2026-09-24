@@ -72,7 +72,7 @@ graph TD
     P1 --> SEG[Seguridad]
 
     WEB --> WEB1[Front-end vs Back-end]
-    WEB --> WEB2[Servidor:Hardware+Software]
+    WEB --> WEB2[Servidor: Hardware + Software]
     COMP --> COMP1[Cliente-Servidor]
     COMP --> COMP2[Capas: Presentación,Negocio,Datos]
     ARQ --> ARQ1[MVC]
@@ -99,7 +99,7 @@ graph TD
     SEG --> SEG3[HTTPS,CORS,Logs]
 
     P2 --> DI[Inyección de Dependencias]
-    P2 --> PAT[Patron Repository]
+    P2 --> PAT[Patrón Repository]
     P2 --> LINQ[LINQ + DataFrames]
     P2 --> FICH[Ficheros + JSON]
     P2 --> RESULT[Manejo de Errores]
@@ -118,7 +118,7 @@ graph TD
     PAT --> PAT1[Repository: Acceso a Datos]
     PAT --> PAT2[Service: Lógica de Negocio]
     PAT --> PAT3[Factory: Creación de Objetos]
-    LINQ --> LINQ1[ Consultas Declarativas]
+    LINQ --> LINQ1[Consultas Declarativas]
     LINQ --> LINQ2[Parallel LINQ: Paralelo]
     LINQ --> LINQ3[DataFrames: Big Data]
     FICH --> FICH1[File, StreamWriter, StreamReader]
@@ -139,7 +139,7 @@ graph TD
     BD --> BD2[MongoDB, Redis]
     TEST --> TEST1[NUnit + Moq]
     TEST --> TEST2[FluentAssertions]
-    TEST --> TEST3[TestContainers: Docker/Podman]
+    TEST --> TEST3[Testcontainers: Docker/Podman]
     DOCKER --> DOCKER1[Dockerfile Multi-etapa]
     DOCKER --> DOCKER2[docker-compose.yml]
     SEGP --> SEGP1[BCrypt: Hash + Salt]
@@ -147,7 +147,7 @@ graph TD
     SEGP --> SEGP3[CORS: Orígenes Permitidos]
 
     style UD01 fill:#2196F3,color:#fff
-    style P1 fill:#7c3aed,color:#fff
+    style P1 fill:#9C27B0,color:#fff
     style P2 fill:#4CAF50,color:#fff
     style WEB fill:#FF9800,color:#fff
     style COMP fill:#FF9800,color:#fff
@@ -291,7 +291,7 @@ graph TD
 - **JSON:** System.Text.Json (moderno, rápido) o Newtonsoft.Json (flexible)
 - **CSV:** CsvHelper o mapeo manual con Split
 - **Convención:** Mappers/ para mapear datos entre capas
-- 📌 El example 09 lee 46.596 registros de accidentes de Madrid desde CSV
+- 📌 El ejemplo 09 lee 46.596 registros de accidentes de Madrid desde CSV
 
 #### Tema 15: Manejo de Errores con Result<T>
 - **Result:** Tipo funcional que encapsula éxito o error. Sin excepciones
@@ -307,14 +307,14 @@ graph TD
 - **Task:** Representa una operación asíncrona que aún no ha terminado
 - **CancellationToken:** Señal para cancelar operaciones largas
 - **async void:** ¡NUNCA en servicios! Solo en eventos de UI
-- **.Result / .Wait():** ¡NUNCA! Bloquea el hilo y puede causar deadlocks
+- **.Result / .Wait():** ¡NUNCA! Bloquea el hilo (deadlocks en UI, starvation del ThreadPool en ASP.NET Core)
 - **Patrón:** `await client.GetAsync(url)` en vez de `client.GetAsync(url).Result`
 - 📌 Un endpoint que consulta una API externa usa async/await para no bloquear otros requests
 
 #### Tema 17: Flujos Reactivos
 - **Rx.NET:** Programación reactiva con observables. Los datos fluyen y tú reaccionas
 - **Subject<T>:** Emisor de eventos. Varios suscriptores pueden escuchar
-- **IAsyncEnumerable:**colección que se lee asincrónicamente elemento a elemento con `await foreach`
+- **IAsyncEnumerable:** colección que se lee de forma asíncrona elemento a elemento con `await foreach`
 - **Flujos fríos (IAsyncEnumerable):** Cada suscriptor recorre todo desde el inicio
 - **Flujos calientes (Rx.NET):** Los suscriptores tardíos pierden eventos anteriores
 - **Operadores:** Merge (unir), Buffer (agrupar), Take (tomar N), Where (filtrar)
@@ -323,9 +323,9 @@ graph TD
 #### Tema 18: Consumo de APIs Externas
 - **Refit:** Interfaz tipada para consumir APIs REST. Defines la interfaz, Refit genera la implementación
 - **Polly:** Resiliencia. Retry, Circuit Breaker, Timeout, Bulkhead
-- **IHttpClientFactory:** Crea HttpClient de forma segura. Evita Socket Exhaustion
+- **IHttpClientFactory:** Crea HttpClient de forma segura. Evita el agotamiento de sockets (socket exhaustion)
 - **Debounce:** Espera a que el usuario deje de escribir antes de buscar
-- **Neverending Fetch:** Cancela peticiones anteriores cuando llega una nueva
+- **Cancelación de peticiones (Switch):** Cancela la petición anterior cuando llega una nueva
 - 📌 Glovo usa Polly para reintentar si un repartidor no responde la primera vez
 
 #### Tema 19: Configuración y Logging
@@ -350,7 +350,7 @@ graph TD
 
 #### Tema 21: SQL y NoSQL
 - **PostgreSQL:** BD relacional potente. JSONB, PostGIS, extensiones
-- **MySQL:** BD relacional popular. Simple, rápido, community edition
+- **MySQL:** BD relacional popular. Simple, rápido, edición comunitaria
 - **SQLite:** BD embebida. Sin servidor. Ideal para desarrollo y apps móviles
 - **MongoDB:** BD documental. JSON flexible. Sin esquema fijo
 - **Redis:** Caché en memoria. Clave-valor. Expiración TTL
@@ -364,10 +364,10 @@ graph TD
 - **Moq:** Mocking de interfaces. Simula dependencias para aislar lo que se testea
 - **FluentAssertions:** Aserciones legibles. `resultado.Should().Be(esperado)`
 - **Patrón AAA:** Arrange (preparar), Act (ejecutar), Assert (verificar)
-- **TestContainers:** Tests con Docker/Podman. BD real, Redis real, todo efímero
+- **Testcontainers:** Tests con Docker/Podman. BD real, Redis real, todo efímero
 - **Cobertura:** `dotnet test --collect:"XPlat Code Coverage"`. Objetivo: >80%
 - **Organización:** Misma estructura que el proyecto principal (Models/, Services/, Repositories/)
-- 📌 Un equipo usa TestContainers para testear la BD real sin contaminar datos de desarrollo
+- 📌 Un equipo usa Testcontainers para testear la BD real sin contaminar datos de desarrollo
 
 #### Tema 23: Docker y Podman: Contenedores
 - **Dockerfile:** Receta multi-etapa: build → test → runtime. Mismo formato para Docker y Podman
@@ -425,7 +425,7 @@ graph TD
 
 | Error | Por qué está mal | Cómo evitarlo |
 |-------|------------------|---------------|
-| Usar `.Result` o `.Wait()` | Bloquea el hilo, puede causar deadlocks | Usar siempre `await` |
+| Usar `.Result` o `.Wait()` | Bloquea el hilo: deadlocks en UI, starvation en ASP.NET Core | Usar siempre `await` |
 | `async void` en servicios | No se puede await, errores silenciosos | Usar `async Task` |
 | `HttpClient` directo | Socket Exhaustion en producción | Usar `IHttpClientFactory` |
 | Contraseñas en texto plano | Cualquier hacker las lee | Usar BCrypt con salt |
@@ -435,11 +435,11 @@ graph TD
 | `Parse` sin validar | Excepción si el dato no es válido | Usar `TryParse` |
 | No usar `CancellationToken` | Operaciones no se pueden cancelar | Pasar token en métodos asíncronos |
 | No rotar logs | El disco se llena | Configurar retención y rotación |
-| `COPY . .` en Dockerfile | Copia archivos innecesarios | Copiar carpetas individuales |
+| `COPY . .` en Dockerfile | Copia ficheros innecesarios | Copiar carpetas individuales |
 | SQL con concatenación | SQL Injection | Usar consultas parametrizadas |
 | `int` para dinero | Pierde decimales | Usar `decimal` |
 | Confundir `=` y `==` | Asignación vs comparación | Usar `==` en condiciones |
-| No usar `using` con recursos | Memory leaks | Envolver en `using` statements |
+| No usar `using` con recursos | Fugas de memoria (memory leaks) | Envolver en un bloque `using` |
 
 ## 25.5. Checklist de Supervivencia
 
@@ -472,7 +472,7 @@ Antes de dar por cerrado el tema, asegúrate de poder responder **SÍ** a estas 
 - [ ] ¿Sé crear un Dockerfile multi-etapa y un docker-compose.yml (compatible con Docker y Podman)?
 - [ ] ¿Entiendo JWT, BCrypt y CORS para seguridad?
 
-> 🔧 **Truco:** La mejor forma de aprender es practicando. No leas solo los apuntes: abre el IDE y prueba cada ejemplo. Modifícalos, rompelos, arreglalos. Eso es como se aprende.
+> 🔧 **Truco:** La mejor forma de aprender es practicando. No leas solo los apuntes: abre el IDE y prueba cada ejemplo. Modifícalos, rómpelos, arreglalos. Eso es como se aprende.
 
 ## 25.6. Glosario de Términos
 
@@ -486,7 +486,7 @@ Antes de dar por cerrado el tema, asegúrate de poder responder **SÍ** a estas 
 | **SOLID** | 5 principios de diseño: SRP, OCP, LSP, ISP, DIP |
 | **Docker** | Plataforma de contenedores. Empaqueta la app con todo lo que necesita |
 | **Podman** | Alternativa a Docker, sin daemon, compatible con Dockerfile |
-| **CI/CD** | Integración Continua / Despliegue Continuo. Automatización de build y deploy |
+| **CI/CD** | Integración Continua / Despliegue Continuo. Automatización de compilación y despliegue |
 | **DI** | Inyección de Dependencias. El contenedor crea e inyecta objetos |
 | **Repository** | Patrón de acceso a datos. Abstrae la fuente de datos |
 | **Service** | Patrón de lógica de negocio. Contiene la lógica de la aplicación |
@@ -498,7 +498,7 @@ Antes de dar por cerrado el tema, asegúrate de poder responder **SÍ** a estas 
 | **CancellationToken** | Señal para cancelar operaciones asíncronas en progreso |
 | **Observable** | Fuente de datos que emite valores a suscriptores (Rx.NET) |
 | **Subject** | Observable + Observer. Emisor de eventos en Rx.NET |
-| **IAsyncEnumerable** | Colección que se lee asincrónicamente con `await foreach` |
+| **IAsyncEnumerable** | Colección que se lee de forma asíncrona con `await foreach` |
 | **Refit** | Cliente HTTP tipado. Define interfaz, Refit genera la implementación |
 | **Polly** | Librería de resiliencia: retry, circuit breaker, timeout |
 | **IOptions<T>** | Configuración tipada en .NET. Accedes a valores como propiedades |
@@ -514,7 +514,7 @@ Antes de dar por cerrado el tema, asegúrate de poder responder **SÍ** a estas 
 | **NUnit** | Framework de tests para .NET |
 | **Moq** | Librería para crear mocks de interfaces |
 | **FluentAssertions** | Aserciones fluidas y legibles para tests |
-| **TestContainers** | Tests con contenedores Docker/Podman efímeros |
+| **Testcontainers** | Tests con contenedores Docker/Podman efímeros |
 | **LINQ to DataFrame** | Tablas en memoria para análisis de datos (big data) |
 
 ## 25.7. Ejercicios de Repaso
@@ -541,7 +541,7 @@ Antes de dar por cerrado el tema, asegúrate de poder responder **SÍ** a estas 
 
 11. **Rx.NET vs IAsyncEnumerable:** ¿Cuándo usarías un flujo caliente y cuándo uno frío? Da un ejemplo de cada caso.
 
-12. **Proyecto integrador:** Diseña la arquitectura de una API para gestionar una biblioteca. Indica: patrones (Repository, Service), tecnologías (EF Core, PostgreSQL), seguridad (JWT), despliegue (Docker/Podman), y testing (NUnit + TestContainers).
+12. **Proyecto integrador:** Diseña la arquitectura de una API para gestionar una biblioteca. Indica: patrones (Repository, Service), tecnologías (EF Core, PostgreSQL), seguridad (JWT), despliegue (Docker/Podman), y testing (NUnit + Testcontainers).
 
 ## 25.8. ¿Qué viene después?
 
@@ -556,7 +556,7 @@ En la **UD02: Desarrollo de servicios web en .NET** aprenderás a crear APIs RES
 | EF Core (20) | Conectar la API a PostgreSQL |
 | JWT (24) | Autenticar usuarios |
 | Docker/Podman (23) | Desplegar la app en contenedores |
-| Testing (22) | Tests de integración con TestContainers |
+| Testing (22) | Tests de integración con Testcontainers |
 
 📌 **Ejemplo real:** En la UD02 crearás una API REST completa para gestionar productos. Usarás: ASP.NET Core (HTTP/REST), EF Core (PostgreSQL), DI (Scrutor), JWT (autenticación), Serilog (logging), NUnit (tests), y Docker/Podman (despliegue). Todo lo que aprendiste en la UD01.
 

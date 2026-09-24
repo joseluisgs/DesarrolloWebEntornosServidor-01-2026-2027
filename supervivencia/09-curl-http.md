@@ -30,9 +30,9 @@ curl -o respuesta.json https://jsonplaceholder.typicode.com/users
 curl -L https://ejemplo.com
 ```
 
-> 💡 **Consejo:** `-s` (silent) quita la barra de progreso. Úsalo siempre con `| jq` para-formatear JSON.
+> 💡 **Consejo:** `-s` (silent) quita la barra de progreso. Úsalo siempre con `| jq` para formatear JSON.
 
-> 🔧 **Truco:** `-I` solo descarga las cabeceras. Perfecto para comprobar si un endpoint está vivo sin descargar el body.
+> 🔧 **Truco:** `-I` solo descarga las cabeceras. Perfecto para comprobar si un endpoint está vivo sin descargar el cuerpo.
 
 > 💡 **Analogía:** `curl` es como un navegador en la terminal. Hace peticiones HTTP y muestra la respuesta. Es la herramienta #1 para probar APIs.
 
@@ -61,7 +61,7 @@ curl -X POST https://api.ejemplo.com/upload \
 
 > ⚠️ **Advertencia:** Si olvidas `-H "Content-Type: application/json"`, el servidor recibirá el JSON como texto plano y devolverá `415 Unsupported Media Type`.
 
-> 🔧 **Truco:** `-d @usuario.json` lee el contenido de un fichero. Perfecto para enviar payloads grandes sin escribir todo en la línea de comandos.
+> 🔧 **Truco:** `-d @usuario.json` lee el contenido de un fichero. Perfecto para enviar cuerpos grandes sin escribir todo en la línea de comandos.
 
 ## PUT — Actualizar datos
 
@@ -116,17 +116,17 @@ curl -X DELETE https://api.ejemplo.com/users/1 \
 -H "Accept: application/json"
 -H "Accept: text/html"
 
-# Custom headers
+# Cabeceras personalizadas
 -H "X-Request-Id: 12345"
 -H "X-Correlation-Id: abc-def"
 ```
 
 > 🔧 **Truco:** Para generar Basic Auth: `echo -n 'usuario:password' | base64`. Ejemplo: `dXN1YXJpbzpwYXNzd29yZA==`.
 
-## Verbose y debugging
+## Modo verbose y depuración
 
 ```bash
-# Ver todo (cabeceras, request, response)
+# Ver todo (cabeceras, petición y respuesta)
 curl -v https://api.ejemplo.com/users
 
 # Solo cabeceras de respuesta
@@ -144,9 +144,9 @@ Total:     %{time_total}s
 " https://api.ejemplo.com/users
 ```
 
-> 💡 **Consejo:** `curl -v` es tu mejor amigo para debugging. Muestra las cabeceras de request y response, el body, y los tiempos de conexión.
+> 💡 **Consejo:** `curl -v` es tu mejor amigo para depurar. Muestra las cabeceras de petición y respuesta, el cuerpo, y los tiempos de conexión.
 
-> 🔧 **Truco:** El flag `-w` (write-out) te da métricas de rendimiento. Si una API es lenta, usa esto para saber si el problema es DNS, conexión o TLS.
+> 🔧 **Truco:** La opción `-w` (write-out) te da métricas de rendimiento. Si una API es lenta, usa esto para saber si el problema es DNS, conexión o TLS.
 
 ## Proxies y timeouts
 

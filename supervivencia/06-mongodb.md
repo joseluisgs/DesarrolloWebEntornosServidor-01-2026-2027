@@ -129,7 +129,7 @@ db.productos.updateOne(
 )
 ```
 
-> 💡 **Consejo:** `upsert: true` crea el documento si no existe. Es como un "insert or update". Muy útil para sincronizar datos.
+> 💡 **Consejo:** `upsert: true` crea el documento si no existe — es como un "insertar o actualizar". Muy útil para sincronizar datos.
 
 ## Eliminar documentos
 
@@ -194,9 +194,9 @@ db.productos.aggregate([
 
 > 💡 **Analogía:** Aggregation Pipeline es como una tubería de fábrica: cada etapa (`$group`, `$sort`, `$match`) recibe datos, los procesa y los pasa a la siguiente. Es el equivalente a las consultas SQL complejas pero por pasos.
 
-> 🔧 **Truco:** Si no sabes qué pipeline usar, piensa en pasos: primero filtra (`$match`), luego agrupa (`$group`), luego ordena (`$sort`). Es más legible que una query gigante.
+> 🔧 **Truco:** Si no sabes qué pipeline usar, piensa en pasos: primero filtra (`$match`), luego agrupa (`$group`), luego ordena (`$sort`). Es más legible que una consulta gigante.
 
-## ERRORES comunes
+## Errores comunes
 
 | Error | Causa típica |
 |-------|-------------|

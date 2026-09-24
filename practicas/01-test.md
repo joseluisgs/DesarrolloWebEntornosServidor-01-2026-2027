@@ -186,7 +186,7 @@
     C) Un framework de CSS
     D) Un protocolo de red
 
-29. ¿Qué diferencian a una web estática de una web dinámica?
+29. ¿Qué diferencia hay entre una web estática y una web dinámica?
     A) La web estática tiene más páginas
     B) La web dinámica genera contenido en tiempo de ejecución según el usuario o contexto
     C) La web dinámica no necesita servidor
@@ -464,7 +464,7 @@
 
 71. ¿Qué problema resuelve el async/await en aplicaciones web?
     A) La falta de memoria
-    B) Bloquear el hilo del servidor durante operaciones de larga duración
+    B) El bloqueo del hilo del servidor durante operaciones de larga duración
     C) Los errores de compilación
     D) La falta de estilos
 

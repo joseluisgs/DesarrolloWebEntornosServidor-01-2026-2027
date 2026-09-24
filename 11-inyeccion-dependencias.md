@@ -7,10 +7,10 @@
   - [11.6. Métodos de Inyección](#116-métodos-de-inyección)
   - [11.7. DI en Aplicaciones de Consola](#117-di-en-aplicaciones-de-consola)
     - [11.7.1. Estructura de Carpetas de un Proyecto C#](#1171-estructura-de-carpetas-de-un-proyecto-c)
-  - [11.8. Scrutor: Assembly Scanning Automático](#118-scrutor-assembly-scanning-automático)
-  - [11.9. Buenas Prácticas](#119-buenas-prácticas)
+  - [11.8. Scrutor: Escaneo de Ensamblados Automático](#118-scrutor-escaneo-de-ensamblados-automático)
     - [11.8.1. DI condicional: elegir implementación según configuración](#1181-di-condicional-elegir-implementación-según-configuración)
   - [11.9. Patrones de Diseño con DI](#119-patrones-de-diseño-con-di)
+  - [11.10. Buenas Prácticas](#1110-buenas-prácticas)
 
 
 # 11. Inyección de Dependencias
@@ -81,7 +81,7 @@ En .NET, la DI está integrada en el framework. Se usa `IServiceCollection` para
 graph TD
     subgraph DI["Inyección de Dependencias"]
         A["IServiceCollection<br/>(Registro)"] -->|"BuildServiceProvider()"| B["IServiceProvider<br/>(Resolución)"]
-        B -->|"GetRequiredService<IPedidoRepository>()"| C["PedidoRepository<br/>(Implementación)"]
+        B -->|"GetRequiredService&lt;IPedidoRepository&gt;()"| C["PedidoRepository<br/>(Implementación)"]
     end
 
     D["Program.cs"] -->|"Registra servicios"| A
@@ -170,13 +170,13 @@ services.AddScoped<IPedidoService, PedidoService>();
 services.AddSingleton<ICacheService, CacheService>();
 ```
 
-> ⚠️ **Advertencia — Captive Dependency:** No inyectes un servicio **Transient** dentro de uno **Singleton**. El servicio Transiente quedará "atrapado" y nunca se destruirá, causando memory leaks.
+> ⚠️ **Advertencia — Captive Dependency:** No inyectes un servicio **Transient** dentro de uno **Singleton**. El servicio Transiente quedará "atrapado" y nunca se destruirá, causando fugas de memoria (*memory leaks*).
 
 ```mermaid
 graph TD
     subgraph MAL["❌ MALO: Transient atrapado en Singleton"]
         A["Singleton"] -->|"Dependencia"| B["Transient"]
-        B -->|"Nunca se destruye"| C["Memory Leak"]
+        B -->|"Nunca se destruye"| C["Fuga de memoria"]
     end
 
     subgraph BIEN["✅ BIEN: Singleton con Singleton"]
@@ -190,7 +190,7 @@ graph TD
 
 ## 11.5. Service Locator: El Anti-Patrón
 
-El **Service Locator** es un patrón que se usa como alternativa a la DI, pero es considerado un **anti-patrón** porque oculta las dependencias y dificulta el testing.
+El **Service Locator** es un patrón que se usa como alternativa a la DI, pero es considerado un **anti-patrón** porque oculta las dependencias y dificulta las pruebas.
 
 ```csharp
 // ❌ MALO: Service Locator (anti-patrón)
@@ -227,8 +227,8 @@ graph TD
 
 | Característica | DI (Inyección) | Service Locator |
 |----------------|----------------|-----------------|
-| **Dependencias** | Explícitas (constructor) | Ocultas (buscar en runtime) |
-| **Testing** | Fácil (inyectar mock) | Difícil (mockear el locator) |
+| **Dependencias** | Explícitas (constructor) | Ocultas (búsqueda en tiempo de ejecución) |
+| **Testing** | Fácil (inyectar mock) | Difícil (simular el localizador) |
 | **Mantenibilidad** | Alta (se ve en el constructor) | Baja (dependencias ocultas) |
 | **Acoplamiento** | Bajo | Alto (al locator) |
 
@@ -258,7 +258,7 @@ public class PedidoService(IPedidoRepository repository, IEmailService email) : 
 // ❌ EVITAR: Inyección por propiedad
 public class PedidoService
 {
-    [Inject] public IPedidoRepository Repository { get; set; } // Oculto, mutable
+    [Inject] public IPedidoRepository Repository { get; set; } = null!; // Oculto, mutable
 }
 ```
 
@@ -292,7 +292,7 @@ var personas = service.GetAll();
 
 📌 **Ejemplo real:** El proyecto de Gestión Académica que viste en 1º usa este patrón. La carpeta `Infrastructure/DependenciesProvider.cs` centraliza todos los registros de DI.
 
-> 📝 **Nota:** En apps de consola, usa `CreateScope()` para que los servicios Scoped se comporten correctamente. Cuando el scope se dispose, todos los servicios Scoped se limpian.
+> 📝 **Nota:** En apps de consola, usa `CreateScope()` para que los servicios Scoped se comporten correctamente. Cuando el scope se libera (se hace `Dispose`), todos los servicios Scoped se limpian.
 
 ### 11.7.1. Estructura de Carpetas de un Proyecto C#
 
@@ -336,7 +336,7 @@ MiProyecto/
 
 > ⚠️ **Advertencia común:** Muchos alumnos meten el `AppDbContext` dentro de `Repositories/`. **NUNCA** hagas eso. El DbContext es una entidad de persistencia, no un repositorio. Va en `Entity/`.
 
-## 11.8. Scrutor: Assembly Scanning Automático
+## 11.8. Scrutor: Escaneo de Ensamblados Automático
 
 ### Instalación
 
@@ -506,7 +506,7 @@ builder.Services.Scan(scan => scan
     .FromAssemblyOf<Program>()
     .AddClasses(classes => classes.Where(t => t.Name.EndsWith("Repository")))
         .AsImplementedInterfaces()
-        .WithSingletonLifetime()
+        .WithScopedLifetime()
     .AddClasses(classes => classes.Where(t => t.Name.EndsWith("Service")))
         .AsImplementedInterfaces()
         .WithScopedLifetime()
@@ -527,7 +527,7 @@ else
 }
 ```
 
-📌 Ejemplo real: **TiendaAPI** usa este patrón en `RepositoriesConfig.cs`. La sección `Pedidos:RepositoryType` en `appsettings.json` determina si los pedidos se almacenan con MongoDB Driver nativo o con EF Core. Scrutor registra los repos normales automáticamente, y el condicional se registra manualmente después.
+📌 **Ejemplo real:** **TiendaAPI** usa este patrón en `RepositoriesConfig.cs`. La sección `Pedidos:RepositoryType` en `appsettings.json` determina si los pedidos se almacenan con MongoDB Driver nativo o con EF Core. Scrutor registra los repos normales automáticamente, y el condicional se registra manualmente después.
 
 > 💡 **Analogía:** Scrutor es como un conserje que registra a todos los invitados automáticamente. Pero si hay un invitado especial que solo viene si llueve (configuración), lo registras tú a mano después del conserje.
 
@@ -587,10 +587,10 @@ public class PedidoService(IPedidoRepository repository) : IPedidoService
 
 > 📝 **Nota:** En el tema 12 profundizaremos en los patrones Repository y Service. Ahora solo necesitas entender que la DI es el mecanismo que los hace posibles.
 
-## 11.9. Buenas Prácticas
+## 11.10. Buenas Prácticas
 
-- **SIEMPRE usar DI**: Nunca crear instancias con `new` dentro de clases. Inyectar por constructor
-- **Scoped para repositories**: Una instancia por petición HTTP. Singleton para cache/config
+- **Inyecta, no creas**: Evita crear dependencias con `new` dentro de las clases; inyecta por constructor (los tipos simples o *value objects* sí pueden crearse en el interior)
+- **Scoped para repositories**: Una instancia por petición HTTP. Singleton para caché/configuración
 - **Registrar interfaces, no implementaciones**: Facilita testing y cambio de implementación
 - **Scrutor para proyectos grandes**: Registro automático por escaneo de ensamblados
 

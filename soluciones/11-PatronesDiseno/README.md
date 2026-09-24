@@ -7,7 +7,7 @@ Ejemplo completo que demuestra los 5 principios SOLID y 6 patrones de diseño ap
 ## Objetivos de aprendizaje
 
 - Entender los 5 principios SOLID con ejemplos negativos y positivos
-- Aplicar Strategy para intercambiar algoritmos en runtime
+- Aplicar Strategy para intercambiar algoritmos en tiempo de ejecución
 - Usar Factory para crear objetos sin acoplamiento
 - Añadir comportamiento con Decorator sin modificar código
 - Integrar APIs externas con Adapter

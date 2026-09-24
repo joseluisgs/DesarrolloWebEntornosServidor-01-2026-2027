@@ -9,7 +9,7 @@
 
 # 6. Páginas Web Dinámicas y Generación de Contenido
 
-> 💡 **Punto de partida:** ¿Alguna vez te has preguntado por qué cuando abres Instagram ves tus fotos y no las de otro usuario? O por qué Amazon te muestra productos "recomendados para ti"? Todo isso se debe a que las páginas web no son documentos fijos: se **generan en tiempo real** para cada visitante. Vamos a descubrir cómo funciona eso.
+> 💡 **Punto de partida:** ¿Alguna vez te has preguntado por qué cuando abres Instagram ves tus fotos y no las de otro usuario? O por qué Amazon te muestra productos "recomendados para ti"? Todo eso se debe a que las páginas web no son documentos fijos: se **generan en tiempo real** para cada visitante. Vamos a descubrir cómo funciona eso.
 
 En este tema aprenderás la diferencia entre páginas estáticas y dinámicas, cómo el servidor genera contenido personalizado y cuáles son las tecnologías que lo hacen posible.
 
@@ -32,7 +32,7 @@ La diferencia fundamental radica en **cómo y cuándo se genera el contenido** q
 | **Velocidad** | Muy rápida (solo lectura) | Más lenta (requiere procesamiento) |
 | **Interactividad** | Baja o nula | Alta (login, búsquedas, formularios) |
 | **Tecnologías** | HTML, CSS, JavaScript | PHP, Java, C#, Python, Node.js + BBDD |
-| **Ejemplo** | Landing page, portfolio | Gmail, Instagram, Amazon |
+| **Ejemplo** | Landing page, porfolio | Gmail, Instagram, Amazon |
 
 ```mermaid
 graph TD
@@ -60,7 +60,7 @@ graph TD
 
 > 💡 **Analogía — El Periódico vs Twitter:**
 > - **Página Estática (Periódico de Papel):** Se imprime por la mañana. Si compras uno a las 9:00 y otro a las 18:00, dice exactamente lo mismo. Todos los lectores ven las mismas noticias.
-> - **Página Dinámica (Twitter/X):** Se genera al momento. Si entras a las 9:00 ves unas cosas, y a las 18:00 ves otras. Además, tu *timeline* es diferente al de tu amigo. Se construye "a medida" para ti en ese instante.
+> - **Página Dinámica (Twitter/X):** Se genera al momento. Si entras a las 9:00 ves unas cosas, y a las 18:00 ves otras. Además, lo que ves en tu pantalla es diferente a lo que ve tu amigo. Se construye "a medida" para ti en ese instante.
 
 ## 6.2. Cómo Funciona una Página Web Dinámica (SSR)
 
@@ -273,9 +273,9 @@ record Usuario(int Id, string Nombre, string Email, int Edad);
 
 | Característica | PHP | Java | C# (ASP.NET Core) | Python | Node.js |
 |----------------|-----|------|-------------------|--------|---------|
-| **Curva aprendizaje** | Baja | Alta | Media | Baja | Media |
+| **Curva de aprendizaje** | Baja | Alta | Media | Baja | Media |
 | **Rendimiento** | Bajo | Alto | Muy alto | Medio | Alto |
-| **Uso principal** | CMS, webs | Enterprise | Enterprise, Cloud | IA, Data | APIs, Realtime |
+| **Uso principal** | CMS, webs | Empresarial | Empresarial, nube | IA y datos | APIs y tiempo real |
 | **Hosting barato** | Sí | No | No | Parcial | No |
 | **Empresas que lo usan** | Wikipedia, WordPress | Netflix, LinkedIn | Microsoft, Stack Overflow | Instagram, Spotify | Netflix, Uber |
 

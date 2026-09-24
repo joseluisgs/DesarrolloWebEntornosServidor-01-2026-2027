@@ -42,8 +42,8 @@ graph LR
         B3["Acceso a BBDD"]
     end
 
-    FRONTEND -->|"HTTP Request"| BACKEND
-    BACKEND -->|"HTTP Response"| FRONTEND
+    FRONTEND -->|"Petición HTTP"| BACKEND
+    BACKEND -->|"Respuesta HTTP"| FRONTEND
 
     style FRONTEND fill:#2196F3,color:#fff
     style BACKEND fill:#4CAF50,color:#fff
@@ -73,7 +73,7 @@ graph TD
     style E fill:#f44336,color:#fff
 ```
 
-📌 **Ejemplo real:** Netflix tiene un único Back-end escrito en Java. Ese mismo Back-end alimenta:
+📌 **Ejemplo real:** Netflix no se apoya en una única tecnología: combina varias en su back-end (Java entre ellas, junto a otros lenguajes y servicios). Esa misma plataforma de servicios alimenta:
 - La web de Netflix (navegador)
 - La app de Netflix para móvil (iOS/Android)
 - La app de Netflix para Smart TVs
@@ -83,7 +83,7 @@ El Back-end **no sabe ni le importa** qué cliente le está pidiendo datos. Solo
 
 | Cliente | Tecnología | Cómo consume el Back-end |
 |---------|------------|-------------------------|
-| **Web** | JavaScript (fetch/axios) | Llamadas HTTP al navegador |
+| **Web** | JavaScript (fetch/axios) | Llamadas HTTP desde el navegador |
 | **Móvil** | Swift (iOS) / Kotlin (Android) | Llamadas HTTP desde la app |
 | **Escritorio** | C# / WPF | Llamadas HTTP desde la app |
 | **API pública** | Cualquier lenguaje | Cualquier cliente HTTP |
@@ -99,12 +99,12 @@ No es lo mismo una página web que una aplicación web. Es una diferencia fundam
 | Característica | **Página Web** | **Aplicación Web** |
 |----------------|----------------|-------------------|
 | **¿Qué es?** | Un documento HTML que se muestra en el navegador | Una herramienta interactiva que procesa datos |
-| **Ejemplo** | Blog, web corporativa, portfolio | Gmail, Instagram, Amazon |
+| **Ejemplo** | Blog, web corporativa, porfolio | Gmail, Instagram, Amazon |
 | **Interactividad** | Baja o nula (solo leer) | Alta (escribir, buscar, comprar) |
 | **Datos** | Contenido estático o con poca dinámica | Datos dinámicos, personalizados |
 | **Backend** | No siempre necesita | Siempre necesita |
 
-📌 **Ejemplo real:** La web de "InfoJobs" es una **página web** con información estática de ofertas. Pero cuando te registras, subes tu CV y aplicas a ofertas, estás usando una **aplicación web**. La diferencia es la **interacción** y el **procesamiento de datos**.
+📌 **Ejemplo real:** La web de "InfoJobs" no es una página estática: el buscador de ofertas consulta el Back-end en cada búsqueda y aplica filtros dinámicos (ubicación, salario, experiencia). Y cuando te registras, subes tu CV y aplicas a ofertas, estás usando a fondo una **aplicación web**. La diferencia es la **interacción** y el **procesamiento de datos**.
 
 > 💡 **Consejo:** En el ámbito profesional, casi todo son **aplicaciones web**. Las páginas web estáticas son poco comunes hoy en día. Incluso una web corporativa tiene un panel de administración (Back-end) para gestionar contenido.
 

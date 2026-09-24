@@ -28,7 +28,7 @@ Procesar ficheros CSV con datos reales de accidentes de tráfico en Madrid (2024
 
 ## Descripción
 
-Dado los ficheros CSV `2024_Accidentalidad.csv`, `2025_Accidentalidad.csv` y `2026_Accidentalidad.csv` del directorio `data`, debemos:
+Dados los ficheros CSV `2024_Accidentalidad.csv`, `2025_Accidentalidad.csv` y `2026_Accidentalidad.csv` del directorio `data`, debemos:
 
 1. Leer los 3 ficheros CSV
 2. Combinar los datos en una sola colección

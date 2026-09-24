@@ -13,7 +13,7 @@
 
 > 💡 **Punto de partida:** Has visto `async/await` para operaciones individuales, pero... ¿qué pasa cuando necesitas manejar un **flujo continuo** de datos? Como un chat en tiempo real, las notificaciones de una red social o los sensores de un IoT. No es una sola petición-respuesta, sino un **río de datos** que fluye constantemente. La Programación Reactiva te permite trabajar con estos flujos de forma declarativa y elegante.
 
-En este aprenderás los dos tipos de flujos en C#: `IAsyncEnumerable` (fríos) y `IObservable` (calientes con Rx.NET), los Subject, los operadores más importantes y cuándo usar cada uno.
+En este tema aprenderás los dos tipos de flujos en C#: `IAsyncEnumerable` (fríos) y `IObservable` (calientes con Rx.NET), los Subject, los operadores más importantes y cuándo usar cada uno.
 
 **Objetivos de aprendizaje:**
 
@@ -77,7 +77,7 @@ graph LR
 | Característica | Frío (IAsyncEnumerable) | Caliente (IObservable) |
 |----------------|------------------------|------------------------|
 | **¿Cuándo empieza?** | Cuando alguien lo consume | Siempre, ya está emitiendo |
-| **¿Qué pasa si te suscribes tarde?** | Nada, receivedes todo desde el inicio | Pierdes lo que ya pasó |
+| **¿Qué pasa si te suscribes tarde?** | Nada, recibes todo desde el inicio | Pierdes lo que ya pasó |
 | **Analogía** | Netflix (ves cuando quieres) | TV en directo (si llegas tarde, te lo pierdes) |
 
 > 💡 **Analogía:**
@@ -153,7 +153,7 @@ await foreach (var resultado in GenerarNumerosAsync()
 | Leer un fichero línea a línea | Logs, CSV grandes |
 | Streaming de datos desde una API | Paginación de resultados |
 | Procesar colas de mensajes | Cola de RabbitMQ, Kafka |
-| Sensores IoT que envían datos periódicamente | Temperatura, humedad |
+| Recorrer una colección grande sin cargarla toda | Lotes de registros de BD |
 
 ## 17.3. IObservable: Flujos Calientes
 
@@ -162,7 +162,8 @@ Un **flujo caliente** es como una antena de radio: emite datos todo el tiempo, i
 ### Interfaz IObservable
 
 ```csharp
-// IObservable<T> es la interfaz base de Rx.NET
+// IObservable<T> es una interfaz de la propia BCL (namespace System);
+// Rx.NET (System.Reactive) la implementa y añade los operadores
 public interface IObservable<out T>
 {
     IDisposable Subscribe(IObserver<T> observer);
@@ -290,7 +291,7 @@ var observable = Observable
     .Interval(TimeSpan.FromMilliseconds(100))         // Un valor cada 100ms
     .Where(n => n % 2 == 0)                          // Solo pares
     .Select(n => n * 2)                              // Duplicar
-    .Throttle(TimeSpan.FromSeconds(1))                // Máximo 1 por segundo
+    .Throttle(TimeSpan.FromSeconds(1))                // Emite el último valor tras 1s sin cambios
     .Buffer(3)                                        // Agrupar de 3 en 3
     .Subscribe(
         grupo => Console.WriteLine($"Grupo: {string.Join(", ", grupo)}"),
@@ -391,7 +392,7 @@ stream.OnNext("B"); // B
 // Throttle: emitir solo después de un periodo sin cambios
 var input = new Subject<string>();
 input
-    .Throttle(TimeSpan.FromSeconds(500)) // Espera 500ms sin cambios
+    .Throttle(TimeSpan.FromMilliseconds(500)) // Espera 500ms sin cambios
     .Subscribe(texto => BuscarEnTiempoReal(texto));
 ```
 
@@ -416,7 +417,7 @@ edad.OnNext(30);         // Carlos, 30 años
 
 ### Control de tiempo: Delay, Timeout, Buffer
 
-```sharp
+```csharp
 // Delay: retrasar cada valor
 var retardado = Observable.Range(1, 5)
     .Delay(TimeSpan.FromSeconds(2));
@@ -464,8 +465,8 @@ var observable = Observable.Throw<int>(new Exception("Error de red"))
 Siempre debes hacer `Dispose()` de las suscripciones para evitar **memory leaks**:
 
 ```csharp
-// ❌ MAL: La suscripción nunca se cancela
-subject.OnNext += handler; // Memory leak!
+// ❌ MAL: La suscripción nunca se cancela (IDisposable olvidado)
+var sub = subject.Subscribe(handler); // Memory leak!
 
 // ✅ BIEN: Usar using para dispose automático
 using var subscription = subject
@@ -521,9 +522,12 @@ input
     .Throttle(TimeSpan.FromMilliseconds(300))     // Esperar 300ms sin escribir
     .DistinctUntilChanged()                        // Ignorar si escribe lo mismo
     .Where(texto => texto.Length >= 2)             // Mínimo 2 caracteres
-    .SelectMany(texto => BuscarAsync(texto))       // Buscar (cancela la anterior)
+    .Select(texto => BuscarAsync(texto))           // Buscar: lanza la tarea
+    .Switch()                                      // ... y cancela la anterior si llega una nueva
     .Subscribe(resultados => MostrarResultados(resultados));
 ```
+
+> 📝 **Nota:** Ojo con `SelectMany`: hace **merge** de los flujos y NO cancela la búsqueda anterior (pueden llegarte resultados desordenados de varias búsquedas). Para cancelar la anterior, transforma con `Select` y encadena `.Switch()`, que se suscribe a la tarea más reciente y descarta las demás.
 
 📌 **Ejemplo real:** La barra de búsqueda de Google usa exactamente este patrón: espera a que dejes de escribir (throttle), ignora si escribes lo mismo (distinctUntilChanged), busca solo si hay al menos 2 caracteres (where), y cancela la búsqueda anterior si escribes algo nuevo (switch).
 
@@ -553,7 +557,7 @@ subject
 ## 17.8. Buenas Prácticas
 
 - **Rx.NET para flujos complejos**: Múltiples fuentes, transformaciones, combinaciones
-- **IAsyncEnumerable para datos secuenciales**: Más simple que Rx para IoT/SSE
+- **IAsyncEnumerable para datos secuenciales**: Más simple que Rx para ficheros, APIs paginadas y colas (el IoT en directo va mejor con Rx)
 - **Throttle para limitar velocidad**: No sobrecargar el sistema
 - **Subjects en producción con cuidado**: Preferir `Observable.Create`
 

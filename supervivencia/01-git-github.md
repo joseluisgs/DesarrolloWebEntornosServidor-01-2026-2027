@@ -152,7 +152,7 @@ git reset --hard HEAD~1
 git reset --soft <commit-hash>
 
 # ─── REVERT (deshacer un commit con commit nuevo) ─────────────
-# Crea un commit nuevo que invierte los cambios (seguro para shared)
+# Crea un commit nuevo que invierte los cambios (seguro para ramas compartidas)
 git revert <commit-hash>
 git revert HEAD                # revert del último commit
 
@@ -175,10 +175,11 @@ git stash drop stash@{0}
 git stash clear
 ```
 
-> 💡 **Analogía:** `stash` es como hacer una " pausa" y guardar lo que tienes en la mesa en un cajón. Cuando vuelves, sacas lo que guardaste con `pop`.
+> 💡 **Analogía:** `stash` es como hacer una "pausa" y guardar lo que tienes en la mesa en un cajón. Cuando vuelves, sacas lo que guardaste con `pop`.
 
 > ⚠️ **Advertencia:** `git stash clear` borra TODO sin confirmación. Usa `git stash drop stash@{0}` para borrar uno concreto.
 
+```bash
 # ─── REFLOG (recuperar lo que parece perdido) ──────────────────
 # Ver historial de movimientos de HEAD
 git reflog
@@ -273,8 +274,9 @@ gh pr browse 15
 
 > 💡 **Consejo:** `--squash` es útil para limpiar commits molestos ("fix typo", "wip") antes de merge a `main`. `--rebase` mantiene el historial lineal.
 
-> ⚠️ **Advertencia:** Revisa SIEMPRE el diff de un PR antes de approve: `gh pr diff <número>`.
+> ⚠️ **Advertencia:** Revisa SIEMPRE el diff de un PR antes de aprobar: `gh pr diff <número>`.
 
+```bash
 # ─── RELEASES ──────────────────────────────────────────────────
 # Listar releases
 gh release list

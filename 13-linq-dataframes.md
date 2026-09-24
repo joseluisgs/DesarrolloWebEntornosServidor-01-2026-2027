@@ -14,6 +14,7 @@
   - [13.7. LINQ Avanzado](#137-linq-avanzado)
   - [13.8. DataFrames en C# con Microsoft.Data.Analysis](#138-dataframes-en-c-con-microsoftdataanalysis)
   - [13.9. LINQ vs PLINQ vs DataFrame: ¿Cuándo usar cada uno?](#139-linq-vs-plinq-vs-dataframe-cuándo-usar-cada-uno)
+  - [13.10. Buenas Prácticas](#1310-buenas-prácticas)
 
 
 # 13. LINQ en Colecciones y Base de Datos
@@ -36,15 +37,15 @@ En este tema aprenderás a usar LINQ en colecciones y bases de datos, las operac
 
 ```csharp
 // IMPERATIVO: CÓMO hacerlo paso a paso
-var resultados = new List<Cliente>();
+var resultadosImperativos = new List<Cliente>();
 foreach (var cliente in clientes)
 {
     if (cliente.Ciudad == "Madrid" && cliente.Activo)
     {
-        resultados.Add(cliente);
+        resultadosImperativos.Add(cliente);
     }
 }
-resultados.Sort((a, b) => a.Nombre.CompareTo(b.Nombre));
+resultadosImperativos.Sort((a, b) => a.Nombre.CompareTo(b.Nombre));
 
 // DECLARATIVO: QUÉ quieres
 var resultados = clientes
@@ -79,7 +80,7 @@ var madrid = clientes.Where(c => c.Ciudad == "Madrid");
 var madridActivo = clientes.Where(c => c.Ciudad == "Madrid" && c.Activo);
 ```
 
-📌 Ejemplo real: **Amazon** usa `Where` para filtrar productos por precio, categoría, valoración, etc. Cuando pones un filtro de "menos de 50€", internamente hace un `Where(p => p.Precio <= 50)`.
+📌 **Ejemplo real:** Amazon usa `Where` para filtrar productos por precio, categoría, valoración, etc. Cuando pones un filtro de "menos de 50 €", internamente hace un `Where(p => p.Precio <= 50)`.
 
 ### Proyección: Select
 
@@ -96,7 +97,7 @@ var resumen = productos.Select(p => new { p.Nombre, p.Precio });
 var nombresMayusculas = productos.Select(p => p.Nombre.ToUpper());
 ```
 
-📌 Ejemplo real: **Netflix** usa `Select` para extraer solo los títulas de las series al mostrar la lista. No necesita toda la información de cada serie, solo el nombre y el póster.
+📌 **Ejemplo real:** Netflix usa `Select` para extraer solo los títulos de las series al mostrar la lista. No necesita toda la información de cada serie, solo el nombre y el póster.
 
 ### Ordenación: OrderBy / ThenBy
 
@@ -125,7 +126,7 @@ var resultado = productos
 | `ThenBy` | Secundario ascendente | `ThenBy(p => p.Nombre)` — desempate A-Z |
 | `ThenByDescending` | Secundario descendente | `ThenByDescending(p => p.Nombre)` — desempate Z-A |
 
-📌 Ejemplo real: **Amazon** al ordenar por "Precio: mayor a menor" usa `OrderByDescending(p => p.Precio)`. Si hay varios productos con el mismo precio, desempata por valoración con `ThenByDescending(p => p.Valoracion)`.
+📌 **Ejemplo real:** Amazon, al ordenar por "Precio: mayor a menor", usa `OrderByDescending(p => p.Precio)`. Si hay varios productos con el mismo precio, desempata por valoración con `ThenByDescending(p => p.Valoracion)`.
 
 ### Agregación: Count, Sum, Average, Max, Min
 
@@ -142,7 +143,7 @@ decimal minimo = productos.Min(p => p.Precio);    // Precio más bajo
 int caros = productos.Count(p => p.Precio > 100); // Cuántos cuestan más de 100
 ```
 
-📌 Ejemplo real: **Bankia** usa `Sum` para calcular el saldo total de un cliente, `Average` para la media de gasto mensual, y `Max` para el mayor cargo del mes.
+📌 **Ejemplo real:** CaixaBank usa `Sum` para calcular el saldo total de un cliente, `Average` para la media de gasto mensual y `Max` para el mayor cargo del mes.
 
 ### Partitionado: Take, Skip
 
@@ -157,7 +158,7 @@ var terceraPagina = productos.Skip(20).Take(10);           // Siguientes 10
 var pagina = productos.Skip((numPagina - 1) * 10).Take(10);
 ```
 
-📌 Ejemplo real: **Google** muestra 10 resultados por página. Internamente hace `Skip(0).Take(10)` en la primera página, `Skip(10).Take(10)` en la segunda, etc.
+📌 **Ejemplo real:** Google muestra 10 resultados por página. Internamente hace `Skip(0).Take(10)` en la primera página, `Skip(10).Take(10)` en la segunda, etc.
 
 ### Búsqueda: First, Single, Any, All
 
@@ -186,7 +187,7 @@ bool todosBaratos = productos.All(p => p.Precio < 100);
 
 > ⚠️ **Cuidado:** `First()` lanza excepción si no hay elementos. Usa `FirstOrDefault()` cuando el elemento pueda no existir. `Single()` lanza excepción si hay más de uno.
 
-📌 Ejemplo real: **Netflix** usa `Any()` para comprobar si un usuario tiene contenido en la lista de favoritos antes de mostrar el botón de "Eliminar de favoritos".
+📌 **Ejemplo real:** Netflix usa `Any()` para comprobar si un usuario tiene contenido en la lista de favoritos antes de mostrar el botón de "Eliminar de favoritos".
 
 ## 13.3. GroupBy: La Operación Más Poderosa
 
@@ -315,7 +316,7 @@ var resultado = context.Productos
     .ToList();                             // Ejecuta la consulta SQL
 ```
 
-> ⚠️ **Advertencia:** No todas las operaciones LINQ se traducen a SQL. Por ejemplo, métodos C# como `.ToString()` o `.Contains()` con expresiones complejas pueden dar error en runtime. Usa `EF.Functions` para funciones SQL específicas.
+> ⚠️ **Advertencia:** No todas las operaciones LINQ se traducen a SQL. Por ejemplo, métodos C# como `.ToString()` o `.Contains()` con expresiones complejas pueden dar error en tiempo de ejecución. Usa `EF.Functions` para funciones SQL específicas.
 
 ## 13.6. Parallel LINQ (PLINQ)
 
@@ -340,10 +341,10 @@ var resultado = productos
 |------|-------|
 | Un núcleo de CPU | Múltiples núcleos |
 | Orden garantizado | Orden NO garantizado (usa `.AsOrdered()` si lo necesitas) |
-| Sin overhead | Overhead de sincronización |
+| Sin coste añadido | Coste de sincronización |
 | Para colecciones pequeñas | Para colecciones grandes + procesamiento pesado |
 
-> 💡 **Consejo:** Usa PLINQ solo cuando el procesamiento de cada elemento es **pesado** (cálculos complejos, llamadas a servicios externos). Para operaciones simples, el overhead de PLINQ puede hacer que sea más lento que LINQ secuencial.
+> 💡 **Consejo:** Usa PLINQ solo cuando el procesamiento de cada elemento sea **pesado** (cálculos complejos, llamadas a servicios externos). Para operaciones simples, el coste de sincronización de PLINQ puede hacer que sea más lento que LINQ secuencial.
 
 ## 13.7. LINQ Avanzado
 
@@ -413,10 +414,10 @@ dotnet add package Microsoft.Data.Analysis
 ```csharp
 using Microsoft.Data.Analysis;
 
-// Crear columnas
-var nombres = new PrimitiveDataFrameColumn<string>("Nombre", new[] { "Ana", "Carlos", "María", "Pedro" });
+// Crear columnas (StringDataFrameColumn para texto, PrimitiveDataFrameColumn<T> para números)
+var nombres = new StringDataFrameColumn("Nombre", new[] { "Ana", "Carlos", "María", "Pedro" });
 var edades = new PrimitiveDataFrameColumn<int>("Edad", new[] { 25, 30, 28, 35 });
-var ciudades = new PrimitiveDataFrameColumn<string>("Ciudad", new[] { "Madrid", "Barcelona", "Madrid", "Sevilla" });
+var ciudades = new StringDataFrameColumn("Ciudad", new[] { "Madrid", "Barcelona", "Madrid", "Sevilla" });
 
 // Crear DataFrame
 var df = new DataFrame();
@@ -436,8 +437,8 @@ Console.WriteLine(df);
 ### Filtrar con Where
 
 ```csharp
-// Filtrar personas de Madrid
-var madrid = df.Filter(df.Columns["Ciudad"].Cast<string>().EqualTo("Madrid"));
+// Filtrar personas de Madrid (ElementwiseEquals devuelve una máscara booleana)
+var madrid = df.Filter(df.Columns["Ciudad"].ElementwiseEquals("Madrid"));
 Console.WriteLine(madrid);
 //  Nombre  Edad  Ciudad
 //  Ana     25    Madrid
@@ -447,29 +448,29 @@ Console.WriteLine(madrid);
 ### Seleccionar columnas
 
 ```csharp
-// Seleccionar solo nombres y edades
-var seleccion = df.Columns["Nombre"].Join(df.Columns["Edad"]);
+// Seleccionar solo nombres y edades (nuevo DataFrame con esas dos columnas)
+var seleccion = new DataFrame(df.Columns["Nombre"], df.Columns["Edad"]);
 ```
 
 ### Ordenar
 
 ```csharp
 // Ordenar por edad descendente
-var ordenado = df.Sort(df.Columns["Edad"], SortOrder.Descending);
+var ordenado = df.OrderByDescending("Edad");
 ```
 
 ### Agrupar y agregar
 
 ```csharp
-// Contar por ciudad
-var porCiudad = df.GroupBy("Ciudad");
-foreach (var grupo in porCiudad)
+// Contar por ciudad (GroupBy no es enumerable: se itera sobre Groupings)
+var porCiudad = df.GroupBy<string>("Ciudad");
+foreach (var grupo in porCiudad.Groupings)
 {
-    Console.WriteLine($"{grupo.Key}: {grupo.RowCount} registros");
+    Console.WriteLine($"{grupo.Key}: {grupo.Count()} registros");
 }
-// Madrid: 2
-// Barcelona: 1
-// Sevilla: 1
+// Madrid: 2 registros
+// Barcelona: 1 registro
+// Sevilla: 1 registro
 ```
 
 ### Leer CSV con DataFrame
@@ -480,14 +481,14 @@ using Microsoft.Data.Analysis;
 // Leer fichero CSV
 var df = DataFrame.LoadCsv("datos.csv");
 
-// Consultas
-var mujeres = df.Filter(df.Columns["Sexo"].Cast<string>().EqualTo("Mujer"));
-var hombres = df.Filter(df.Columns["Sexo"].Cast<string>().EqualTo("Hombre"));
+// Consultas (ElementwiseEquals devuelve una máscara booleana para Filter)
+var mujeres = df.Filter(df.Columns["Sexo"].ElementwiseEquals("Mujer"));
+var hombres = df.Filter(df.Columns["Sexo"].ElementwiseEquals("Hombre"));
 
 // Estadísticas
-var mediaEdad = df.Columns["Edad"].Cast<double>().Mean();
-var maxEdad = df.Columns["Edad"].Cast<double>().Max();
-var minEdad = df.Columns["Edad"].Cast<double>().Min();
+var mediaEdad = df.Columns["Edad"].Mean();
+var maxEdad = df.Columns["Edad"].Max();
+var minEdad = df.Columns["Edad"].Min();
 ```
 
 ### DataFrame vs colecciones LINQ
@@ -496,7 +497,7 @@ var minEdad = df.Columns["Edad"].Cast<double>().Min();
 |----------------|-----------|------------------|
 | **Tipo de datos** | Tabular (filas y columnas) | Colección de objetos |
 | **Esquema** | Cada columna tiene un tipo | Cada objeto tiene propiedades |
-| **Filtrado** | `df.Filter(column.EqualTo(value))` | `lista.Where(x => x.Prop == value)` |
+| **Filtrado** | `df.Filter(column.ElementwiseEquals(value))` | `lista.Where(x => x.Prop == value)` |
 | **Agrupación** | `df.GroupBy("columna")` | `lista.GroupBy(x => x.Prop)` |
 | **Estadísticas** | `.Mean()`, `.Max()`, `.Min()` | `.Average()`, `.Max()`, `.Min()` |
 | **Lectura CSV** | `DataFrame.LoadCsv()` | CsvHelper |
@@ -511,17 +512,17 @@ var accidentes = DataFrame.LoadCsv("2025_Accidentalidad.csv");
 
 // Accidentes con alcohol
 var conAlcohol = accidentes.Filter(
-    accidentes.Columns["PositivoAlcohol"].Cast<bool>().EqualTo(true));
+    accidentes.Columns["PositivoAlcohol"].ElementwiseEquals(true));
 
 // Por distrito
-var porDistrito = accidentes.GroupBy("Distrito");
-foreach (var grupo in porDistrito)
+var porDistrito = accidentes.GroupBy<string>("Distrito");
+foreach (var grupo in porDistrito.Groupings)
 {
-    Console.WriteLine($"{grupo.Key}: {grupo.RowCount} accidentes");
+    Console.WriteLine($"{grupo.Key}: {grupo.Count()} accidentes");
 }
 
-// Stats por edad
-var mediaEdad = accidentes.Columns["Edad"].Cast<double>().Mean();
+// Estadísticas por edad
+var mediaEdad = accidentes.Columns["Edad"].Mean();
 ```
 
 > 📝 **Nota:** `Microsoft.Data.Analysis` es ideal para análisis de datos, ETL y procesamiento de CSV. Para objetos de dominio complejos con relaciones, usa colecciones LINQ o EF Core.
@@ -560,11 +561,12 @@ graph LR
 
 ```csharp
 using CsvHelper;
+using System.Globalization;
 
 // Leer CSV → List<Accidente>
-var registros = new StreamReader("accidentes.csv")
-    .Then rdr => new CsvReader(rdr, CultureInfo.InvariantCulture)
-    .GetRecords<Accidente>().ToList();
+using var reader = new StreamReader("accidentes.csv");
+using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+var registros = csv.GetRecords<Accidente>().ToList();
 
 // Procesar con LINQ
 var resultado = registros
@@ -583,8 +585,8 @@ var resultado = registros
 | Ventaja | Desventaja |
 |---------|------------|
 | ✅ Código claro y legible | ❌ Un solo núcleo de CPU |
-| ✅ Sin overhead | ❌ Lento con millones de filas |
-| ✅ Tipo-safe en tiempo de compilación | ❌ Memoria: toda la lista en RAM |
+| ✅ Sin coste añadido | ❌ Lento con millones de filas |
+| ✅ Tipado seguro en compilación | ❌ Memoria: toda la lista en RAM |
 
 **Cuándo usarlo:** CSV con < 10.000 registros, operaciones simples (Where, Select, GroupBy básico).
 
@@ -592,15 +594,17 @@ var resultado = registros
 
 ```csharp
 using CsvHelper;
+using System.Globalization;
 
 // Leer CSV → List<Accidente>
-var registros = new StreamReader("accidentes.csv")
-    .Then rdr => new CsvReader(rdr, CultureInfo.InvariantCulture)
-    .GetRecords<Accidente>().ToList();
+using var reader = new StreamReader("accidentes.csv");
+using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+var registros = csv.GetRecords<Accidente>().ToList();
 
 // Procesar con PLINQ
 var resultado = registros
     .AsParallel()                            // ← Paralelizar
+    .AsOrdered()                             // ← Mantener orden desde el origen
     .WithDegreeOfParallelism(Environment.ProcessorCount)
     .Where(a => a.PositivoAlcohol)
     .GroupBy(a => a.Distrito)
@@ -610,19 +614,18 @@ var resultado = registros
         Total = g.Count(),
         MediaEdad = g.Average(a => a.Edad)
     })
-    .AsOrdered()                             // ← Mantener orden
     .ToList();
 ```
 
 | Ventaja | Desventaja |
 |---------|------------|
-| ✅ Aprovecha todos los núcleos de CPU | ❌ Overhead de sincronización |
+| ✅ Aprovecha todos los núcleos de CPU | ❌ Coste de sincronización |
 | ✅ 2x-8x más rápido con millones de filas | ❌ Orden NO garantizado (sin `.AsOrdered()`) |
 | ✅ Mismo código que LINQ, solo `.AsParallel()` | ❌ No sirve para operaciones con estado |
 
 **Cuándo usarlo:** CSV con 10.000-500.000 registros Y operación pesada por fila (cálculos complejos, llamadas a servicios).
 
-> ⚠️ **Advertencia:** Si la operación por fila es ligera (solo un Where), PLINQ puede ser más LENTO que LINQ por el overhead de sincronización. Solo usa PLINQ cuando el procesamiento de cada fila es pesado.
+> ⚠️ **Advertencia:** Si la operación por fila es ligera (solo un Where), PLINQ puede ser más LENTO que LINQ por el coste de sincronización. Solo usa PLINQ cuando el procesamiento de cada fila sea pesado.
 
 #### Opción 3: DataFrame (tabular, estadístico)
 
@@ -633,23 +636,23 @@ using Microsoft.Data.Analysis;
 var df = DataFrame.LoadCsv("accidentes.csv");
 
 // Filtrar
-var conAlcohol = df.Filter(df.Columns["PositivoAlcohol"].Cast<bool>().EqualTo(true));
+var conAlcohol = df.Filter(df.Columns["PositivoAlcohol"].ElementwiseEquals(true));
 
-// Agrupar y contar
-var porDistrito = conAlcohol.GroupBy("Distrito");
-foreach (var grupo in porDistrito)
+// Agrupar y contar (GroupBy no es enumerable: se itera sobre Groupings)
+var porDistrito = conAlcohol.GroupBy<string>("Distrito");
+foreach (var grupo in porDistrito.Groupings)
 {
-    Console.WriteLine($"{grupo.Key}: {grupo.RowCount} accidentes");
+    Console.WriteLine($"{grupo.Key}: {grupo.Count()} accidentes");
 }
 
 // Estadísticas
-var mediaEdad = conAlcohol.Columns["Edad"].Cast<double>().Mean();
-var maxEdad = conAlcohol.Columns["Edad"].Cast<double>().Max();
+var mediaEdad = conAlcohol.Columns["Edad"].Mean();
+var maxEdad = conAlcohol.Columns["Edad"].Max();
 ```
 
 | Ventaja | Desventaja |
 |---------|------------|
-| ✅ Optimizado para datos tabulares | ❌ No es tipo-safe (errores en runtime) |
+| ✅ Optimizado para datos tabulares | ❌ Sin tipado seguro (errores en tiempo de ejecución) |
 | ✅ Estadísticas integradas (Mean, Max, Min) | ❌ Menos flexible que LINQ para objetos |
 | ✅ No necesita definir una clase Accidente | ❌ API menos conocida, menos documentación |
 | ✅ Mejor rendimiento con 100K+ filas | ❌ Conversión a objetos es manual |
@@ -662,10 +665,10 @@ var maxEdad = conAlcohol.Columns["Edad"].Cast<double>().Max();
 |----------|------|-------|-----------|
 | **Tipo de datos** | `List<T>` (objetos) | `List<T>` (objetos) | Tabular (columnas) |
 | **Definir modelo** | Sí (`record Accidente`) | Sí (`record Accidente`) | No (columnas dinámicas) |
-| **Rendimiento (pocos datos)** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ (overhead) | ⭐⭐⭐ |
+| **Rendimiento (pocos datos)** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ (coste de sincronización) | ⭐⭐⭐ |
 | **Rendimiento (muchos datos)** | ⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
 | **Estadísticas** | Manual (Average, Count) | Manual | Integradas (Mean, Max) |
-| **Type-safe** | ✅ Compile-time | ✅ Compile-time | ❌ Runtime |
+| **Tipado seguro** | ✅ En compilación | ✅ En compilación | ❌ En ejecución |
 | **Legibilidad** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐ |
 | **Para CSV < 10K** | ✅ **Mejor** | ⚠️ Innecesario | ⚠️ Sobredimensionado |
 | **Para CSV 10K-100K** | ⚠️ Puede ser lento | ✅ **Mejor** | ⚠️ Posible |
@@ -696,12 +699,12 @@ graph TD
 
 > 💡 **Consejo para el examen:** Si te preguntan "¿qué usas para procesar un CSV?", la respuesta correcta es: "Depende. Si son pocos datos, LINQ. Si son muchos y necesito paralelismo, PLINQ. Si son muchísimos y necesito estadísticas, DataFrame."
 
-## 13.7. Buenas Prácticas
+## 13.10. Buenas Prácticas
 
 - **LINQ para colecciones pequeñas** (<10K): Rápido y legible
 - **PLINQ para grandes con operaciones pesadas**: Paralelizar con cuidado
 - **DataFrame para análisis y estadística**: Como pandas pero en C#
-- **Evitar N+1 queries**: Usar `Include()` para carga eager en EF Core
+- **Evitar consultas N+1**: Usar `Include()` para carga anticipada (*eager*) en EF Core
 
 ---
 

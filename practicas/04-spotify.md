@@ -46,7 +46,7 @@ Investiga a fondo la arquitectura y tecnologías de Spotify consultando fuentes 
 
 ### 5. Comunicación entre Servicios
 
-- Protocolos de comunicación (REST, gRPC, Kafka, message queues)
+- Protocolos de comunicación (REST, gRPC, Kafka, colas de mensajes)
 - Cómo se comunican los microservicios entre sí
 
 ### 6. Infraestructura y Despliegue

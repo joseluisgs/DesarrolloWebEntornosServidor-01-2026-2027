@@ -178,7 +178,7 @@ graph LR
 
 **Desventajas:**
 - Más complejo de entender
-- Overhead de Rx
+- Sobrecoste de Rx
 
 **Cuándo usar:** Datos en tiempo real (sensores, logs, stocks), cuando necesitas múltiples consumidores.
 
@@ -200,7 +200,7 @@ await foreach (var registro in repository.GetAllAsyncEnumerable(cts.Token))
 }
 ```
 
-> 💡 **Consejo:** CancellationToken permite detener un flujo largo. Útil cuando el usuario cancela una operación o cuando hay timeout.
+> 💡 **Consejo:** CancellationToken permite detener un flujo largo. Útil cuando el usuario cancela una operación o cuando hay un tiempo límite.
 
 ### Observable.Create — Crear un observable
 

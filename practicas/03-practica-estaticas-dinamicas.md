@@ -39,7 +39,7 @@ Para cada punto, investiga y describe:
 - **Definición:** Qué es, cómo se genera el contenido en el servidor
 - **Ventajas:** Interactividad, personalización, gestión de contenido
 - **Desventajas:** Complejidad, consumo de recursos, mantenimiento
-- **Uso más adecuado:** E-commerce, redes sociales, aplicaciones web
+- **Uso más adecuado:** Comercio electrónico, redes sociales, aplicaciones web
 - **Tecnologías Back-end:** PHP, Java/Spring, ASP.NET Core, Python/Django, Node.js
 - **Tecnologías Front-end:** JavaScript, frameworks SPA (React, Angular, Vue)
 

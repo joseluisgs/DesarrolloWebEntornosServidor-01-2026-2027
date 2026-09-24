@@ -60,19 +60,20 @@ string respuestaJson = await respuesta.Content.ReadAsStringAsync();
 ### Los problemas de HttpClient
 
 ```csharp
-// ❌ MALO: Crear HttpClient cada vez
+// ❌ MALO: Crear HttpClient cada vez (Socket Exhaustion)
 public async Task<Usuario> ObtenerUsuarioAsync(int id)
 {
     using var client = new HttpClient(); // ¡Cada petición crea y destruye un socket!
     return await client.GetFromJsonAsync<Usuario>($"https://api.com/usuarios/{id}");
 }
 
-// ❌ MALO: HttpClient estático (Socket Exhaustion)
+// ⚠️ PROBLEMÁTICO: HttpClient estático (caché DNS obsoleta)
 private static readonly HttpClient _client = new();
-// Si haces miles de peticiones, los sockets se agotan
+// Los sockets van bien, pero las entradas DNS se cachean y no se
+// renuevan si la API cambia de IP (hasta reiniciar la app)
 ```
 
-> ⚠️ **Advertencia:** `HttpClient` **no debe** crearse ni destruirse frecuentemente. Cada instancia consume un socket del sistema operativo. Si creas miles de instancias, el sistema operativo se queda sin sockets y las peticiones fallan con `SocketException`.
+> ⚠️ **Advertencia:** `HttpClient` **no debe** crearse ni destruirse frecuentemente. Cada instancia consume un socket del sistema operativo. Si creas miles de instancias, el sistema operativo se queda sin sockets y las peticiones fallan con `SocketException` (socket exhaustion). La solución es `IHttpClientFactory`, que veremos en el siguiente apartado.
 
 ## 18.2. IHttpClientFactory: Gestionar HttpClient Correctamente
 
@@ -109,7 +110,7 @@ var app = builder.Build();
 ```csharp
 public class MusicService(IHttpClientFactory httpClientFactory)
 {
-    public async Task<Playlist> ObtenerPlaylistAsync(string playlistId)
+    public async Task<Playlist?> ObtenerPlaylistAsync(string playlistId)
     {
         var client = httpClientFactory.CreateClient("spotify");
         return await client.GetFromJsonAsync<Playlist>($"playlists/{playlistId}");
@@ -137,7 +138,9 @@ public class SpotifyService(HttpClient client) : ISpotifyService
 
     public async Task<SearchResult> BuscarAsync(string query)
     {
-        return await client.GetFromJsonAsync<SearchResult>($"search?q={query}&type=track");
+        string q = Uri.EscapeDataString(query); // Codificar la consulta
+        return await client.GetFromJsonAsync<SearchResult>($"search?q={q}&type=track")
+            ?? throw new InvalidOperationException("La API devolvió una respuesta vacía");
     }
 }
 
@@ -196,7 +199,7 @@ public interface IUsuarioApi
 ```csharp
 // Program.cs
 builder.Services
-    .AddRefitClient<IUsuarioApi>(settings => new RefitSettings
+    .AddRefitClient<IUsuarioApi>(sp => new RefitSettings
     {
         ContentSerializer = new SystemTextJsonContentSerializer(new JsonSerializerOptions
         {
@@ -237,7 +240,7 @@ public class UsuarioService(IUsuarioApi api) // Refit crea la implementación au
 | **Testeable** | Difícil (necesitas mockear HttpClient) | Fácil (mockear la interfaz) |
 | **Type-safe** | ❌ Strings para URLs y Bodies | ✅ Tipado en compile-time |
 
-> 💡 **Consejo:** Si tu app consume una API externa, **siempre** usa Refit. El ahorro de código es enorme y la maintenance es mucho más sencilla.
+> 💡 **Consejo:** Si tu app consume una API externa, **siempre** usa Refit. El ahorro de código es enorme y el mantenimiento es mucho más sencillo.
 
 📌 **Ejemplo real:** En un proyecto real, Refit reduce ~50 líneas de código HTTP por endpoint a ~3 (el atributo + la firma del método). Si la API tiene 30 endpoints, ahorras ~1500 líneas de código repetitivo.
 

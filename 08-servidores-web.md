@@ -49,7 +49,7 @@ graph LR
     SA -->|"Consulta"| DB["🗄️ Base de Datos"]
     DB -->|"Datos"| SA
     SA -->|"Respuesta"| SW
-    SW -->|"HTTP Response"| C
+    SW -->|"Respuesta HTTP"| C
 
     style SW fill:#2196F3,color:#fff
     style SA fill:#4CAF50,color:#fff
@@ -71,7 +71,7 @@ Apache es el veterano de los servidores web. Lanzado en 1995, ha sido el servido
 | **Arquitectura** | Multi-proceso/hilo (model worker) |
 | **Configuración** | Flexible, mediante `.htaccess` |
 | **Modular** | Se activa/desactiva funcionalidad con módulos |
-| **Cuota de mercado** | ~30% de las webs mundiales |
+| **Cuota de mercado** | Alrededor del 25-30 % de las webs (varía según la fuente) |
 
 ### Instalación y Configuración Básica (Linux)
 
@@ -123,7 +123,7 @@ Nginx (pronunciado "engine-x") es el servidor web moderno por excelencia. Su arq
 | **Arquitectura** | Asíncrona, orientada a eventos (event-driven) |
 | **Configuración** | Centralizada (no usa `.htaccess`) |
 | **Uso principal** | Proxy inverso, balanceador de carga, estáticos |
-| **Cuota de mercado** | ~35% de las webs mundiales (y creciendo) |
+| **Cuota de mercado** | Alrededor del 30 % de las webs y en aumento (varía según la fuente) |
 
 ### Ventajas de Nginx
 
@@ -170,7 +170,7 @@ server {
 
 ```mermaid
 graph LR
-    C["👤 Cliente"] -->|"Petición"| N["🔷 Nginx<br/>(Reverse Proxy)"]
+    C["👤 Cliente"] -->|"Petición"| N["🔷 Nginx<br/>(Proxy inverso)"]
     N -->|"Estáticos"| D["📁 Disco<br/>(img, css, js)"]
     N -->|"Dinámicos"| A["🔶 Apache / Tomcat"]
     A -->|"Procesa"| DB["🗄️ Base de Datos"]
@@ -195,7 +195,7 @@ Un **servidor de aplicaciones** va más allá de servir archivos estáticos. Pro
 | Servidor | Tecnología | Puerto por defecto | Uso principal |
 |----------|-----------|-------------------|---------------|
 | **Apache Tomcat** | Java (Servlets/JSP) | 8080 | Aplicaciones Java web |
-| **Jetty** | Java (Servlets) | 8080 | Embedded, microservicios |
+| **Jetty** | Java (Servlets) | 8080 | Embebido, microservicios |
 | **Kestrel** | C# (.NET) | 5000 | ASP.NET Core |
 | **Gunicorn** | Python (WSGI) | 8000 | Django, Flask |
 | **uWSGI** | Python (WSGI) | 5000 | Django, Flask |
@@ -252,8 +252,9 @@ app.MapGet("/", () => "Hola Mundo desde Kestrel!");
 app.Run();
 ```
 
+La misma configuración puede definirse en `appsettings.json`:
+
 ```json
-// Configuración en appsettings.json
 {
   "Kestrel": {
     "Endpoints": {
@@ -289,7 +290,7 @@ Las bases de datos son donde se almacenan los datos de las aplicaciones. Existen
 |----|----------------|------------|
 | **MySQL / MariaDB** | Rápido, sencillo, Open Source | CMS, blogs, e-commerce sencillo |
 | **PostgreSQL** | Potente, estricto, "el Oracle Open Source" | Apps complejas, GIS, datos científicos |
-| **SQL Server** | Microsoft, integración con .NET | Enterprise, entornos Microsoft |
+| **SQL Server** | Microsoft, integración con .NET | Empresarial, entornos Microsoft |
 | **Oracle** | El más potente, licencia cara | Grandes empresas, banca |
 
 ### Bases de Datos NoSQL
@@ -321,7 +322,7 @@ graph TD
     style NOSQL fill:#4CAF50,color:#fff
 ```
 
-📌 **Ejemplo real:** Instagram usa **Redis** para caché y sesiones, **PostgreSQL** para datos relacionales y **Cassandra** para almacenar fotos y vídeos a gran escala.
+📌 **Ejemplo real:** Instagram usa **Redis** para caché y sesiones, **PostgreSQL** para datos relacionales y **Cassandra** para datos de gran volumen como el feed y los perfiles de usuario. Las fotos y vídeos no se guardan en la base de datos: van a **almacenamiento de objetos** (tipo S3).
 
 > ⚠️ **Advertencia:** Nunca expongas el puerto de la base de datos (ej. 3306 para MySQL, 5432 para PostgreSQL) directamente a Internet. Solo debe ser accesible desde tu servidor de aplicaciones (localhost o red privada).
 
@@ -333,7 +334,7 @@ En producción, una aplicación web típica tiene esta arquitectura:
 
 ```mermaid
 graph TD
-    C["👤 Usuario"] -->|"HTTPS"| LB["⚖️ Load Balancer<br/>(Balanceador)"]
+    C["👤 Usuario"] -->|"HTTPS"| LB["⚖️ Balanceador<br/>(Load Balancer)"]
     LB -->|"Peticiones"| N1["🔷 Nginx 1"]
     LB -->|"Peticiones"| N2["🔷 Nginx 2"]
     N1 -->|"Estáticos"| D1["📁 CDN<br/>(Archivos estáticos)"]
@@ -367,9 +368,9 @@ graph TD
 
 ## 8.9. Buenas Prácticas
 
-- **Kestrel para desarrollo**: Es suficiente. En producción, usa Nginx o Apache como reverse proxy
+- **Kestrel para desarrollo**: Es suficiente. En producción, usa Nginx o Apache como proxy inverso
 - **Separar servidor web de aplicaciones**: Escalabilidad y seguridad
-- **Bases de datos con versiones estables**: PostgreSQL 17, MongoDB 7.0, Redis 7
+- **Bases de datos con versiones estables**: Ni la última versión experimental ni una antigua sin soporte
 - **Monitoriza siempre**: Herramientas específicas para cada componente de la arquitectura
 
 ---

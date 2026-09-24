@@ -53,7 +53,7 @@ El usuario tiene un **tiempo límite de 500ms**. Si el desayuno no está listo a
 1. Ejecución **secuencial**
 2. Ejecución con **`async/await`**
 3. Ejecución con el **mejor rendimiento posible**
-4. Las tres soluciones anteriores con **timeout de 500ms** (para que el café no se enfríe)
+4. Las tres soluciones anteriores con **tiempo límite de 500 ms** (para que el café no se enfríe)
 
 Compara los tiempos de ejecución de las 5 soluciones y reflexiona sobre las diferencias.
 
@@ -68,7 +68,7 @@ Sube tu proyecto a GitHub. El `README.md` debe incluir:
 - Respuestas a estas preguntas:
   1. ¿Qué diferencias has observado entre las 5 soluciones?
   2. ¿Qué acciones se pueden ejecutar a la vez y cuáles no? ¿Por qué?
-  3. ¿Qué ha pasado con cada solución cuando introduces el timeout?
+  3. ¿Qué ha pasado con cada solución cuando aplicas el tiempo límite?
   4. ¿El enfoque con mejor rendimiento es también el más seguro? ¿Por qué?
   5. ¿Merece la pena complicarse con paralelismo o con mecanismos de control de tiempo? Justifica tu respuesta.
 

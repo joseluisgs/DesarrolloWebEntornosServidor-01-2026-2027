@@ -15,7 +15,7 @@ dotnet run --project 14-ReactividadRxNet
 
 ## ¿Qué es un flujo caliente?
 
-Un **flujo caliente** (hot observable) es un stream de datos que emite eventos **independientemente de si hay suscriptores**. Si un observador se conecta tarde, **se pierde lo que ya pasó**. Solo ve los eventos desde el momento en que se suscribe.
+Un **flujo caliente** (hot observable) es un flujo de datos que emite eventos **independientemente de si hay suscriptores**. Si un observador se conecta tarde, **se pierde lo que ya pasó**. Solo ve los eventos desde el momento en que se suscribe.
 
 **Analogía:** Es como un partido de fútbol en directo. Si llegas a los 20 minutos, te perdiste los primeros 20. No puedes "rebobinar" el partido. Eso es un flujo caliente.
 
