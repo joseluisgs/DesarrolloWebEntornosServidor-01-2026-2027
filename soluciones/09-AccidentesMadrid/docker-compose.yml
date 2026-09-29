@@ -1,0 +1,6 @@
+services:
+  accidentes:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: accidentes-madrid
