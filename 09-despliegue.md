@@ -185,7 +185,7 @@ services:
       - cache
 
   db:
-    image: postgres:16
+    image: postgres:17-alpine
     environment:
       POSTGRES_DB: miapp
       POSTGRES_USER: admin
@@ -194,7 +194,7 @@ services:
       - "5432:5432"
 
   cache:
-    image: redis:7
+    image: redis:7-alpine
     ports:
       - "6379:6379"
 ```

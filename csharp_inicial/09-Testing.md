@@ -633,7 +633,7 @@ namespace Testing.Integration;
         public async Task OneTimeSetUp()
         {
             _container = new PostgreSqlBuilder()
-                .WithImage("postgres:15")
+                .WithImage("postgres:17-alpine")
                 .Build();
             
             await _container.StartAsync();

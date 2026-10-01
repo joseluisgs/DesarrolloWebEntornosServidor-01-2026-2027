@@ -65,12 +65,7 @@ public class JsonCsvTests
             };
 
             // Act
-            List<Producto> productos;
-            using (var reader = new StreamReader(csvPath))
-            using (var csv = new CsvReader(reader, config))
-            {
-                productos = csv.GetRecords<Producto>().ToList();
-            }
+            var productos = LeerProductosCsv(csvPath, config);
 
             // Assert
             productos.Should().NotBeNullOrEmpty();
@@ -117,16 +112,35 @@ public class JsonCsvTests
             var path = Path.Combine(_outputDir, "test_export.csv");
 
             // Act
-            using (var writer = new StreamWriter(path))
-            using (var csv = new CsvWriter(writer, config))
-            {
-                csv.WriteRecords(productos);
-            }
+            EscribirProductosCsv(path, config, productos);
 
             // Assert
             File.Exists(path).Should().BeTrue();
             var contenido = await File.ReadAllTextAsync(path);
             contenido.Should().Contain("Test Product");
+        }
+
+        // ============================================================
+        // Helpers: mantienen el alcance explícito de cada operación de
+        // fichero con 'using var'. El reader/writer se libera al salir
+        // de la función, no al final del test.
+        // ============================================================
+
+        // Lee un CSV y lo devuelve en memoria (el fichero queda cerrado aquí).
+        private static List<Producto> LeerProductosCsv(string ruta, CsvConfiguration config)
+        {
+            using var reader = new StreamReader(ruta);
+            using var csv = new CsvReader(reader, config);
+            return csv.GetRecords<Producto>().ToList();
+        }
+
+        // Escribe los productos y cierra el writer (flush incluido), por eso
+        // el Assert posterior ya encuentra el fichero completo en disco.
+        private static void EscribirProductosCsv(string ruta, CsvConfiguration config, IEnumerable<Producto> productos)
+        {
+            using var writer = new StreamWriter(ruta);
+            using var csv = new CsvWriter(writer, config);
+            csv.WriteRecords(productos);
         }
     }
 

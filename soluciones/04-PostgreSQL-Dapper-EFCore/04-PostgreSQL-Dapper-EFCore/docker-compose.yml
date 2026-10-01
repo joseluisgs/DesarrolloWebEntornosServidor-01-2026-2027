@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgres:16-alpine
+    image: postgres:17-alpine
     container_name: productos_postgres
     environment:
       POSTGRES_DB: productos_db

@@ -21,7 +21,7 @@ public class ProductoMongoIntegrationTests
     public async Task OneTimeSetUp()
     {
         _container = new MongoDbBuilder()
-            .WithImage("mongo:7")
+            .WithImage("mongo:7.0")
             .WithUsername("admin")
             .WithPassword("admin")
             .Build();

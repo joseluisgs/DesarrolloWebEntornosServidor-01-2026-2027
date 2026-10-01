@@ -433,7 +433,7 @@ public class PersonaRepositoryIntegrationTests
     {
         // Lanzar contenedor PostgreSQL
         _container = new PostgreSqlBuilder()
-            .WithImage("postgres:16")
+            .WithImage("postgres:17-alpine")
             .WithDatabase("testdb")
             .WithUsername("test")
             .WithPassword("test")
@@ -531,7 +531,7 @@ public class RedisCacheServiceTests
     public async Task Setup()
     {
         _container = new RedisBuilder()
-            .WithImage("redis:7")
+            .WithImage("redis:7-alpine")
             .Build();
 
         await _container.StartAsync();

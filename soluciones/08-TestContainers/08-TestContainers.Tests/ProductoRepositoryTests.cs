@@ -25,7 +25,7 @@ public class ProductoRepositoryTests
     {
         // Crear un contenedor PostgreSQL que se reutiliza en todos los tests
         _container = new PostgreSqlBuilder()
-            .WithImage("postgres:16-alpine")
+            .WithImage("postgres:17-alpine")
             .WithDatabase("test_db")
             .WithUsername("test")
             .WithPassword("test")

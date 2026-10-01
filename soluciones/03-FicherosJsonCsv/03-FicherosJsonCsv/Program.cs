@@ -43,14 +43,9 @@ var config = new CsvConfiguration(CultureInfo.InvariantCulture)
     BadDataFound = null
 };
 
-using (var reader = new StreamReader(csvPath))
-using (var csv = new CsvReader(reader, config))
+foreach (var p in LeerCsv(csvPath, config))
 {
-    var productosCsv = csv.GetRecords<Producto>().ToList();
-    foreach (var p in productosCsv)
-    {
-        Console.WriteLine($"  [{p.Id}] {p.Nombre} - {p.Precio:C} ({p.Categoria})");
-    }
+    Console.WriteLine($"  [{p.Id}] {p.Nombre} - {p.Precio:C} ({p.Categoria})");
 }
 
 // ============================================================
@@ -77,13 +72,33 @@ Console.WriteLine($"  Total productos: {todosLosProductos.Count}");
 Console.WriteLine("\n--- PARTE 4: Exportar a CSV ---");
 var csvExportPath = Path.Combine(outputDir, "productos_export.csv");
 
-using (var writer = new StreamWriter(csvExportPath))
-using (var csv = new CsvWriter(writer, config))
-{
-    csv.WriteRecords(todosLosProductos);
-}
+ExportarCsv(csvExportPath, config, todosLosProductos);
 
 Console.WriteLine($"  Exportado a: {csvExportPath}");
 Console.WriteLine($"  Total productos: {todosLosProductos.Count}");
 
 Console.WriteLine("\n=== Fin del ejemplo ===");
+
+// ============================================================
+// Funciones locales (top-level statements): mantienen el alcance
+// explícito de cada operación de fichero usando 'using var'.
+// El reader/writer se libera al salir de la función, no al final
+// del programa: así el CSV queda cerrado y con flush hecho.
+// ============================================================
+
+// Lee un CSV de productos y lo devuelve ya en memoria.
+static List<Producto> LeerCsv(string ruta, CsvConfiguration config)
+{
+    using var reader = new StreamReader(ruta);
+    using var csv = new CsvReader(reader, config);
+    return csv.GetRecords<Producto>().ToList();
+}
+
+// Escribe los productos en un CSV. Al salir de la función se cierra
+// el writer (flush incluido), por eso el fichero queda completo.
+static void ExportarCsv(string ruta, CsvConfiguration config, IEnumerable<Producto> productos)
+{
+    using var writer = new StreamWriter(ruta);
+    using var csv = new CsvWriter(writer, config);
+    csv.WriteRecords(productos);
+}

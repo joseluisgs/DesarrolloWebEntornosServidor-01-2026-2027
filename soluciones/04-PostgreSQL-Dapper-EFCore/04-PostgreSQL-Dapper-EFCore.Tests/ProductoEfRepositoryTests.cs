@@ -23,7 +23,7 @@ public class ProductoEfRepositoryTests
     public async Task OneTimeSetUp()
     {
         _container = new PostgreSqlBuilder()
-            .WithImage("postgres:16-alpine")
+            .WithImage("postgres:17-alpine")
             .WithDatabase("test_db")
             .WithUsername("test")
             .WithPassword("test")

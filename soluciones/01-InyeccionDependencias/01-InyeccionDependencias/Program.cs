@@ -14,12 +14,10 @@ Console.WriteLine();
 Console.WriteLine("--- Enfoque 1: Registro Manual ---");
 var providerManual = DependenciesProviderManual.BuildServiceProvider();
 
-using (var scope = providerManual.CreateScope())
-{
-    var serviceManual = scope.ServiceProvider.GetRequiredService<IProductoService>();
-    var productos = serviceManual.GetAll();
-    Console.WriteLine($"Manual: {productos.Count()} productos encontrados");
-}
+using var scopeManual = providerManual.CreateScope();
+var serviceManual = scopeManual.ServiceProvider.GetRequiredService<IProductoService>();
+var productos = serviceManual.GetAll();
+Console.WriteLine($"Manual: {productos.Count()} productos encontrados");
 Console.WriteLine();
 
 // ============================================================
@@ -40,12 +38,10 @@ Console.WriteLine();
 Console.WriteLine("--- Enfoque 2: Scrutor (escaneo automático) ---");
 var providerScrutor = DependenciesProviderScrutor.BuildServiceProvider();
 
-using (var scope = providerScrutor.CreateScope())
-{
-    var serviceScrutor = scope.ServiceProvider.GetRequiredService<IProductoService>();
-    var productos = serviceScrutor.GetAll();
-    Console.WriteLine($"Scrutor: {productos.Count()} productos encontrados");
-}
+using var scopeScrutor = providerScrutor.CreateScope();
+var serviceScrutor = scopeScrutor.ServiceProvider.GetRequiredService<IProductoService>();
+var productosScrutor = serviceScrutor.GetAll();
+Console.WriteLine($"Scrutor: {productosScrutor.Count()} productos encontrados");
 Console.WriteLine();
 
 Console.WriteLine("=== Configuración DI completada ===");

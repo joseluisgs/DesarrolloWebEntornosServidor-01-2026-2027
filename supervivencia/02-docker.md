@@ -12,7 +12,7 @@ docker ps
 docker ps -a
 
 # Arrancar y ejecutar contenedor desde una imagen
-docker run -d --name mi-postgres -p 5432:5432 -e POSTGRES_PASSWORD=secret postgres:16-alpine
+docker run -d --name mi-postgres -p 5432:5432 -e POSTGRES_PASSWORD=secret postgres:17-alpine
 #   -d              detach (segundo plano)
 #   --name          nombre del contenedor
 #   -p host:cont    mapeo de puertos
@@ -69,7 +69,7 @@ docker rm -f <nombre>               # forzar (en ejecución)
 docker images
 
 # Descargar imagen
-docker pull postgres:16-alpine
+docker pull postgres:17-alpine
 
 # Eliminar imagen
 docker rmi <imagen>
@@ -167,7 +167,7 @@ docker compose exec <servicio> dotnet run
 ```yaml
 services:
   postgres:
-    image: postgres:16-alpine
+    image: postgres:17-alpine
     ports:
       - "5432:5432"              # host:contenedor
     volumes:
@@ -231,7 +231,7 @@ Podman usa **los mismos Dockerfiles** y comandos casi idénticos. Solo cambia `d
 | `docker logs <nombre>` | `podman logs <nombre>` | Ver logs |
 | `docker exec -it <nombre> bash` | `podman exec -it <nombre> bash` | Entrar al contenedor |
 | `docker images` | `podman images` | Listar imágenes |
-| `docker pull postgres:16` | `podman pull postgres:16` | Descargar imagen |
+| `docker pull postgres:17-alpine` | `podman pull postgres:17-alpine` | Descargar imagen |
 | `docker compose up -d` | `podman compose up -d` | Arrancar servicios |
 | `docker compose down` | `podman compose down` | Parar servicios |
 | `docker compose ps` | `podman compose ps` | Ver servicios |

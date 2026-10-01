@@ -198,7 +198,7 @@ Si quieres ampliar el proyecto, puedes sustituir SQLite por PostgreSQL y MemoryC
 ```yaml
 services:
   postgres:
-    image: postgres:16-alpine
+    image: postgres:17-alpine
     container_name: repositorio-postgres
     environment:
       POSTGRES_DB: usuarios

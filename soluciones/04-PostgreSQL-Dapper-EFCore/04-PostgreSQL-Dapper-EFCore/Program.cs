@@ -55,12 +55,12 @@ Console.WriteLine($"Usando repositorio: {repoType}\n");
 // ============================================================
 if (dbConfig.DropData)
 {
-    using (var scope = provider.CreateScope())
-    {
-        var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        await context.Database.ExecuteSqlRawAsync("TRUNCATE TABLE Productos RESTART IDENTITY");
-        Console.WriteLine("  [LIMPIEZA] Tabla Productos vaciada (DropData=true)\n");
-    }
+    // 'using var' se dispone al salir del bloque if: mismo alcance
+    // que el bloque 'using (var ...)' pero con sintaxis C# moderna.
+    using var scope = provider.CreateScope();
+    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    await context.Database.ExecuteSqlRawAsync("TRUNCATE TABLE Productos RESTART IDENTITY");
+    Console.WriteLine("  [LIMPIEZA] Tabla Productos vaciada (DropData=true)\n");
 }
 
 // ============================================================

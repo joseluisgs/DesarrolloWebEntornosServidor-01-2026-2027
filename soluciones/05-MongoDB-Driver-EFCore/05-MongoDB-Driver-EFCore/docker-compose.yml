@@ -1,6 +1,6 @@
 services:
   mongodb:
-    image: mongo:7
+    image: mongo:7.0
     container_name: productos_mongodb
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin

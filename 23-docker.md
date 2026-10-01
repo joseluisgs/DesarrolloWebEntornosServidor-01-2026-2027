@@ -180,7 +180,7 @@ docker rmi miapp:v1
 docker image prune -a
 
 # Pull de una imagen
-docker pull postgres:16
+docker pull postgres:17-alpine
 ```
 
 ### Comandos útiles
@@ -217,7 +217,7 @@ Podman usa **los mismos Dockerfiles** y comandos casi idénticos (solo cambia `d
 | `docker exec -it miapp bash` | `podman exec -it miapp bash` | Entrar al contenedor |
 | `docker images` | `podman images` | Listar imágenes |
 | `docker rmi miapp:v1` | `podman rmi miapp:v1` | Eliminar imagen |
-| `docker pull postgres:16` | `podman pull postgres:16` | Descargar imagen |
+| `docker pull postgres:17-alpine` | `podman pull postgres:17-alpine` | Descargar imagen |
 | `docker compose up -d` | `podman compose up -d` | Arrancar servicios |
 
 > 📝 **Nota:** Podman es **daemonless** (sin proceso en segundo plano) y **rootless** (sin permisos de administrador) por defecto. Los comandos son casi idénticos a Docker.
@@ -249,7 +249,7 @@ services:
       - app-network
 
   db:
-    image: postgres:16
+    image: postgres:17-alpine
     environment:
       POSTGRES_DB: miapp
       POSTGRES_USER: admin
@@ -380,7 +380,7 @@ Los contenedores son **efímeros**: si borras un contenedor, pierdes todos sus d
 ```yaml
 services:
   db:
-    image: postgres:16
+    image: postgres:17-alpine
     volumes:
       - pgdata:/var/lib/postgresql/data  # Named volume (persistente)
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql  # Bind mount (init script)
