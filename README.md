@@ -1,4 +1,4 @@
-# Desarrollo Web en Entorno Servidor - 01 - Introducción al desarrollo de software en Servidor
+﻿# Desarrollo Web en Entorno Servidor - 01 - Introducción al desarrollo de software en Servidor
 
 UD01. Introducción al desarrollo de software en Servidor. 2DAW. Curso 2026-2027
 
@@ -7,7 +7,7 @@ UD01. Introducción al desarrollo de software en Servidor. 2DAW. Curso 2026-2027
 - [Desarrollo Web en Entorno Servidor - 01 - Introducción al desarrollo de software en Servidor](#desarrollo-web-en-entorno-servidor-01---introducción-al-desarrollo-de-software-en-servidor)
   - [Contenidos](#contenidos)
   - [Contenido en YouTube](#contenido-en-youtube)
-  - [Resultados de aprendizaje y criterios de evaluación](#resultados-de-aprendizaje-y-criterios-de-evaluación)
+  - [Resultados de Aprendizaje y Criterios de Evaluación](#resultados-de-aprendizaje-y-criterios-de-evaluación)
   - [Autor](#autor)
     - [Contacto](#contacto)
   - [Licencia de uso](#licencia-de-uso)
@@ -61,7 +61,7 @@ UD01. Introducción al desarrollo de software en Servidor. 2DAW. Curso 2026-2027
 - [Entity Framework Core](https://youtu.be/Noj_7CQWnUI)
 - [Lista de reproducción](https://www.youtube.com/playlist?list=PLLiuVpAc3Gv4)
 
-## Resultados de aprendizaje y criterios de evaluación
+## Resultados de Aprendizaje y Criterios de Evaluación
 
 - RA1: Selecciona las arquitecturas y tecnologías de programación web en entorno servidor, analizando sus capacidades y características propias.
 
