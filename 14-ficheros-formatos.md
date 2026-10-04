@@ -1,14 +1,14 @@
-- [14. Ficheros y Formatos de Intercambio](#14-ficheros-y-formatos-de-intercambio)
-  - [14.1. IDisposable y Gestión de Recursos](#141-idisposable-y-gestión-de-recursos)
-  - [14.2. System.IO: Lectura y Escritura de Ficheros](#142-systemio-lectura-y-escritura-de-ficheros)
-  - [14.3. Streams: La Abstracción Fundamental](#143-streams-la-abstracción-fundamental)
+- [14. Ficheros y formatos de intercambio](#14-ficheros-y-formatos-de-intercambio)
+  - [14.1. IDisposable y gestión de recursos](#141-idisposable-y-gestión-de-recursos)
+  - [14.2. System.IO: lectura y escritura de ficheros](#142-systemio-lectura-y-escritura-de-ficheros)
+  - [14.3. Streams: la abstracción fundamental](#143-streams-la-abstracción-fundamental)
   - [14.4. CSV con CsvHelper](#144-csv-con-csvhelper)
   - [14.5. JSON con System.Text.Json](#145-json-con-systemtextjson)
-  - [14.6. Comparativa de Formatos](#146-comparativa-de-formatos)
-  - [14.7. Buenas Prácticas](#147-buenas-prácticas)
+  - [14.6. Comparativa de formatos](#146-comparativa-de-formatos)
+  - [14.7. Buenas prácticas](#147-buenas-prácticas)
 
 
-# 14. Ficheros y Formatos de Intercambio
+# 14. Ficheros y formatos de intercambio
 
 > 💡 **Punto de partida:** Tu aplicación guarda datos en memoria, pero cuando se cierra... ¡todo se pierde! Necesitas guardar información en ficheros. Pero no es tan sencillo como "escribir texto": hay que gestionar recursos del sistema operativo, elegir el formato correcto (CSV, JSON, XML) y asegurarse de que los ficheros se cierren correctamente. ¿Y si el programa falla a mitad de escritura? Podrías perder datos. Aquí entra `IDisposable` y los streams.
 
@@ -23,7 +23,7 @@ En este tema aprenderás a trabajar con ficheros en C#: la interfaz `IDisposable
 - Serializar y deserializar JSON con System.Text.Json
 - Comparar formatos y elegir el adecuado según el caso de uso
 
-## 14.1. IDisposable y Gestión de Recursos
+## 14.1. IDisposable y gestión de recursos
 
 Cuando abres un fichero, una conexión a base de datos o un socket de red, estás usando un **recurso del sistema operativo**. Estos recursos son limitados y deben liberarse cuando ya no se necesitan.
 
@@ -71,7 +71,7 @@ finally
 
 📌 **Ejemplo real:** Cuando Visual Studio o Rider abren un proyecto, abren cientos de ficheros. Si no usaran `IDisposable`, después de cerrar el proyecto, muchos ficheros seguirían abiertos y no podrías borrarlos o moverlos.
 
-### Patrón Dispose con campo de disposed
+### Patrón dispose con campo de disposed
 
 ```csharp
 public class ConexionBD : IDisposable
@@ -108,7 +108,7 @@ public class ConexionBD : IDisposable
 }
 ```
 
-## 14.2. System.IO: Lectura y Escritura de Ficheros
+## 14.2. System.IO: lectura y escritura de ficheros
 
 `System.IO` es el namespace que contiene todas las clases para trabajar con ficheros y directorios en C#.
 
@@ -124,7 +124,7 @@ public class ConexionBD : IDisposable
 | `FileStream` | Acceso directo a bytes | Ficheros binarios |
 | `Path` | Utilidades para rutas | Combinar, obtener extensión |
 
-### Operaciones rápidas con File
+### Operaciones rápidas con file
 
 ```csharp
 // Leer todo el fichero de golpe (para ficheros pequeños)
@@ -181,7 +181,7 @@ using var stream = new FileStream("datos.bin", FileMode.Create);
 stream.Write(datos, 0, datos.Length);
 ```
 
-### Clase Path: utilidades para rutas
+### Clase path: utilidades para rutas
 
 ```csharp
 string ruta = @"C:\Datos\personas.csv";
@@ -197,7 +197,7 @@ Path.GetRandomFileName();      // Nombre aleatorio para fichero temporal
 
 📌 **Ejemplo real:** En una app de gestión, cuando el usuario exporta datos a CSV, se usa `StreamWriter` para escribir línea a línea sin cargar todo el fichero en memoria. Si el usuario exporta 100.000 registros, el programa no se queda sin memoria.
 
-## 14.3. Streams: La Abstracción Fundamental
+## 14.3. Streams: la abstracción fundamental
 
 Un **stream** es una secuencia de bytes que fluye desde un origen (fichero, red, memoria) hacia un destino. Es como una tubería por la que pasan datos.
 
@@ -211,12 +211,12 @@ graph TD
     A --> E["🌐 NetworkStream<br/>(Red)"]
     A --> F["🔒 CryptoStream<br/>(Cifrado)"]
 
-    style A fill:#4CAF50,color:#fff
-    style B fill:#2196F3,color:#fff
-    style C fill:#FF9800,color:#fff
-    style D fill:#9C27B0,color:#fff
-    style E fill:#f44336,color:#fff
-    style F fill:#607D8B,color:#fff
+    style A fill:#4CAF5,color:#fff0,color:#fff
+    style B fill:#2196F,color:#fff3,color:#fff
+    style C fill:#FF980,color:#fff0,color:#fff
+    style D fill:#9C27B,color:#fff0,color:#fff
+    style E fill:#f4433,color:#fff6,color:#fff
+    style F fill:#607D8,color:#fffB,color:#fff
 ```
 
 | Stream | Origen/Destino | Ejemplo |
@@ -226,7 +226,7 @@ graph TD
 | `NetworkStream` | Red (TCP/IP) | Comunicación cliente-servidor |
 | `CryptoStream` | Cifrado/descifrado | Cifrar datos |
 
-### Composición de streams (Patrón Decorator)
+### Composición de streams (patrón decorator)
 
 Los streams se pueden **componer** unos sobre otros, como muñecas rusas:
 
@@ -473,7 +473,7 @@ int edad = root.GetProperty("edad").GetInt32();
 
 📌 **Ejemplo real:** Cuando una API de Spotify devuelve el listado de canciones de una playlist, el formato es JSON. Tu app C# usa `JsonSerializer.Deserialize<PlaylistResponse>()` para convertirlo en objetos tipados y mostrarlos en la interfaz.
 
-## 14.6. Comparativa de Formatos
+## 14.6. Comparativa de formatos
 
 | Característica | CSV | JSON | XML |
 |---------------|-----|------|-----|
@@ -495,14 +495,14 @@ graph TD
     F -->|"Sí"| G["📝 XML"]
     F -->|"No"| H["📋 JSON (por defecto)"]
 
-    style A fill:#4CAF50,color:#fff
-    style C fill:#2196F3,color:#fff
-    style E fill:#FF9800,color:#fff
-    style G fill:#9C27B0,color:#fff
-    style H fill:#607D8B,color:#fff
+    style A fill:#4CAF5,color:#fff0,color:#fff
+    style C fill:#2196F,color:#fff3,color:#fff
+    style E fill:#FF980,color:#fff0,color:#fff
+    style G fill:#9C27B,color:#fff0,color:#fff
+    style H fill:#607D8,color:#fffB,color:#fff
 ```
 
-### Ejemplo completo: Convertir CSV a JSON
+### Ejemplo completo: convertir CSV a JSON
 
 ```csharp
 using CsvHelper;
@@ -529,7 +529,7 @@ Console.WriteLine($"Convertidos {personas.Count} registros de CSV a JSON");
 
 > ⚠️ **Advertencia:** CSV no maneja bien datos con comas, saltos de línea o caracteres especiales sin comillas. Si tus datos pueden contener estos caracteres, usa JSON. CSV solo es seguro cuando los datos son simples y tabulares.
 
-## 14.7. Buenas Prácticas
+## 14.7. Buenas prácticas
 
 - **Implementa `IDisposable` si tu clase mantiene recursos**: Ficheros, conexiones, streams
 - **JSON con System.Text.Json**: Moderno, rápido y seguro. Opciones con `JsonSerializerOptions`

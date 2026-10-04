@@ -1,24 +1,24 @@
-- [7. Ficheros y Formatos de Intercambio en .NET](#7-ficheros-y-formatos-de-intercambio-en-net)
+- [7. Ficheros y formatos de intercambio en .NET](#7-ficheros-y-formatos-de-intercambio-en-net)
   - [7.1. Gestión de recursos y archivos](#71-gestión-de-recursos-y-archivos)
     - [7.1.1. El patrón IDisposable y la gestión de recursos no administrados](#711-el-patrón-idisposable-y-la-gestión-de-recursos-no-administrados)
     - [7.1.2. La declaración using: sintaxis y semántica](#712-la-declaración-using-sintaxis-y-semántica)
     - [7.1.3. La API System.IO: visión general](#713-la-api-systemio-visión-general)
     - [7.1.4. Stream: la abstracción fundamental de flujos de datos](#714-stream-la-abstracción-fundamental-de-flujos-de-datos)
-    - [7.1.5. Clases derivadas de Stream: FileStream, MemoryStream, NetworkStream](#715-clases-derivadas-de-stream-filestream-memorystream-networkstream)
+    - [7.1.5. Clases derivadas de stream: FileStream, MemoryStream, NetworkStream](#715-clases-derivadas-de-stream-filestream-memorystream-networkstream)
     - [7.1.6. Lectura y escritura con StreamReader y StreamWriter](#716-lectura-y-escritura-con-streamreader-y-streamwriter)
-    - [7.1.7. La clase File: operaciones de alto nivel](#717-la-clase-file-operaciones-de-alto-nivel)
-    - [7.1.8. La clase Directory y Path: gestión del sistema de archivos](#718-la-clase-directory-y-path-gestión-del-sistema-de-archivos)
+    - [7.1.7. La clase file: operaciones de alto nivel](#717-la-clase-file-operaciones-de-alto-nivel)
+    - [7.1.8. La clase directory y path: gestión del sistema de archivos](#718-la-clase-directory-y-path-gestión-del-sistema-de-archivos)
     - [7.1.9. Clases BinaryReader y BinaryWriter: formato binario estructurado](#719-clases-binaryreader-y-binarywriter-formato-binario-estructurado)
   - [7.2. Formatos de intercambio de datos](#72-formatos-de-intercambio-de-datos)
     - [7.2.1. Fundamentos de los formatos de intercambio](#721-fundamentos-de-los-formatos-de-intercambio)
     - [7.2.2. CSV: formato de valores separados por comas](#722-csv-formato-de-valores-separados-por-comas)
-    - [7.2.3. JSON: JavaScript Object Notation](#723-json-javascript-object-notation)
-    - [7.2.4. XML: Extensible Markup Language](#724-xml-extensible-markup-language)
+    - [7.2.3. JSON: JavaScript object notation](#723-json-javascript-object-notation)
+    - [7.2.4. XML: extensible markup language](#724-xml-extensible-markup-language)
     - [7.2.5. Comparativa técnica de formatos](#725-comparativa-técnica-de-formatos)
 
 
 
-# 7. Ficheros y Formatos de Intercambio en .NET
+# 7. Ficheros y formatos de intercambio en .NET
 
 > 💡 **Punto de partida:** ¿Alguna vez te has preguntado cómo guarda tu app los datos entre sesiones o cómo intercambia información con otra? La respuesta está en ficheros y formatos de intercambio como CSV, JSON y XML.
 
@@ -403,7 +403,7 @@ namespace SystemIO.Stream;
 }
 ```
 
-### 7.1.5. Clases derivadas de Stream: FileStream, MemoryStream, NetworkStream
+### 7.1.5. Clases derivadas de stream: FileStream, MemoryStream, NetworkStream
 
 .NET proporciona múltiples implementaciones concretas de `Stream`, cada una optimizada para un caso de uso específico. Comprender cuándo usar cada una es crucial para escribir código eficiente.
 
@@ -643,7 +643,7 @@ namespace SystemIO.Stream.Texto;
 }
 ```
 
-### 7.1.7. La clase File: operaciones de alto nivel
+### 7.1.7. La clase file: operaciones de alto nivel
 
 La clase `File` proporciona métodos estáticos convenientes para operaciones comunes de archivos. Aunque menos flexible que `FileStream`, es ideal para escenarios donde necesitamos leer o escribir archivos completos de forma simple y directa.
 
@@ -754,7 +754,7 @@ namespace SystemIO.File;
 }
 ```
 
-### 7.1.8. La clase Directory y Path: gestión del sistema de archivos
+### 7.1.8. La clase directory y path: gestión del sistema de archivos
 
 La clase `Directory` proporciona métodos para manipular directorios, mientras que `Path` ofrece utilidades para trabajar con rutas de archivos de forma multiplataforma.
 
@@ -1035,10 +1035,10 @@ graph LR
         C -->|No| H[CSV]
     end
     
-    style A fill:#4CAF50
-    style E fill:#2196F3
-    style G fill:#FF9800
-    style H fill:#9C27B0
+    style A fill:#4CAF50,color:#fff
+    style E fill:#2196F3,color:#fff
+    style G fill:#FF9800,color:#fff
+    style H fill:#9C27B0,color:#fff
 ```
 
 ### 7.2.2. CSV: formato de valores separados por comas
@@ -1197,7 +1197,7 @@ namespace Formatos.CSV;
 
 🧠 **Analogía**: CSV es como una hoja de cálculo simple. Cada línea es una fila, cada coma separa las columnas. Es perfecto para datos tabulares pero se complica cuando un celda necesita contener una coma (como direcciones con "Calle Principal, 123").
 
-### 7.2.3. JSON: JavaScript Object Notation
+### 7.2.3. JSON: JavaScript object notation
 
 JSON se ha convertido en el formato de intercambio predominante en aplicaciones web y APIs modernas. Combina legibilidad humana con soporte para estructuras de datos complejas, tipos primitivos, y estructuras anidadas.
 
@@ -1389,7 +1389,7 @@ namespace Formatos.JSON;
 }
 ```
 
-### 7.2.4. XML: Extensible Markup Language
+### 7.2.4. XML: extensible markup language
 
 XML es un formato verbose pero poderoso que proporciona validación mediante esquemas (XSD), espacios de nombres, y procesamiento estándar mediante XPath/XSLT. Todavía es común en sistemas empresariales, configuración (app.config, web.config), y documentos Office.
 
@@ -1605,9 +1605,9 @@ graph TB
         G --> G2["Muy verboso<br/>Parsing más lento<br/>Espacio"]
     end
     
-    style A fill:#4CAF50
-    style D fill:#2196F3
-    style G fill:#FF9800
+    style A fill:#4CAF50,color:#fff
+    style D fill:#2196F3,color:#fff
+    style G fill:#FF9800,color:#fff
 ```
 
 | Característica | CSV | JSON | XML |

@@ -4,7 +4,7 @@
 
 Este ejemplo muestra cómo consumir una API REST externa (**JSONPlaceholder**) usando **Refit**, una librería que genera implementaciones de interfaces HTTP de forma declarativa.
 
-## Conceptos Clave
+## Conceptos clave
 
 ### ¿Qué es Refit?
 
@@ -23,7 +23,7 @@ var usuario = await api.GetUsuarioByIdAsync(id);
 
 📌 Ejemplo real: **Instagram** usa patrones similares para comunicarse con sus microservicios. Cada servicio expone una API y los clientes la consumen mediante interfaces tipadas.
 
-### Refit vs HttpClient Manual
+### Refit vs HttpClient manual
 
 | Característica | HttpClient Manual | Refit |
 |----------------|-------------------|-------|
@@ -58,7 +58,7 @@ services.AddHttpClient("nombre", client =>
 .AddRefitClient<IApi>();
 ```
 
-### Result Object Pattern (ROP)
+### Result object pattern (ROP)
 
 En lugar de usar excepciones para errores de negocio, usamos `Result<T, E>`:
 
@@ -125,7 +125,7 @@ No necesita Docker ni base de datos. JSONPlaceholder es una API demo gratuita.
 | `Microsoft.Extensions.Http` | 9.0.0 | IHttpClientFactory |
 | `Microsoft.Extensions.DependencyInjection` | 9.0.0 | Inyección de dependencias |
 
-## Casos de Uso
+## Casos de uso
 
 - **Microservicios**: Consumo de APIs internas
 - **Integraciones externas**: APIs de terceros (Stripe, Twilio, etc.)
@@ -134,6 +134,6 @@ No necesita Docker ni base de datos. JSONPlaceholder es una API demo gratuita.
 ## Referencias
 
 - [Refit (GitHub)](https://github.com/reactiveui/refit)
-- [Refit Documentation](https://refit-httpclient.io/)
+- [Refit documentation](https://refit-httpclient.io/)
 - [JSONPlaceholder](https://jsonplaceholder.typicode.com/)
 - [IHttpClientFactory (Microsoft)](https://learn.microsoft.com/es-es/dotnet/core/extensions/httpclient-factory)

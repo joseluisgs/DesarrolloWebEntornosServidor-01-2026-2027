@@ -6,9 +6,9 @@ Este ejemplo demuestra el uso de **Inyección de Dependencias (DI)** en .NET, mo
 - **DI Manual**: registro explícito de cada servicio
 - **DI con Scrutor**: escaneo automático usando interfaces marcadoras
 
-## Conceptos Clave
+## Conceptos clave
 
-### ¿Qué es la Inyección de Dependencias?
+### ¿Qué es la inyección de dependencias?
 
 La Inyección de Dependencias es un patrón de diseño donde un objeto recibe sus dependencias de fuentes externas en lugar de crearlas él mismo. Esto promueve:
 
@@ -16,7 +16,7 @@ La Inyección de Dependencias es un patrón de diseño donde un objeto recibe su
 - **Testabilidad**: fácil de mockear dependencias
 - **Mantenibilidad**: cambiar implementaciones sin modificar el código cliente
 
-### Duración de los Servicios
+### Duración de los servicios
 
 | Tipo | Descripción | Ejemplo |
 |------|-------------|---------|
@@ -24,7 +24,7 @@ La Inyección de Dependencias es un patrón de diseño donde un objeto recibe su
 | **Scoped** | Una instancia por petición HTTP | Servicios de negocio |
 | **Singleton** | Una única instancia reutilizada | Caché, configuración |
 
-### Interfaces Marcadoras
+### Interfaces marcadoras
 
 Las interfaces marcadoras son interfaces vacías que indican la duración deseada del servicio:
 
@@ -34,7 +34,7 @@ public interface IScopedService { }
 public interface ISingletonService { }
 ```
 
-## Estructura del Proyecto
+## Estructura del proyecto
 
 ```
 01-InyeccionDependencias/
@@ -64,7 +64,7 @@ public interface ISingletonService { }
         └── ProductoServiceTests.cs
 ```
 
-## Comparativa: Manual vs Scrutor
+## Comparativa: manual vs Scrutor
 
 | Aspecto | DI Manual | DI con Scrutor |
 |---------|-----------|----------------|
@@ -84,7 +84,7 @@ dotnet run
 dotnet test
 ```
 
-## Ejemplo Real
+## Ejemplo real
 
 **Netflix** usa un sistema similar de Inyección de Dependencias para gestionar sus múltiples microservicios:
 - Cada servicio (recomendaciones, pagos, notificaciones) se registra con una duración específica
@@ -96,4 +96,4 @@ dotnet test
 
 - [Documentación oficial de DI en .NET](https://learn.microsoft.com/es-es/dotnet/core/extensions/dependency-injection)
 - [Scrutor en GitHub](https://github.com/khellang/Scrutor)
-- [Vídeo: Inyección de Dependencias en .NET](https://www.youtube.com/watch?v=8z)
+- [Vídeo: inyección de dependencias en .NET](https://www.youtube.com/watch?v=8z)

@@ -1,22 +1,22 @@
-- [21. Bases de Datos SQL y NoSQL](#21-bases-de-datos-sql-y-nosql)
-  - [21.1. ACID vs BASE: Dos Filosofías](#211-acid-vs-base-dos-filosofías)
-  - [21.2. PostgreSQL: El SQL Potente](#212-postgresql-el-sql-potente)
-  - [21.3. MongoDB: Documentos Flexibles](#213-mongodb-documentos-flexibles)
-  - [21.4. Redis: Caché y Clave-Valor](#214-redis-caché-y-clave-valor)
-  - [21.4.1. Algoritmos de Caché](#2141-algoritmos-de-caché)
-  - [21.4.2. Caché Local: Microsoft.Extensions.Caching.Memory](#2142-caché-local-microsoftextensionscachingmemory)
-  - [21.5. Diseño de Datos: SQL vs NoSQL](#215-diseño-de-datos-sql-vs-nosql)
-  - [21.6. Sharding y Replicación](#216-sharding-y-replicación)
+- [21. Bases de datos SQL y NoSQL](#21-bases-de-datos-sql-y-nosql)
+  - [21.1. ACID vs BASE: dos filosofías](#211-acid-vs-base-dos-filosofías)
+  - [21.2. PostgreSQL: el SQL potente](#212-postgresql-el-sql-potente)
+  - [21.3. MongoDB: documentos flexibles](#213-mongodb-documentos-flexibles)
+  - [21.4. Redis: caché y Clave-Valor](#214-redis-caché-y-clave-valor)
+  - [21.4.1. Algoritmos de caché](#2141-algoritmos-de-caché)
+  - [21.4.2. Caché local: Microsoft.Extensions.Caching.Memory](#2142-caché-local-microsoftextensionscachingmemory)
+  - [21.5. Diseño de datos: SQL vs NoSQL](#215-diseño-de-datos-sql-vs-nosql)
+  - [21.6. Sharding y replicación](#216-sharding-y-replicación)
   - [21.7. Patrón Cache-Aside](#217-patrón-cache-aside)
-  - [21.8. Consistencia Eventual](#218-consistencia-eventual)
-  - [21.9. Modelo Relacional vs Documento](#219-modelo-relacional-vs-documento)
+  - [21.8. Consistencia eventual](#218-consistencia-eventual)
+  - [21.9. Modelo relacional vs documento](#219-modelo-relacional-vs-documento)
   - [21.10. Dapper vs EF Core vs ADO.NET](#2110-dapper-vs-ef-core-vs-ado)
-  - [21.11. Escalabilidad Vertical vs Horizontal](#2111-escalabilidad-vertical-vs-horizontal)
-  - [21.12. Comparativa y Cuándo Usar Cada Uno](#2112-comparativa-y-cuándo-usar-cada-uno)
-  - [21.13. Buenas Prácticas](#2113-buenas-prácticas)
+  - [21.11. Escalabilidad vertical vs horizontal](#2111-escalabilidad-vertical-vs-horizontal)
+  - [21.12. Comparativa y cuándo usar cada uno](#2112-comparativa-y-cuándo-usar-cada-uno)
+  - [21.13. Buenas prácticas](#2113-buenas-prácticas)
 
 
-# 21. Bases de Datos SQL y NoSQL
+# 21. Bases de datos SQL y NoSQL
 
 > 💡 **Punto de partida:** Necesitas guardar datos, pero... ¿una base de datos relacional como PostgreSQL? ¿O un documento como MongoDB? ¿O una caché como Redis? No hay una "mejor" base de datos: cada una está diseñada para problemas diferentes. PostgreSQL es como una hoja de cálculo gigante con relaciones. MongoDB es como guardar PDFs flexibles. Redis es como una estantería donde guardas cajas etiquetadas. Vamos a ver cuándo usar cada una.
 
@@ -30,7 +30,7 @@ En este tema aprenderás las diferencias entre ACID y BASE, y usarás PostgreSQL
 - Usar Redis para caché y almacenamiento clave-valor
 - Elegir la base de datos adecuada según el caso de uso
 
-## 21.1. ACID vs BASE: Dos Filosofías
+## 21.1. ACID vs BASE: dos filosofías
 
 | Propiedad | ACID (SQL) | BASE (NoSQL) |
 |-----------|-----------|--------------|
@@ -49,16 +49,16 @@ graph TD
     D -->|"Caché / clave-valor"| F["Redis"]
     D -->|"Datos relacionales,<br/>pero escalabilidad"| G["Cassandra"]
 
-    style A fill:#4CAF50,color:#fff
-    style C fill:#2196F3,color:#fff
-    style E fill:#FF9800,color:#fff
-    style F fill:#f44336,color:#fff
-    style G fill:#9C27B0,color:#fff
+    style A fill:#4CAF5,color:#fff0,color:#fff
+    style C fill:#2196F,color:#fff3,color:#fff
+    style E fill:#FF980,color:#fff0,color:#fff
+    style F fill:#f4433,color:#fff6,color:#fff
+    style G fill:#9C27B,color:#fff0,color:#fff
 ```
 
 📌 **Ejemplo real:** Un banco usa PostgreSQL (ACID): si transfieres dinero, la transacción es "todo o nada" — no puede quedarse a medias. Un feed de redes sociales usa MongoDB (BASE): si un post tarda 1 milisegundo más en aparecer, no pasa nada.
 
-## 21.2. PostgreSQL: El SQL Potente
+## 21.2. PostgreSQL: el SQL potente
 
 PostgreSQL es el SGBD relacional de código abierto más potente. Soporta JSON, SIG, búsqueda de texto completo y extensiones.
 
@@ -69,7 +69,7 @@ dotnet add package Npgsql
 dotnet add package Dapper
 ```
 
-### CRUD con Dapper
+### CRUD con dapper
 
 ```csharp
 using Npgsql;
@@ -126,7 +126,7 @@ public class PersonaRepository(string connectionString)
 
 > 📝 **Nota:** Este repositorio usa **soft delete** (borrado lógico): como el modelo tiene el campo `Activo`, el DELETE no elimina la fila, solo la marca `Activo = false`. Así se conserva el histórico y no se rompen las referencias. Las consultas filtran con `WHERE Activo = true` (mira el JOIN de abajo). Si en tu proyecto el borrado debe ser físico, borra la fila de forma explícita y documenta la decisión.
 
-### JOINs con Dapper
+### JOINs con dapper
 
 ```csharp
 // Consulta con JOIN
@@ -169,7 +169,7 @@ catch
 
 > 💡 **Consejo:** Para EF Core con PostgreSQL, usa el paquete `Npgsql.EntityFrameworkCore.PostgreSQL`. Para Dapper, usa `Npgsql` directamente. Dapper es más rápido para consultas complejas, EF Core para CRUD rápido.
 
-### EF Core con PostgreSQL: CRUD Completo
+### EF Core con PostgreSQL: CRUD completo
 
 ```bash
 dotnet add package Npgsql.EntityFrameworkCore.PostgreSQL
@@ -274,7 +274,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("PostgreSQL")));
 ```
 
-### CRUD con Dapper vs EF Core
+### CRUD con dapper vs EF Core
 
 | Operación | Dapper | EF Core |
 |-----------|--------|---------|
@@ -286,7 +286,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 | **Rendimiento** | Más rápido | Más productivo |
 | **Usar cuando** | Consultas complejas, informes | CRUD rápido, prototipos |
 
-## 21.3. MongoDB: Documentos Flexibles
+## 21.3. MongoDB: documentos flexibles
 
 MongoDB almacena documentos BSON (JSON binario). No necesitas un esquema fijo: cada documento puede tener estructura diferente.
 
@@ -325,7 +325,7 @@ public class ProductoMongo
 }
 ```
 
-### CRUD con MongoDB Driver
+### CRUD con MongoDB driver
 
 ```csharp
 using MongoDB.Driver;
@@ -404,7 +404,7 @@ var resultados = await pipeline.ToListAsync();
 
 📌 **Ejemplo real:** Instagram guarda los perfiles de usuario en MongoDB. Cada usuario tiene información diferente: unos tienen LinkedIn, otros no; unos tienen bio larga, otros vacía. Con MongoDB no necesitas un esquema rígido.
 
-### EF Core con MongoDB: CRUD Completo
+### EF Core con MongoDB: CRUD completo
 
 ```bash
 dotnet add package MongoDB.EntityFrameworkCore
@@ -498,7 +498,7 @@ builder.Services.AddDbContext<MongoDbContext>(options =>
         "Academia"));                                          // 2) nombre de la base de datos
 ```
 
-### MongoDB: Driver Nativo vs EF Core
+### MongoDB: driver nativo vs EF Core
 
 | Característica | MongoDB.Driver | EF Core + MongoDB |
 |----------------|---------------|-------------------|
@@ -510,7 +510,7 @@ builder.Services.AddDbContext<MongoDbContext>(options =>
 | **Usar cuando** | Agregaciones complejas, documentos anidados | CRUD rápido, si ya usas EF Core |
 | **Rendimiento** | Más rápido | Más productivo |
 
-## 21.4. Redis: Caché y Clave-Valor
+## 21.4. Redis: caché y Clave-Valor
 
 Redis es una base de datos en memoria ultra-rápida. Se usa principalmente para caché, sesiones, colas de mensajes y contadores.
 
@@ -600,7 +600,7 @@ public class PersonaRedisRepository(string connectionString)
 }
 ```
 
-### IDistributedCache: Interfaz .NET para caché
+### IDistributedCache: interfaz .NET para caché
 
 ```csharp
 using Microsoft.Extensions.Caching.Distributed;
@@ -766,7 +766,7 @@ RedisValue nombre = await _db.HashGetAsync("usuario:1", "nombre");
 
 📌 **Ejemplo real:** Twitter usa Redis para cachear los timelines de los usuarios. Cuando abres Twitter, el timeline se carga de Redis (microsegundos), no de la base de datos (milisegundos). Los datos se actualizan cuando alguien twittea.
 
-### Redis: Driver Nativo vs EF Core
+### Redis: driver nativo vs EF Core
 
 Redis **NO tiene un provider oficial de EF Core**. La razón es que Redis no es una base de datos relacional: no soporta JOINs, no tiene esquema, y sus operaciones son clave-valor. EF Core está diseñado para bases de datos relacionales.
 
@@ -811,7 +811,7 @@ public class ProductoService(
 
 > 📝 **Nota:** Redis como EF Core provider no existe porque Redis no es relacional. El patrón correcto es: **EF Core para la BD principal** (PostgreSQL, SQL Server) y **Redis como caché** encima.
 
-### Comparativa: Driver Nativo vs EF Core (las 3 BD)
+### Comparativa: driver nativo vs EF Core (las 3 BD)
 
 | BD | Driver Nativo | EF Core Provider | Cuándo usar nativo | Cuándo usar EF Core |
 |----|---------------|------------------|-------------------|---------------------|
@@ -819,7 +819,7 @@ public class ProductoService(
 | **MongoDB** | `MongoDB.Driver` | `MongoDB.EntityFrameworkCore` | Agregaciones complejas | CRUD simple, si ya usas EF Core |
 | **Redis** | `StackExchange.Redis` | ❌ No existe oficialmente | Caché, sesiones, colas | Usar `IDistributedCache` + Redis |
 
-## 21.4.1. Algoritmos de Caché
+## 21.4.1. Algoritmos de caché
 
 Cuando la caché se llena, hay que decidir **qué borrar** para hacer hueco. Los algoritmos más comunes son:
 
@@ -847,9 +847,9 @@ graph LR
         C2 -.->|"Borrar"| X3["❌"]
     end
 
-    style FIFO fill:#2196F3,color:#fff
-    style LRU fill:#4CAF50,color:#fff
-    style LFU fill:#FF9800,color:#fff
+    style FIFO fill:#2196F,color:#fff3,color:#fff
+    style LRU fill:#4CAF5,color:#fff0,color:#fff
+    style LFU fill:#FF980,color:#fff0,color:#fff
 ```
 
 > 💡 **Analogía — La nevera:**
@@ -874,8 +874,8 @@ graph TB
         B2 --> B3["Expira a las 10:55<br/>(se renueva con cada uso)"]
     end
 
-    style ABSOLUTA fill:#f44336,color:#fff
-    style DESLIZANTE fill:#4CAF50,color:#fff
+    style ABSOLUTA fill:#f4433,color:#fff6,color:#fff
+    style DESLIZANTE fill:#4CAF5,color:#fff0,color:#fff
 ```
 
 | Tipo | ¿Cuándo expira? | Ejemplo |
@@ -883,7 +883,7 @@ graph TB
 | **Absoluta** | En un momento fijo, se use o no | Sesión de usuario: expira en 30 min siempre |
 | **Deslizante** | Después de X tiempo sin uso | Token de API: se renueva con cada petición |
 
-## 21.4.2. Caché Local: Microsoft.Extensions.Caching.Memory
+## 21.4.2. Caché local: Microsoft.Extensions.Caching.Memory
 
 Cuando **NO necesitas Redis** (aplicación de un solo servidor, datos poco compartidos), usa `MemoryCache` de .NET. Es más rápido (memoria del proceso) y no requiere infraestructura externa.
 
@@ -998,7 +998,7 @@ cache.Set("key", value);  // ¡Excepción si hay SizeLimit!
 
 > 💡 **Consejo:** Empieza con `MemoryCache`. Cuando necesites escalar a múltiples servidores, migra a Redis. El patrón `IDistributedCache` facilita la migración porque cambias el proveedor sin cambiar el código.
 
-### IDistributedCache: La abstracción .NET
+### IDistributedCache: la abstracción .NET
 
 ```csharp
 // Interfaz que funciona con MemoryCache O Redis
@@ -1021,9 +1021,9 @@ builder.Services.AddStackExchangeRedisCache(options =>
 
 > 💡 **Consejo:** Usa `IDistributedCache` en tu código. Así puedes cambiar de MemoryCache a Redis solo modificando `Program.cs`, sin tocar los servicios.
 
-## 21.5. Diseño de Datos: SQL vs NoSQL
+## 21.5. Diseño de datos: SQL vs NoSQL
 
-### Integridad referencial vs Flexibilidad
+### Integridad referencial vs flexibilidad
 
 **PostgreSQL (ACID)** garantiza integridad referencial con claves externas:
 
@@ -1061,7 +1061,7 @@ CREATE TABLE Pedidos (
 
 > 💡 **Analogía:** PostgreSQL es como un banco: cada movimiento está verificado, tiene restricciones, y si algo no cuadra, no deja pasar la operación. MongoDB es como un Excel: tú controlas qué es válido y qué no.
 
-### Embedded vs Referencias en MongoDB
+### Embedded vs referencias en MongoDB
 
 MongoDB permite dos formas de modelar relaciones:
 
@@ -1079,11 +1079,11 @@ graph TB
         D2 -->|"1:N"| D3
     end
 
-    style EMBEDDED fill:#4CAF50,color:#fff
-    style REFERENCIAS fill:#FF9800,color:#fff
+    style EMBEDDED fill:#4CAF5,color:#fff0,color:#fff
+    style REFERENCIAS fill:#FF980,color:#fff0,color:#fff
 ```
 
-#### Embedded (Documentos embebidos)
+#### Embedded (documentos embebidos)
 
 El documento hijo se guarda **dentro** del padre. No necesitas JOINs.
 
@@ -1104,7 +1104,7 @@ var cliente = await collection.Find(c => c.Id == "cliente123").FirstOrDefaultAsy
 // Los pedidos ya vienen dentro del documento
 ```
 
-#### Referencias (Documento referenciado)
+#### Referencias (documento referenciado)
 
 El documento hijo tiene una referencia al padre. Similar a las claves externas.
 
@@ -1123,7 +1123,7 @@ El documento hijo tiene una referencia al padre. Similar a las claves externas.
 var pedidos = await collection.Find(p => p.ClienteId == "cliente123").ToListAsync();
 ```
 
-### Cuándo usar Embedded vs Referencias
+### Cuándo usar embedded vs referencias
 
 | Criterio | Embedded | Referencias |
 |----------|----------|-------------|
@@ -1191,17 +1191,17 @@ graph LR
         D1["📄 Documento Pedido<br/>cliente: {nombre, email}<br/>producto: {nombre, precio}"]
     end
 
-    style SQL fill:#2196F3,color:#fff
-    style MONGO fill:#FF9800,color:#fff
+    style SQL fill:#2196F,color:#fff3,color:#fff
+    style MONGO fill:#FF980,color:#fff0,color:#fff
 ```
 
 > 💡 **Consejo:** El embedding elimina JOINs pero crea redundancia. Si el cliente cambia de email, tienes que actualizar todos los pedidos embebidos. Elige según tu caso de uso: si los datos son estáticos, embebe; si cambian, referencia.
 
-## 21.6. Sharding y Replicación
+## 21.6. Sharding y replicación
 
 Cuando tu base de datos crece demasiado para un solo servidor, necesitas **distribuir los datos**. Hay dos estrategias principales:
 
-### Sharding (Particionado)
+### Sharding (particionado)
 
 Dividir los datos entre múltiples servidores. Cada servidor tiene una parte de los datos.
 
@@ -1214,11 +1214,11 @@ graph TB
         R -->|"Backup"| S3["Servidor 3<br/>(Copia de seguridad)"]
     end
 
-    style C fill:#2196F3,color:#fff
-    style R fill:#FF9800,color:#fff
-    style S1 fill:#4CAF50,color:#fff
-    style S2 fill:#4CAF50,color:#fff
-    style S3 fill:#9C27B0,color:#fff
+    style C fill:#2196F,color:#fff3,color:#fff
+    style R fill:#FF980,color:#fff0,color:#fff
+    style S1 fill:#4CAF5,color:#fff0,color:#fff
+    style S2 fill:#4CAF5,color:#fff0,color:#fff
+    style S3 fill:#9C27B,color:#fff0,color:#fff
 ```
 
 > 💡 **Analogía — La Biblioteca:**
@@ -1238,10 +1238,10 @@ graph TB
         C3["Cliente 3"] --> R2
     end
 
-    style C fill:#2196F3,color:#fff
-    style P fill:#f44336,color:#fff
-    style R1 fill:#4CAF50,color:#fff
-    style R2 fill:#4CAF50,color:#fff
+    style C fill:#2196F,color:#fff3,color:#fff
+    style P fill:#f4433,color:#fff6,color:#fff
+    style R1 fill:#4CAF5,color:#fff0,color:#fff
+    style R2 fill:#4CAF5,color:#fff0,color:#fff
 ```
 
 > 💡 **Analogía — Las Fotocopias:**
@@ -1277,7 +1277,7 @@ sequenceDiagram
 
 📌 **Ejemplo real:** Instagram guarda en Redis las fotos de perfil. Cuando abres un perfil, primero busca en Redis (1ms). Si no está, va a PostgreSQL (50ms) y guarda en Redis para la próxima vez.
 
-## 21.8. Consistencia Eventual
+## 21.8. Consistencia eventual
 
 En sistemas distribuidos, la **consistencia eventual** significa que los datos se sincronizan entre servidores, pero no inmediatamente. Durante unos milisegundos, diferentes servidores pueden tener datos diferentes.
 
@@ -1312,7 +1312,7 @@ sequenceDiagram
 - ❌ Transferencia bancaria (necesita consistencia fuerte, ACID)
 - ❌ Stock de inventario (vender 2 veces el mismo producto es grave)
 
-## 21.9. Modelo Relacional vs Documento
+## 21.9. Modelo relacional vs documento
 
 El mismo dato modelado en SQL vs MongoDB:
 
@@ -1337,8 +1337,8 @@ graph LR
         C1["Colección personas"] --> D1["Documento: {_id:1, nombre:Ana, pedidos:[...]}"]
     end
 
-    style SQL fill:#2196F3,color:#fff
-    style NOSQL fill:#FF9800,color:#fff
+    style SQL fill:#2196F,color:#fff3,color:#fff
+    style NOSQL fill:#FF980,color:#fff0,color:#fff
 ```
 
 **PostgreSQL (relacional):**
@@ -1387,9 +1387,9 @@ graph LR
     B -.->|"Equilibrio"| B1["SQL + mapeo automático"]
     C -.->|"Más productividad"| C1["LINQ + Abstracción"]
 
-    style A fill:#f44336,color:#fff
-    style B fill:#FF9800,color:#fff
-    style C fill:#4CAF50,color:#fff
+    style A fill:#f4433,color:#fff6,color:#fff
+    style B fill:#FF980,color:#fff0,color:#fff
+    style C fill:#4CAF5,color:#fff0,color:#fff
 ```
 
 > 💡 **Cuándo usar cada uno:**
@@ -1397,7 +1397,7 @@ graph LR
 > - **Dapper:** CRUD rápido, control del SQL, alto rendimiento
 > - **EF Core:** Desarrollo rápido, Change Tracking, migraciones automáticas, LINQ
 
-## 21.11. Escalabilidad Vertical vs Horizontal
+## 21.11. Escalabilidad vertical vs horizontal
 
 | Tipo | Qué es | Ventajas | Desventajas |
 |------|--------|----------|-------------|
@@ -1417,8 +1417,8 @@ graph TB
         LB --> C["Clientes"]
     end
 
-    style VERTICAL fill:#FF9800,color:#fff
-    style HORIZONTAL fill:#4CAF50,color:#fff
+    style VERTICAL fill:#FF980,color:#fff0,color:#fff
+    style HORIZONTAL fill:#4CAF5,color:#fff0,color:#fff
 ```
 
 > 💡 **Analogía:**
@@ -1430,7 +1430,7 @@ graph TB
 - **MongoDB:** Escala horizontal con **sharding** (dividir datos entre servidores)
 - **Redis:** Escala con clustering (múltiples nodos)
 
-## 21.12. Comparativa y Cuándo Usar Cada Uno
+## 21.12. Comparativa y cuándo usar cada uno
 
 | Característica | PostgreSQL | MongoDB | Redis |
 |---------------|-----------|---------|-------|
@@ -1473,12 +1473,12 @@ graph TD
     E --> E1["Neo4j"]
     F --> F1["Elasticsearch"]
 
-    style A fill:#4CAF50,color:#fff
-    style B fill:#2196F3,color:#fff
-    style C fill:#FF9800,color:#fff
-    style D fill:#f44336,color:#fff
-    style E fill:#9C27B0,color:#fff
-    style F fill:#607D8B,color:#fff
+    style A fill:#4CAF5,color:#fff0,color:#fff
+    style B fill:#2196F,color:#fff3,color:#fff
+    style C fill:#FF980,color:#fff0,color:#fff
+    style D fill:#f4433,color:#fff6,color:#fff
+    style E fill:#9C27B,color:#fff0,color:#fff
+    style F fill:#607D8,color:#fffB,color:#fff
 ```
 
 > 📝 **Nota:** Neo4j es interesante para redes sociales. Si Instagram guardara "Ana sigue a Carlos, Carlos sigue a Pedro", en PostgreSQL necesitarías una tabla de relaciones y JOINs complejos. En Neo4j es simplemente `Ana -> Carlos -> Pedro` y puedes hacer "amigos de amigos" en milisegundos.
@@ -1507,13 +1507,13 @@ graph TD
     F -->|"Sí"| G["🍃 MongoDB"]
     F -->|"No"| C
 
-    style A fill:#4CAF50,color:#fff
-    style C fill:#2196F3,color:#fff
-    style E fill:#f44336,color:#fff
-    style G fill:#FF9800,color:#fff
+    style A fill:#4CAF5,color:#fff0,color:#fff
+    style C fill:#2196F,color:#fff3,color:#fff
+    style E fill:#f4433,color:#fff6,color:#fff
+    style G fill:#FF980,color:#fff0,color:#fff
 ```
 
-### Ejemplo: Arquitectura híbrida
+### Ejemplo: arquitectura híbrida
 
 ```csharp
 // Un sistema real usa las tres:
@@ -1544,7 +1544,7 @@ public class PedidoService(PedidoRepository pedidoRepo, PostRepository postRepo,
 
 > 📝 **Nota:** En producción, la mayoría de sistemas usan una combinación: PostgreSQL para datos transaccionales, Redis para caché, y a veces MongoDB para contenido flexible. No es "uno o otro", sino "el correcto para cada tipo de dato".
 
-## 21.13. Buenas Prácticas
+## 21.13. Buenas prácticas
 
 - **PostgreSQL para datos transaccionales**: Relaciones fuertes, integridad referencial
 - **MongoDB para documentos flexibles**: Datos autocontenidos, esquema variable

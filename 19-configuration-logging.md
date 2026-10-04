@@ -1,14 +1,14 @@
-- [19. Configuración y Logging en .NET](#19-configuración-y-logging-en-net)
-  - [19.1. appsettings.json: La Fuente de Verdad](#191-appsettingsjson-la-fuente-de-verdad)
-  - [19.2. IConfiguration: Acceder a la Configuración](#192-iconfiguration-acceder-a-la-configuración)
-  - [19.3. IOptions\<T\>: Configuración Tipada](#193-ioptionst-configuración-tipada)
-  - [19.4. Serilog: Logging Estructurado](#194-serilog-logging-estructurado)
-  - [19.5. ILogger en Apps de Consola](#195-ilogger-en-apps-de-consola)
-  - [19.6. Logging con Dependencias y Enrichers](#196-logging-con-dependencias-y-enrichers)
-  - [19.7. Buenas Prácticas](#197-buenas-prácticas)
+- [19. Configuración y logging en .NET](#19-configuración-y-logging-en-net)
+  - [19.1. Appsettings.json: la fuente de verdad](#191-appsettingsjson-la-fuente-de-verdad)
+  - [19.2. IConfiguration: acceder a la configuración](#192-iconfiguration-acceder-a-la-configuración)
+  - [19.3. IOptions\<T\>: configuración tipada](#193-ioptionst-configuración-tipada)
+  - [19.4. Serilog: logging estructurado](#194-serilog-logging-estructurado)
+  - [19.5. ILogger en apps de consola](#195-ilogger-en-apps-de-consola)
+  - [19.6. Logging con dependencias y enrichers](#196-logging-con-dependencias-y-enrichers)
+  - [19.7. Buenas prácticas](#197-buenas-prácticas)
 
 
-# 19. Configuración y Logging en .NET
+# 19. Configuración y logging en .NET
 
 > 💡 **Punto de partida:** Tu app tiene datos hardcodeados: `"Server=localhost"`, `"ApiKey=12345"`. Cuando pasas de desarrollo a producción, ¿qué haces? ¿Cambiar el código? ¿Crear otra versión? ¡No! La configuración debe estar **fuera del código**: en `appsettings.json`, variables de entorno o la nube. Y para saber qué pasa dentro de tu app en producción, necesitas **logging** estructurado con Serilog.
 
@@ -23,7 +23,7 @@ En este tema aprenderás a gestionar configuración (`appsettings.json`, `IConfi
 - Usar `ILogger` en aplicaciones de consola
 - Aplicar enrichers para añadir contexto a los logs
 
-## 19.1. appsettings.json: La Fuente de Verdad
+## 19.1. Appsettings.json: la fuente de verdad
 
 `appsettings.json` es el fichero de configuración principal en ASP.NET Core. Puede tener variantes por entorno:
 
@@ -80,7 +80,7 @@ dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=localhost;
 
 > ⚠️ **Advertencia:** **NUNCA** guardes secretos en `appsettings.json` si el fichero se sube a git. Usa User Secrets (desarrollo) o variables de entorno (producción).
 
-## 19.2. IConfiguration: Acceder a la Configuración
+## 19.2. IConfiguration: acceder a la configuración
 
 `IConfiguration` es la interfaz que da acceso a toda la configuración de la app.
 
@@ -126,7 +126,7 @@ foreach (var provider in config.Providers)
 
 > 💡 **Consejo:** El orden de los proveedores importa. Los últimos sobreescriben los primeros. Por defecto: `appsettings.json` → `appsettings.{Environment}.json` → User Secrets (solo en Development) → Variables de entorno → Argumentos de línea de comandos. Las variables de entorno y la CLI **ganan** a los user secrets.
 
-## 19.3. IOptions\<T\>: Configuración Tipada
+## 19.3. IOptions\<T\>: configuración tipada
 
 `IOptions<T>` convierte una sección de `appsettings.json` en un objeto C# tipado. Así evitas los strings mágicos.
 
@@ -215,7 +215,7 @@ public class MiServicio(IOptionsSnapshot<ApiSettings> options)
 
 📌 **Ejemplo real:** En una app de e-commerce, la URL de la API de pagos cambia entre desarrollo y producción. Con `IOptions<PaymentSettings>`, el servicio de pagos no necesita saber en qué entorno está: la configuración se carga automáticamente del `appsettings` correcto.
 
-## 19.4. Serilog: Logging Estructurado
+## 19.4. Serilog: logging estructurado
 
 **Serilog** es la librería de logging estándar en .NET. Es más potente que el logging por defecto porque soporta **logging estructurado**: los logs son datos consultables, no solo texto plano.
 
@@ -358,7 +358,7 @@ public class PedidoService(
 
 > 💡 **Consejo:** Serilog es **estructurado**: puedes hacer queries sobre los logs. En vez de buscar texto plano, puedes buscar `WHERE PedidoId = 42` o `WHERE Nivel = 'Error'` en un Elasticsearch o Seq.
 
-## 19.5. ILogger en Apps de Consola
+## 19.5. ILogger en apps de consola
 
 En apps de consola no hay `Program.cs` de ASP.NET Core, pero podemos configurar Serilog igualmente:
 
@@ -411,9 +411,9 @@ public class MiServicio(ILogger<MiServicio> logger)
 
 > 📝 **Nota:** Cuando usas `{@Pedido}` (con `@`), Serilog serializa el objeto a JSON en el log. Sin `@`, solo muestra `.ToString()`. Siempre usa `@` para objetos complejos.
 
-## 19.6. Logging con Dependencias y Enrichers
+## 19.6. Logging con dependencias y enrichers
 
-### Enrichers: Añadir contexto a los logs
+### Enrichers: añadir contexto a los logs
 
 Los enrichers añaden automáticamente información a cada log: nombre de máquina, versión de la app, ID de petición, etc.
 
@@ -436,7 +436,7 @@ Log.Logger = new LoggerConfiguration()
     .CreateLogger();
 ```
 
-### Request Logging para ASP.NET Core
+### Request logging para ASP.NET Core
 
 ```csharp
 // Log automático de cada petición HTTP
@@ -460,7 +460,7 @@ app.UseSerilogRequestLogging(options =>
 
 > ⚠️ **Advertencia:** **NUNCA** logues datos sensibles: contraseñas, números de tarjeta de crédito, DNI. Los logs pueden ser accedidos por personas no autorizadas. Si necesitas logear parte de un dato sensible, enmascara: `"****-****-****-" + ultimosCuatro`.
 
-## 19.7. Buenas Prácticas
+## 19.7. Buenas prácticas
 
 - **Serilog para logging estructurado**: Más potente que Console.WriteLine
 - **IOptions<T> para configuración tipada**: Nunca leer appsettings directamente

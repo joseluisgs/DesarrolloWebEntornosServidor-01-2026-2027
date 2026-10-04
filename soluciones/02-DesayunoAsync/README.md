@@ -24,7 +24,7 @@
 
 ## Los 5 modos de ejecución
 
-### PARTE 1: Secuencial
+### PARTE 1: secuencial
 
 ```
 1 → 2 → 3 → 4 → 5 → 6 → 7
@@ -32,7 +32,7 @@
 
 Todo uno tras otro. Tiempo total = **1500ms**.
 
-### PARTE 2: Asíncrono malo
+### PARTE 2: asíncrono malo
 
 ```csharp
 await HacerCafeAsync();      // 200ms
@@ -45,7 +45,7 @@ Usamos `async/await` pero **cada tarea espera a la anterior**. Es igual de lento
 
 > ⚠️ **Error común:** Pensar que `async/await` automáticamente paraleliza. NO. Solo libera el hilo mientras espera, pero si haces `await` secuencial, estás igual que antes.
 
-### PARTE 3: Asíncrono bueno
+### PARTE 3: asíncrono bueno
 
 ```mermaid
 graph TD
@@ -69,12 +69,12 @@ graph TD
     BACON --> FIN
     MANTEQUILLA --> FIN
 
-    style START fill:#4CAF50,color:#fff
-    style FIN fill:#4CAF50,color:#fff
-    style PARALELO fill:#2196F3,color:#fff
-    style GRUPOA fill:#FF9800,color:#fff
-    style GRUPOB fill:#FF9800,color:#fff
-    style HUEVOS_BACON fill:#2196F3,color:#fff
+    style START fill:#4CAF5,color:#fff0,color:#fff
+    style FIN fill:#4CAF5,color:#fff0,color:#fff
+    style PARALELO fill:#2196F,color:#fff3,color:#fff
+    style GRUPOA fill:#FF980,color:#fff0,color:#fff
+    style GRUPOB fill:#FF980,color:#fff0,color:#fff
+    style HUEVOS_BACON fill:#2196F,color:#fff3,color:#fff
 ```
 
 **Estructura:**
@@ -94,7 +94,7 @@ WhenAll(1, A, B, 7)              ← 4 grupos en paralelo
 
 **Tiempo total = máx(200, 500, 300, 200) = 500ms** → ¡3x más rápido!
 
-### PARTE 4: Async malo + CancellationToken (500ms) → FALLA
+### PARTE 4: async malo + CancellationToken (500ms) → FALLA
 
 ```csharp
 using var cts = new CancellationTokenSource();
@@ -109,7 +109,7 @@ El modo secuencial necesita 1500ms pero el timeout es 500ms. **Falla en la acci�
 
 **Mensaje:** "¡El café se ha enfriado! ☕❄️"
 
-### PARTE 5: Async bueno + CancellationToken (500ms) → PASA
+### PARTE 5: async bueno + CancellationToken (500ms) → PASA
 
 ```csharp
 using var cts = new CancellationTokenSource();

@@ -1,8 +1,8 @@
-# Cuestionario de Desarrollo de Respuestas: Desarrollo Web en Entorno Servidor
+# Cuestionario de desarrollo de respuestas: desarrollo web en entorno servidor
 
 **Instrucciones:** Responde cada pregunta de forma clara y concisa. Puedes usar ejemplos de código si es necesario.
 
-## PARTE 1 (Temas 01-10)
+## PARTE 1 (temas 01-10)
 
 1.  **¿Qué es el desarrollo web en entorno servidor y por qué es importante en la arquitectura de una aplicación web moderna?**
 
@@ -24,7 +24,7 @@
 
 10. **Explica la diferencia entre autenticación y autorización. ¿Qué es JWT y cómo funciona? ¿Por qué son importantes los logs en la seguridad de una aplicación?**
 
-## PARTE 2 (Temas 11-25)
+## PARTE 2 (temas 11-25)
 
 11. **¿Qué es la Inyección de Dependencias (DI)? Menciona los 3 ciclos de vida principales. ¿Qué es Scrutor y para qué se usa? Menciona un ejemplo de cómo se configuraría un `DependenciesProvider`.**
 

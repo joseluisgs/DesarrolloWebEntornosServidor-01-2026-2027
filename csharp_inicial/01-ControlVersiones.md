@@ -1,20 +1,20 @@
-- [1. Control de Versiones](#1-control-de-versiones)
-  - [1.1. ¿Qué es un Sistema de Control de Versiones?](#11-qué-es-un-sistema-de-control-de-versiones)
-    - [🧠 Analogía: El control de versiones como máquina del tiempo](#-analogía-el-control-de-versiones-como-máquina-del-tiempo)
-  - [1.2. Git: El sistema de control de versiones distribuido](#12-git-el-sistema-de-control-de-versiones-distribuido)
-    - [🧠 Analogía: Centralizado vs Distribuido](#-analogía-centralizado-vs-distribuido)
+- [1. Control de versiones](#1-control-de-versiones)
+  - [1.1. ¿Qué es un sistema de control de versiones?](#11-qué-es-un-sistema-de-control-de-versiones)
+    - [🧠 Analogía: el control de versiones como máquina del tiempo](#-analogía-el-control-de-versiones-como-máquina-del-tiempo)
+  - [1.2. Git: el sistema de control de versiones distribuido](#12-git-el-sistema-de-control-de-versiones-distribuido)
+    - [🧠 Analogía: centralizado vs distribuido](#-analogía-centralizado-vs-distribuido)
   - [1.3. GitHub y plataformas de colaboración](#13-github-y-plataformas-de-colaboración)
   - [1.4. Conceptos fundamentales de Git](#14-conceptos-fundamentales-de-git)
   - [1.5. Comandos básicos de Git](#15-comandos-básicos-de-git)
   - [1.6. Flujo de trabajo con ramas](#16-flujo-de-trabajo-con-ramas)
-    - [🧠 Analogía: Las ramas como hojas de ruta](#-analogía-las-ramas-como-hojas-de-ruta)
+    - [🧠 Analogía: las ramas como hojas de ruta](#-analogía-las-ramas-como-hojas-de-ruta)
   - [1.7. Resolución de conflictos](#17-resolución-de-conflictos)
   - [1.8. Buenas prácticas](#18-buenas-prácticas)
-    - [💡 Ejercicio Propuesto](#-ejercicio-propuesto)
+    - [💡 Ejercicio propuesto](#-ejercicio-propuesto)
 
 
 
-# 1. Control de Versiones
+# 1. Control de versiones
 
 > 💡 **Punto de partida:** ¿Alguna vez has roto un proyecto sin saber qué habías cambiado la noche anterior? Git es tu máquina del tiempo: te permite volver atrás, probar sin miedo y trabajar en equipo sin pisarte.
 
@@ -27,7 +27,7 @@ El control de versiones es una de las habilidades más importantes que debe domi
 - Dominar los comandos básicos de Git y el flujo de trabajo con ramas
 - Saber resolver conflictos de fusión y aplicar buenas prácticas de commit
 
-## 1.1. ¿Qué es un Sistema de Control de Versiones?
+## 1.1. ¿Qué es un sistema de control de versiones?
 
 Un **Sistema de Control de Versiones (VCS)** es una herramienta que registra los cambios realizados sobre archivos a lo largo del tiempo. Permite recuperar versiones específicas, comparar cambios entre versiones, y mantener un historial completo del desarrollo.
 
@@ -38,11 +38,11 @@ graph LR
     C --> D["Cambio 3<br/>v2.0"]
     D --> E["Recuperar<br/>cualquier versión"]
     
-    style A fill:#4CAF50
-    style E fill:#FF9800
+    style A fill:#4CAF50,color:#fff
+    style E fill:#FF9800,color:#fff
 ```
 
-### 🧠 Analogía: El control de versiones como máquina del tiempo
+### 🧠 Analogía: el control de versiones como máquina del tiempo
 
 Imagina que Git es una máquina del tiempo para tu código:
 - Cada **commit** es como tomar una foto instantánea de tu proyecto
@@ -66,10 +66,10 @@ graph TD
     C --> C2["Trabajo sin conexión"]
     C --> C3["Mayor seguridad"]
     
-    style C fill:#4CAF50
+    style C fill:#4CAF50,color:#fff
 ```
 
-## 1.2. Git: El sistema de control de versiones distribuido
+## 1.2. Git: el sistema de control de versiones distribuido
 
 **Git** es un sistema de control de versiones distribuido, creado por Linus Torvalds en 2005. Es el estándar de la industria y el más utilizado en el mundo.
 
@@ -88,7 +88,7 @@ graph TD
     E --> E1["Flujos de trabajo<br/>personalizables"]
 ```
 
-### 🧠 Analogía: Centralizado vs Distribuido
+### 🧠 Analogía: centralizado vs distribuido
 
 | Centralizado (SVN) | Distribuido (Git) |
 |--------------------|--------------------|
@@ -130,10 +130,10 @@ graph LR
     C["Desarrollador 3"] -->|push| G
     C -->|pull| G
     
-    style G fill:#24292e
-    style A fill:#4CAF50
-    style B fill:#4CAF50
-    style C fill:#4CAF50
+    style G fill:#24292e,color:#fff
+    style A fill:#4CAF50,color:#fff
+    style B fill:#4CAF50,color:#fff
+    style C fill:#4CAF50,color:#fff
 ```
 
 **Plataformas similares:**
@@ -158,10 +158,10 @@ graph TD
     C -->|git push| D["Remote Repository"]
     D -->|git pull| A
     
-    style A fill:#607D8B,color:#fff
-    style B fill:#2196F3,color:#fff
-    style C fill:#4CAF50,color:#fff
-    style D fill:#FF9800,color:#fff
+    style A fill:#607D8,color:#fffB,color:#fff
+    style B fill:#2196F,color:#fff3,color:#fff
+    style C fill:#4CAF5,color:#fff0,color:#fff
+    style D fill:#FF980,color:#fff0,color:#fff
 ```
 
 **Estados de un archivo en Git:**
@@ -180,9 +180,9 @@ flowchart TD
     B --> C["git commit<br/>mensaje"]
     C --> D["git push<br/>origin main"]
     
-    style B fill:#FF9800
-    style C fill:#4CAF50
-    style D fill:#2196F3
+    style B fill:#FF9800,color:#fff
+    style C fill:#4CAF50,color:#fff
+    style D fill:#2196F3,color:#fff
 ```
 
 ## 1.5. Comandos básicos de Git
@@ -268,8 +268,8 @@ graph LR
     
     C2 -->|merge| M2["main + feature"]
     
-    style M fill:#4CAF50
-    style F fill:#FF9800
+    style M fill:#4CAF50,color:#fff
+    style F fill:#FF9800,color:#fff
 ```
 
 **Comandos de ramas:**
@@ -308,7 +308,7 @@ git rebase main
 3. Mantener actualizada con `main`
 4. Fusionar cuando esté listo
 
-### 🧠 Analogía: Las ramas como hojas de ruta
+### 🧠 Analogía: las ramas como hojas de ruta
 
 Imagina el desarrollo como una autopista:
 - **main** es la carretera principal
@@ -328,8 +328,8 @@ graph TD
     D --> E["git add<br/>archivos resueltos"]
     E --> F["git commit<br/>finalizar merge"]
     
-    style A fill:#F44336
-    style F fill:#4CAF50
+    style A fill:#F44336,color:#fff
+    style F fill:#4CAF50,color:#fff
 ```
 
 **Marcadores de conflicto en el código:**
@@ -429,7 +429,7 @@ graph TD
 
 💡 **Tip del Examinador**: Git es tu seguro contra desastres. Haz commits frecuentemente, incluso cambios pequeños. Es más fácil deshacer cambios pequeños que grandes.
 
-### 💡 Ejercicio Propuesto
+### 💡 Ejercicio propuesto
 
 **Configurar Git y crear tu primer repositorio:**
 

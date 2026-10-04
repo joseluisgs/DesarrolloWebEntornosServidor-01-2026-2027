@@ -1,14 +1,14 @@
-- [23. Docker y Podman: Contenedores y Despliegue](#23-docker-y-podman-contenedores-y-despliegue)
-  - [23.1. ¿Qué son los Contenedores?](#231-qué-son-los-contenedores)
-  - [23.2. Dockerfile: La Receta](#232-dockerfile-la-receta)
-  - [23.3. Comandos Esenciales de Docker](#233-comandos-esenciales-de-docker)
-  - [23.4. Docker Compose: Orquestación Local](#234-docker-compose-orquestación-local)
-  - [23.5. Volúmenes y Persistencia](#235-volúmenes-y-persistencia)
-  - [23.6. Buenas Prácticas en Dockerfiles](#236-buenas-prácticas-en-dockerfiles)
-  - [23.7. Infraestructuras y Entorno de Desarrollo](#237-infraestructuras-y-entorno-de-desarrollo)
+- [23. Docker y podman: contenedores y despliegue](#23-docker-y-podman-contenedores-y-despliegue)
+  - [23.1. ¿Qué son los contenedores?](#231-qué-son-los-contenedores)
+  - [23.2. Dockerfile: la receta](#232-dockerfile-la-receta)
+  - [23.3. Comandos esenciales de Docker](#233-comandos-esenciales-de-docker)
+  - [23.4. Docker compose: orquestación local](#234-docker-compose-orquestación-local)
+  - [23.5. Volúmenes y persistencia](#235-volúmenes-y-persistencia)
+  - [23.6. Buenas prácticas en dockerfiles](#236-buenas-prácticas-en-dockerfiles)
+  - [23.7. Infraestructuras y entorno de desarrollo](#237-infraestructuras-y-entorno-de-desarrollo)
 
 
-# 23. Docker y Podman: Contenedores y Despliegue
+# 23. Docker y podman: contenedores y despliegue
 
 > 💡 **Punto de partida:** En el tema 09 vimos contenedores a nivel teórico. Ahora vamos a **usarlo**: crear un Dockerfile para tu app .NET, levantar una base de datos con Docker Compose, gestionar volúmenes para persistir datos y aprender los comandos esenciales. Docker es como una "caja mágica" donde empaquetas tu aplicación con todo lo que necesita para funcionar: el runtime, las librerías, la configuración, los datos. Y esa caja funciona igual en tu portátil, en el servidor de la empresa y en la nube. Podman es una alternativa a Docker que usa los mismos Dockerfiles y comandos similares.
 
@@ -23,7 +23,7 @@ En este tema aprenderás a crear Dockerfiles, imágenes, contenedores, volúmene
 - Configurar volúmenes para persistir datos
 - Aplicar buenas prácticas: multi-stage build, .dockerignore
 
-## 23.1. ¿Qué son los Contenedores?
+## 23.1. ¿Qué son los contenedores?
 
 Un **contenedor** es una unidad de software empaquetada con todo lo necesario para ejecutarse: código, runtime, librerías, dependencias del sistema. Es más ligero que una máquina virtual porque comparte el kernel del sistema operativo anfitrión.
 
@@ -44,8 +44,8 @@ graph LR
         C3 --> C4["Hardware (mismo kernel)"]
     end
 
-    style VM fill:#FF9800,color:#fff
-    style DC fill:#4CAF50,color:#fff
+    style VM fill:#FF980,color:#fff0,color:#fff
+    style DC fill:#4CAF5,color:#fff0,color:#fff
 ```
 
 | Concepto | Definición | Ejemplo |
@@ -59,7 +59,7 @@ graph LR
 
 📌 **Ejemplo real:** Cuando Netflix despliega una actualización, crea una nueva imagen Docker con la app actualizada. Luego lanza nuevos contenedores con esa imagen y elimina los antiguos. Si algo falla, solo tiene que volver a la imagen anterior.
 
-## 23.2. Dockerfile: La Receta
+## 23.2. Dockerfile: la receta
 
 Un `Dockerfile` es un fichero de texto con las instrucciones para construir una imagen Docker.
 
@@ -110,7 +110,7 @@ ENTRYPOINT ["dotnet", "MiAplicacion.dll"]
 | `ENTRYPOINT` | Comando que se ejecuta al iniciar el contenedor |
 | `CMD` | Comando por defecto (puede ser sobreescrito) |
 
-### Multi-stage build: Por qué es importante
+### Multi-stage build: por qué es importante
 
 ```mermaid
 graph LR
@@ -124,8 +124,8 @@ graph LR
 
     B -->|"Solo publicación"| C
 
-    style BUILD fill:#FF9800,color:#fff
-    style RUNTIME fill:#4CAF50,color:#fff
+    style BUILD fill:#FF980,color:#fff0,color:#fff
+    style RUNTIME fill:#4CAF5,color:#fff0,color:#fff
 ```
 
 | Sin multi-stage | Con multi-stage |
@@ -134,7 +134,7 @@ graph LR
 | SDK incluida (innecesaria) | Solo runtime |
 | Mayor superficie de ataque | Menor superficie de ataque |
 
-## 23.3. Comandos Esenciales de Docker
+## 23.3. Comandos esenciales de Docker
 
 ### Construir y ejecutar
 
@@ -201,7 +201,7 @@ docker run -d --memory=512m --cpus=1.0 miapp:v1
 
 > 💡 **Consejo:** Usa `docker compose` en vez de `docker run` para proyectos con múltiples servicios. Es más fácil de gestionar y documenta la arquitectura.
 
-### Equivalencias con Podman
+### Equivalencias con podman
 
 Podman usa **los mismos Dockerfiles** y comandos casi idénticos (solo cambia `docker` por `podman`):
 
@@ -222,11 +222,11 @@ Podman usa **los mismos Dockerfiles** y comandos casi idénticos (solo cambia `d
 
 > 📝 **Nota:** Podman es **daemonless** (sin proceso en segundo plano) y **rootless** (sin permisos de administrador) por defecto. Los comandos son casi idénticos a Docker.
 
-## 23.4. Docker Compose: Orquestación Local
+## 23.4. Docker compose: orquestación local
 
 **Docker Compose** define y ejecuta múltiples contenedores con un solo fichero YAML.
 
-### docker-compose.yml completo
+### Docker-compose.yml completo
 
 ```yaml
 services:
@@ -293,7 +293,7 @@ networks:
 
 > 📝 **Nota:** El puerto `5000` del contenedor funciona porque la app define `ASPNETCORE_URLS=http://+:5000` en el Dockerfile. Si no lo defines, las imágenes .NET 8+ escuchan en el puerto `8080` por defecto y tendrías que mapear `5000:8080`.
 
-### Comandos de Docker Compose
+### Comandos de Docker compose
 
 ```bash
 # Levantar todo en segundo plano
@@ -318,7 +318,7 @@ docker compose build app
 docker compose exec db psql -U admin -d miapp
 ```
 
-### Podman Compose
+### Podman compose
 
 **Podman Compose** usa el mismo `docker-compose.yml`. Solo cambia el comando:
 
@@ -365,7 +365,7 @@ services:
 
 📌 **Ejemplo real:** En un proyecto de clase, `docker compose up -d` levanta tu app en el puerto 5000, PostgreSQL en el 5432 y Redis en el 6379. Todo configurado y listo para desarrollar.
 
-## 23.5. Volúmenes y Persistencia
+## 23.5. Volúmenes y persistencia
 
 Los contenedores son **efímeros**: si borras un contenedor, pierdes todos sus datos. Los **volúmenes** guardan datos fuera del contenedor.
 
@@ -403,7 +403,7 @@ docker run --rm -v pgdata:/data -v $(pwd):/backup alpine \
 
 > ⚠️ **Advertencia:** **NUNCA** guardes datos importantes solo en el contenedor. Si ejecutas `docker compose down -v` (o `podman compose down -v`), los volúmenes se eliminan y los datos se pierden. Usa siempre named volumes para datos persistentes.
 
-## 23.6. Buenas Prácticas en Dockerfiles
+## 23.6. Buenas prácticas en dockerfiles
 
 ### .dockerignore
 
@@ -466,9 +466,9 @@ ENV DOTNET_RUNNING_IN_CONTAINER=true
 
 > 💡 **Consejo:** Para el examen, recuerda las 3 capas de caché en Docker/Podman: **imágenes base** (FROM), **restauración de dependencias** (COPY csproj + RUN restore) y **build** (COPY código + RUN publish). Si no cambian los csproj, se reutiliza la caché de la capa de restauración.
 
-## 23.7. Infraestructuras y Entorno de Desarrollo
+## 23.7. Infraestructuras y entorno de desarrollo
 
-### ¿Dónde se usan Docker y Podman?
+### ¿Dónde se usan Docker y podman?
 
 Docker y Podman son **técnicamente equivalentes**. Ambos usan los mismos Dockerfiles, los mismos `docker-compose.yml` y los mismos comandos (solo cambia `docker` por `podman`). El formato de contenedor es el mismo (estándar OCI): una imagen creada con Docker funciona con Podman y viceversa.
 
@@ -501,7 +501,7 @@ En la práctica, **Docker domina el mercado** (~80% de cuota), pero ambos son v�
 
 > 📝 **Nota:** Para este módulo, **ambos son equivalentes**. Ninguna empresa te preguntará si usaste Docker o Podman en tus proyectos. Lo que importa es que sepas crear Dockerfiles, orquestar con Compose y desplegar contenedores. Si sabes Docker, sabes Podman con un `alias docker=podman`.
 
-### Docker y Podman en JetBrains Rider
+### Docker y podman en JetBrains Rider
 
 Rider usa **el mismo plugin** para Docker y Podman. No necesitas instalar nada adicional:
 
@@ -536,7 +536,7 @@ Rider genera automáticamente el Dockerfile multi-etapa y el `.dockerignore` opt
 
 > 🔧 **Truco:** Si vienes de Docker y quieres probar Podman, solo necesitas `alias docker=podman` en Linux. En Windows, instala Podman Desktop y los comandos son idénticos.
 
-### Docker-in-Docker: Tests dentro de un contenedor
+### Docker-in-Docker: tests dentro de un contenedor
 
 Cuando un Dockerfile tiene una etapa de `dotnet test` y esos tests usan Testcontainers, se produce un **Docker-in-Docker**: un contenedor intenta crear otros contenedores.
 
@@ -549,9 +549,9 @@ graph TD
         end
     end
 
-    style HOST fill:#2196F3,color:#fff
-    style DAEMON fill:#FF9800,color:#fff
-    style B fill:#f44336,color:#fff
+    style HOST fill:#2196F,color:#fff3,color:#fff
+    style DAEMON fill:#FF980,color:#fff0,color:#fff
+    style B fill:#f4433,color:#fff6,color:#fff
 ```
 
 **El problema:** Para que esto funcione con Docker, necesitas exponer el daemon en el puerto `2375` sin TLS. Esto abre una vulnerabilidad de seguridad porque cualquier proceso en la máquina puede enviar comandos al daemon (equivalente a root).
@@ -568,9 +568,9 @@ graph TD
 
     B -->|"Sin daemon, seguro"| C["OK"]
 
-    style HOST fill:#2196F3,color:#fff
-    style USER fill:#4CAF50,color:#fff
-    style C fill:#4CAF50,color:#fff
+    style HOST fill:#2196F,color:#fff3,color:#fff
+    style USER fill:#4CAF5,color:#fff0,color:#fff
+    style C fill:#4CAF5,color:#fff0,color:#fff
 ```
 
 > ⚠️ **Advertencia:** Con Docker, ejecutar tests dentro de un contenedor requiere exponer el daemon en el puerto `2375` sin TLS. Con **Podman**, no hay daemon que exponer: cada contenedor es un proceso independiente del usuario, sin riesgo de seguridad.

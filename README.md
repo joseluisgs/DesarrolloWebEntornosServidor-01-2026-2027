@@ -7,7 +7,7 @@ UD01. Introducción al desarrollo de software en Servidor. 2DAW. Curso 2026-2027
 
 ## Contenidos
 
-### Desarrollo Web en Entorno Servidor
+### Desarrollo web en entorno servidor
 
 1. [Introducción al Desarrollo Web](01-introduccion-web.md)
 2. [Componentes de una Web](02-componentes-web.md)
@@ -20,7 +20,7 @@ UD01. Introducción al desarrollo de software en Servidor. 2DAW. Curso 2026-2027
 9. [Despliegue de Aplicaciones](09-despliegue.md)
 10. [Seguridad y Monitorización](10-seguridad-monitorizacion.md)
 
-### C# Avanzado para Desarrollo Web en Entorno Servidor
+### C# avanzado para desarrollo web en entorno servidor
 
 11. [Inyección de Dependencias](11-inyeccion-dependencias.md)
 12. [Patrones y Arquitecturas](12-patrones-arquitecturas.md)
@@ -43,17 +43,17 @@ UD01. Introducción al desarrollo de software en Servidor. 2DAW. Curso 2026-2027
 
 ## Contenido en YouTube
 
-- [Resumen Parte 1: Fundamentos del Desarrollo Web en Entorno Servidor](https://youtu.be/MpCJV7ZMtZY)
+- [Resumen parte 1: fundamentos del desarrollo web en entorno servidor](https://youtu.be/MpCJV7ZMtZY)
 - [Protocolos y APIs](https://youtu.be/yX1LK8MG5bE)
-- [Páginas Web Estáticas vs Dinámicas](https://youtu.be/DLh_fSXA1KQ)
-- [Resumen Parte 2: C# Avanzado para Desarrollo Servidor](https://youtu.be/26Z2-6HdQPw)
-- [Asincronía y Reactividad](https://youtu.be/QUYEs0Zh72E)
+- [Páginas web estáticas vs dinámicas](https://youtu.be/DLh_fSXA1KQ)
+- [Resumen parte 2: C# avanzado para desarrollo servidor](https://youtu.be/26Z2-6HdQPw)
+- [Asincronía y reactividad](https://youtu.be/QUYEs0Zh72E)
 - [SQL vs NoSQL: ACID vs BASE](https://youtu.be/ro2bNNb4k2Q)
-- [Inyección de Dependencias y Patrones](https://youtu.be/oNAHN_ofXFk)
+- [Inyección de dependencias y patrones](https://youtu.be/oNAHN_ofXFk)
 - [Entity Framework Core](https://youtu.be/Noj_7CQWnUI)
-- [Lista de Reproducción](https://www.youtube.com/playlist?list=PLLiuVpAc3Gv4)
+- [Lista de reproducción](https://www.youtube.com/playlist?list=PLLiuVpAc3Gv4)
 
-## Resultados de Aprendizaje y Criterios de Evaluación
+## Resultados de aprendizaje y criterios de evaluación
 
 - RA1: Selecciona las arquitecturas y tecnologías de programación web en entorno servidor, analizando sus capacidades y características propias.
 

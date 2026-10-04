@@ -7,7 +7,7 @@ Este ejemplo muestra cómo realizar operaciones CRUD en PostgreSQL usando dos en
 - **Dapper**: Micro ORM ligero, ejecuta SQL directo
 - **Entity Framework Core**: ORM completo con change tracking y migraciones
 
-## Conceptos Clave
+## Conceptos clave
 
 ### Dapper vs EF Core
 
@@ -24,7 +24,7 @@ Este ejemplo muestra cómo realizar operaciones CRUD en PostgreSQL usando dos en
 - **Dapper**: Consultas optimizadas, informes, alto rendimiento
 - **EF Core**: CRUD estándar, prototipado rápido, proyectos medianos
 
-### Docker Compose
+### Docker compose
 
 Levanta PostgreSQL 16 con un volumen persistente y un script de inicialización:
 
@@ -33,7 +33,7 @@ docker-compose up -d
 # o con Podman: podman-compose up -d
 ```
 
-### Inyección de Dependencias
+### Inyección de dependencias
 
 Ambos repositorios implementan la misma interfaz `IProductoRepository`. Se pueden intercambiar fácilmente:
 
@@ -108,4 +108,4 @@ docker-compose down
 - [Dapper (GitHub)](https://github.com/DapperLib/Dapper)
 - [Entity Framework Core (Microsoft)](https://learn.microsoft.com/es-es/ef/core/)
 - [Npgsql (PostgreSQL para .NET)](https://www.npgsql.org/)
-- [Docker Compose (Documentación)](https://docs.docker.com/compose/)
+- [Docker compose (documentación)](https://docs.docker.com/compose/)

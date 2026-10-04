@@ -1,13 +1,13 @@
-- [6. Páginas Web Dinámicas y Generación de Contenido](#6-páginas-web-dinámicas-y-generación-de-contenido)
-  - [6.1. Páginas Estáticas vs. Páginas Dinámicas](#61-páginas-estáticas-vs-páginas-dinámicas)
-  - [6.2. Cómo Funciona una Página Web Dinámica (SSR)](#62-cómo-funciona-una-página-web-dinámica-ssr)
-  - [6.3. Tecnologías de Generación de Contenido Dinámico](#63-tecnologías-de-generación-de-contenido-dinámico)
-  - [6.4. Ejemplo "Hola Mundo" en ASP.NET Core](#64-ejemplo-hola-mundo-en-aspnet-core)
-  - [6.5. Comparativa de Tecnologías](#65-comparativa-de-tecnologías)
-  - [6.6. Buenas Prácticas](#66-buenas-prácticas)
+- [6. Páginas web dinámicas y generación de contenido](#6-páginas-web-dinámicas-y-generación-de-contenido)
+  - [6.1. Páginas estáticas vs. páginas dinámicas](#61-páginas-estáticas-vs-páginas-dinámicas)
+  - [6.2. Cómo funciona una página web dinámica (SSR)](#62-cómo-funciona-una-página-web-dinámica-ssr)
+  - [6.3. Tecnologías de generación de contenido dinámico](#63-tecnologías-de-generación-de-contenido-dinámico)
+  - [6.4. Ejemplo "hola mundo" en ASP.NET Core](#64-ejemplo-hola-mundo-en-aspnet-core)
+  - [6.5. Comparativa de tecnologías](#65-comparativa-de-tecnologías)
+  - [6.6. Buenas prácticas](#66-buenas-prácticas)
 
 
-# 6. Páginas Web Dinámicas y Generación de Contenido
+# 6. Páginas web dinámicas y generación de contenido
 
 > 💡 **Punto de partida:** ¿Alguna vez te has preguntado por qué cuando abres Instagram ves tus fotos y no las de otro usuario? O por qué Amazon te muestra productos "recomendados para ti"? Todo eso se debe a que las páginas web no son documentos fijos: se **generan en tiempo real** para cada visitante. Vamos a descubrir cómo funciona eso.
 
@@ -21,7 +21,7 @@ En este tema aprenderás la diferencia entre páginas estáticas y dinámicas, c
 - Analizar ejemplos "Hola Mundo" en diferentes tecnologías
 - Comparar ventajas e inconvenientes de cada tecnología
 
-## 6.1. Páginas Estáticas vs. Páginas Dinámicas
+## 6.1. Páginas estáticas vs. páginas dinámicas
 
 La diferencia fundamental radica en **cómo y cuándo se genera el contenido** que ve el usuario.
 
@@ -52,8 +52,8 @@ graph TD
         S2 -->|"Respuesta HTML"| U2
     end
 
-    style ESTÁTICA fill:#2196F3,color:#fff
-    style DINÁMICA fill:#4CAF50,color:#fff
+    style ESTÁTICA fill:#2196F,color:#fff3,color:#fff
+    style DINÁMICA fill:#4CAF5,color:#fff0,color:#fff
 ```
 
 📌 **Ejemplo real:** La web de "InfoJobs" muestra ofertas de trabajo. Cuando buscas ofertas en Madrid, la página se genera **en ese momento** con los resultados que coinciden con tu búsqueda. No hay un archivo HTML con todas las búsquedas posibles pregeneradas.
@@ -62,7 +62,7 @@ graph TD
 > - **Página Estática (Periódico de Papel):** Se imprime por la mañana. Si compras uno a las 9:00 y otro a las 18:00, dice exactamente lo mismo. Todos los lectores ven las mismas noticias.
 > - **Página Dinámica (Twitter/X):** Se genera al momento. Si entras a las 9:00 ves unas cosas, y a las 18:00 ves otras. Además, lo que ves en tu pantalla es diferente a lo que ve tu amigo. Se construye "a medida" para ti en ese instante.
 
-## 6.2. Cómo Funciona una Página Web Dinámica (SSR)
+## 6.2. Cómo funciona una página web dinámica (SSR)
 
 El proceso de generación de contenido dinámico se conoce como **SSR (Server-Side Rendering)**. El servidor "cocina" el HTML y se lo da "comido" al navegador.
 
@@ -116,8 +116,8 @@ graph LR
         N2b -->|"Muestra"| U2["👤 Usuario"]
     end
 
-    style SSR fill:#2196F3,color:#fff
-    style CSR fill:#FF9800,color:#fff
+    style SSR fill:#2196F,color:#fff3,color:#fff
+    style CSR fill:#FF980,color:#fff0,color:#fff
 ```
 
 | | **SSR (Server-Side)** | **CSR (Client-Side)** |
@@ -131,7 +131,7 @@ graph LR
 
 > 💡 **Consejo:** Para el examen, recuerda que SSR significa que el servidor genera el HTML. CSR significa que el navegador genera el HTML. Ambos son válidos, pero tienen diferentes ventajas e inconvenientes.
 
-## 6.3. Tecnologías de Generación de Contenido Dinámico
+## 6.3. Tecnologías de generación de contenido dinámico
 
 Las principales tecnologías para generar páginas web dinámicas utilizan la integración de lenguajes de programación del lado del servidor con lenguajes de marcado como HTML.
 
@@ -143,7 +143,7 @@ Las principales tecnologías para generar páginas web dinámicas utilizan la in
 | **Django / Flask** | Python | Sintaxis limpia, potente en datos/IA |
 | **Node.js** | JavaScript | Mismo lenguaje en cliente y servidor, asíncrono |
 
-### Ejemplos "Hola Mundo" en Diferentes Tecnologías
+### Ejemplos "hola mundo" en diferentes tecnologías
 
 **PHP (código embebido en HTML):**
 
@@ -184,11 +184,11 @@ public class HelloController {
 
 > 📝 **Nota:** Fíjate cómo en PHP mezclamos código lógico con HTML. Esto se llama "código espagueti" si no se controla bien. Los frameworks modernos (Spring, Laravel, Django, ASP.NET Core) separan esto usando el patrón MVC.
 
-## 6.4. Ejemplo "Hola Mundo" en ASP.NET Core
+## 6.4. Ejemplo "hola mundo" en ASP.NET Core
 
 ASP.NET Core es el framework web de Microsoft para C#. Veamos cómo crear una aplicación web dinámica paso a paso.
 
-### Opción 1: Minimal API (la más simple)
+### Opción 1: minimal API (la más simple)
 
 ```csharp
 // Program.cs - Punto de entrada con Top Level Statements
@@ -269,7 +269,7 @@ record Usuario(int Id, string Nombre, string Email, int Edad);
 
 > ⚠️ **Advertencia:** Este código almacena datos en memoria (una lista). Cuando el servidor se reinicia, **se pierden todos los datos**. En producción, se usaría una base de datos (PostgreSQL, SQL Server, etc.).
 
-## 6.5. Comparativa de Tecnologías
+## 6.5. Comparativa de tecnologías
 
 | Característica | PHP | Java | C# (ASP.NET Core) | Python | Node.js |
 |----------------|-----|------|-------------------|--------|---------|
@@ -281,7 +281,7 @@ record Usuario(int Id, string Nombre, string Email, int Edad);
 
 📌 **Ejemplo real:** Netflix usa Java para su Back-end, Spotify usa Python para recomendaciones y Microsoft usa ASP.NET Core para Azure. No hay un lenguaje "mejor": cada uno tiene su nicho.
 
-## 6.6. Buenas Prácticas
+## 6.6. Buenas prácticas
 
 - **ASP.NET Core para Back-end en .NET**: Moderno, rápido y multiplataforma. Es la opción recomendada
 - **No generar HTML en el servidor para todo**: Usa APIs REST + SPA (React, Vue, Angular)

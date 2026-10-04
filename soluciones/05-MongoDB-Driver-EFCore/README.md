@@ -7,7 +7,7 @@ Este ejemplo muestra cómo realizar operaciones CRUD en MongoDB usando dos enfoq
 - **Driver nativo de MongoDB**: Control total, API específica de MongoDB
 - **Entity Framework Core**: ORM familiar, intercambiable con otros proveedores
 
-## Conceptos Clave
+## Conceptos clave
 
 ### MongoDB vs PostgreSQL
 
@@ -19,7 +19,7 @@ Este ejemplo muestra cómo realizar operaciones CRUD en MongoDB usando dos enfoq
 | **Datos** | JSON/BSON | Tablas y filas |
 | **Uso típico** | Big Data, IoT, CMS | Transacciones, ERP |
 
-### Driver Nativo vs EF Core
+### Driver nativo vs EF Core
 
 | Característica | Driver MongoDB | EF Core MongoDB |
 |----------------|----------------|-----------------|
@@ -29,7 +29,7 @@ Este ejemplo muestra cómo realizar operaciones CRUD en MongoDB usando dos enfoq
 | **Migraciones** | No | Sí (limitado) |
 | **Control** | Total | Abstraído |
 
-### Docker Compose
+### Docker compose
 
 Levanta MongoDB 7 con Mongo Express (interfaz web):
 
@@ -109,13 +109,13 @@ docker-compose down
 | `Microsoft.EntityFrameworkCore.MongoDB` | 9.0.2 | EF Core para MongoDB |
 | `Microsoft.Extensions.DependencyInjection` | 9.0.0 | Inyección de dependencias |
 
-## Casos de Uso
+## Casos de uso
 
 - **Driver Nativo**: Apps que necesitan aggregation pipelines, change streams
 - **EF Core**: Apps que ya usan EF Core y quieren cambiar de BD fácilmente
 
 ## Referencias
 
-- [MongoDB Driver .NET (Documentación)](https://www.mongodb.com/docs/drivers/csharp/)
+- [MongoDB driver .NET (documentación)](https://www.mongodb.com/docs/drivers/csharp/)
 - [EF Core con MongoDB (Microsoft)](https://learn.microsoft.com/es-es/ef/core/providers/mongodb/)
-- [MongoDB University (Cursos gratuitos)](https://university.mongodb.com/)
+- [MongoDB university (cursos gratuitos)](https://university.mongodb.com/)

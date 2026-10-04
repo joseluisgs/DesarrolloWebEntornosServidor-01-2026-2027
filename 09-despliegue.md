@@ -1,14 +1,14 @@
-- [9. Despliegue de Aplicaciones Web](#9-despliegue-de-aplicaciones-web)
-  - [9.1. ¿Qué es el Despliegue?](#91-qué-es-el-despliegue)
-  - [9.2. Escalabilidad: Vertical y Horizontal](#92-escalabilidad-vertical-y-horizontal)
-  - [9.3. Contenedores: Docker y Podman](#93-contenedores-docker-y-podman)
-  - [9.4. Orquestación: Kubernetes](#94-orquestación-kubernetes)
-  - [9.5. Despliegue en la Nube](#95-despliegue-en-la-nube)
-  - [9.6. Integración Continua y Despliegue Continuo (CI/CD)](#96-integración-continua-y-despliegue-continuo-cicd)
-  - [9.7. Buenas Prácticas](#97-buenas-prácticas)
+- [9. Despliegue de aplicaciones web](#9-despliegue-de-aplicaciones-web)
+  - [9.1. ¿Qué es el despliegue?](#91-qué-es-el-despliegue)
+  - [9.2. Escalabilidad: vertical y horizontal](#92-escalabilidad-vertical-y-horizontal)
+  - [9.3. Contenedores: Docker y podman](#93-contenedores-docker-y-podman)
+  - [9.4. Orquestación: kubernetes](#94-orquestación-kubernetes)
+  - [9.5. Despliegue en la nube](#95-despliegue-en-la-nube)
+  - [9.6. Integración continua y despliegue continuo (CI/CD)](#96-integración-continua-y-despliegue-continuo-cicd)
+  - [9.7. Buenas prácticas](#97-buenas-prácticas)
 
 
-# 9. Despliegue de Aplicaciones Web
+# 9. Despliegue de aplicaciones web
 
 > 💡 **Punto de partida:** Has creado una aplicación web increíble en tu ordenador. Pero, ¿cómo la haces accesible para que todo el mundo la use? ¿Qué pasa cuando llegan 10.000 usuarios al mismo tiempo? ¿Cómo actualizas la aplicación sin que los usuarios noten interrupciones? Todo esto es el **despliegue**, y es donde la teoría se encuentra con la realidad.
 
@@ -23,7 +23,7 @@ En este tema aprenderás los conceptos de despliegue, escalabilidad, contenedore
 - Analizar los servicios de la nube (AWS, Azure, Google Cloud)
 - Comprender qué es CI/CD y por qué es importante
 
-## 9.1. ¿Qué es el Despliegue?
+## 9.1. ¿Qué es el despliegue?
 
 El **despliegue** es el proceso de llevar una aplicación desde el entorno de desarrollo (tu ordenador, "localhost") hasta el entorno de producción (un servidor accesible por Internet).
 
@@ -33,10 +33,10 @@ graph LR
     B --> C["📦 Staging<br/>(Pre-producción)"]
     C --> D["🚀 Producción<br/>(Servidor real)"]
 
-    style A fill:#2196F3,color:#fff
-    style B fill:#FF9800,color:#fff
-    style C fill:#9C27B0,color:#fff
-    style D fill:#4CAF50,color:#fff
+    style A fill:#2196F,color:#fff3,color:#fff
+    style B fill:#FF980,color:#fff0,color:#fff
+    style C fill:#9C27B,color:#fff0,color:#fff
+    style D fill:#4CAF5,color:#fff0,color:#fff
 ```
 
 | Fase | Descripción | Herramientas típicas |
@@ -59,11 +59,11 @@ Para desplegar una aplicación web necesitas varios elementos:
 
 > 💡 **Consejo:** En el tema 01 ya vimos el despliegue. Ahora profundizaremos en cómo hacerlo de forma profesional: con contenedores, orquestación y automatización.
 
-## 9.2. Escalabilidad: Vertical y Horizontal
+## 9.2. Escalabilidad: vertical y horizontal
 
 La **escalabilidad** es la capacidad de una aplicación para crecer y manejar más tráfico sin perder rendimiento.
 
-### Escalabilidad Vertical ("Scale Up")
+### Escalabilidad vertical ("scale up")
 
 Consiste en **aumentar los recursos** del servidor: más RAM, mejor CPU, más disco.
 
@@ -72,9 +72,9 @@ graph LR
     S1["🖥️ Servidor<br/>Pequeño"] -->|"Más RAM/CPU"| S2["🖥️ Servidor<br/>MEDIANO"]
     S2 -->|"Más RAM/CPU"| S3["🖥️ SERVIDOR<br/>GIGANTE"]
 
-    style S1 fill:#2196F3,color:#fff
-    style S2 fill:#FF9800,color:#fff
-    style S3 fill:#f44336,color:#fff
+    style S1 fill:#2196F,color:#fff3,color:#fff
+    style S2 fill:#FF980,color:#fff0,color:#fff
+    style S3 fill:#f4433,color:#fff6,color:#fff
 ```
 
 | Ventaja | Inconveniente |
@@ -83,7 +83,7 @@ graph LR
 | No requiere cambios en la app | Si el servidor falla, todo falla |
 | Ideal para poco tráfico | No es escalable indefinidamente |
 
-### Escalabilidad Horizontal ("Scale Out")
+### Escalabilidad horizontal ("scale out")
 
 Consiste en **añadir más servidores** que trabajen juntos.
 
@@ -94,11 +94,11 @@ graph TD
     LB --> S3["🖥️ Servidor 3"]
     LB --> S4["🖥️ Servidor N"]
 
-    style LB fill:#9C27B0,color:#fff
-    style S1 fill:#4CAF50,color:#fff
-    style S2 fill:#4CAF50,color:#fff
-    style S3 fill:#4CAF50,color:#fff
-    style S4 fill:#4CAF50,color:#fff
+    style LB fill:#9C27B,color:#fff0,color:#fff
+    style S1 fill:#4CAF5,color:#fff0,color:#fff
+    style S2 fill:#4CAF5,color:#fff0,color:#fff
+    style S3 fill:#4CAF5,color:#fff0,color:#fff
+    style S4 fill:#4CAF5,color:#fff0,color:#fff
 ```
 
 | Ventaja | Inconveniente |
@@ -115,7 +115,7 @@ graph TD
 
 > ⚠️ **Advertencia:** La escalabilidad horizontal requiere que la aplicación sea **stateless** (sin estado). Si guardas sesiones en memoria del servidor, cuando el usuario sea redirigido a otro servidor, perderá la sesión. Usa Redis o una base de datos para las sesiones.
 
-## 9.3. Contenedores: Docker y Podman
+## 9.3. Contenedores: Docker y podman
 
 Los **contenedores** empaquetan una aplicación con todas sus dependencias en una unidad ligera y portable. Si funciona en tu contenedor, funciona en cualquier lugar.
 
@@ -143,8 +143,8 @@ graph LR
         B1["App"] --> B2["Libs"] --> B3["Container Engine"] --> B4["Hardware"]
     end
 
-    style VM fill:#FF9800,color:#fff
-    style DC fill:#4CAF50,color:#fff
+    style VM fill:#FF980,color:#fff0,color:#fff
+    style DC fill:#4CAF5,color:#fff0,color:#fff
 ```
 
 📌 **Ejemplo real:** Un contenedor de Node.js pesa 50MB, una VM completa puede pesar 2GB. Los contenedores arrancan en milisegundos, las VM en minutos.
@@ -171,7 +171,7 @@ EXPOSE 5000
 ENTRYPOINT ["dotnet", "MiAplicacion.dll"]
 ```
 
-#### Docker Compose para desarrollo local
+#### Docker compose para desarrollo local
 
 ```yaml
 # docker-compose.yml - Orquestación de contenedores
@@ -226,7 +226,7 @@ podman ps
 podman stop <nombre>
 ```
 
-#### Podman Compose
+#### Podman compose
 
 Para orquestar varios contenedores, Podman usa `podman compose` con el mismo `docker-compose.yml`:
 
@@ -240,7 +240,7 @@ podman compose down
 
 > 💡 **Consejo:** `podman compose` necesita que instales `podman-compose` o que uses el plugin. En Windows con Podman Desktop, viene incluido.
 
-#### Ventajas de Podman
+#### Ventajas de podman
 
 | Ventaja | Descripción |
 |---------|-------------|
@@ -249,7 +249,7 @@ podman compose down
 | **Compatible con Dockerfile** | Mismos Dockerfiles, mismas imágenes de Docker Hub |
 | **Compatible con Docker Compose** | Mismos ficheros `docker-compose.yml` |
 
-### Docker vs Podman: ¿cuándo usar cada uno?
+### Docker vs podman: ¿cuándo usar cada uno?
 
 | Característica | Docker | Podman |
 |----------------|--------|--------|
@@ -266,7 +266,7 @@ podman compose down
 
 📌 **Ejemplo real:** Red Hat, Fedora y CentOS usan Podman como contenedor por defecto. Docker sigue siendo el estándar en la mayoría de la nube (AWS, Azure, GCP).
 
-## 9.4. Orquestación: Kubernetes
+## 9.4. Orquestación: kubernetes
 
 **Kubernetes** (K8s) es el sistema de orquestación de contenedores. Gestiona miles de contenedores, autoescalado, recuperación de fallos y despliegues.
 
@@ -289,12 +289,12 @@ graph TD
     P2 --> C
     P3 --> C
 
-    style LB fill:#9C27B0,color:#fff
-    style P1 fill:#4CAF50,color:#fff
-    style P2 fill:#4CAF50,color:#fff
-    style P3 fill:#4CAF50,color:#fff
-    style DB fill:#FF9800,color:#fff
-    style C fill:#f44336,color:#fff
+    style LB fill:#9C27B,color:#fff0,color:#fff
+    style P1 fill:#4CAF5,color:#fff0,color:#fff
+    style P2 fill:#4CAF5,color:#fff0,color:#fff
+    style P3 fill:#4CAF5,color:#fff0,color:#fff
+    style DB fill:#FF980,color:#fff0,color:#fff
+    style C fill:#f4433,color:#fff6,color:#fff
 ```
 
 📌 **Ejemplo real:** Netflix usa Kubernetes para gestionar más de 100.000 contenedores. Cuando hay un pico de tráfico (estreno de una serie popular), Kubernetes añade automáticamente más contenedores para manejar la carga.
@@ -304,7 +304,7 @@ graph TD
 > - **Kubernetes** = Gestiona miles de contenedores (orquestación)
 > - **CI/CD** = Automatiza la creación y envío de esos contenedores
 
-## 9.5. Despliegue en la Nube
+## 9.5. Despliegue en la nube
 
 Ya no compramos servidores físicos (en nuestras instalaciones, *on-premise*): los alquilamos por segundos. Esto se conoce como **computación en la nube** (*cloud computing*).
 
@@ -314,7 +314,7 @@ Ya no compramos servidores físicos (en nuestras instalaciones, *on-premise*): l
 | **PaaS** | Plataforma como Servicio | Solo tu código y datos | Todo lo demás | Azure App Service, Heroku |
 | **SaaS** | Software como Servicio | Solo lo usas | Todo | Gmail, Drive, Salesforce |
 
-### Principales Proveedores de Nube
+### Principales proveedores de nube
 
 | Proveedor | Servicios principales | Ventaja |
 |-----------|----------------------|---------|
@@ -334,17 +334,17 @@ graph TD
     U -->|"Solo código"| PaaS
     U -->|"Solo usas"| SaaS
 
-    style CLOUD fill:#2196F3,color:#fff
-    style IaaS fill:#FF9800,color:#fff
-    style PaaS fill:#4CAF50,color:#fff
-    style SaaS fill:#9C27B0,color:#fff
+    style CLOUD fill:#2196F,color:#fff3,color:#fff
+    style IaaS fill:#FF980,color:#fff0,color:#fff
+    style PaaS fill:#4CAF5,color:#fff0,color:#fff
+    style SaaS fill:#9C27B,color:#fff0,color:#fff
 ```
 
 📌 **Ejemplo real:** Cuando usas Gmail, estás usando **SaaS** (Software as a Service). Cuando despliegas una app en Azure App Service, estás usando **PaaS**. Cuando alquilas un servidor virtual en AWS EC2, estás usando **IaaS**.
 
 > 💡 **Consejo:** Para empezar, **PaaS** es lo más fácil: subes tu código y el proveedor se encarga del resto. Para más control, **IaaS** te da libertad total pero más responsabilidad.
 
-## 9.6. Integración Continua y Despliegue Continuo (CI/CD)
+## 9.6. Integración continua y despliegue continuo (CI/CD)
 
 **CI/CD** es la automatización de todo el proceso: desde que el desarrollador guarda código hasta que llega a producción.
 
@@ -389,7 +389,7 @@ sequenceDiagram
 
 > 💡 **Consejo:** Para el examen, recuerda que CI/CD automatiza el proceso de "código → tests → build → despliegue". Es fundamental para trabajar en equipo y mantener la calidad del código.
 
-## 9.7. Buenas Prácticas
+## 9.7. Buenas prácticas
 
 - **Contenedores desde el día 1**: Docker para desarrollo. Kubernetes solo cuando sea necesario
 - **CI/CD automatizado**: Commit → Tests → Compilación → Despliegue. Nunca desplegar manualmente

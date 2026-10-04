@@ -1,4 +1,4 @@
-# Redis — Instrucciones de Supervivencia
+# Redis — instrucciones de supervivencia
 
 > Referencia rápida de Redis (cli y comandos habituales).
 
@@ -120,7 +120,7 @@ SDIFF tags tags2            # solo en tags
 
 > 💡 **Analogía:** Un Set es como una lista pero sin duplicados y con operaciones matemáticas. `SINTER` es la intersección, `SUNION` la unión.
 
-## Sorted Sets
+## Sorted sets
 
 ```bash
 # Añadir con puntuación
@@ -210,7 +210,7 @@ DISCARD
 
 > ⚠️ **Advertencia:** Las transacciones de Redis NO son como las de SQL. No hay `ROLLBACK`. Si un comando falla, los demás se ejecutan igual. Para rollback real, usa Lua scripts.
 
-## Scripting (Lua)
+## Scripting (lua)
 
 ```bash
 # Ejecutar script Lua

@@ -1,10 +1,10 @@
-- [6. Tipos de Datos Abstractos, Colecciones y Programación Funcional en .NET](#6-tipos-de-datos-abstractos-colecciones-y-programación-funcional-en-net)
+- [6. Tipos de datos abstractos, colecciones y programación funcional en .NET](#6-tipos-de-datos-abstractos-colecciones-y-programación-funcional-en-net)
   - [6.1. Tipos de datos abstractos](#61-tipos-de-datos-abstractos)
     - [6.1.1. Concepto y definición formal de TDA](#611-concepto-y-definición-formal-de-tda)
     - [6.1.2. Principios fundamentales de abstracción](#612-principios-fundamentales-de-abstracción)
     - [6.1.3. Interfaz vs implementación: el contrato público](#613-interfaz-vs-implementación-el-contrato-público)
-    - [6.1.4. Ejemplo detallado: TDA Pila (Stack)](#614-ejemplo-detallado-tda-pila-stack)
-    - [6.1.5. Ejemplo detallado: TDA Cola (Queue)](#615-ejemplo-detallado-tda-cola-queue)
+    - [6.1.4. Ejemplo detallado: TDA pila (stack)](#614-ejemplo-detallado-tda-pila-stack)
+    - [6.1.5. Ejemplo detallado: TDA cola (queue)](#615-ejemplo-detallado-tda-cola-queue)
   - [6.2. Programación con genéricos](#62-programación-con-genéricos)
     - [6.2.1. Evolución histórica: de object a genéricos](#621-evolución-histórica-de-object-a-genéricos)
     - [6.2.2. Fundamentos teóricos de la genericidad](#622-fundamentos-teóricos-de-la-genericidad)
@@ -19,18 +19,18 @@
     - [6.3.4. IList\<T\> y el acceso por índice](#634-ilistt-y-el-acceso-por-índice)
     - [6.3.5. IDictionary\<TKey, TValue\> y las tablas hash](#635-idictionarytkey-tvalue-y-las-tablas-hash)
     - [6.3.6. LINQ y las colecciones: querying declarativo](#636-linq-y-las-colecciones-querying-declarativo)
-  - [6.6. Programación Funcional en C#](#66-programación-funcional-en-c)
+  - [6.6. Programación funcional en C#](#66-programación-funcional-en-c)
     - [6.6.1. Delegados](#661-delegados)
-    - [6.6.2. Expresiones Lambda](#662-expresiones-lambda)
-    - [6.6.3. Funciones Anónimas](#663-funciones-anónimas)
-    - [6.6.4. Funciones de Extensión](#664-funciones-de-extensión)
-    - [6.6.5. Funciones de Orden Superior](#665-funciones-de-orden-superior)
-    - [6.6.6. Inmutabilidad y Funciones Puras](#666-inmutabilidad-y-funciones-puras)
-    - [6.6.7. Pattern Matching Funcional](#667-pattern-matching-funcional)
+    - [6.6.2. Expresiones lambda](#662-expresiones-lambda)
+    - [6.6.3. Funciones anónimas](#663-funciones-anónimas)
+    - [6.6.4. Funciones de extensión](#664-funciones-de-extensión)
+    - [6.6.5. Funciones de orden superior](#665-funciones-de-orden-superior)
+    - [6.6.6. Inmutabilidad y funciones puras](#666-inmutabilidad-y-funciones-puras)
+    - [6.6.7. Pattern matching funcional](#667-pattern-matching-funcional)
 
 
 
-# 6. Tipos de Datos Abstractos, Colecciones y Programación Funcional en .NET
+# 6. Tipos de datos abstractos, colecciones y programación funcional en .NET
 
 > 💡 **Punto de partida:** ¿Alguna vez has tenido que guardar una lista de amigos y no sabías si usar un array o una lista enlazada? Los Tipos de Datos Abstractos (TDAs), las colecciones y la programación funcional son las herramientas que te permiten elegir la estructura adecuada y escribir código más expresivo en C#.
 
@@ -73,10 +73,10 @@ graph TD
     D --> D2["Precondiciones"]
     D --> D3["Postcondiciones"]
     
-    style A fill:#4CAF50
-    style B fill:#2196F3
-    style C fill:#FF9800
-    style D fill:#9C27B0
+    style A fill:#4CAF50,color:#fff
+    style B fill:#2196F3,color:#fff
+    style C fill:#FF9800,color:#fff
+    style D fill:#9C27B0,color:#fff
 ```
 
 ### 6.1.2. Principios fundamentales de abstracción
@@ -110,9 +110,9 @@ graph LR
     I2 --> E2
     I3 --> E3
     
-    style C1 fill:#2196F3,color:#fff
-    style I1 fill:#FF9800,color:#fff
-    style E1 fill:#f44336,color:#fff
+    style C1 fill:#2196F,color:#fff3,color:#fff
+    style I1 fill:#FF980,color:#fff0,color:#fff
+    style E1 fill:#f4433,color:#fff6,color:#fff
 ```
 
 ### 6.1.3. Interfaz vs implementación: el contrato público
@@ -182,7 +182,7 @@ public class Pila<T> : IPila<T>
 }
 ```
 
-### 6.1.4. Ejemplo detallado: TDA Pila (Stack)
+### 6.1.4. Ejemplo detallado: TDA pila (stack)
 
 La pila es uno de los TDAs más fundamentales y ampliamente utilizados en programación. Su funcionamiento se basa en el principio LIFO (Last In, First Out), que significa "el último en entrar es el primero en salir". Este comportamiento es análogo a una pila de platos en un restaurante: el último plato que colocamos es el primero que retiramos. La pila aparece constantemente en algoritmos importantes, como la evaluación de expresiones, la navegación en estructuras jerárquicas (como el DOM de HTML o el árbol de llamadas de un programa), y la implementación de la recursión en tiempo de compilación.
 
@@ -273,7 +273,7 @@ namespace TDAs.Ejemplos;
 }
 ```
 
-### 6.1.5. Ejemplo detallado: TDA Cola (Queue)
+### 6.1.5. Ejemplo detallado: TDA cola (queue)
 
 La cola es otro TDA fundamental que sigue el principio FIFO (First In, First Out), es decir, "el primero en entrar es el primero en salir". Este comportamiento es análogo a una cola de personas en un banco o supermercado: la primera persona que llega es la primera en ser atendida. Las colas son esenciales en muchos escenarios de programación, incluyendo la gestión de solicitudes en servidores web, la comunicación entre procesos, y la implementación de algoritmos de búsqueda en grafos (BFS).
 
@@ -934,10 +934,10 @@ graph TD
     ID --> Dictionary
     ID --> SortedDictionary
     
-    style IE fill:#4CAF50
-    style IC fill:#2196F3
-    style IL fill:#FF9800
-    style ID fill:#9C27B0
+    style IE fill:#4CAF50,color:#fff
+    style IC fill:#2196F3,color:#fff
+    style IL fill:#FF9800,color:#fff
+    style ID fill:#9C27B0,color:#fff
 ```
 
 ```mermaid
@@ -1842,7 +1842,7 @@ namespace Colecciones.Linq;
 
 🧠 **Analogía**: LINQ es como usar SQL en tu código. Imagina que tienes una bandeja de ingredientes (tu colección) y quieres preparar diferentes platos (resultados). Con LINQ, en lugar de manualmente seleccionar, cortar y mezclar cada ingrediente, simplemente describes qué quieres y el lenguaje lo hace por ti: "dame los ingredientes rojos que pesen más de 100g, ordenados por tamaño".
 
-## 6.6. Programación Funcional en C#
+## 6.6. Programación funcional en C#
 
 La programación funcional es un paradigma que trata la computación como evaluación de funciones matemáticas, enfatizando **inmutabilidad**, **funciones de primera clase** y **composición**. C# soporta programación funcional de forma elegante, especialmente desde C# 3.0 con la introducción de LINQ y expresiones lambda.
 
@@ -1964,7 +1964,7 @@ namespace ProgramacionFuncional.Delegados;
 }
 ```
 
-### 6.6.2. Expresiones Lambda
+### 6.6.2. Expresiones lambda
 
 Las **expresiones lambda** son funciones anónimas que permiten escribir código funcional conciso. Se usan extensivamente con LINQ y delegados.
 
@@ -2051,7 +2051,7 @@ namespace ProgramacionFuncional.Lambdas;
 }
 ```
 
-### 6.6.3. Funciones Anónimas
+### 6.6.3. Funciones anónimas
 
 Las **funciones anónimas** son funciones sin nombre, incluyendo **delegados anónimos** y **métodos anónimos**.
 
@@ -2122,7 +2122,7 @@ namespace ProgramacionFuncional.Anonimas;
 }
 ```
 
-### 6.6.4. Funciones de Extensión
+### 6.6.4. Funciones de extensión
 
 Las **funciones de extensión** permiten agregar métodos a tipos existentes sin modificar el tipo original ni crear un tipo derivado.
 
@@ -2297,7 +2297,7 @@ namespace ProgramacionFuncional.ExtensionMethods;
 }
 ```
 
-### 6.6.5. Funciones de Orden Superior
+### 6.6.5. Funciones de orden superior
 
 Las **funciones de orden superior** son funciones que reciben otras funciones como parámetros o las devuelven como resultado.
 
@@ -2426,7 +2426,7 @@ namespace ProgramacionFuncional.HigherOrder;
 }
 ```
 
-### 6.6.6. Inmutabilidad y Funciones Puras
+### 6.6.6. Inmutabilidad y funciones puras
 
 Los principios de **inmutabilidad** y **funciones puras** son centrales en la programación funcional.
 
@@ -2578,7 +2578,7 @@ namespace ProgramacionFuncional.Pureza;
 }
 ```
 
-### 6.6.7. Pattern Matching Funcional
+### 6.6.7. Pattern matching funcional
 
 El **pattern matching** en C# permite escribir código declarativo que descompone y evalúa estructuras de datos.
 

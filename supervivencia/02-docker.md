@@ -1,4 +1,4 @@
-# Docker y Podman — Comandos de Supervivencia
+# Docker y podman — comandos de supervivencia
 
 > Referencia rápida para contenedores, imágenes, Docker Compose, Podman Compose y Dockerfile.
 
@@ -130,7 +130,7 @@ docker system df
 
 > 🔧 **Truco:** Usa `docker system df` antes de limpiar para ver cuánto espacio ocupan imágenes, contenedores y volúmenes.
 
-## Docker Compose
+## Docker compose
 
 ```bash
 # Arrancar servicios (en segundo plano)
@@ -162,7 +162,7 @@ docker compose exec <servicio> dotnet run
 
 > 🔧 **Truco:** `docker compose up -d --build` reconstruye las imágenes ANTES de arrancar. Si cambiaste el Dockerfile, siempre usa este.
 
-## Docker Compose — Puerto y volúmenes
+## Docker compose — puerto y volúmenes
 
 ```yaml
 services:
@@ -217,7 +217,7 @@ ENTRYPOINT ["dotnet", "MiProyecto.dll"]
 | `ENTRYPOINT` | Comando de inicio | `ENTRYPOINT ["dotnet", "app.dll"]` |
 | `ENV` | Variable de entorno | `ENV ASPNETCORE_ENVIRONMENT=Production` |
 
-## Podman — Equivalencias
+## Podman — equivalencias
 
 Podman usa **los mismos Dockerfiles** y comandos casi idénticos. Solo cambia `docker` por `podman`:
 

@@ -1,27 +1,27 @@
-- [2. Gestión de Proyectos y Construcción en .NET](#2-gestión-de-proyectos-y-construcción-en-net)
-  - [2.1. Soluciones, Proyectos y Namespaces](#21-soluciones-proyectos-y-namespaces)
-    - [2.1.1. ¿Qué es una Solución?](#211-qué-es-una-solución)
-    - [2.1.2. Formatos de Solución: .sln vs .slnx](#212-formatos-de-solución-sln-vs-slnx)
-    - [2.1.3. Cómo Portar de .sln a .slnx](#213-cómo-portar-de-sln-a-slnx)
-    - [2.1.4. ¿Qué es un Proyecto?](#214-qué-es-un-proyecto)
-    - [2.1.5. Estructura de una Solución con Múltiples Proyectos](#215-estructura-de-una-solución-con-múltiples-proyectos)
-    - [2.1.6. Namespaces y Organización del Código](#216-namespaces-y-organización-del-código)
-    - [2.1.7. La Directiva using](#217-la-directiva-using)
-    - [2.1.8. Using Static y Global Using](#218-using-static-y-global-using)
-    - [2.1.9. Referencias entre Proyectos](#219-referencias-entre-proyectos)
-  - [2.2. dotnet CLI y Archivo .csproj](#22-dotnet-cli-y-archivo-csproj)
+- [2. Gestión de proyectos y construcción en .NET](#2-gestión-de-proyectos-y-construcción-en-net)
+  - [2.1. Soluciones, proyectos y namespaces](#21-soluciones-proyectos-y-namespaces)
+    - [2.1.1. ¿Qué es una solución?](#211-qué-es-una-solución)
+    - [2.1.2. Formatos de solución: .sln vs .slnx](#212-formatos-de-solución-sln-vs-slnx)
+    - [2.1.3. Cómo portar de .sln a .slnx](#213-cómo-portar-de-sln-a-slnx)
+    - [2.1.4. ¿Qué es un proyecto?](#214-qué-es-un-proyecto)
+    - [2.1.5. Estructura de una solución con múltiples proyectos](#215-estructura-de-una-solución-con-múltiples-proyectos)
+    - [2.1.6. Namespaces y organización del código](#216-namespaces-y-organización-del-código)
+    - [2.1.7. La directiva using](#217-la-directiva-using)
+    - [2.1.8. Using static y global using](#218-using-static-y-global-using)
+    - [2.1.9. Referencias entre proyectos](#219-referencias-entre-proyectos)
+  - [2.2. dotnet CLI y archivo .csproj](#22-dotnet-cli-y-archivo-csproj)
     - [2.2.1. Ejemplo de solución (.sln y .slnx)](#221-ejemplo-de-solución-sln-y-slnx)
-    - [2.2.2. NuGet: Gestor de paquetes](#222-nuget-gestor-de-paquetes)
+    - [2.2.2. NuGet: gestor de paquetes](#222-nuget-gestor-de-paquetes)
   - [2.3. Generación de código y reducción de boilerplate](#23-generación-de-código-y-reducción-de-boilerplate)
-    - [2.3.1. Source Generators](#231-source-generators)
+    - [2.3.1. Source generators](#231-source-generators)
     - [2.3.2. Records para POCOs inmutables](#232-records-para-pocos-inmutables)
-    - [2.3.3. Primary Constructors (C# 12+)](#233-primary-constructors-c-12)
+    - [2.3.3. Primary constructors (C# 12+)](#233-primary-constructors-c-12)
   - [2.4. Buenas prácticas de organización](#24-buenas-prácticas-de-organización)
-    - [💡 Ejercicio Propuesto](#-ejercicio-propuesto)
+    - [💡 Ejercicio propuesto](#-ejercicio-propuesto)
 
 
 
-# 2. Gestión de Proyectos y Construcción en .NET
+# 2. Gestión de proyectos y construcción en .NET
 
 > 💡 **Punto de partida:** ¿Alguna vez te has preguntado cómo organizan sus proyectos los equipos profesionales sin acabar perdidos entre ficheros? La respuesta está en agrupar proyectos en soluciones, dejar que la CLI de `dotnet` haga el trabajo pesado y gestionar los paquetes con NuGet.
 
@@ -51,14 +51,14 @@ flowchart TD
     E --> E1["dotnet test"]
     F --> F1["dotnet publish"]
     
-    style A fill:#4CAF50
+    style A fill:#4CAF50,color:#fff
 ```
 
-## 2.1. Soluciones, Proyectos y Namespaces
+## 2.1. Soluciones, proyectos y namespaces
 
 En .NET, el código se organiza en una jerarquía clara: **Soluciones** contienen **Proyectos**, y los **Namespaces** agrupan el código dentro de cada proyecto.
 
-### 2.1.1. ¿Qué es una Solución?
+### 2.1.1. ¿Qué es una solución?
 
 Una **solución** es un contenedor que agrupa múltiples proyectos relacionados. Una solución puede contener tantos proyectos como necesites.
 
@@ -86,10 +86,10 @@ flowchart TB
         N --> P["Integration Tests"]
     end
     
-    style A fill:#2196F3
-    style E fill:#4CAF50
-    style J fill:#FF9800
-    style N fill:#9C27B0
+    style A fill:#2196F3,color:#fff
+    style E fill:#4CAF50,color:#fff
+    style J fill:#FF9800,color:#fff
+    style N fill:#9C27B0,color:#fff
 ```
 
 **Comandos para gestionar soluciones:**
@@ -114,7 +114,7 @@ dotnet sln list
 dotnet sln remove src/Old/Old.csproj
 ```
 
-### 2.1.2. Formatos de Solución: .sln vs .slnx
+### 2.1.2. Formatos de solución: .sln vs .slnx
 
 .NET soporta dos formatos de solución:
 
@@ -131,8 +131,8 @@ flowchart TD
     C --> C2["Más legible"]
     C --> C3["VS 2022 17.12+"]
     
-    style B fill:#FF9800
-    style C fill:#4CAF50
+    style B fill:#FF9800,color:#fff
+    style C fill:#4CAF50,color:#fff
 ```
 
 **Comparación de formatos:**
@@ -185,7 +185,7 @@ EndGlobal
 
 📝 **Nota del Profesor**: El formato `.slnx` usa **XML**, no JSON. Esto facilita la edición manual y el merge en Git, ya que los conflictos son más fáciles de resolver que en el formato tradicional de Visual Studio.
 
-### 2.1.3. Cómo Portar de .sln a .slnx
+### 2.1.3. Cómo portar de .sln a .slnx
 
 El comando `dotnet sln migrate` automatiza la conversión de soluciones del formato `.sln` al nuevo formato `.slnx`.
 
@@ -245,7 +245,7 @@ dotnet sln MiSolucion.sln migrate
 
 > 📝 **Nota:** `migrate` no admite las opciones `--output` ni `--force`: genera un `.slnx` con el mismo nombre que el `.sln` y, si ya existe un `.slnx`, el comando falla. El archivo `.sln` original no se elimina.
 
-### 2.1.4. ¿Qué es un Proyecto?
+### 2.1.4. ¿Qué es un proyecto?
 
 Un **proyecto** es un archivo `.csproj` que define la configuración, dependencias, referencias y estructura del código. Cada proyecto produce un ensamblado (DLL o EXE).
 
@@ -266,7 +266,7 @@ flowchart TD
     D --> D1["ProjectReference<br/>Otro proyecto"]
     D --> D2["AssemblyReference"]
     
-    style A fill:#4CAF50
+    style A fill:#4CAF50,color:#fff
 ```
 
 **Tipos de proyectos:**
@@ -294,7 +294,7 @@ dotnet new xunit -n MisTestsXUnit
 dotnet new mstest -n MisTestsMSTest
 ```
 
-### 2.1.5. Estructura de una Solución con Múltiples Proyectos
+### 2.1.5. Estructura de una solución con múltiples proyectos
 
 ```mermaid
 flowchart TB
@@ -317,10 +317,10 @@ flowchart TB
         D["Tests<br/>Unit, Integration"]
     end
     
-    style A fill:#2196F3
-    style B fill:#4CAF50
-    style C fill:#FF9800
-    style D fill:#9C27B0
+    style A fill:#2196F3,color:#fff
+    style B fill:#4CAF50,color:#fff
+    style C fill:#FF9800,color:#fff
+    style D fill:#9C27B0,color:#fff
 ```
 
 **Estructura física en disco:**
@@ -376,7 +376,7 @@ MiSolucion/
         └── ApiTests.cs
 ```
 
-### 2.1.6. Namespaces y Organización del Código
+### 2.1.6. Namespaces y organización del código
 
 Los **namespaces** organizan el código en grupos lógicos, evitando conflictos de nombres y facilitando la navegación.
 
@@ -391,7 +391,7 @@ flowchart TD
     B --> B2["Por funcionalidad"]
     B --> B3["Por tipo"]
     
-    style A fill:#4CAF50
+    style A fill:#4CAF50,color:#fff
 ```
 
 **Convenciones de nombres:**
@@ -440,7 +440,7 @@ public class User
 }
 ```
 
-### 2.1.7. La Directiva using
+### 2.1.7. La directiva using
 
 La directiva `using` importa namespaces para no tener que escribir el nombre completo de los tipos.
 
@@ -450,7 +450,7 @@ flowchart LR
     B --> C["Console.WriteLine"]
     B --> D["List<T>"]
     
-    style A fill:#4CAF50
+    style A fill:#4CAF50,color:#fff
 ```
 
 **Tipos de using:**
@@ -496,7 +496,7 @@ var dict = new Dictionary<string, int>();
 var fecha = DateTime.Now;
 ```
 
-### 2.1.8. Using Static y Global Using
+### 2.1.8. Using static y global using
 
 **Using static:**
 
@@ -568,7 +568,7 @@ Con `ImplicitUsings` habilitado, .NET incluye automáticamente los using más co
 // Class library - incluye System, System.Collections.Generic
 ```
 
-### 2.1.9. Referencias entre Proyectos
+### 2.1.9. Referencias entre proyectos
 
 Los proyectos pueden referenciarse para compartir código.
 
@@ -581,10 +581,10 @@ flowchart LR
     D -->|"ProjectReference"| B
     D -->|"ProjectReference"| C
 
-    style A fill:#2196F3
-    style B fill:#4CAF50
-    style C fill:#FF9800
-    style D fill:#9C27B0
+    style A fill:#2196F3,color:#fff
+    style B fill:#4CAF50,color:#fff
+    style C fill:#FF9800,color:#fff
+    style D fill:#9C27B0,color:#fff
 ```
 
 **Agregar referencias:**
@@ -627,7 +627,7 @@ Tests --> Api --> Core --> Infrastructure
 
 El proyecto **Core** no debe depender de nadie. **Infrastructure** implementa las interfaces de **Core**. **Api** depende de Core e Infrastructure. **Tests** prueba todo.
 
-## 2.2. dotnet CLI y Archivo .csproj
+## 2.2. Dotnet CLI y archivo .csproj
 
 📝 **Nota del Profesor**: A diferencia de Java que tiene Maven/Gradle separados, .NET consolida todo en una única herramienta. Esto reduce la curva de aprendizaje y simplifica la configuración.
 
@@ -811,11 +811,11 @@ graph TD
     E --> C
     E --> D
     
-    style A fill:#4CAF50
-    style B fill:#2196F3
-    style C fill:#4CAF50
-    style D fill:#FF9800
-    style E fill:#9C27B0
+    style A fill:#4CAF50,color:#fff
+    style B fill:#2196F3,color:#fff
+    style C fill:#4CAF50,color:#fff
+    style D fill:#FF9800,color:#fff
+    style E fill:#9C27B0,color:#fff
 ```
 
 **Estructura típica de solución:**
@@ -881,7 +881,7 @@ dotnet test
 
 💡 **Tip del Examinador**: Mantén la estructura "src/ tests/" para proyectos grandes. Es el estándar de la industria y facilita la navegación.
 
-### 2.2.2. NuGet: Gestor de paquetes
+### 2.2.2. NuGet: gestor de paquetes
 
 **NuGet** es el gestor de paquetes oficial de .NET, equivalente a Maven Central o npm.
 
@@ -964,7 +964,7 @@ graph TD
     D --> G["Constructores concisos"]
 ```
 
-### 2.3.1. Source Generators
+### 2.3.1. Source generators
 
 **Source Generators** (C# 9+) generan código durante la compilación.
 
@@ -1030,7 +1030,7 @@ Console.WriteLine(producto);
 - Respuestas de API
 - Configuración
 
-### 2.3.3. Primary Constructors (C# 12+)
+### 2.3.3. Primary constructors (C# 12+)
 
 Los **Primary Constructors** eliminan aún más código repetitivo.
 
@@ -1105,7 +1105,7 @@ graph TD
 
 💡 **Tip del Examinador**: Usa records para DTOs y entidades de dominio. Son más seguros (inmutables) y menos propensos a errores.
 
-### 💡 Ejercicio Propuesto
+### 💡 Ejercicio propuesto
 
 **Crear una solución completa:**
 

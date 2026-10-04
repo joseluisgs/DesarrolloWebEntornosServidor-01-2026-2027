@@ -1,4 +1,4 @@
-# SQL — Instrucciones de Supervivencia
+# SQL — instrucciones de supervivencia
 
 > Referencia rápida de SQL para PostgreSQL, MySQL y SQLite.
 

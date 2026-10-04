@@ -1,19 +1,19 @@
-- [11. Inyección de Dependencias](#11-inyección-de-dependencias)
-  - [11.1. El Problema: Acoplamiento Duro](#111-el-problema-acoplamiento-duro)
-  - [11.2. Principio SOLID de Inversión de Dependencias](#112-principio-solid-de-inversión-de-dependencias)
-  - [11.3. Inyección de Dependencias en C#](#113-inyección-de-dependencias-en-c)
-  - [11.4. Ciclo de Vida de los Servicios](#114-ciclo-de-vida-de-los-servicios)
-  - [11.5. Service Locator: El Anti-Patrón](#115-service-locator-el-anti-patrón)
-  - [11.6. Métodos de Inyección](#116-métodos-de-inyección)
-  - [11.7. DI en Aplicaciones de Consola](#117-di-en-aplicaciones-de-consola)
-    - [11.7.1. Estructura de Carpetas de un Proyecto C#](#1171-estructura-de-carpetas-de-un-proyecto-c)
-  - [11.8. Scrutor: Escaneo de Ensamblados Automático](#118-scrutor-escaneo-de-ensamblados-automático)
+- [11. Inyección de dependencias](#11-inyección-de-dependencias)
+  - [11.1. El problema: acoplamiento duro](#111-el-problema-acoplamiento-duro)
+  - [11.2. Principio SOLID de inversión de dependencias](#112-principio-solid-de-inversión-de-dependencias)
+  - [11.3. Inyección de dependencias en C#](#113-inyección-de-dependencias-en-c)
+  - [11.4. Ciclo de vida de los servicios](#114-ciclo-de-vida-de-los-servicios)
+  - [11.5. Service locator: el Anti-Patrón](#115-service-locator-el-anti-patrón)
+  - [11.6. Métodos de inyección](#116-métodos-de-inyección)
+  - [11.7. DI en aplicaciones de consola](#117-di-en-aplicaciones-de-consola)
+    - [11.7.1. Estructura de carpetas de un proyecto C#](#1171-estructura-de-carpetas-de-un-proyecto-c)
+  - [11.8. Scrutor: escaneo de ensamblados automático](#118-scrutor-escaneo-de-ensamblados-automático)
     - [11.8.1. DI condicional: elegir implementación según configuración](#1181-di-condicional-elegir-implementación-según-configuración)
-  - [11.9. Patrones de Diseño con DI](#119-patrones-de-diseño-con-di)
-  - [11.10. Buenas Prácticas](#1110-buenas-prácticas)
+  - [11.9. Patrones de diseño con DI](#119-patrones-de-diseño-con-di)
+  - [11.10. Buenas prácticas](#1110-buenas-prácticas)
 
 
-# 11. Inyección de Dependencias
+# 11. Inyección de dependencias
 
 > 💡 **Punto de partida:** Imagina que cada vez que necesitas un café, tuvieses que construir la cafetera, moler el café y prepararlo todo desde cero. Absurdo, ¿verdad? Pues eso es lo que hacemos cuando una clase crea sus propias dependencias en vez de recibirlas "de fuera". La Inyección de Dependencias es como ir a una cafetería: tú pides el café, alguien más se encarga de prepararlo.
 
@@ -27,7 +27,7 @@ En este tema aprenderás qué es la Inyección de Dependencias, por qué es fund
 - Aplicar DI en aplicaciones de consola con `Microsoft.Extensions.DependencyInjection`
 - Usar Scrutor para evitar registros manuales
 
-## 11.1. El Problema: Acoplamiento Duro
+## 11.1. El problema: acoplamiento duro
 
 Cuando una clase crea directamente sus dependencias, queda **acoplada** a esas implementaciones. Esto hace que el código sea difícil de cambiar, probar y mantener.
 
@@ -50,7 +50,7 @@ public class PedidoService
 
 > 💡 **Analogía:** Es como si cada vez que fueras al cine, tuvieses que construir tu propia butaca. Si cambias de cine, tienes que construir otra butaca. La DI es como sentarte en la butaca que el cine te ofrece.
 
-## 11.2. Principio SOLID de Inversión de Dependencias
+## 11.2. Principio SOLID de inversión de dependencias
 
 El **principio D de SOLID** dice: "Depende de abstracciones, no de implementaciones".
 
@@ -73,7 +73,7 @@ public class PedidoService(IPedidoRepository repository, IEmailService email)
 | **Testeo** | Difícil (depende de BBDD real) | Fácil (se puede inyectar un mock) |
 | **Cambio** | Hay que modificar la clase | Solo cambia la configuración DI |
 
-## 11.3. Inyección de Dependencias en C#
+## 11.3. Inyección de dependencias en C#
 
 En .NET, la DI está integrada en el framework. Se usa `IServiceCollection` para registrar servicios y `IServiceProvider` para resolverlos.
 
@@ -88,9 +88,9 @@ graph TD
     E["PedidoService"] -->|"Pide IPedidoRepository"| B
     B -->|"Inyecta implementación"| E
 
-    style A fill:#2196F3,color:#fff
-    style B fill:#4CAF50,color:#fff
-    style C fill:#FF9800,color:#fff
+    style A fill:#2196F,color:#fff3,color:#fff
+    style B fill:#4CAF5,color:#fff0,color:#fff
+    style C fill:#FF980,color:#fff0,color:#fff
 ```
 
 ```csharp
@@ -128,7 +128,7 @@ sequenceDiagram
     P-->>C: PedidoService listo
 ```
 
-## 11.4. Ciclo de Vida de los Servicios
+## 11.4. Ciclo de vida de los servicios
 
 Cada servicio registrado tiene un **ciclo de vida** que determina cuánto tiempo vive la instancia:
 
@@ -156,9 +156,9 @@ graph LR
         N4["Petición 3"] --> N2
     end
 
-    style TRANSIENT fill:#2196F3,color:#fff
-    style SCOPED fill:#4CAF50,color:#fff
-    style SINGLETON fill:#FF9800,color:#fff
+    style TRANSIENT fill:#2196F,color:#fff3,color:#fff
+    style SCOPED fill:#4CAF5,color:#fff0,color:#fff
+    style SINGLETON fill:#FF980,color:#fff0,color:#fff
 ```
 
 ```csharp
@@ -184,11 +184,11 @@ graph TD
         E -->|"Se destruye al cerrar"| F["OK"]
     end
 
-    style MAL fill:#f44336,color:#fff
-    style BIEN fill:#4CAF50,color:#fff
+    style MAL fill:#f4433,color:#fff6,color:#fff
+    style BIEN fill:#4CAF5,color:#fff0,color:#fff
 ```
 
-## 11.5. Service Locator: El Anti-Patrón
+## 11.5. Service locator: el Anti-Patrón
 
 El **Service Locator** es un patrón que se usa como alternativa a la DI, pero es considerado un **anti-patrón** porque oculta las dependencias y dificulta las pruebas.
 
@@ -218,8 +218,8 @@ graph TD
         E -->|"Inyecta"| F["PedidoRepository"]
     end
 
-    style SERVICELOCATOR fill:#f44336,color:#fff
-    style DI fill:#4CAF50,color:#fff
+    style SERVICELOCATOR fill:#f4433,color:#fff6,color:#fff
+    style DI fill:#4CAF5,color:#fff0,color:#fff
 ```
 
 > 💡 **Analogía — Service Locator:**
@@ -234,7 +234,7 @@ graph TD
 
 > ⚠️ **Regla:** **NUNCA** uses Service Locator en C#. Siempre usa Inyección de Dependencias por constructor. ASP.NET Core no usa Service Locator — todo se resuelve por constructor.
 
-## 11.6. Métodos de Inyección
+## 11.6. Métodos de inyección
 
 Hay varias formas de inyectar dependencias. La más recomendada es por **constructor**:
 
@@ -264,7 +264,7 @@ public class PedidoService
 
 > 💡 **Consejo:** Usa **inyección por constructor** siempre. Si una clase tiene demasiados parámetros (más de 5), es una señal de que necesita ser refactorizada (SRP — Single Responsibility Principle).
 
-## 11.7. DI en Aplicaciones de Consola
+## 11.7. DI en aplicaciones de consola
 
 En una app de consola no hay `Program.cs` de ASP.NET Core, pero podemos configurar DI manualmente:
 
@@ -294,7 +294,7 @@ var personas = service.GetAll();
 
 > 📝 **Nota:** En apps de consola, usa `CreateScope()` para que los servicios Scoped se comporten correctamente. Cuando el scope se libera (se hace `Dispose`), todos los servicios Scoped se limpian.
 
-### 11.7.1. Estructura de Carpetas de un Proyecto C#
+### 11.7.1. Estructura de carpetas de un proyecto C#
 
 Cuando montas un proyecto con DI, es vital organizar bien las carpetas. No es solo estética — es **arquitectura**. Cada carpeta tiene una responsabilidad clara:
 
@@ -336,7 +336,7 @@ MiProyecto/
 
 > ⚠️ **Advertencia común:** Muchos alumnos meten el `AppDbContext` dentro de `Repositories/`. **NUNCA** hagas eso. El DbContext es una entidad de persistencia, no un repositorio. Va en `Entity/`.
 
-## 11.8. Scrutor: Escaneo de Ensamblados Automático
+## 11.8. Scrutor: escaneo de ensamblados automático
 
 ### Instalación
 
@@ -542,15 +542,15 @@ flowchart TD
     D --> E
     E --> F["Servicios que usan IPedidosRepository"]
 
-    style A fill:#2196F3,color:#fff
-    style B fill:#FF9800,color:#fff
-    style C fill:#4CAF50,color:#fff
-    style D fill:#4CAF50,color:#fff
-    style E fill:#9C27B0,color:#fff
-    style F fill:#607D8B,color:#fff
+    style A fill:#2196F,color:#fff3,color:#fff
+    style B fill:#FF980,color:#fff0,color:#fff
+    style C fill:#4CAF5,color:#fff0,color:#fff
+    style D fill:#4CAF5,color:#fff0,color:#fff
+    style E fill:#9C27B,color:#fff0,color:#fff
+    style F fill:#607D8,color:#fffB,color:#fff
 ```
 
-## 11.9. Patrones de Diseño con DI
+## 11.9. Patrones de diseño con DI
 
 La DI es la base de muchos patrones de diseño:
 
@@ -587,7 +587,7 @@ public class PedidoService(IPedidoRepository repository) : IPedidoService
 
 > 📝 **Nota:** En el tema 12 profundizaremos en los patrones Repository y Service. Ahora solo necesitas entender que la DI es el mecanismo que los hace posibles.
 
-## 11.10. Buenas Prácticas
+## 11.10. Buenas prácticas
 
 - **Inyecta, no creas**: Evita crear dependencias con `new` dentro de las clases; inyecta por constructor (los tipos simples o *value objects* sí pueden crearse en el interior)
 - **Scoped para repositories**: Una instancia por petición HTTP. Singleton para caché/configuración

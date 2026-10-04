@@ -4,9 +4,9 @@
 
 Este ejemplo demuestra cómo leer y escribir ficheros en formatos JSON y CSV usando C#. Son dos de los formatos más utilizados para intercambio de datos.
 
-## Conceptos Clave
+## Conceptos clave
 
-### JSON (JavaScript Object Notation)
+### JSON (JavaScript object notation)
 
 Formato ligero de intercambio de datos. En C# usamos `System.Text.Json` (viene con .NET):
 
@@ -21,7 +21,7 @@ var jsonExport = JsonSerializer.Serialize(productos, opciones);
 await File.WriteAllTextAsync("export.json", jsonExport);
 ```
 
-### CSV (Comma-Separated Values)
+### CSV (Comma-Separated values)
 
 Formato tabular simple. Usamos la librería `CsvHelper` para leer/escribir:
 
@@ -88,5 +88,5 @@ Los ficheros de salida se crearán en la carpeta `output/`.
 ## Referencias
 
 - [System.Text.Json (Microsoft)](https://learn.microsoft.com/es-es/dotnet/system.text.json)
-- [CsvHelper (Documentación)](https://joshclose.github.io/CsvHelper/)
+- [CsvHelper (documentación)](https://joshclose.github.io/CsvHelper/)
 - [Ficheros y flujos en C# (Microsoft)](https://learn.microsoft.com/es-es/dotnet/standard/io)

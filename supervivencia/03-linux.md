@@ -1,4 +1,4 @@
-# Linux — Comandos de Supervivencia
+# Linux — comandos de supervivencia
 
 > Comandos esenciales para trabajar en terminales Linux y contenedores Docker.
 

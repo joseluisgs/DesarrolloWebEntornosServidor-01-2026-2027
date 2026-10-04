@@ -2,13 +2,13 @@
   - [3.1. ¿Qué es C# y por qué usarlo?](#31-qué-es-c-y-por-qué-usarlo)
     - [3.1.1. 🧠 Analogía: C# como un idioma universal](#311--analogía-c-como-un-idioma-universal)
     - [3.1.2. Historia de C#](#312-historia-de-c)
-  - [3.2. Evolución de .NET: De .NET Framework a .NET 10](#32-evolución-de-net-de-net-framework-a-net-10)
-  - [3.3. Compilación y ejecución: El papel del CLR](#33-compilación-y-ejecución-el-papel-del-clr)
-    - [3.3.1. 🧠 Analogía: El proceso de traducción](#331--analogía-el-proceso-de-traducción)
+  - [3.2. Evolución de .NET: de .NET framework a .NET 10](#32-evolución-de-net-de-net-framework-a-net-10)
+  - [3.3. Compilación y ejecución: el papel del CLR](#33-compilación-y-ejecución-el-papel-del-clr)
+    - [3.3.1. 🧠 Analogía: el proceso de traducción](#331--analogía-el-proceso-de-traducción)
     - [3.3.2. Optimizaciones del JIT](#332-optimizaciones-del-jit)
   - [3.4. Instalación y herramientas de desarrollo](#34-instalación-y-herramientas-de-desarrollo)
   - [3.5. Tu primer programa en C#](#35-tu-primer-programa-en-c)
-    - [3.5.1. 🧠 Analogía: Desglose del código](#351--analogía-desglose-del-código)
+    - [3.5.1. 🧠 Analogía: desglose del código](#351--analogía-desglose-del-código)
 
 
 
@@ -82,7 +82,7 @@ graph LR
 
 📝 **Nota del Profesor**: Cada versión de C# añade características que simplifican el código. Por ejemplo, lo que antes requería 10 líneas de código ahora puede hacerse en 2 gracias a las nuevas características.
 
-## 3.2. Evolución de .NET: De .NET Framework a .NET 10
+## 3.2. Evolución de .NET: de .NET framework a .NET 10
 
 **Historia de .NET:**
 
@@ -144,7 +144,7 @@ graph TD
 
 💡 **Tip del Examinador**: .NET 5 unificó .NET Framework, .NET Core y .NET Standard. A partir de .NET 5, solo existe ".NET" (no ".NET Core"). Usa siempre la última versión estable en proyectos nuevos.
 
-## 3.3. Compilación y ejecución: El papel del CLR
+## 3.3. Compilación y ejecución: el papel del CLR
 
 Comprender este proceso es fundamental para entender cómo funciona .NET. C# utiliza un proceso de compilación en dos etapas, similar al modelo de Java pero con optimizaciones adicionales.
 
@@ -159,8 +159,8 @@ flowchart TD
     E --> F["Código máquina<br/>Nativo"]
     F --> G["Ejecución"]
     
-    style B fill:#4CAF50
-    style E fill:#FF9800
+    style B fill:#4CAF50,color:#fff
+    style E fill:#FF9800,color:#fff
 ```
 
 **Etapa 1: Compilación**
@@ -198,7 +198,7 @@ El CLR cargará el CIL, lo compilará a código nativo y lo ejecutará, mostrand
 ¡Hola, mundo!
 ```
 
-### 3.3.1. 🧠 Analogía: El proceso de traducción
+### 3.3.1. 🧠 Analogía: el proceso de traducción
 
 Imagina que eres un hablante de español (C#) que quiere dar una conferencia en Japón (Windows), China (Linux) y Estados Unidos (macOS):
 
@@ -307,7 +307,7 @@ else
 dotnet run
 ```
 
-### 3.5.1. 🧠 Analogía: Desglose del código
+### 3.5.1. 🧠 Analogía: desglose del código
 
 | Concepto | Analogía |
 |----------|----------|

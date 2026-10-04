@@ -1,23 +1,23 @@
-- [13. LINQ en Colecciones y Base de Datos](#13-linq-en-colecciones-y-base-de-datos)
-  - [13.1. LINQ como Lenguaje Declarativo](#131-linq-como-lenguaje-declarativo)
-  - [13.2. Operaciones Fundamentales](#132-operaciones-fundamentales)
-    - [Filtrado: Where](#filtrado-where)
-    - [Proyección: Select](#proyección-select)
+- [13. LINQ en colecciones y base de datos](#13-linq-en-colecciones-y-base-de-datos)
+  - [13.1. LINQ como lenguaje declarativo](#131-linq-como-lenguaje-declarativo)
+  - [13.2. Operaciones fundamentales](#132-operaciones-fundamentales)
+    - [Filtrado: where](#filtrado-where)
+    - [Proyección: select](#proyección-select)
     - [Ordenación: OrderBy / ThenBy](#ordenación-orderby--thenby)
-    - [Agregación: Count, Sum, Average, Max, Min](#agregación-count-sum-average-max-min)
-    - [Partitionado: Take, Skip](#partitionado-take-skip)
-    - [Búsqueda: First, Single, Any, All](#búsqueda-first-single-any-all)
-  - [13.3. GroupBy: La Operación Más Poderosa](#133-groupby-la-operación-más-poderosa)
+    - [Agregación: count, sum, average, max, min](#agregación-count-sum-average-max-min)
+    - [Partitionado: take, skip](#partitionado-take-skip)
+    - [Búsqueda: first, single, any, all](#búsqueda-first-single-any-all)
+  - [13.3. GroupBy: la operación más poderosa](#133-groupby-la-operación-más-poderosa)
   - [13.4. JOINs en LINQ](#134-joins-en-linq)
-  - [13.5. LINQ en Base de Datos (Entity Framework Core)](#135-linq-en-base-de-datos-entity-framework-core)
+  - [13.5. LINQ en base de datos (Entity Framework Core)](#135-linq-en-base-de-datos-entity-framework-core)
   - [13.6. Parallel LINQ (PLINQ)](#136-parallel-linq-plinq)
-  - [13.7. LINQ Avanzado](#137-linq-avanzado)
+  - [13.7. LINQ avanzado](#137-linq-avanzado)
   - [13.8. DataFrames en C# con Microsoft.Data.Analysis](#138-dataframes-en-c-con-microsoftdataanalysis)
-  - [13.9. LINQ vs PLINQ vs DataFrame: ¿Cuándo usar cada uno?](#139-linq-vs-plinq-vs-dataframe-cuándo-usar-cada-uno)
-  - [13.10. Buenas Prácticas](#1310-buenas-prácticas)
+  - [13.9. LINQ vs PLINQ vs DataFrame: ¿cuándo usar cada uno?](#139-linq-vs-plinq-vs-dataframe-cuándo-usar-cada-uno)
+  - [13.10. Buenas prácticas](#1310-buenas-prácticas)
 
 
-# 13. LINQ en Colecciones y Base de Datos
+# 13. LINQ en colecciones y base de datos
 
 > 💡 **Punto de partida:** Sin LINQ, para filtrar una lista de clientes tendrías que escribir un `foreach`, crear una lista nueva, añadir elementos que cumplan la condición... Con LINQ, lo haces en una línea. Pero LINQ no es solo comodidad: es un lenguaje declarativo que transforma la forma en que piensas sobre datos.
 
@@ -31,7 +31,7 @@ En este tema aprenderás a usar LINQ en colecciones y bases de datos, las operac
 - Hacer JOINs entre colecciones
 - Usar PLINQ para procesamiento paralelo
 
-## 13.1. LINQ como Lenguaje Declarativo
+## 13.1. LINQ como lenguaje declarativo
 
 **LINQ** (Language Integrated Query) permite escribir consultas sobre datos de forma declarativa: describes **qué** quieres, no **cómo** obtenerlo.
 
@@ -63,9 +63,9 @@ var resultados = clientes
 
 > 💡 **Analogía:** Imperativo es como dar instrucciones paso a paso a alguien que va al supermercado: "Entra, gira a la derecha, coge una cesta, ve al pasillo 3, coge leche...". Declarativo es como decir: "Trae leche, pan y huevos". No te importa el camino, solo el resultado.
 
-## 13.2. Operaciones Fundamentales
+## 13.2. Operaciones fundamentales
 
-### Filtrado: Where
+### Filtrado: where
 
 `Where` filtra una colección según una condición. Devuelve solo los elementos que cumplen la condición.
 
@@ -82,7 +82,7 @@ var madridActivo = clientes.Where(c => c.Ciudad == "Madrid" && c.Activo);
 
 📌 **Ejemplo real:** Amazon usa `Where` para filtrar productos por precio, categoría, valoración, etc. Cuando pones un filtro de "menos de 50 €", internamente hace un `Where(p => p.Precio <= 50)`.
 
-### Proyección: Select
+### Proyección: select
 
 `Select` transforma cada elemento de una colección. Puedes extraer un campo o crear un objeto nuevo.
 
@@ -128,7 +128,7 @@ var resultado = productos
 
 📌 **Ejemplo real:** Amazon, al ordenar por "Precio: mayor a menor", usa `OrderByDescending(p => p.Precio)`. Si hay varios productos con el mismo precio, desempata por valoración con `ThenByDescending(p => p.Valoracion)`.
 
-### Agregación: Count, Sum, Average, Max, Min
+### Agregación: count, sum, average, max, min
 
 Estas operaciones reducen toda la colección a **un solo valor**.
 
@@ -145,7 +145,7 @@ int caros = productos.Count(p => p.Precio > 100); // Cuántos cuestan más de 10
 
 📌 **Ejemplo real:** CaixaBank usa `Sum` para calcular el saldo total de un cliente, `Average` para la media de gasto mensual y `Max` para el mayor cargo del mes.
 
-### Partitionado: Take, Skip
+### Partitionado: take, skip
 
 `Take` coge los primeros N elementos. `Skip` salta los primeros N. Juntos hacen paginación.
 
@@ -160,7 +160,7 @@ var pagina = productos.Skip((numPagina - 1) * 10).Take(10);
 
 📌 **Ejemplo real:** Google muestra 10 resultados por página. Internamente hace `Skip(0).Take(10)` en la primera página, `Skip(10).Take(10)` en la segunda, etc.
 
-### Búsqueda: First, Single, Any, All
+### Búsqueda: first, single, any, all
 
 ```csharp
 // First: primer elemento que cumple la condición (o excepción si no hay)
@@ -189,11 +189,11 @@ bool todosBaratos = productos.All(p => p.Precio < 100);
 
 📌 **Ejemplo real:** Netflix usa `Any()` para comprobar si un usuario tiene contenido en la lista de favoritos antes de mostrar el botón de "Eliminar de favoritos".
 
-## 13.3. GroupBy: La Operación Más Poderosa
+## 13.3. GroupBy: la operación más poderosa
 
 `GroupBy` agrupa elementos por una clave. Es muy potente pero hay que saber usarlo bien.
 
-### GroupBy + Select + ToList (menos eficiente)
+### GroupBy + select + ToList (menos eficiente)
 
 ```csharp
 // Agrupar por categoría y obtener lista de productos
@@ -299,7 +299,7 @@ var resultado = clientes
 
 > 📝 **Nota:** En Entity Framework Core, los JOINs se escriben con `Join()` o `GroupJoin()`, pero también puedes usar `Include()` para cargar relaciones de forma más sencilla.
 
-## 13.5. LINQ en Base de Datos (Entity Framework Core)
+## 13.5. LINQ en base de datos (Entity Framework Core)
 
 Cuando usas LINQ con Entity Framework Core, las consultas se traducen a SQL automáticamente:
 
@@ -346,9 +346,9 @@ var resultado = productos
 
 > 💡 **Consejo:** Usa PLINQ solo cuando el procesamiento de cada elemento sea **pesado** (cálculos complejos, llamadas a servicios externos). Para operaciones simples, el coste de sincronización de PLINQ puede hacer que sea más lento que LINQ secuencial.
 
-## 13.7. LINQ Avanzado
+## 13.7. LINQ avanzado
 
-### SelectMany: Aplanar colecciones anidadas
+### SelectMany: aplanar colecciones anidadas
 
 ```csharp
 var pedidos = new[]
@@ -365,7 +365,7 @@ var todosLosProductos = pedidos.SelectMany(p => p.Productos);
 // ["Laptop", "Ratón", "Teclado"]
 ```
 
-### Zip: Combinar secuencias
+### Zip: combinar secuencias
 
 ```csharp
 var nombres = new[] { "Ana", "Carlos", "María" };
@@ -375,7 +375,7 @@ var combinado = nombres.Zip(edades, (nombre, edad) => new { nombre, edad });
 // [{Ana, 25}, {Carlos, 30}, {María, 28}]
 ```
 
-### Distinct / Except / Intersect: Operaciones de conjuntos
+### Distinct / except / intersect: operaciones de conjuntos
 
 ```csharp
 var lista1 = new[] { 1, 2, 3, 4, 5 };
@@ -387,7 +387,7 @@ var comunes = lista1.Intersect(lista2);          // [4, 5]
 var todos = lista1.Union(lista2);                // [1, 2, 3, 4, 5, 6, 7, 8]
 ```
 
-### Chunk: Dividir en trozos
+### Chunk: dividir en trozos
 
 ```csharp
 var numeros = Enumerable.Range(1, 100);
@@ -434,7 +434,7 @@ Console.WriteLine(df);
 //  Pedro   35    Sevilla
 ```
 
-### Filtrar con Where
+### Filtrar con where
 
 ```csharp
 // Filtrar personas de Madrid (ElementwiseEquals devuelve una máscara booleana)
@@ -529,7 +529,7 @@ var mediaEdad = accidentes.Columns["Edad"].Mean();
 
 > 💡 **Consejo:** Si necesitas análisis estadístico avanzado, combina DataFrame con LINQ. Carga los datos en un DataFrame, filtra y agrupa, y luego convierte a objetos para lógica de negocio.
 
-## 13.9. LINQ vs PLINQ vs DataFrame: ¿Cuándo usar cada uno?
+## 13.9. LINQ vs PLINQ vs DataFrame: ¿cuándo usar cada uno?
 
 Imagina que tienes un **fichero CSV** con datos de accidentes de tráfico en Madrid. ¿Qué herramienta usas? Depende del **tamaño** y del **tipo de operación**.
 
@@ -546,14 +546,14 @@ graph LR
     D --> G["PLINQ"]
     E --> H["DataFrame + LINQ"]
 
-    style C fill:#4CAF50,color:#fff
-    style D fill:#FF9800,color:#fff
-    style E fill:#f44336,color:#fff
+    style C fill:#4CAF5,color:#fff0,color:#fff
+    style D fill:#FF980,color:#fff0,color:#fff
+    style E fill:#f4433,color:#fff6,color:#fff
 ```
 
 > 💡 **Punto clave:** Cuando lees un CSV con CsvHelper, los datos van a una `List<T>` (colección de objetos). Ahí LINQ y PLINQ son naturales. DataFrame NO convierte a objetos — trabaja directamente con columnas tipo tabla, como SQL en memoria.
 
-### Ejemplo real: Procesar CSV de accidentes
+### Ejemplo real: procesar CSV de accidentes
 
 **Escenario:** Fichero con 200.000 registros. Queremos filtrar accidentes con alcohol, agrupar por distrito y calcular la media de edad.
 
@@ -659,7 +659,7 @@ var maxEdad = conAlcohol.Columns["Edad"].Max();
 
 **Cuándo usarlo:** CSV con 100.000+ registros, análisis estadístico, ETL, o cuando no quieres definir una clase para los datos.
 
-### Tabla comparativa: Los tres en un vistazo
+### Tabla comparativa: los tres en un vistazo
 
 | Criterio | LINQ | PLINQ | DataFrame |
 |----------|------|-------|-----------|
@@ -689,17 +689,17 @@ graph TD
     E -->|"Sí"| G["📊 DataFrame.LoadCsv()<br/>+ GroupBy + Mean"]
     E -->|"No, necesito objetos"| H["📋 CsvHelper → List&lt;T&gt;<br/>+ PLINQ"]
 
-    style C fill:#4CAF50,color:#fff
-    style F fill:#FF9800,color:#fff
-    style G fill:#f44336,color:#fff
-    style H fill:#FF9800,color:#fff
+    style C fill:#4CAF5,color:#fff0,color:#fff
+    style F fill:#FF980,color:#fff0,color:#fff
+    style G fill:#f4433,color:#fff6,color:#fff
+    style H fill:#FF980,color:#fff0,color:#fff
 ```
 
 📌 **Ejemplo real:** Netflix procesa logs de visualización (millones de registros). Usa algo similar a DataFrames para análisis de datos (qué series se ven, cuándo, en qué países). Pero para la lógica de "recomendar series similares", usa objetos con LINQ porque necesita relaciones complejas.
 
 > 💡 **Consejo para el examen:** Si te preguntan "¿qué usas para procesar un CSV?", la respuesta correcta es: "Depende. Si son pocos datos, LINQ. Si son muchos y necesito paralelismo, PLINQ. Si son muchísimos y necesito estadísticas, DataFrame."
 
-## 13.10. Buenas Prácticas
+## 13.10. Buenas prácticas
 
 - **LINQ para colecciones pequeñas** (<10K): Rápido y legible
 - **PLINQ para grandes con operaciones pesadas**: Paralelizar con cuidado

@@ -1,12 +1,12 @@
-**Test: Desarrollo Web en Entorno Servidor**
+**Test: desarrollo web en entorno servidor**
 
 **Instrucciones:** Lee cada pregunta cuidadosamente y selecciona la opción que consideres correcta.
 
 ---
 
-## PARTE 1 (Temas 01-10)
+## PARTE 1 (temas 01-10)
 
-**Tema 01: Introducción al Desarrollo Web en Servidor**
+**Tema 01: Introducción al desarrollo web en servidor**
 
 1.  ¿Qué es el desarrollo web en entorno servidor?
     A) Crear páginas estáticas con HTML y CSS únicamente
@@ -38,7 +38,7 @@
     C) únicamente bases de datos relacionales
     D) Exclusivamente lenguajes de scripting del lado del cliente
 
-**Tema 02: Componentes de una Web**
+**Tema 02: Componentes de una web**
 
 6.  ¿Cuáles son las tres tecnologías fundamentales del Front-end?
     A) Java, C#, Python
@@ -70,7 +70,7 @@
     C) Un fichero de base de datos
     D) Un componente del servidor
 
-**Tema 03: Arquitecturas Web**
+**Tema 03: Arquitecturas web**
 
 11. ¿Qué arquitectura divide una aplicación en capas como Presentación, Negocio y Datos?
     A) Arquitectura de microservicios
@@ -134,7 +134,7 @@
     C) PUT
     D) PATCH
 
-**Tema 05: Servicios Web y APIs**
+**Tema 05: Servicios web y APIs**
 
 21. ¿Qué es una API REST?
     A) Un tipo de base de datos
@@ -166,7 +166,7 @@
     C) REST es más flexible y ligero, SOAP es más estricto y estandarizado
     D) No hay diferencia significativa
 
-**Tema 06: Web Dinámica**
+**Tema 06: Web dinámica**
 
 26. ¿Qué es la programación del lado del servidor (server-side)?
     A) Programar exclusivamente con HTML
@@ -230,7 +230,7 @@
     C) El interpretado solo sirve para web
     D) No hay diferencia real
 
-**Tema 08: Servidores Web**
+**Tema 08: Servidores web**
 
 36. ¿Qué es un servidor web?
     A) Un tipo de base de datos
@@ -294,7 +294,7 @@
     C) Una variable de entorno
     D) Un archivo de configuración
 
-**Tema 10: Seguridad y Monitorización**
+**Tema 10: Seguridad y monitorización**
 
 46. ¿Qué es HTTPS?
     A) Una versión de HTTP con encriptación TLS/SSL para asegurar la comunicación
@@ -328,9 +328,9 @@
 
 ---
 
-## PARTE 2 (Temas 11-25)
+## PARTE 2 (temas 11-25)
 
-**Tema 11: Inyección de Dependencias**
+**Tema 11: Inyección de dependencias**
 
 51. ¿Qué problema resuelve la Inyección de Dependencias?
     A) La lentitud del servidor
@@ -356,7 +356,7 @@
     C) Singleton
     D) Per Request
 
-**Tema 12: Patrones y Arquitecturas**
+**Tema 12: Patrones y arquitecturas**
 
 55. ¿Qué patrón de diseño encapsula la lógica de negocio y coordina las operaciones entre diferentes componentes?
     A) Repository
@@ -408,7 +408,7 @@
     C) CsvHelper
     D) EntityFramework
 
-**Tema 14: Ficheros y Formatos**
+**Tema 14: Ficheros y formatos**
 
 63. ¿Qué formato de fichero es ideal para almacenar configuraciones de una aplicación .NET?
     A) .exe
@@ -454,7 +454,7 @@
     C) Optional<T>
     D) Nullable<T>
 
-**Tema 16: Concurrencia y Asincronía**
+**Tema 16: Concurrencia y asincronía**
 
 70. ¿Qué palabra clave en C# se usa para ejecutar código de forma asíncrona?
     A) sync
@@ -480,7 +480,7 @@
     C) string
     D) object
 
-**Tema 17: Programación Reactiva**
+**Tema 17: Programación reactiva**
 
 74. ¿Qué es la Programación Reactiva?
     A) Un tipo de base de datos
@@ -592,7 +592,7 @@
     C) Cuando trabajas exclusivamente con documentos JSON
     D) Cuando no necesitas persistir datos
 
-**Tema 22: Testing Avanzado**
+**Tema 22: Testing avanzado**
 
 91. ¿Qué es un test unitario?
     A) Un test que verifica toda la aplicación de punta a punta

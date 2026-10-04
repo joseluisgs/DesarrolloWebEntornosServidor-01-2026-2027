@@ -1,47 +1,47 @@
-- [25. Resumen y Conclusiones](#25-resumen-y-conclusiones)
-  - [25.1. Mapa Conceptual de la Unidad](#251-mapa-conceptual-de-la-unidad)
-  - [25.2. Conceptos Clave](#252-conceptos-clave)
-    - [Parte 1: Fundamentos del Desarrollo Web en Servidor](#parte-1-fundamentos-del-desarrollo-web-en-servidor)
-      - [Tema 01: Introducción a la Web y el Desarrollo en Servidor](#tema-01-introducción-a-la-web-y-el-desarrollo-en-servidor)
-      - [Tema 02: Componentes del Desarrollo Web](#tema-02-componentes-del-desarrollo-web)
-      - [Tema 03: Arquitecturas de Software](#tema-03-arquitecturas-de-software)
-      - [Tema 04: Protocolo HTTP](#tema-04-protocolo-http)
-      - [Tema 05: APIs Web](#tema-05-apis-web)
-      - [Tema 06: Desarrollo Web Dinámico](#tema-06-desarrollo-web-dinámico)
-      - [Tema 07: Lenguajes de Programación en el Servidor](#tema-07-lenguajes-de-programación-en-el-servidor)
-      - [Tema 08: Servidores Web](#tema-08-servidores-web)
-      - [Tema 09: Despliegue y Contenedores](#tema-09-despliegue-y-contenedores)
-      - [Tema 10: Seguridad Básica](#tema-10-seguridad-básica)
-    - [Parte 2: C# Avanzado para Desarrollo Servidor](#parte-2-c-avanzado-para-desarrollo-servidor)
-      - [Tema 11: Inyección de Dependencias (DI)](#tema-11-inyección-de-dependencias-di)
-      - [Tema 12: Patrones de Diseño](#tema-12-patrones-de-diseño)
+- [25. Resumen y conclusiones](#25-resumen-y-conclusiones)
+  - [25.1. Mapa conceptual de la unidad](#251-mapa-conceptual-de-la-unidad)
+  - [25.2. Conceptos clave](#252-conceptos-clave)
+    - [Parte 1: fundamentos del desarrollo web en servidor](#parte-1-fundamentos-del-desarrollo-web-en-servidor)
+      - [Tema 01: introducción a la web y el desarrollo en servidor](#tema-01-introducción-a-la-web-y-el-desarrollo-en-servidor)
+      - [Tema 02: componentes del desarrollo web](#tema-02-componentes-del-desarrollo-web)
+      - [Tema 03: arquitecturas de software](#tema-03-arquitecturas-de-software)
+      - [Tema 04: protocolo HTTP](#tema-04-protocolo-http)
+      - [Tema 05: APIs web](#tema-05-apis-web)
+      - [Tema 06: desarrollo web dinámico](#tema-06-desarrollo-web-dinámico)
+      - [Tema 07: lenguajes de programación en el servidor](#tema-07-lenguajes-de-programación-en-el-servidor)
+      - [Tema 08: servidores web](#tema-08-servidores-web)
+      - [Tema 09: despliegue y contenedores](#tema-09-despliegue-y-contenedores)
+      - [Tema 10: seguridad básica](#tema-10-seguridad-básica)
+    - [Parte 2: C# avanzado para desarrollo servidor](#parte-2-c-avanzado-para-desarrollo-servidor)
+      - [Tema 11: inyección de dependencias (DI)](#tema-11-inyección-de-dependencias-di)
+      - [Tema 12: patrones de diseño](#tema-12-patrones-de-diseño)
       - [Tema 13: LINQ y DataFrames](#tema-13-linq-y-dataframes)
-      - [Tema 14: Ficheros y Serialización](#tema-14-ficheros-y-serialización)
-      - [Tema 15: Manejo de Errores con Result](#tema-15-manejo-de-errores-con-result)
-      - [Tema 16: Programación Asíncrona](#tema-16-programación-asíncrona)
-      - [Tema 17: Flujos Reactivos](#tema-17-flujos-reactivos)
-      - [Tema 18: Consumo de APIs Externas](#tema-18-consumo-de-apis-externas)
-      - [Tema 19: Configuración y Logging](#tema-19-configuración-y-logging)
+      - [Tema 14: ficheros y serialización](#tema-14-ficheros-y-serialización)
+      - [Tema 15: manejo de errores con result](#tema-15-manejo-de-errores-con-result)
+      - [Tema 16: programación asíncrona](#tema-16-programación-asíncrona)
+      - [Tema 17: flujos reactivos](#tema-17-flujos-reactivos)
+      - [Tema 18: consumo de APIs externas](#tema-18-consumo-de-apis-externas)
+      - [Tema 19: configuración y logging](#tema-19-configuración-y-logging)
       - [Tema 20: Entity Framework Core](#tema-20-entity-framework-core)
       - [Tema 21: SQL y NoSQL](#tema-21-sql-y-nosql)
-      - [Tema 22: Testing Profesional](#tema-22-testing-profesional)
-      - [Tema 23: Docker y Podman: Contenedores](#tema-23-docker-y-podman-contenedores)
-      - [Tema 24: Seguridad en .NET](#tema-24-seguridad-en-net)
-  - [25.3. Herramientas y Perfiles](#253-herramientas-y-perfiles)
+      - [Tema 22: testing profesional](#tema-22-testing-profesional)
+      - [Tema 23: Docker y podman: contenedores](#tema-23-docker-y-podman-contenedores)
+      - [Tema 24: seguridad en .NET](#tema-24-seguridad-en-net)
+  - [25.3. Herramientas y perfiles](#253-herramientas-y-perfiles)
     - [SDK y CLI](#sdk-y-cli)
     - [NuGet (paquetes habituales)](#nuget-paquetes-habituales)
     - [IDE](#ide)
-  - [25.4. Errores Comunes a Evitar](#254-errores-comunes-a-evitar)
-  - [25.5. Checklist de Supervivencia](#255-checklist-de-supervivencia)
-    - [Parte 1: Fundamentos](#parte-1-fundamentos)
-    - [Parte 2: C# Avanzado](#parte-2-c-avanzado)
-  - [25.6. Glosario de Términos](#256-glosario-de-términos)
-  - [25.7. Ejercicios de Repaso](#257-ejercicios-de-repaso)
+  - [25.4. Errores comunes a evitar](#254-errores-comunes-a-evitar)
+  - [25.5. Checklist de supervivencia](#255-checklist-de-supervivencia)
+    - [Parte 1: fundamentos](#parte-1-fundamentos)
+    - [Parte 2: C# avanzado](#parte-2-c-avanzado)
+  - [25.6. Glosario de términos](#256-glosario-de-términos)
+  - [25.7. Ejercicios de repaso](#257-ejercicios-de-repaso)
   - [25.8. ¿Qué viene después?](#258-qué-viene-después)
-  - [25.9. Mapa de Conexiones entre Temas](#259-mapa-de-conexiones-entre-temas)
+  - [25.9. Mapa de conexiones entre temas](#259-mapa-de-conexiones-entre-temas)
 
 
-# 25. Resumen y Conclusiones
+# 25. Resumen y conclusiones
 
 > 💡 **Punto de partida:** Has completado la Unidad 01, que consta de dos partes fundamentales. La Parte 1 te dio la base teórica de cómo funciona la web y el desarrollo en servidor. La Parte 2 te dio las herramientas de C# para construir aplicaciones reales. Este resumen consolida todo en una sola mirada.
 
@@ -53,7 +53,7 @@ Hemos visto la teoría completa de Desarrollo Web en Entorno Servidor. Este punt
 - Consolidar el vocabulario técnico
 - Tener una referencia rápida para el examen
 
-## 25.1. Mapa Conceptual de la Unidad
+## 25.1. Mapa conceptual de la unidad
 
 ```mermaid
 graph TD
@@ -146,61 +146,61 @@ graph TD
     SEGP --> SEGP2[JWT: Header, Payload, Firma]
     SEGP --> SEGP3[CORS: Orígenes Permitidos]
 
-    style UD01 fill:#2196F3,color:#fff
-    style P1 fill:#9C27B0,color:#fff
-    style P2 fill:#4CAF50,color:#fff
-    style WEB fill:#FF9800,color:#fff
-    style COMP fill:#FF9800,color:#fff
-    style ARQ fill:#FF9800,color:#fff
-    style HTTP fill:#FF9800,color:#fff
-    style API fill:#FF9800,color:#fff
-    style DIN fill:#FF9800,color:#fff
-    style LENG fill:#FF9800,color:#fff
-    style SRV fill:#FF9800,color:#fff
-    style DES fill:#FF9800,color:#fff
-    style SEG fill:#FF9800,color:#fff
-    style DI fill:#2196F3,color:#fff
-    style PAT fill:#2196F3,color:#fff
-    style LINQ fill:#2196F3,color:#fff
-    style FICH fill:#2196F3,color:#fff
-    style RESULT fill:#2196F3,color:#fff
-    style ASYNC fill:#2196F3,color:#fff
-    style RX fill:#2196F3,color:#fff
-    style APIEXT fill:#2196F3,color:#fff
-    style CONFIG fill:#2196F3,color:#fff
-    style EF fill:#2196F3,color:#fff
-    style BD fill:#2196F3,color:#fff
-    style TEST fill:#2196F3,color:#fff
-    style DOCKER fill:#2196F3,color:#fff
-    style SEGP fill:#2196F3,color:#fff
+    style UD01 fill:#2196F,color:#fff3,color:#fff
+    style P1 fill:#9C27B,color:#fff0,color:#fff
+    style P2 fill:#4CAF5,color:#fff0,color:#fff
+    style WEB fill:#FF980,color:#fff0,color:#fff
+    style COMP fill:#FF980,color:#fff0,color:#fff
+    style ARQ fill:#FF980,color:#fff0,color:#fff
+    style HTTP fill:#FF980,color:#fff0,color:#fff
+    style API fill:#FF980,color:#fff0,color:#fff
+    style DIN fill:#FF980,color:#fff0,color:#fff
+    style LENG fill:#FF980,color:#fff0,color:#fff
+    style SRV fill:#FF980,color:#fff0,color:#fff
+    style DES fill:#FF980,color:#fff0,color:#fff
+    style SEG fill:#FF980,color:#fff0,color:#fff
+    style DI fill:#2196F,color:#fff3,color:#fff
+    style PAT fill:#2196F,color:#fff3,color:#fff
+    style LINQ fill:#2196F,color:#fff3,color:#fff
+    style FICH fill:#2196F,color:#fff3,color:#fff
+    style RESULT fill:#2196F,color:#fff3,color:#fff
+    style ASYNC fill:#2196F,color:#fff3,color:#fff
+    style RX fill:#2196F,color:#fff3,color:#fff
+    style APIEXT fill:#2196F,color:#fff3,color:#fff
+    style CONFIG fill:#2196F,color:#fff3,color:#fff
+    style EF fill:#2196F,color:#fff3,color:#fff
+    style BD fill:#2196F,color:#fff3,color:#fff
+    style TEST fill:#2196F,color:#fff3,color:#fff
+    style DOCKER fill:#2196F,color:#fff3,color:#fff
+    style SEGP fill:#2196F,color:#fff3,color:#fff
 ```
 
-## 25.2. Conceptos Clave
+## 25.2. Conceptos clave
 
-### Parte 1: Fundamentos del Desarrollo Web en Servidor
+### Parte 1: fundamentos del desarrollo web en servidor
 
-#### Tema 01: Introducción a la Web y el Desarrollo en Servidor
+#### Tema 01: introducción a la web y el desarrollo en servidor
 - **Front-end:** Lo que se ve en el navegador (HTML, CSS, JavaScript)
 - **Back-end:** Lo que procesa en el servidor (lógica, base de datos, autenticación)
 - **Full-Stack:** Desarrollador que domina ambos lados
 - **La web es client-server:** El cliente (navegador) pide, el servidor responde
 - 📌 Netflix usa front-end para la interfaz y back-end para recomendar contenido y gestionar pagos
 
-#### Tema 02: Componentes del Desarrollo Web
+#### Tema 02: componentes del desarrollo web
 - **Cliente:** Navegador, app móvil, escritorio — cualquier cosa que haga peticiones HTTP
 - **Servidor:** Hardware + Software que escucha y responde peticiones
 - **Capas:** Presentación (UI) → Negocio (lógica) → Datos (BD)
 - **Un solo back-end sirve a múltiples clientes:** Web, móvil y escritorio consumen la misma API
 - 📌 Instagram tiene un único back-end que sirve la web, la app iOS y la app Android
 
-#### Tema 03: Arquitecturas de Software
+#### Tema 03: arquitecturas de software
 - **MVC:** Modelo (datos) → Vista (interfaz) → Controlador (lógica). Separa responsabilidades
 - **SOLID:** 5 principios para código mantenible (SRP, OCP, LSP, ISP, DIP)
 - **Microservicios:** Dividir la app en servicios pequeños e independientes
 - **Monolito vs Microservicios:** Monolito = todo junto (fácil de empezar, difícil de escalar). Microservicios = separado (difícil de empezar, fácil de escalar)
 - 📌 Netflix pasó de monolito a +700 microservicios para escalar a millones de usuarios
 
-#### Tema 04: Protocolo HTTP
+#### Tema 04: protocolo HTTP
 - **HTTP:** Protocolo de comunicación cliente-servidor. Sin estado (stateless)
 - **Verbos:** GET (leer), POST (crear), PUT (actualizar completo), PATCH (actualizar parcial), DELETE (eliminar)
 - **Códigos de estado:** 2xx (éxito), 3xx (redirección), 4xx (error cliente), 5xx (error servidor)
@@ -208,14 +208,14 @@ graph TD
 - **HTTPS:** HTTP con cifrado TLS. Imprescindible en producción
 - 📌 Cuando haces login en una web, el navegador envía POST con credenciales y el servidor devuelve 200 OK o 401 Unauthorized
 
-#### Tema 05: APIs Web
+#### Tema 05: APIs web
 - **REST:** Arquitectura basada en recursos (URLs) y verbos HTTP. Stateless. Cacheable
 - **GraphQL:** Consulta flexible. El cliente pide exactamente lo que necesita. Un único endpoint
 - **WebSocket:** Comunicación bidireccional en tiempo real (chat, notificaciones, gaming)
 - **REST vs GraphQL:** REST = múltiples endpoints, GraphQL = uno solo. REST es más simple, GraphQL es más flexible
 - 📌 Instagram usa GraphQL para que cada pantalla pida solo los datos que necesita, reduciendo tráfico
 
-#### Tema 06: Desarrollo Web Dinámico
+#### Tema 06: desarrollo web dinámico
 - **SSR (Server-Side Rendering):** El servidor genera HTML completo antes de enviarlo al navegador
 - **CSR (Client-Side Rendering):** El navegador recibe JavaScript vacío y renderiza todo en cliente
 - **Tecnologías SSR:** PHP, JSP, ASP.NET Razor, Thymeleaf
@@ -223,14 +223,14 @@ graph TD
 - **Ventaja CSR:** Experiencia fluida (SPA). **Desventaja:** Peor SEO, carga inicial más lenta
 - 📌 Amazon usa SSR para que cada producto sea indexado por Google (SEO)
 
-#### Tema 07: Lenguajes de Programación en el Servidor
+#### Tema 07: lenguajes de programación en el servidor
 - **Scripting:** PHP, Python, Node.js — se interpretan línea a línea. Flexibles pero más lentos
 - **Compilados:** C#, Java — se traducen a binario antes de ejecutar. Rendimiento alto
 - **Bytecode:** JVM (Java), CLR (.NET) — compilación mixta. Portabilidad + rendimiento
 - **C# y .NET:** Lenguaje de alto nivel, compilado, estático, multiparadigma. CLR gestiona memoria (GC) y compila JIT
 - 📌 Node.js usa JavaScript en servidor con V8. Útil para I/O intensivo, pero no para CPU intensivo
 
-#### Tema 08: Servidores Web
+#### Tema 08: servidores web
 - **Apache:** El más histórico. Basado en módulos (.htaccess). PHP funciona genial con él
 - **Nginx:** Orientado a eventos. Alto rendimiento. Proxy inverso y balanceo de carga
 - **Kestrel:** Servidor de ASP.NET Core. Viene con .NET. Rápido y moderno
@@ -238,7 +238,7 @@ graph TD
 - **En producción:** Nginx (proxy) → Kestrel (app .NET) → PostgreSQL (BD)
 - 📌 Airbnb usa Nginx como proxy inverso para repartir tráfico entre cientos de servidores
 
-#### Tema 09: Despliegue y Contenedores
+#### Tema 09: despliegue y contenedores
 - **Docker:** Empaqueta la app con todo lo que necesita (OS, librerías, config). Funciona igual en cualquier máquina
 - **Podman:** Alternativa a Docker, sin daemon, compatible con Dockerfile. Rootless por defecto
 - **Dockerfile:** Receta para construir la imagen (FROM, COPY, RUN, EXPOSE, CMD). Mismo formato para Docker y Podman
@@ -247,7 +247,7 @@ graph TD
 - **Nube:** AWS, Azure, Google Cloud — infraestructura bajo demanda
 - 📌 Netflix despliega +4000 contenedores diarios con CI/CD en AWS
 
-#### Tema 10: Seguridad Básica
+#### Tema 10: seguridad básica
 - **Autenticación:** ¿Quién eres? → JWT, sesiones, OAuth
 - **Autorización:** ¿Qué puedes hacer? → Roles, permisos, ACL
 - **HTTPS:** Cifra la comunicación. Sin él, cualquier persona puede ver tus datos en tránsito
@@ -257,9 +257,9 @@ graph TD
 - **Logs:** Registro de eventos para detectar y depurar problemas
 - 📌 Un banco usa HTTPS + JWT + CORS + logs para proteger las transacciones de sus clientes
 
-### Parte 2: C# Avanzado para Desarrollo Servidor
+### Parte 2: C# avanzado para desarrollo servidor
 
-#### Tema 11: Inyección de Dependencias (DI)
+#### Tema 11: inyección de dependencias (DI)
 - **DI:** No crees dependencias, recíbelas. El contenedor las crea y te las inyecta
 - **Ciclos de vida:** Transient (nueva cada vez), Scoped (una por petición), Singleton (una global)
 - **Scrutor:** Auto-registro de dependencias sin escribir cada `AddSingleton`/`AddScoped`
@@ -267,7 +267,7 @@ graph TD
 - **Ventaja:** Código desacoplado, testeable, mantenible
 - 📌 ASP.NET Core usa DI por defecto. Cada controller recibe sus servicios por constructor
 
-#### Tema 12: Patrones de Diseño
+#### Tema 12: patrones de diseño
 - **Repository:** Acceso a datos abstracto. No importa si es SQL, JSON o memoria
 - **Service:** Lógica de negocio. Usa Repository para leer/escribir datos
 - **Factory:** Crea objetos sin exponer la lógica de creación
@@ -284,7 +284,7 @@ graph TD
 - **ToDictionary vs Select+ToList:** ToDictionary es más eficiente cuando necesitas acceso por clave
 - 📌 Netflix analiza millones de vistas diarias con DataFrames para recomendar contenido
 
-#### Tema 14: Ficheros y Serialización
+#### Tema 14: ficheros y serialización
 - **IDisposable:** Los ficheros son recursos. Usa `using` para liberarlos automáticamente
 - **File:** Métodos estáticos para leer/escribir todo el contenido de golpe
 - **StreamWriter/StreamReader:** Lectura/escritura línea a línea. Eficiente para ficheros grandes
@@ -293,7 +293,7 @@ graph TD
 - **Convención:** Mappers/ para mapear datos entre capas
 - 📌 El ejemplo 09 lee 46.596 registros de accidentes de Madrid desde CSV
 
-#### Tema 15: Manejo de Errores con Result<T>
+#### Tema 15: manejo de errores con Result<T>
 - **Result:** Tipo funcional que encapsula éxito o error. Sin excepciones
 - **Result<T>:** `Result.Ok(valor)` o `Result.Fail("mensaje")`
 - **CSharpFunctionalExtensions:** Librería que añade Result, Maybe, y programación funcional a C#
@@ -302,7 +302,7 @@ graph TD
 - **Ventaja:** El caller sabe que puede haber error y lo maneja explícitamente
 - 📌 Un login usa Result: credenciales correctas → Ok, usuario no existe → Fail, contraseña mala → Fail
 
-#### Tema 16: Programación Asíncrona
+#### Tema 16: programación asíncrona
 - **async/await:** Ejecuta código sin bloquear el hilo principal
 - **Task:** Representa una operación asíncrona que aún no ha terminado
 - **CancellationToken:** Señal para cancelar operaciones largas
@@ -311,7 +311,7 @@ graph TD
 - **Patrón:** `await client.GetAsync(url)` en vez de `client.GetAsync(url).Result`
 - 📌 Un endpoint que consulta una API externa usa async/await para no bloquear otros requests
 
-#### Tema 17: Flujos Reactivos
+#### Tema 17: flujos reactivos
 - **Rx.NET:** Programación reactiva con observables. Los datos fluyen y tú reaccionas
 - **Subject<T>:** Emisor de eventos. Varios suscriptores pueden escuchar
 - **IAsyncEnumerable:** colección que se lee de forma asíncrona elemento a elemento con `await foreach`
@@ -320,7 +320,7 @@ graph TD
 - **Operadores:** Merge (unir), Buffer (agrupar), Take (tomar N), Where (filtrar)
 - 📌 Un chat en tiempo vivo usa Rx.NET para que cada mensaje llegue a todos los usuarios conectados
 
-#### Tema 18: Consumo de APIs Externas
+#### Tema 18: consumo de APIs externas
 - **Refit:** Interfaz tipada para consumir APIs REST. Defines la interfaz, Refit genera la implementación
 - **Polly:** Resiliencia. Retry, Circuit Breaker, Timeout, Bulkhead
 - **IHttpClientFactory:** Crea HttpClient de forma segura. Evita el agotamiento de sockets (socket exhaustion)
@@ -328,7 +328,7 @@ graph TD
 - **Cancelación de peticiones (Switch):** Cancela la petición anterior cuando llega una nueva
 - 📌 Glovo usa Polly para reintentar si un repartidor no responde la primera vez
 
-#### Tema 19: Configuración y Logging
+#### Tema 19: configuración y logging
 - **appsettings.json:** Fichero de configuración. Valores por defecto + valores por entorno
 - **IOptions<T>:** Configuración tipada. Accedes a valores como propiedades
 - **Secciones:** ConnectionStrings, Jwt, Logging, Cors, AppState
@@ -359,7 +359,7 @@ graph TD
 - **Cuándo usar qué:** Relaciones→SQL, Documentos→MongoDB, Caché→Redis, Móvil→SQLite
 - 📌 Toyota usa Redis para cachear catálogos de productos (consulta frecuente, datos que cambian poco)
 
-#### Tema 22: Testing Profesional
+#### Tema 22: testing profesional
 - **NUnit:** Framework de tests. [TestFixture], [Test], [SetUp], [TestCase]
 - **Moq:** Mocking de interfaces. Simula dependencias para aislar lo que se testea
 - **FluentAssertions:** Aserciones legibles. `resultado.Should().Be(esperado)`
@@ -369,7 +369,7 @@ graph TD
 - **Organización:** Misma estructura que el proyecto principal (Models/, Services/, Repositories/)
 - 📌 Un equipo usa Testcontainers para testear la BD real sin contaminar datos de desarrollo
 
-#### Tema 23: Docker y Podman: Contenedores
+#### Tema 23: Docker y podman: contenedores
 - **Dockerfile:** Receta multi-etapa: build → test → runtime. Mismo formato para Docker y Podman
 - **docker-compose.yml:** Define servicios: app, BD, caché, etc. Compatible con Podman Compose
 - **.dockerignore:** Excluir bin/, obj/, .git/ del contexto de build
@@ -379,7 +379,7 @@ graph TD
 - **Puertos:** `EXPOSE` en Dockerfile, `ports` en docker-compose.yml
 - 📌 Netflix ejecuta +4000 contenedores diarios con Docker/Podman en la nube
 
-#### Tema 24: Seguridad en .NET
+#### Tema 24: seguridad en .NET
 - **BCrypt:** Hash de contraseñas con salt. Resistente a rainbow tables. ¡NUNCA MD5!
 - **JWT:** Token firmado. Header (algoritmo), Payload (datos), Firma (secreto)
 - **CORS:** Controla qué dominios pueden hacer peticiones a tu API
@@ -389,7 +389,7 @@ graph TD
 - **Rate Limiting:** Limitar peticiones por IP para evitar abusos
 - 📌 Un e-commerce usa JWT para login, BCrypt para contraseñas, y CORS para permitir solo su dominio
 
-## 25.3. Herramientas y Perfiles
+## 25.3. Herramientas y perfiles
 
 ### SDK y CLI
 - **`dotnet new sln`**: Crea una solución (.slnx en .NET 10)
@@ -421,7 +421,7 @@ graph TD
 - **Visual Studio Code:** Editor ligero, multiplataforma, gratuito
 - **Visual Studio:** IDE completo de Microsoft (versión Community gratuita)
 
-## 25.4. Errores Comunes a Evitar
+## 25.4. Errores comunes a evitar
 
 | Error | Por qué está mal | Cómo evitarlo |
 |-------|------------------|---------------|
@@ -441,11 +441,11 @@ graph TD
 | Confundir `=` y `==` | Asignación vs comparación | Usar `==` en condiciones |
 | No usar `using` con recursos | Fugas de memoria (memory leaks) | Envolver en un bloque `using` |
 
-## 25.5. Checklist de Supervivencia
+## 25.5. Checklist de supervivencia
 
 Antes de dar por cerrado el tema, asegúrate de poder responder **SÍ** a estas preguntas:
 
-### Parte 1: Fundamentos
+### Parte 1: fundamentos
 - [ ] ¿Entiendo la diferencia entre front-end y back-end?
 - [ ] ¿Sé qué es el modelo cliente-servidor y las capas de una aplicación?
 - [ ] ¿Puedo explicar MVC, SOLID y microservicios?
@@ -456,7 +456,7 @@ Antes de dar por cerrado el tema, asegúrate de poder responder **SÍ** a estas 
 - [ ] ¿Puedo explicar qué es Docker/Podman y para qué sirve un contenedor?
 - [ ] ¿Conozco los conceptos básicos de seguridad: JWT, CORS, HTTPS?
 
-### Parte 2: C# Avanzado
+### Parte 2: C# avanzado
 - [ ] ¿Entiendo la Inyección de Dependencias y los ciclos de vida (Transient, Scoped, Singleton)?
 - [ ] ¿Sé usar el patrón Repository y Service?
 - [ ] ¿Puedo hacer consultas LINQ: Select, Where, GroupBy, OrderBy, Join?
@@ -474,7 +474,7 @@ Antes de dar por cerrado el tema, asegúrate de poder responder **SÍ** a estas 
 
 > 🔧 **Truco:** La mejor forma de aprender es practicando. No leas solo los apuntes: abre el IDE y prueba cada ejemplo. Modifícalos, rómpelos, arreglalos. Eso es como se aprende.
 
-## 25.6. Glosario de Términos
+## 25.6. Glosario de términos
 
 | Término | Definición |
 |---------|------------|
@@ -517,7 +517,7 @@ Antes de dar por cerrado el tema, asegúrate de poder responder **SÍ** a estas 
 | **Testcontainers** | Tests con contenedores Docker/Podman efímeros |
 | **LINQ to DataFrame** | Tablas en memoria para análisis de datos (big data) |
 
-## 25.7. Ejercicios de Repaso
+## 25.7. Ejercicios de repaso
 
 1. **Arquitecturas:** Explica la diferencia entre MVC, monolito y microservicios. ¿Cuándo usarías cada uno?
 
@@ -560,7 +560,7 @@ En la **UD02: Desarrollo de servicios web en .NET** aprenderás a crear APIs RES
 
 📌 **Ejemplo real:** En la UD02 crearás una API REST completa para gestionar productos. Usarás: ASP.NET Core (HTTP/REST), EF Core (PostgreSQL), DI (Scrutor), JWT (autenticación), Serilog (logging), NUnit (tests), y Docker/Podman (despliegue). Todo lo que aprendiste en la UD01.
 
-## 25.9. Mapa de Conexiones entre Temas
+## 25.9. Mapa de conexiones entre temas
 
 ```mermaid
 graph LR
@@ -574,10 +574,10 @@ graph LR
     UD03 -.->|Razor, Blazor, MVC en .NET| UD04
     UD04 -.->|Componentes, Híbridos, JavaScript| UD05
 
-    style UD01 fill:#4CAF50,color:#fff
-    style UD02 fill:#2196F3,color:#fff
-    style UD03 fill:#FF9800,color:#fff
-    style UD04 fill:#9C27B0,color:#fff
-    style UD05 fill:#f44336,color:#fff
+    style UD01 fill:#4CAF5,color:#fff0,color:#fff
+    style UD02 fill:#2196F,color:#fff3,color:#fff
+    style UD03 fill:#FF980,color:#fff0,color:#fff
+    style UD04 fill:#9C27B,color:#fff0,color:#fff
+    style UD05 fill:#f4433,color:#fff6,color:#fff
 ```
 

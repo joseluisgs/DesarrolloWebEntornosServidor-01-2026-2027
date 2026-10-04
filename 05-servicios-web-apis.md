@@ -1,15 +1,15 @@
-- [5. Servicios Web y Comunicación con APIs](#5-servicios-web-y-comunicación-con-apis)
-  - [5.1. ¿Qué es un Servicio Web?](#51-qué-es-un-servicio-web)
-  - [5.2. REST: El Estándar de la Industria](#52-rest-el-estándar-de-la-industria)
-  - [5.3. GraphQL: La Alternativa Flexible](#53-graphql-la-alternativa-flexible)
-  - [5.4. WebSocket: Comunicación en Tiempo Real](#54-websocket-comunicación-en-tiempo-real)
-  - [5.5. Otros Protocolos](#55-otros-protocolos)
-  - [5.6. Comparativa de Protocolos](#56-comparativa-de-protocolos)
-  - [5.7. Buenas Prácticas](#57-buenas-prácticas)
+- [5. Servicios web y comunicación con APIs](#5-servicios-web-y-comunicación-con-apis)
+  - [5.1. ¿Qué es un servicio web?](#51-qué-es-un-servicio-web)
+  - [5.2. REST: el estándar de la industria](#52-rest-el-estándar-de-la-industria)
+  - [5.3. GraphQL: la alternativa flexible](#53-graphql-la-alternativa-flexible)
+  - [5.4. WebSocket: comunicación en tiempo real](#54-websocket-comunicación-en-tiempo-real)
+  - [5.5. Otros protocolos](#55-otros-protocolos)
+  - [5.6. Comparativa de protocolos](#56-comparativa-de-protocolos)
+  - [5.7. Buenas prácticas](#57-buenas-prácticas)
 
 
 
-# 5. Servicios Web y Comunicación con APIs
+# 5. Servicios web y comunicación con APIs
 
 > 💡 **Punto de partida:** Has visto que HTTP es el idioma que usan cliente y servidor. Pero, ¿cómo se estructuran esos servicios? ¿Cuándo conviene REST y cuándo GraphQL? ¿Cómo funciona un chat en tiempo real como WhatsApp Web? Todo se reduce a **cómo se diseñan las APIs**.
 
@@ -23,7 +23,7 @@ En este tema aprenderás qué es un servicio web, cómo funciona REST (el están
 - Comprender cómo funciona WebSocket para comunicación en tiempo real
 - Comparar los principales protocolos de comunicación (REST, GraphQL, gRPC, WebSocket, SOAP)
 
-## 5.1. ¿Qué es un Servicio Web?
+## 5.1. ¿Qué es un servicio web?
 
 Un **servicio web** es una aplicación que se comunica con otras aplicaciones a través de Internet usando protocolos estándar como HTTP. Es la forma en que diferentes sistemas intercambian datos.
 
@@ -42,7 +42,7 @@ Un **servicio web** es una aplicación que se comunica con otras aplicaciones a 
 
 > 📝 **Nota:** Un servicio web no es lo mismo que una API REST. Un servicio web es un concepto general (cualquier servicio que se comunique vía HTTP). Una API REST es un **estilo específico** de diseñar servicios web.
 
-## 5.2. REST: El Estándar de la Industria
+## 5.2. REST: el estándar de la industria
 
 **REST** (Representational State Transfer) es un estilo arquitectónico para diseñar APIs. No es un protocolo, sino un **conjunto de principios** que hacen que las APIs sean consistentes y fáciles de usar.
 
@@ -133,7 +133,7 @@ record Producto(int Id, string Nombre, decimal Precio, string Categoria);
 
 > 💡 **Consejo:** Cuando diseñes una API REST, usa sustantivos en plural para las rutas (`/api/productos`, no `/api/getProduct`). Los verbos van en el método HTTP (`GET`, `POST`, `PUT`, `DELETE`).
 
-## 5.3. GraphQL: La Alternativa Flexible
+## 5.3. GraphQL: la alternativa flexible
 
 **GraphQL** es un lenguaje de consultas creado por Facebook que permite al cliente pedir **exactamente** lo que necesita, ni más ni menos.
 
@@ -163,7 +163,7 @@ query {
 
 > 📝 **Nota:** GraphQL es ideal cuando el cliente necesita flexibilidad (apps móviles con diferentes pantallas). REST es ideal cuando la estructura es predecible (APIs públicas).
 
-## 5.4. WebSocket: Comunicación en Tiempo Real
+## 5.4. WebSocket: comunicación en tiempo real
 
 **WebSocket** es un protocolo que permite **comunicación bidireccional en tiempo real** entre cliente y servidor. A diferencia de HTTP, la conexión se mantiene abierta.
 
@@ -193,7 +193,7 @@ sequenceDiagram
 
 > 📝 **Nota:** WebSocket no reemplaza a HTTP. Son complementarios. HTTP se usa para peticiones normales (cargar datos), WebSocket para comunicación en tiempo real (chat, notificaciones).
 
-## 5.5. Otros Protocolos
+## 5.5. Otros protocolos
 
 | Protocolo | Descripción | Cuándo usarlo |
 |-----------|-------------|---------------|
@@ -204,7 +204,7 @@ sequenceDiagram
 
 > 💡 **Consejo:** Para el examen, recuerda que REST es el estándar de la industria. GraphQL es la alternativa cuando necesitas flexibilidad. WebSocket es para comunicación en tiempo real. gRPC es para alto rendimiento entre microservicios.
 
-## 5.6. Comparativa de Protocolos
+## 5.6. Comparativa de protocolos
 
 | Característica | REST | GraphQL | WebSocket | gRPC | SOAP |
 |----------------|------|---------|-----------|------|------|
@@ -279,7 +279,7 @@ sequenceDiagram
 | Sistemas bancarios legacy | **SOAP** |
 | Notificaciones push simples | **SSE** |
 
-## 5.7. Buenas Prácticas
+## 5.7. Buenas prácticas
 
 - **REST por defecto**: Es el estándar para APIs públicas. Úsalo como opción por defecto
 - **GraphQL solo cuando sea necesario**: Apps móviles que necesitan flexibilidad en consultas

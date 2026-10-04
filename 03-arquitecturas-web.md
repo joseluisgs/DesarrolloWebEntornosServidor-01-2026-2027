@@ -1,13 +1,13 @@
-- [3. Arquitecturas Web](#3-arquitecturas-web)
+- [3. Arquitecturas web](#3-arquitecturas-web)
   - [3.1. Arquitectura Cliente-Servidor](#31-arquitectura-cliente-servidor)
-  - [3.2. Modelos de Arquitectura Software](#32-modelos-de-arquitectura-software)
+  - [3.2. Modelos de arquitectura software](#32-modelos-de-arquitectura-software)
   - [3.3. Patrón MVC (Modelo-Vista-Controlador)](#33-patrón-mvc-modelo-vista-controlador)
   - [3.4. Principios SOLID](#34-principios-solid)
-  - [3.5. Buenas Prácticas](#35-buenas-prácticas)
+  - [3.5. Buenas prácticas](#35-buenas-prácticas)
 
 
 
-# 3. Arquitecturas Web
+# 3. Arquitecturas web
 
 > 💡 **Punto de partida:** Si construyes una casa, no empiezas a poner ladrillos sin un plano. Lo mismo ocurre con el software: necesitas una **arquitectura**, un plan que determine cómo se organizan las piezas, cómo se comunican y cómo escalará en el futuro.
 
@@ -29,8 +29,8 @@ graph LR
     A["👤 Cliente<br/>(Navegador)"] -->|"📡 Petición"| B["⚙️ Servidor<br/>(Back-end)"]
     B -->|"📋 Respuesta"| A
 
-    style A fill:#2196F3,color:#fff
-    style B fill:#4CAF50,color:#fff
+    style A fill:#2196F,color:#fff3,color:#fff
+    style B fill:#4CAF5,color:#fff0,color:#fff
 ```
 
 | Ventaja | Descripción |
@@ -42,9 +42,9 @@ graph LR
 
 > 💡 **Analogía:** El modelo Cliente-Servidor es como una biblioteca. Tú (el cliente) vas al mostrador y pides un libro. El bibliotecario (el servidor) busca el libro, te lo da y lo registra. Tú no vas directamente a los estantes a buscarlo.
 
-## 3.2. Modelos de Arquitectura Software
+## 3.2. Modelos de arquitectura software
 
-### 3.2.1. Arquitectura Monolítica
+### 3.2.1. Arquitectura monolítica
 
 En una arquitectura **monolítica**, toda la aplicación (Front-end, Back-end, base de datos) está en un solo paquete desplegable.
 
@@ -59,12 +59,12 @@ graph TD
 
     A --> B --> C --> D
 
-    style MONOLITO fill:#FF9800,color:#fff
+    style MONOLITO fill:#FF980,color:#fff0,color:#fff
 ```
 
 📌 **Ejemplo real:** Muchas startups empiezan con monolitos porque es rápido de desarrollar y desplegar. Etsy (tienda online de artesanías) sigue usando un monolito PHP bien estructurado.
 
-### 3.2.2. Arquitectura por Capas
+### 3.2.2. Arquitectura por capas
 
 La arquitectura por **capas** separa la aplicación en niveles con responsabilidades diferentes:
 
@@ -73,9 +73,9 @@ graph TD
     A["🖥️ Capa de Presentación<br/>(Front-end)"] --> B["⚙️ Capa de Lógica<br/>(Back-end)"]
     B --> C["🗄️ Capa de Datos<br/>(BBDD)"]
 
-    style A fill:#2196F3,color:#fff
-    style B fill:#4CAF50,color:#fff
-    style C fill:#FF9800,color:#fff
+    style A fill:#2196F,color:#fff3,color:#fff
+    style B fill:#4CAF5,color:#fff0,color:#fff
+    style C fill:#FF980,color:#fff0,color:#fff
 ```
 
 | Capa | Responsabilidad | Tecnologías |
@@ -112,9 +112,9 @@ graph TD
     B --> E
     B --> F
 
-    style CLIENTE fill:#2196F3,color:#fff
-    style API_GATEWAY fill:#9C27B0,color:#fff
-    style MICROSERVICIOS fill:#4CAF50,color:#fff
+    style CLIENTE fill:#2196F,color:#fff3,color:#fff
+    style API_GATEWAY fill:#9C27B,color:#fff0,color:#fff
+    style MICROSERVICIOS fill:#4CAF5,color:#fff0,color:#fff
 ```
 
 📌 **Ejemplo real:** Netflix usa microservicios. Cada función (recomendaciones, búsquedas, pagos, streaming) es un servicio independiente. Si falla el servicio de pagos, el de recomendaciones sigue funcionando.
@@ -152,10 +152,10 @@ graph TD
     B -->|"Renderiza"| D["🖥️ Vista"]
     D -->|"Respuesta"| A
 
-    style A fill:#9C27B0,color:#fff
-    style B fill:#4CAF50,color:#fff
-    style C fill:#FF9800,color:#fff
-    style D fill:#2196F3,color:#fff
+    style A fill:#9C27B,color:#fff0,color:#fff
+    style B fill:#4CAF5,color:#fff0,color:#fff
+    style C fill:#FF980,color:#fff0,color:#fff
+    style D fill:#2196F,color:#fff3,color:#fff
 ```
 
 📌 **Ejemplo real:** Cuando haces login en una web:
@@ -212,7 +212,7 @@ public class PdfService
 
 📌 **Ejemplo real:** En una tienda online, si `PedidoService` envía emails, genera PDFs y guarda en BD, cuando cambie el proveedor de email tendrías que tocar la clase de pedidos. Con SRP, solo tocas `EmailService`.
 
-### OCP: Open/Closed Principle
+### OCP: Open/Closed principle
 
 > "Abierto a extensión, cerrado a modificación"
 
@@ -385,7 +385,7 @@ services.AddScoped<IEmailService, EmailServiceGmail>();
 > - Cada departamento tiene **sus propias herramientas** (ISP)
 > - Los empleados dependen de **instrucciones claras**, no de saber todo (DIP)
 
-## 3.5. Buenas Prácticas
+## 3.5. Buenas prácticas
 
 - **Empieza monolítico**: No uses microservicios desde el principio. Escala cuando sea necesario
 - **SOLID desde el diseño**: Los 5 principios se aplican al diseñar, no al refactorizar después

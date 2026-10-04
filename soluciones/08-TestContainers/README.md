@@ -4,7 +4,7 @@
 
 Este ejemplo muestra cómo escribir **tests de integración** usando **TestContainers** para levantar contenedores Docker (o Podman) efímeros (PostgreSQL y Redis) durante la ejecución de los tests.
 
-## Conceptos Clave
+## Conceptos clave
 
 ### ¿Qué es TestContainers?
 
@@ -17,9 +17,9 @@ graph TB
         A --> C[Redis Container<br/>Docker/Podman efímero]
     end
     
-    style A fill:#2196F3,color:#fff
-    style B fill:#4CAF50,color:#fff
-    style C fill:#f44336,color:#fff
+    style A fill:#2196F,color:#fff3,color:#fff
+    style B fill:#4CAF5,color:#fff0,color:#fff
+    style C fill:#f4433,color:#fff6,color:#fff
 ```
 
 📌 Ejemplo real: **Netflix** usa TestContainers para probar sus servicios que dependen de bases de datos y colas de mensajería. Cada ejecución de tests levanta un entorno completo y aislado.
@@ -51,7 +51,7 @@ public async Task Create_InsertsProduct()
 }
 ```
 
-### Aislamiento de Tests
+### Aislamiento de tests
 
 Cada test tiene su propia base de datos limpia:
 
@@ -119,7 +119,7 @@ dotnet test --filter "FullyQualifiedName~Create_InsertsProduct"
 
 ## Paquetes NuGet
 
-### Proyecto Principal
+### Proyecto principal
 
 | Paquete | Versión | Descripción |
 |---------|---------|-------------|
@@ -127,7 +127,7 @@ dotnet test --filter "FullyQualifiedName~Create_InsertsProduct"
 | `Npgsql.EntityFrameworkCore.PostgreSQL` | 9.0.2 | Provider EF Core para PostgreSQL |
 | `Microsoft.Extensions.DependencyInjection` | 9.0.0 | Inyección de dependencias |
 
-### Proyecto de Tests
+### Proyecto de tests
 
 | Paquete | Versión | Descripción |
 |---------|---------|-------------|
@@ -139,7 +139,7 @@ dotnet test --filter "FullyQualifiedName~Create_InsertsProduct"
 | `Microsoft.NET.Test.Sdk` | 17.14.0 | Runtime de tests |
 | `coverlet.collector` | 6.0.4 | Cobertura de código |
 
-## Tests Incluidos
+## Tests incluidos
 
 | Test | Descripción |
 |------|-------------|
@@ -149,7 +149,7 @@ dotnet test --filter "FullyQualifiedName~Create_InsertsProduct"
 | `GetById_NonExistingProduct_ReturnsNull` | Verifica que devuelve null si no existe |
 | `Delete_ExistingProduct_RemovesProduct` | Verifica que elimina un producto |
 
-## Casos de Uso
+## Casos de uso
 
 - **Tests de repositorio**: Verificar consultas correctas contra BD real
 - **Tests de servicios**: Verificar lógica de negocio con datos reales
@@ -159,6 +159,6 @@ dotnet test --filter "FullyQualifiedName~Create_InsertsProduct"
 ## Referencias
 
 - [TestContainers for .NET (GitHub)](https://github.com/testcontainers/testcontainers-dotnet)
-- [NUnit Documentation](https://docs.nunit.org/)
+- [NUnit documentation](https://docs.nunit.org/)
 - [FluentAssertions](https://fluentassertions.com/)
-- [Entity Framework Core Testing](https://learn.microsoft.com/es-es/ef/core/testing/)
+- [Entity Framework Core testing](https://learn.microsoft.com/es-es/ef/core/testing/)

@@ -1,4 +1,4 @@
-# Git & GitHub — Comandos de Supervivencia
+# Git & GitHub — comandos de supervivencia
 
 > Referencia rápida para no perderse con el control de versiones.
 

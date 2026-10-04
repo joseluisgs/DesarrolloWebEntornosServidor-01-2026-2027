@@ -15,11 +15,11 @@ Pero esta solución va más allá de responder a las consultas: **mide**. Compar
   - [4.3. Parallel.For sobre cálculo (FASE 4 y 5)](#43-parallelfor-sobre-cálculo-fase-4-y-5)
   - [4.4. Cara a cara: los dos motores en ×30](#44-cara-a-cara-los-dos-motores-en-30)
 - [5. El precio de cada tarea (precio por hilo)](#5-el-precio-de-cada-tarea-precio-por-hilo)
-- [6. Task para E/S, Parallel para memoria](#6-task-para-es-parallel-para-memoria)
+- [6. Task para E/S, parallel para memoria](#6-task-para-es-parallel-para-memoria)
   - [6.1. La tabla de decisión](#61-la-tabla-de-decisión)
   - [6.2. Anti-patrones: lo que NO hay que hacer](#62-anti-patrones-lo-que-no-hay-que-hacer)
   - [6.3. La regla, en una frase](#63-la-regla-en-una-frase)
-- [7. ¿Cuántas tareas? La forma de valle](#7-cuántas-tareas-la-forma-de-valle)
+- [7. ¿Cuántas tareas? la forma de valle](#7-cuántas-tareas-la-forma-de-valle)
 - [8. Parallel.For con paquetes exactos (los mismos casos)](#8-parallelfor-con-paquetes-exactos-los-mismos-casos)
 - [9. Regla de oro y casuísticas](#9-regla-de-oro-y-casuísticas)
 - [10. Los milisegundos importan](#10-los-milisegundos-importan)
@@ -273,13 +273,13 @@ graph LR
         B1 & B2 & B3 -->|Task.WhenAll| B4["Combinar<br/>130.864 registros"]
     end
 
-    style A1 fill:#f44336,stroke:#333,color:#fff
-    style A2 fill:#f44336,stroke:#333,color:#fff
-    style A3 fill:#f44336,stroke:#333,color:#fff
-    style B1 fill:#4CAF50,stroke:#333,color:#fff
-    style B2 fill:#4CAF50,stroke:#333,color:#fff
-    style B3 fill:#4CAF50,stroke:#333,color:#fff
-    style B4 fill:#2196F3,stroke:#333,color:#fff
+    style A1 fill:#f44336,color:#fff,stroke:#333,color:#fff
+    style A2 fill:#f44336,color:#fff,stroke:#333,color:#fff
+    style A3 fill:#f44336,color:#fff,stroke:#333,color:#fff
+    style B1 fill:#4CAF50,color:#fff,stroke:#333,color:#fff
+    style B2 fill:#4CAF50,color:#fff,stroke:#333,color:#fff
+    style B3 fill:#4CAF50,color:#fff,stroke:#333,color:#fff
+    style B4 fill:#2196F3,color:#fff,stroke:#333,color:#fff
 ```
 
 📌 Ejemplo real: cuando abres Netflix y la app descarga el logo, el subtítulo y los miniaturas **a la vez**, en vez de uno tras otro: la red es E/S, y E/S esperando en paralelo es tiempo gratis.
@@ -369,7 +369,7 @@ xychart-beta
 
 ---
 
-## 6. Task para E/S, Parallel para memoria
+## 6. Task para E/S, parallel para memoria
 
 Es una recomendación muy repetida — ***"async para E/S, Parallel para cálculo"*** — y aquí vemos **por qué** con datos.
 
@@ -416,7 +416,7 @@ Cuando un programa mezcla E/S y cálculo, aparecen siempre los mismos errores. A
 
 ---
 
-## 7. ¿Cuántas tareas? La forma de valle
+## 7. ¿Cuántas tareas? la forma de valle
 
 No basta con decidir "paralelizar": hay que elegir **cuántas tareas** (o cuántos paquetes). Medimos las **8 variantes × 2 motores** para las mismas 30 consultas (ejecución de referencia; tus números dependerán de tu máquina y del momento):
 
@@ -539,10 +539,10 @@ flowchart TD
     D -->|"NO"| F["⚠️ Quédate secuencial<br/>o prueba poco a poco"]
     F --> G["📏 Mide siempre<br/>antes de decidir"]
 
-    style C fill:#4CAF50,stroke:#333,color:#fff
-    style E fill:#4CAF50,stroke:#333,color:#fff
-    style F fill:#FF9800,stroke:#333,color:#fff
-    style G fill:#2196F3,stroke:#333,color:#fff
+    style C fill:#4CAF50,color:#fff,stroke:#333,color:#fff
+    style E fill:#4CAF50,color:#fff,stroke:#333,color:#fff
+    style F fill:#FF9800,color:#fff,stroke:#333,color:#fff
+    style G fill:#2196F3,color:#fff,stroke:#333,color:#fff
 ```
 
 > ⚠️ **Matiz:** tanto el "SÍ" como el "NO" son **puntos de partida**, no sentencias: la propia ejecución de referencia muestra cálculos ganando 17,88x y cálculos perdiendo hasta 0,57x (y la anterior de la sesión, 21,10x y 0,24x). **La respuesta correcta se obtiene cronometrando, no de memoria.**

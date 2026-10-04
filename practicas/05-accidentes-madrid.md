@@ -1,15 +1,15 @@
-# Práctica 5: Análisis de Accidentes de Madrid con LINQ, PLINQ y DataFrames
+# Práctica 5: análisis de accidentes de madrid con LINQ, PLINQ y DataFrames
 
-- [Práctica 5: Análisis de Accidentes de Madrid con LINQ, PLINQ y DataFrames](#práctica-5-análisis-de-accidentes-de-madrid-con-linq-plinq-y-dataframes)
+- [Práctica 5: análisis de accidentes de madrid con LINQ, PLINQ y DataFrames](#práctica-5-análisis-de-accidentes-de-madrid-con-linq-plinq-y-dataframes)
   - [Objetivo](#objetivo)
   - [Descripción](#descripción)
-  - [Fichero de Datos](#fichero-de-datos)
-  - [Estructura de Datos](#estructura-de-datos)
-  - [Operaciones Requeridas](#operaciones-requeridas)
-  - [Justificación del Diseño](#justificación-del-diseño)
+  - [Fichero de datos](#fichero-de-datos)
+  - [Estructura de datos](#estructura-de-datos)
+  - [Operaciones requeridas](#operaciones-requeridas)
+  - [Justificación del diseño](#justificación-del-diseño)
   - [Tecnologías](#tecnologías)
-  - [Estructura de Proyecto](#estructura-de-proyecto)
-  - [Comparativa de Tiempos](#comparativa-de-tiempos)
+  - [Estructura de proyecto](#estructura-de-proyecto)
+  - [Comparativa de tiempos](#comparativa-de-tiempos)
 
 ---
 
@@ -39,7 +39,7 @@ Dados los ficheros CSV `2024_Accidentalidad.csv`, `2025_Accidentalidad.csv` y `2
 
 ---
 
-## Fichero de Datos
+## Fichero de datos
 
 Los ficheros CSV se descargan de los **datos abiertos del Ayuntamiento de Madrid**:
 
@@ -61,7 +61,7 @@ lesividad;coordenada_x_utm;coordenada_y_utm;positiva_alcohol;positiva_droga
 
 ---
 
-## Estructura de Datos
+## Estructura de datos
 
 Deduce la estructura del modelo a partir de las cabeceras del CSV. Ten en cuenta que:
 
@@ -72,9 +72,9 @@ Deduce la estructura del modelo a partir de las cabeceras del CSV. Ten en cuenta
 
 ---
 
-## Operaciones Requeridas
+## Operaciones requeridas
 
-### Lectura de Ficheros (1 punto)
+### Lectura de ficheros (1 punto)
 
 Leer los 3 ficheros CSV del directorio `data/` y combinarlos en una sola colección.
 
@@ -115,7 +115,7 @@ Leer los 3 ficheros CSV del directorio `data/` y combinarlos en una sola colecci
 
 Implementar las **mismas 30 consultas** usando DataFrame.
 
-## Justificación del Diseño
+## Justificación del diseño
 
 El alumno debe incluir un documento o sección en el README justificando **todas** sus decisiones de diseño.
 
@@ -143,7 +143,7 @@ El alumno debe incluir un documento o sección en el README justificando **todas
 
 ---
 
-## Estructura de Proyecto
+## Estructura de proyecto
 
 ```
 AccidentesMadrid/
@@ -177,7 +177,7 @@ El proyecto debe mostrar una comparativa de tiempos al final.
 
 ---
 
-## Comparativa de Tiempos
+## Comparativa de tiempos
 
 El programa debe mostrar una comparativa detallada de tiempos de ejecución.
 

@@ -1,7 +1,7 @@
-- [8. Bases de Datos Relacionales en .NET](#8-bases-de-datos-relacionales-en-net)
-    - [8.1.0. Instalación de Librerías](#810-instalación-de-librerías)
+- [8. Bases de datos relacionales en .NET](#8-bases-de-datos-relacionales-en-net)
+    - [8.1.0. Instalación de librerías](#810-instalación-de-librerías)
   - [8.1. Acceso a bases de datos en .NET](#81-acceso-a-bases-de-datos-en-net)
-    - [8.1.1. ADO.NET: El nivel más bajo](#811-adonet-el-nivel-más-bajo)
+    - [8.1.1. ADO.NET: el nivel más bajo](#811-adonet-el-nivel-más-bajo)
     - [8.1.2. Dapper: Micro-ORM de alto rendimiento](#812-dapper-micro-orm-de-alto-rendimiento)
     - [8.1.3. Entity Framework Core: ORM completo](#813-entity-framework-core-orm-completo)
   - [8.2. Entity Framework Core](#82-entity-framework-core)
@@ -9,33 +9,33 @@
     - [8.2.2. Partes del DbContext](#822-partes-del-dbcontext)
     - [8.2.3. Configuración de entidades](#823-configuración-de-entidades)
     - [8.2.4. Relaciones entre entidades](#824-relaciones-entre-entidades)
-      - [8.2.4.1. Data Annotations (Anotaciones en el Modelo)](#8241-data-annotations-anotaciones-en-el-modelo)
-      - [8.2.4.2. Fluent API (Configuración Avanzada)](#8242-fluent-api-configuración-avanzada)
-      - [8.2.4.3. Comparación: Data Annotations vs Fluent API](#8243-comparación-data-annotations-vs-fluent-api)
-  - [8.3. Patrón Repository](#83-patrón-repository)
-    - [8.3.1. Principios del Repository](#831-principios-del-repository)
+      - [8.2.4.1. Data annotations (anotaciones en el modelo)](#8241-data-annotations-anotaciones-en-el-modelo)
+      - [8.2.4.2. Fluent API (configuración avanzada)](#8242-fluent-api-configuración-avanzada)
+      - [8.2.4.3. Comparación: data annotations vs fluent API](#8243-comparación-data-annotations-vs-fluent-api)
+  - [8.3. Patrón repository](#83-patrón-repository)
+    - [8.3.1. Principios del repository](#831-principios-del-repository)
     - [8.3.2. Implementación genérica](#832-implementación-genérica)
-    - [8.3.3. Unit of Work](#833-unit-of-work)
+    - [8.3.3. Unit of work](#833-unit-of-work)
   - [8.4. CRUD con EF Core](#84-crud-con-ef-core)
     - [8.4.1. Operaciones básicas](#841-operaciones-básicas)
     - [8.4.2. Consultas optimizadas](#842-consultas-optimizadas)
     - [8.4.3. Concurrency y concurrencia](#843-concurrency-y-concurrencia)
   - [8.5. Consultas LINQ y SQL raw](#85-consultas-linq-y-sql-raw)
-    - [8.5.1. LINQ to Entities](#851-linq-to-entities)
+    - [8.5.1. LINQ to entities](#851-linq-to-entities)
     - [8.5.2. SQL interpolado y FromSqlRaw](#852-sql-interpolado-y-fromsqlraw)
     - [8.5.3. Ejecución y optimización](#853-ejecución-y-optimización)
   - [8.6. Migraciones y esquema](#86-migraciones-y-esquema)
-    - [8.6.1. Code First migrations](#861-code-first-migrations)
+    - [8.6.1. Code first migrations](#861-code-first-migrations)
     - [8.6.2. Gestión del historial](#862-gestión-del-historial)
     - [8.6.3. Seed data](#863-seed-data)
-      - [8.6.3.1. Seed Data con HasData (En migraciones)](#8631-seed-data-con-hasdata-en-migraciones)
-      - [8.6.3.2. Seed Data con servicio (En tiempo de ejecución)](#8632-seed-data-con-servicio-en-tiempo-de-ejecución)
-      - [8.6.3.3. Seed Data con archivos JSON](#8633-seed-data-con-archivos-json)
-      - [8.6.3.4. Comparación de métodos de Seed Data](#8634-comparación-de-métodos-de-seed-data)
+      - [8.6.3.1. Seed data con HasData (en migraciones)](#8631-seed-data-con-hasdata-en-migraciones)
+      - [8.6.3.2. Seed data con servicio (en tiempo de ejecución)](#8632-seed-data-con-servicio-en-tiempo-de-ejecución)
+      - [8.6.3.3. Seed data con archivos JSON](#8633-seed-data-con-archivos-json)
+      - [8.6.3.4. Comparación de métodos de seed data](#8634-comparación-de-métodos-de-seed-data)
 
 
 
-# 8. Bases de Datos Relacionales en .NET
+# 8. Bases de datos relacionales en .NET
 
 > 💡 **Punto de partida:** ¿Dónde guarda Netflix tus favoritos o Glovo tus pedidos anteriores? En una base de datos. En este punto aprenderás a conectar tu app C# a bases de datos relacionales, desde el nivel más bajo (ADO.NET) hasta un ORM completo como EF Core.
 
@@ -66,15 +66,15 @@ graph TD
     D --> D2["LINQ to Entities"]
     D --> D3["Migrations"]
     
-    style A fill:#4CAF50
-    style B fill:#2196F3
-    style C fill:#FF9800
-    style D fill:#9C27B0
+    style A fill:#4CAF50,color:#fff
+    style B fill:#2196F3,color:#fff
+    style C fill:#FF9800,color:#fff
+    style D fill:#9C27B0,color:#fff
 ```
 
 🧠 **Analogía**: Piensa en las tecnologías de acceso a datos como diferentes niveles de un coche. ADO.NET es como conducir un coche manual donde controlas cada marcha y pedal. Dapper es como un automático que hace algunas cosas por ti pero mantiene el control. EF Core es como un Tesla autónomo que prácticamente conduce solo.
 
-### 8.1.0. Instalación de Librerías
+### 8.1.0. Instalación de librerías
 
 Para trabajar con bases de datos en .NET, necesitas instalar los paquetes NuGet correspondientes a tu proveedor de base de datos y las librerías de acceso a datos:
 
@@ -183,7 +183,7 @@ sequenceDiagram
 
 ## 8.1. Acceso a bases de datos en .NET
 
-### 8.1.1. ADO.NET: El nivel más bajo
+### 8.1.1. ADO.NET: el nivel más bajo
 
 ADO.NET es la API fundamental de .NET para acceso a datos. Proporciona clases de bajo nivel para conectarse a bases de datos, ejecutar comandos, y leer resultados.
 
@@ -434,9 +434,9 @@ flowchart TD
     B2 -->|SELECT/INSERT/UPDATE/DELETE| C1
     B3 -->|Guarda cambios| C1
     
-    style EF fill:#9C27B0
-    style B1 fill:#4CAF50,color:#fff
-    style B2 fill:#4CAF50,color:#fff
+    style EF fill:#9C27B0,color:#fff
+    style B1 fill:#4CAF5,color:#fff0,color:#fff
+    style B2 fill:#4CAF5,color:#fff0,color:#fff
 ```
 
 ### 8.2.2. Partes del DbContext
@@ -572,7 +572,7 @@ Las relaciones en EF Core pueden configurarse de dos formas:
 1. **Data Annotations** (atributos en las clases) - Más simple
 2. **Fluent API** (en OnModelCreating) - Más flexible
 
-#### 8.2.4.1. Data Annotations (Anotaciones en el Modelo)
+#### 8.2.4.1. Data annotations (anotaciones en el modelo)
 
 ```csharp
 using System.ComponentModel.DataAnnotations;
@@ -668,7 +668,7 @@ namespace BBDD.EFCore.Relaciones.DataAnnotations;
 }
 ```
 
-#### 8.2.4.2. Fluent API (Configuración Avanzada)
+#### 8.2.4.2. Fluent API (configuración avanzada)
 
 ```csharp
 namespace BBDD.EFCore.Relaciones.Fluent;
@@ -757,7 +757,7 @@ namespace BBDD.EFCore.Relaciones.Fluent;
 }
 ```
 
-#### 8.2.4.3. Comparación: Data Annotations vs Fluent API
+#### 8.2.4.3. Comparación: data annotations vs fluent API
 
 | Aspecto             | Data Annotations  |     Fluent API      |
 | :------------------ | :---------------: | :-----------------: |
@@ -832,9 +832,9 @@ namespace BBDD.EFCore.Context;
 }
 ```
 
-## 8.3. Patrón Repository
+## 8.3. Patrón repository
 
-### 8.3.1. Principios del Repository
+### 8.3.1. Principios del repository
 
 ```csharp
 namespace BBDD.Repository;
@@ -1002,7 +1002,7 @@ namespace BBDD.Repository.Generic;
 }
 ```
 
-### 8.3.3. Unit of Work
+### 8.3.3. Unit of work
 
 ```csharp
 namespace BBDD.Repository.UoW;
@@ -1266,7 +1266,7 @@ namespace BBDD.EFCore.Concurrency;
 
 ## 8.5. Consultas LINQ y SQL raw
 
-### 8.5.1. LINQ to Entities
+### 8.5.1. LINQ to entities
 
 ```csharp
 namespace BBDD.EFCore.Linq;
@@ -1441,7 +1441,7 @@ namespace BBDD.EFCore.Execution;
 
 ## 8.6. Migraciones y esquema
 
-### 8.6.1. Code First migrations
+### 8.6.1. Code first migrations
 
 ```csharp
 namespace BBDD.EFCore.Migrations;
@@ -1499,7 +1499,7 @@ namespace BBDD.EFCore.MigrationHistory;
 
 🧠 **Analogía**: El Seed Data es como el "equipamiento inicial" de un video juego. Cuando starts el juego, ya tienes ciertos items, niveles o personajes creados por defecto.
 
-#### 8.6.3.1. Seed Data con HasData (En migraciones)
+#### 8.6.3.1. Seed data con HasData (en migraciones)
 
 Este método guarda los datos en la migración y se ejecuta con `dotnet ef database update`.
 
@@ -1558,7 +1558,7 @@ namespace BBDD.EFCore.SeedData.HasData;
 }
 ```
 
-#### 8.6.3.2. Seed Data con servicio (En tiempo de ejecución)
+#### 8.6.3.2. Seed data con servicio (en tiempo de ejecución)
 
 Este método inserta datos cuando la aplicación starts, sin depender de migraciones.
 
@@ -1600,7 +1600,7 @@ namespace BBDD.EFCore.SeedData.Service;
 }
 ```
 
-#### 8.6.3.3. Seed Data con archivos JSON
+#### 8.6.3.3. Seed data con archivos JSON
 
 Puedes cargar datos desde archivos JSON para mantener el código limpio.
 
@@ -1626,7 +1626,7 @@ namespace BBDD.EFCore.SeedData.Json;
 }
 ```
 
-#### 8.6.3.4. Comparación de métodos de Seed Data
+#### 8.6.3.4. Comparación de métodos de seed data
 
 | Aspecto              | HasData (Migración) | Servicio (Runtime) |      JSON      |
 | :------------------- | :-----------------: | :----------------: | :------------: |

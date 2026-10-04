@@ -1,15 +1,15 @@
-- [10. Seguridad y Monitorización en Aplicaciones Web](#10-seguridad-y-monitorización-en-aplicaciones-web)
-  - [10.1. Conceptos Básicos de Seguridad](#101-conceptos-básicos-de-seguridad)
-  - [10.2. Autenticación: ¿Quién Eres?](#102-autenticación-quién-eres)
-  - [10.3. Autorización: ¿Qué Puedes Hacer?](#103-autorización-qué-puedes-hacer)
-  - [10.4. JWT: JSON Web Tokens](#104-jwt-json-web-tokens)
-  - [10.5. HTTPS: Comunicación Segura](#105-https-comunicación-segura)
-  - [10.6. Otras Amenazas y Buenas Prácticas](#106-otras-amenazas-y-buenas-prácticas)
-  - [10.7. Monitorización: Logs y Herramientas](#107-monitorización-logs-y-herramientas)
-  - [10.8. Rotación de Logs](#108-rotación-de-logs)
+- [10. Seguridad y monitorización en aplicaciones web](#10-seguridad-y-monitorización-en-aplicaciones-web)
+  - [10.1. Conceptos básicos de seguridad](#101-conceptos-básicos-de-seguridad)
+  - [10.2. Autenticación: ¿quién eres?](#102-autenticación-quién-eres)
+  - [10.3. Autorización: ¿qué puedes hacer?](#103-autorización-qué-puedes-hacer)
+  - [10.4. JWT: JSON web tokens](#104-jwt-json-web-tokens)
+  - [10.5. HTTPS: comunicación segura](#105-https-comunicación-segura)
+  - [10.6. Otras amenazas y buenas prácticas](#106-otras-amenazas-y-buenas-prácticas)
+  - [10.7. Monitorización: logs y herramientas](#107-monitorización-logs-y-herramientas)
+  - [10.8. Rotación de logs](#108-rotación-de-logs)
 
 
-# 10. Seguridad y Monitorización en Aplicaciones Web
+# 10. Seguridad y monitorización en aplicaciones web
 
 > 💡 **Punto de partida:** Tu aplicación funciona genial, pero... ¿es segura? ¿Qué pasa si alguien intenta entrar con una contraseña falsa? ¿Y si envía datos maliciosos en un formulario? ¿Cómo sabes si alguien está intentando atacar tu servidor? La seguridad no es opcional: es un requisito básico. Y para detectar problemas, necesitas **monitorización**. Vamos a ver cómo proteger nuestras aplicaciones y cómo detectar fallos.
 
@@ -24,7 +24,7 @@ En este tema aprenderás los conceptos clave de seguridad web (autenticación, a
 - Aprender a monitorizar aplicaciones con logs
 - Conocer herramientas de monitorización y gestión de logs
 
-## 10.1. Conceptos Básicos de Seguridad
+## 10.1. Conceptos básicos de seguridad
 
 La seguridad web se basa en tres pilares fundamentales conocidos como **triada CIA**:
 
@@ -40,10 +40,10 @@ graph TD
     S --> I["✅ Integridad<br/>(Datos no modificados)"]
     S --> D["🌐 Disponibilidad<br/>(Servicio accesible)"]
 
-    style S fill:#f44336,color:#fff
-    style C fill:#2196F3,color:#fff
-    style I fill:#4CAF50,color:#fff
-    style D fill:#FF9800,color:#fff
+    style S fill:#f4433,color:#fff6,color:#fff
+    style C fill:#2196F,color:#fff3,color:#fff
+    style I fill:#4CAF5,color:#fff0,color:#fff
+    style D fill:#FF980,color:#fff0,color:#fff
 ```
 
 📌 **Ejemplo real:** Cuando introduces tu contraseña en Gmail, se envía cifrada (confidencialidad), no puede ser alterada en el camino (integridad) y el servicio está disponible 24/7 (disponibilidad).
@@ -52,11 +52,11 @@ graph TD
 > - **Autenticación (Pasaporte):** Demuestras quién eres en el mostrador del hotel. Te validan y te dan acceso.
 > - **Autorización (Pulsera TI):** Una vez dentro, la pulsera dice qué puedes hacer. ¿Tienes la pulsera "Todo Incluido" (Admin) o la "Solo Desayuno" (User)? Puedes haber identificado perfectamente al huésped (autenticado), pero si su pulsera no da acceso a la zona VIP (autorizado), no entra.
 
-## 10.2. Autenticación: ¿Quién Eres?
+## 10.2. Autenticación: ¿quién eres?
 
 La **autenticación** es el proceso de verificar la identidad de un usuario. "¿Quién eres?"
 
-### Métodos de Autenticación
+### Métodos de autenticación
 
 | Método | Descripción | Seguridad | Cuándo usarlo |
 |--------|-------------|-----------|---------------|
@@ -130,7 +130,7 @@ app.MapGet("/api/datos-privados", () =>
 app.Run();
 ```
 
-## 10.3. Autorización: ¿Qué Puedes Hacer?
+## 10.3. Autorización: ¿qué puedes hacer?
 
 La **autorización** determina qué puede hacer un usuario una vez autenticado. "¿Qué permisos tienes?"
 
@@ -172,7 +172,7 @@ app.MapGet("/api/publico", () =>
 >
 > Primero te autenticas, luego el sistema comprueba qué estás autorizado a hacer.
 
-## 10.4. JWT: JSON Web Tokens
+## 10.4. JWT: JSON web tokens
 
 **JWT** (JSON Web Tokens) es el estándar actual para autenticación en APIs. Un JWT es un token firmado que contiene datos del usuario.
 
@@ -194,10 +194,10 @@ graph LR
     P --> J
     S --> J
 
-    style H fill:#2196F3,color:#fff
-    style P fill:#4CAF50,color:#fff
-    style S fill:#f44336,color:#fff
-    style J fill:#9C27B0,color:#fff
+    style H fill:#2196F,color:#fff3,color:#fff
+    style P fill:#4CAF5,color:#fff0,color:#fff
+    style S fill:#f4433,color:#fff6,color:#fff
+    style J fill:#9C27B,color:#fff0,color:#fff
 ```
 
 📌 **Ejemplo real:** Cuando haces login en una SPA (Single Page Application) con React:
@@ -211,7 +211,7 @@ graph LR
 
 > ⚠️ **Advertencia:** **NUNCA** guardes datos sensibles en el payload de un JWT (como contraseñas o datos bancarios). El payload se puede leer (aunque no modificar sin la firma). Guarda solo datos no sensibles como ID, nombre y rol.
 
-## 10.5. HTTPS: Comunicación Segura
+## 10.5. HTTPS: comunicación segura
 
 **HTTPS** es HTTP con cifrado SSL/TLS. La "S" significa **Secure** (seguro).
 
@@ -250,9 +250,9 @@ sequenceDiagram
 
 > 💡 **Consejo:** Para el examen, recuerda que HTTPS = HTTP + cifrado SSL/TLS. Usa siempre HTTPS en producción. Let's Encrypt ofrece certificados gratuitos.
 
-## 10.6. Otras Amenazas y Buenas Prácticas
+## 10.6. Otras amenazas y buenas prácticas
 
-### Principales Amenazas de Seguridad
+### Principales amenazas de seguridad
 
 | Amenaza | Descripción | Cómo prevenirla |
 |---------|-------------|-----------------|
@@ -273,7 +273,7 @@ using var command = new SqlCommand(consultaBuena, conexion);
 command.Parameters.AddWithValue("@Email", email);
 ```
 
-### Buenas Prácticas de Seguridad
+### Buenas prácticas de seguridad
 
 | Práctica | Descripción |
 |----------|-------------|
@@ -286,11 +286,11 @@ command.Parameters.AddWithValue("@Email", email);
 
 > 📝 **Nota:** La regla de oro de la seguridad: **NUNCA confíes en el cliente**. Siempre valida los datos en el servidor. Un atacante puede desactivar JavaScript, modificar formularios y enviar cualquier cosa al servidor.
 
-## 10.7. Monitorización: Logs y Herramientas
+## 10.7. Monitorización: logs y herramientas
 
 Los **logs** son la "caja negra" del servidor. Si algo falla, lo primero que se mira es el log.
 
-### Tipos de Logs
+### Tipos de logs
 
 | Tipo | Contenido | Ejemplo de uso |
 |------|-----------|----------------|
@@ -299,7 +299,7 @@ Los **logs** son la "caja negra" del servidor. Si algo falla, lo primero que se 
 | **Application Log** | Registros de la aplicación (personalizados) | Seguimiento de procesos de negocio |
 | **Security Log** | Intentos de login, accesos no autorizados | Detectar intrusiones |
 
-### Formato de Log CLF (Common Log Format)
+### Formato de log CLF (common log format)
 
 ```
 192.168.1.100 - ana@email.com [06/Sep/2026:10:30:00 +0100] "GET /api/usuarios HTTP/1.1" 200 1234
@@ -350,7 +350,7 @@ app.Run();
 
 > 💡 **Consejo:** Cuando algo no funcione, lo primero que te diré es: **"¿Qué dice el log?"**. Acostúmbrate a leer `/var/log/apache2/error.log` o equivalente. Los logs son tu mejor amigo para diagnosticar problemas.
 
-## 10.8. Rotación de Logs
+## 10.8. Rotación de logs
 
 Los logs ocupan espacio. Si no se gestionan, el disco duro se llena y el servidor se cae. La **rotación de logs** consiste en:
 
@@ -386,10 +386,10 @@ graph LR
     B -->|"Compresión"| C["🗜️ Logs Comprimidos<br/>(.gz)"]
     C -->|"Borrado"| D["🗑️ Logs Antiguos<br/>(Eliminados)"]
 
-    style A fill:#f44336,color:#fff
-    style B fill:#FF9800,color:#fff
-    style C fill:#4CAF50,color:#fff
-    style D fill:#607D8B,color:#fff
+    style A fill:#f4433,color:#fff6,color:#fff
+    style B fill:#FF980,color:#fff0,color:#fff
+    style C fill:#4CAF5,color:#fff0,color:#fff
+    style D fill:#607D8,color:#fffB,color:#fff
 ```
 
 > ⚠️ **Advertencia:** Si no rotas los logs, el disco duro se llena y el servidor se cae. Siempre configura logrotate o una herramienta equivalente.

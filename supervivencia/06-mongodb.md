@@ -1,4 +1,4 @@
-# MongoDB — Instrucciones de Supervivencia
+# MongoDB — instrucciones de supervivencia
 
 > Referencia rápida de MongoDB (mongo shell y MongoDB Compass).
 
@@ -167,7 +167,7 @@ db.productos.dropIndex("nombre_1")
 
 > 💡 **Consejo:** Crea un índice en `_id` (ya existe por defecto) y en campos que usas en `find()` frecuentemente. El índice compuesto sirve para búsquedas que usan ambos campos.
 
-## Aggregation Pipeline
+## Aggregation pipeline
 
 ```bash
 # Agrupar y contar

@@ -1,16 +1,16 @@
-# Práctica 6: Servicio con Almacenamiento Local y Remoto en .NET
+# Práctica 6: servicio con almacenamiento local y remoto en .NET
 
-- [Práctica 6: Servicio con Almacenamiento Local y Remoto en .NET](#práctica-6-servicio-con-almacenamiento-local-y-remoto-en-net)
+- [Práctica 6: servicio con almacenamiento local y remoto en .NET](#práctica-6-servicio-con-almacenamiento-local-y-remoto-en-net)
   - [Objetivo](#objetivo)
   - [Descripción](#descripción)
-    - [Diagrama de Secuencia: Obtener usuario por ID](#diagrama-de-secuencia-obtener-usuario-por-id)
-    - [Diagrama de Secuencia: Crear usuario](#diagrama-de-secuencia-crear-usuario)
-    - [Diagrama de Secuencia: Sincronización cada 60s](#diagrama-de-secuencia-sincronización-cada-60s)
-    - [Diagrama de Secuencia: Eliminar usuario](#diagrama-de-secuencia-eliminar-usuario)
+    - [Diagrama de secuencia: obtener usuario por ID](#diagrama-de-secuencia-obtener-usuario-por-id)
+    - [Diagrama de secuencia: crear usuario](#diagrama-de-secuencia-crear-usuario)
+    - [Diagrama de secuencia: sincronización cada 60s](#diagrama-de-secuencia-sincronización-cada-60s)
+    - [Diagrama de secuencia: eliminar usuario](#diagrama-de-secuencia-eliminar-usuario)
   - [Tecnologías](#tecnologías)
-  - [Docker Compose](#docker-compose)
+  - [Docker compose](#docker-compose)
     - [Conexión desde la app](#conexión-desde-la-app)
-  - [Comportamiento del Sistema](#comportamiento-del-sistema)
+  - [Comportamiento del sistema](#comportamiento-del-sistema)
     - [Al arrancar la aplicación](#al-arrancar-la-aplicación)
     - [Cada 60 segundos (BackgroundService)](#cada-60-segundos-backgroundservice)
     - [GET /api/users (obtener todos)](#get-apiusers-obtener-todos)
@@ -19,13 +19,13 @@
     - [PUT /api/users/{id} (actualizar)](#put-apiusersid-actualizar)
     - [DELETE /api/users/{id} (eliminar)](#delete-apiusersid-eliminar)
     - [GET /api/users/export (exportar a JSON)](#get-apiusersexport-exportar-a-json)
-  - [Servicio de Notificaciones](#servicio-de-notificaciones)
-  - [Requisitos Técnicos](#requisitos-técnicos)
+  - [Servicio de notificaciones](#servicio-de-notificaciones)
+  - [Requisitos técnicos](#requisitos-técnicos)
     - [Arquitectura y código:](#arquitectura-y-código)
     - [Testing:](#testing)
     - [Documentación:](#documentación)
     - [Opcional (se valorará):](#opcional-se-valorará)
-  - [Estructura de Proyecto](#estructura-de-proyecto)
+  - [Estructura de proyecto](#estructura-de-proyecto)
 
 ---
 
@@ -57,10 +57,10 @@ graph LR
     B -->|Respuesta| A
     A -->|Respuesta| D
 
-    style A fill:#FF9800,color:#fff
-    style B fill:#2196F3,color:#fff
-    style C fill:#4CAF50,color:#fff
-    style D fill:#7c3aed,color:#fff
+    style A fill:#FF980,color:#fff0,color:#fff
+    style B fill:#2196F,color:#fff3,color:#fff
+    style C fill:#4CAF5,color:#fff0,color:#fff
+    style D fill:#7c3ae,color:#fffd,color:#fff
 ```
 
 **Flujo de datos:**
@@ -68,7 +68,7 @@ graph LR
 - Escritura: API REST → BD local → caché
 - Sincronización: cada 60 segundos, BackgroundService limpia y recarga desde la API
 
-### Diagrama de Secuencia: Obtener usuario por ID
+### Diagrama de secuencia: obtener usuario por ID
 
 ```mermaid
 sequenceDiagram
@@ -109,7 +109,7 @@ sequenceDiagram
     end
 ```
 
-### Diagrama de Secuencia: Crear usuario
+### Diagrama de secuencia: crear usuario
 
 ```mermaid
 sequenceDiagram
@@ -130,7 +130,7 @@ sequenceDiagram
     API-->>C: 201 Created + usuario
 ```
 
-### Diagrama de Secuencia: Sincronización cada 60s
+### Diagrama de secuencia: sincronización cada 60s
 
 ```mermaid
 sequenceDiagram
@@ -149,7 +149,7 @@ sequenceDiagram
     end
 ```
 
-### Diagrama de Secuencia: Eliminar usuario
+### Diagrama de secuencia: eliminar usuario
 
 ```mermaid
 sequenceDiagram
@@ -187,11 +187,11 @@ sequenceDiagram
 
 ---
 
-## Docker Compose
+## Docker compose
 
 El ejemplo base NO necesita Docker Compose (SQLite y MemoryCache funcionan sin infraestructura externa).
 
-### Opcional: Ampliar con PostgreSQL y Redis
+### Opcional: ampliar con PostgreSQL y Redis
 
 Si quieres ampliar el proyecto, puedes sustituir SQLite por PostgreSQL y MemoryCache por Redis:
 
@@ -243,7 +243,7 @@ docker exec -it repositorio-redis redis-cli ping  # → PONG
 
 ---
 
-## Comportamiento del Sistema
+## Comportamiento del sistema
 
 ### Al arrancar la aplicación
 - Se borra la base de datos local
@@ -292,7 +292,7 @@ docker exec -it repositorio-redis redis-cli ping  # → PONG
 
 ---
 
-## Servicio de Notificaciones
+## Servicio de notificaciones
 
 Se debe implementar un servicio de notificaciones usando **programación reactiva** con `System.Reactive` (Rx.NET).
 
@@ -304,7 +304,7 @@ Requisitos:
 
 ---
 
-## Requisitos Técnicos
+## Requisitos técnicos
 
 ### Arquitectura y código:
 - ✅ Todo asíncrono (`async`/`Task<T>`)
@@ -333,7 +333,7 @@ Requisitos:
 
 ---
 
-## Estructura de Proyecto
+## Estructura de proyecto
 
 ```
 MiServicio/

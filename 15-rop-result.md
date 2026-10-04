@@ -1,21 +1,21 @@
-- [15. Patrón Result vs Excepciones (ROP)](#15-patrón-result-vs-excepciones-rop)
-  - [15.1. El Problema de las Excepciones](#151-el-problema-de-las-excepciones)
-  - [15.2. Union Types: un tipo que puede ser dos cosas](#152-union-types-un-tipo-que-puede-ser-dos-cosas)
-  - [15.3. La Metáfora del Tren](#153-la-metáfora-del-tren)
-  - [15.4. Errores de Dominio](#154-errores-de-dominio)
-  - [15.5. El Tipo Result](#155-el-tipo-result)
+- [15. Patrón result vs excepciones (ROP)](#15-patrón-result-vs-excepciones-rop)
+  - [15.1. El problema de las excepciones](#151-el-problema-de-las-excepciones)
+  - [15.2. Union types: un tipo que puede ser dos cosas](#152-union-types-un-tipo-que-puede-ser-dos-cosas)
+  - [15.3. La metáfora del tren](#153-la-metáfora-del-tren)
+  - [15.4. Errores de dominio](#154-errores-de-dominio)
+  - [15.5. El tipo result](#155-el-tipo-result)
   - [15.6. CSharpFunctionalExtensions](#156-csharpfunctionalextensions)
-  - [15.7. Operaciones con Result](#157-operaciones-con-result)
-  - [15.8. El Tipo Maybe](#158-el-tipo-maybe)
-  - [15.9. Result vs Excepciones: Cuándo Usar Cada Uno](#159-result-vs-excepciones-cuándo-usar-cada-uno)
+  - [15.7. Operaciones con result](#157-operaciones-con-result)
+  - [15.8. El tipo maybe](#158-el-tipo-maybe)
+  - [15.9. Result vs excepciones: cuándo usar cada uno](#159-result-vs-excepciones-cuándo-usar-cada-uno)
   - [15.10. Result con Async/Await](#1510-result-con-asyncawait)
-  - [15.11. Patrón Validator con Result.Combine](#1511-patrón-validator-con-resultcombine)
-  - [15.12. Maybe vs Result vs Nullable](#1512-maybe-vs-result-vs-nullable)
-  - [15.13. Ejemplo Completo](#1513-ejemplo-completo)
-  - [15.14. Buenas Prácticas](#1514-buenas-prácticas)
+  - [15.11. Patrón validator con Result.Combine](#1511-patrón-validator-con-resultcombine)
+  - [15.12. Maybe vs result vs nullable](#1512-maybe-vs-result-vs-nullable)
+  - [15.13. Ejemplo completo](#1513-ejemplo-completo)
+  - [15.14. Buenas prácticas](#1514-buenas-prácticas)
 
 
-# 15. Patrón Result vs Excepciones (ROP)
+# 15. Patrón result vs excepciones (ROP)
 
 > 💡 **Punto de partida:** Si intentas abrir una puerta y no tiene cerradura, ¿lanzas una excepción? No. Simplemente dices "no se puede abrir". Las excepciones fueron diseñadas para errores inesperados (base de datos caída, archivo corrupto), pero frecuentemente se usan para control de flujo ("usuario no encontrado", "email ya existe"). **Railway Oriented Programming (ROP)** es un patrón funcional que modela el éxito y el error como dos vías de un tren.
 
@@ -29,7 +29,7 @@ En este tema aprenderás a manejar errores sin excepciones usando `Result<T, TEr
 - Usar `Result<T, TError>` con Bind, Map, Ensure, Tap, Match
 - Usar `Maybe<T>` y convertirlo a Result con `ToResult()`
 
-## 15.1. El Problema de las Excepciones
+## 15.1. El problema de las excepciones
 
 Las excepciones fueron diseñadas para **situaciones excepcionales**, pero se usan frecuentemente para control de flujo:
 
@@ -58,13 +58,13 @@ public Persona? GetPersona(int id)
 
 > 📝 **Nota:** Lanzar una excepción es como usar un martillo para matar una mosca. Funciona, pero es excesivo. Las excepciones deberían ser para situaciones realmente excepcionales (base de datos no disponible, archivo corrupto), no para "el usuario no existe".
 
-## 15.2. Union Types: un tipo que puede ser dos cosas
+## 15.2. Union types: un tipo que puede ser dos cosas
 
 Antes de entender `Result`, necesitas entender qué es un **Union Type**.
 
 Un **Union Type** es un tipo que puede contener **exactamente uno** de varios tipos posibles. No es una clase con varias propiedades, sino un tipo que está en **uno u otro estado**, nunca en ambos.
 
-### Union Types en C# 15 (propuesta)
+### Union types en C# 15 (propuesta)
 
 C# 15 prevé el keyword `union` para declarar union types de forma nativa (aún en desarrollo). Veámoslo con un dominio real: gestionar productos.
 
@@ -144,7 +144,7 @@ of its input type (it is not exhaustive).
 
 Esto es algo que **no puedes hacer** con clases heredadas o interfaces: el compilador nunca te avisa si olvidas un `case` en un `switch` sobre una interfaz.
 
-### Comparación: Union Types vs herencia
+### Comparación: union types vs herencia
 
 | Enfoque | Sintaxis | Exhaustividad | Cerrado |
 |---------|----------|----------------|---------|
@@ -170,7 +170,7 @@ Result<Producto, DomainError> resultado = service.CrearProducto(dto);
 
 > 📝 **Nota:** Cuando .NET 11 salga de preview y sea estable, podremos usar `union` nativo. Mientras tanto, el patrón con la biblioteca funciona perfectamente y es lo que se usa en producción. El concepto es el mismo: un tipo que puede ser éxito O error, nunca ambos.
 
-## 15.3. La Metáfora del Tren
+## 15.3. La metáfora del tren
 
 **Railway Oriented Programming (ROP)** modela el flujo como un tren con dos vías:
 
@@ -195,10 +195,10 @@ flowchart LR
 
     I --> Op
 
-    style ST fill:#4CAF50,color:#fff
-    style FT fill:#f44336,color:#fff
-    style SV fill:#2196F3,color:#fff
-    style SE fill:#2196F3,color:#fff
+    style ST fill:#4CAF5,color:#fff0,color:#fff
+    style FT fill:#f4433,color:#fff6,color:#fff
+    style SV fill:#2196F,color:#fff3,color:#fff
+    style SE fill:#2196F,color:#fff3,color:#fff
 ```
 
 **Concepto clave:**
@@ -209,7 +209,7 @@ flowchart LR
 
 > 💡 **Analogía:** ROP es como un semáforo con dos luces: verde (éxito) y rojo (error). Si un semáforo en tu ruta está en rojo, no necesitas revisar todos los demás: el error se detiene en ese punto.
 
-## 15.4. Errores de Dominio
+## 15.4. Errores de dominio
 
 Los errores de dominio se definen como `abstract record` con records anidados. Un **factory** evita el casting explícito:
 
@@ -250,7 +250,7 @@ public static class DomainErrors
 
 > 📝 **Nota:** C# no permite covarianza implícita con tipos genéricos heredados. Al usar `Result<T, DomainError>`, no podemos hacer `new DomainError.NotFound()` directamente porque el compilador no infiere el tipo base automáticamente. Los métodos factory resuelven esto.
 
-## 15.5. El Tipo Result
+## 15.5. El tipo result
 
 `Result<TValue, TError>` representa éxito o fracaso:
 
@@ -297,9 +297,9 @@ Aprovecha para configurar el logging que usaremos con las operaciones `Tap` y `T
 }
 ```
 
-## 15.7. Operaciones con Result
+## 15.7. Operaciones con result
 
-### Tabla Completa de Operaciones
+### Tabla completa de operaciones
 
 | Operación | Descripción | Firma típica | Ejemplo |
 |-----------|-------------|---------------|---------|
@@ -316,7 +316,7 @@ Aprovecha para configurar el logging que usaremos con las operaciones `Tap` y `T
 | **ToResult** | Convertir Maybe a Result | `Maybe<T> → E → Result<T,E>` | `maybe.ToResult(error)` |
 | **Combine** | Combinar múltiples Results | `Result<T,E>... → Result<T,E>` | `Result.Combine(combinar, r1, r2, r3)` |
 
-### Success y Failure: Crear Resultados
+### Success y failure: crear resultados
 
 ```csharp
 // Crear resultado de éxito
@@ -326,7 +326,7 @@ var ok = Result.Success<Persona, DomainError>(new Persona { Nombre = "Ana" });
 var fail = Result.Failure<Persona, DomainError>(DomainErrors.NotFound(1));
 ```
 
-### Bind: Encadenar Operaciones que Pueden Fallar
+### Bind: encadenar operaciones que pueden fallar
 
 ```csharp
 // Sin Result: anidamiento de null checks
@@ -359,15 +359,15 @@ flowchart LR
         D -->|"✅ Éxito"| F["📤 Resultado"]
     end
 
-    style A fill:#2196F3,color:#fff
-    style F fill:#4CAF50,color:#fff
-    style E fill:#f44336,color:#fff
+    style A fill:#2196F,color:#fff3,color:#fff
+    style F fill:#4CAF5,color:#fff0,color:#fff
+    style E fill:#f4433,color:#fff6,color:#fff
 ```
 
 > 💡 **Analogía — La Tubería:**
 > `Bind` es como una tubería de agua. Si el agua fluye bien, pasa por todos los tramos y sale limpia al final. Pero si en algún punto el tubo está roto (error), el agua se detiene ahí y no llega al final. No necesitas revisar todos los tramos — el agua para donde se rompe.
 
-### Map: Transformar el Valor
+### Map: transformar el valor
 
 ```csharp
 // Transformar el valor en caso de éxito
@@ -375,14 +375,14 @@ Result<string, DomainError> nombre = resultado
     .Map(p => p.Nombre);  // Result<Persona, Error> → Result<string, Error>
 ```
 
-### MapError: Transformar el Error
+### MapError: transformar el error
 
 ```csharp
 var resultadoProcesado = resultado
     .MapError(e => new DomainError.Validation([$"Error: {e.Message}"]));
 ```
 
-### Ensure: Validación Condicional
+### Ensure: validación condicional
 
 ```csharp
 var validado = ObtenerPersona(1)
@@ -390,7 +390,7 @@ var validado = ObtenerPersona(1)
     .Ensure(p => p.Edad >= 18, new DomainError.Validation(["Menor de edad"]));
 ```
 
-### Tap: Efectos Secundarios
+### Tap: efectos secundarios
 
 ```csharp
 public class PersonaService(IPersonaRepository repository, ILogger<PersonaService> logger) : IPersonaService
@@ -404,7 +404,7 @@ public class PersonaService(IPersonaRepository repository, ILogger<PersonaServic
 }
 ```
 
-### Match: Consumir el Resultado
+### Match: consumir el resultado
 
 ```csharp
 resultado.Match(
@@ -413,7 +413,7 @@ resultado.Match(
 );
 ```
 
-### OnFailureCompensate: Patrón de Recuperación
+### OnFailureCompensate: patrón de recuperación
 
 ```csharp
 public Result<Persona, DomainError> GetById(int id)
@@ -426,7 +426,7 @@ public Result<Persona, DomainError> GetById(int id)
 
 > 💡 **Consejo:** `OnFailureCompensate` es útil para patrones de recuperación. Si la caché falla, intenta en la BD. Si la BD primaria falla, intenta en la secundaria.
 
-## 15.8. El Tipo Maybe
+## 15.8. El tipo maybe
 
 **Maybe** (también llamado Option) representa un valor que puede existir o no. Es la alternativa funcional a `null`:
 
@@ -438,7 +438,7 @@ Persona? ObtenerPersona(int id);
 Maybe<Persona> ObtenerPersona(int id);
 ```
 
-### Crear Maybe
+### Crear maybe
 
 ```csharp
 // Con valor
@@ -448,7 +448,7 @@ Maybe<Persona> conValor = Maybe.From(persona);
 Maybe<Persona> sinValor = Maybe<Persona>.None;
 ```
 
-### Operaciones con Maybe
+### Operaciones con maybe
 
 ```csharp
 // HasValue / HasNoValue
@@ -462,7 +462,7 @@ Maybe<Persona> activo = maybe.Where(p => p.IsActive);
 Maybe<string> nombre = maybe.Map(p => p.Nombre);
 ```
 
-### Maybe a Result: ToResult
+### Maybe a result: ToResult
 
 ```csharp
 // Maybe → Result
@@ -476,7 +476,7 @@ Result<Persona, DomainError> resultado = persona
 
 > ⚠️ **Advertencia:** `ToResult()` de CSharpFunctionalExtensions solo acepta `string` como error. Para usar tipos personalizados como `DomainError`, necesitas crear una extensión propia (ver ejemplo completo en 15.13).
 
-### ¿Cuándo usar Maybe vs Result?
+### ¿Cuándo usar maybe vs result?
 
 | Escenario | Tipo recomendado |
 |-----------|-----------------|
@@ -485,7 +485,7 @@ Result<Persona, DomainError> resultado = persona
 | Null significa "no encontrado" | `Maybe<T>` → `ToResult()` |
 | Error con contexto (validación, negocio) | `Result<T, Error>` |
 
-## 15.9. Result vs Excepciones: Cuándo Usar Cada Uno
+## 15.9. Result vs excepciones: cuándo usar cada uno
 
 | Situación | Usar | Ejemplo |
 |-----------|------|---------|
@@ -552,7 +552,7 @@ sequenceDiagram
 
 > ⚠️ **Advertencia:** No mezcles `Result` con `async void`. Siempre usa `async Task<Result<T, E>>` para que el error se propague correctamente.
 
-## 15.11. Patrón Validator con Result.Combine
+## 15.11. Patrón validator con Result.Combine
 
 `Result.Combine` permite validar múltiples condiciones y agrupar los errores. Es ideal para formularios donde quieres mostrar **todos** los errores de golpe, no solo el primero.
 
@@ -601,14 +601,14 @@ flowchart TD
     E -->|"Todos OK"| F["✅ Success"]
     E -->|"Alguno falla"| G["❌ Failure (todos los errores)"]
 
-    style A fill:#2196F3,color:#fff
-    style F fill:#4CAF50,color:#fff
-    style G fill:#f44336,color:#fff
+    style A fill:#2196F,color:#fff3,color:#fff
+    style F fill:#4CAF5,color:#fff0,color:#fff
+    style G fill:#f4433,color:#fff6,color:#fff
 ```
 
 > 💡 **Consejo:** `Result.Combine` es útil para formularios web donde quieres mostrar todos los errores al usuario de una vez, no ir campo por campo.
 
-## 15.12. Maybe vs Result vs Nullable
+## 15.12. Maybe vs result vs nullable
 
 | Tipo | Qué representa | Cuándo usarlo | Ejemplo |
 |------|----------------|---------------|---------|
@@ -626,10 +626,10 @@ flowchart LR
     C -->|"Consumir"| F[".Match(ok, fail)"]
     D -->|"Convertir a Maybe"| G["Maybe.From(valor)"]
 
-    style A fill:#2196F3,color:#fff
-    style B fill:#4CAF50,color:#fff
-    style C fill:#FF9800,color:#fff
-    style D fill:#9C27B0,color:#fff
+    style A fill:#2196F,color:#fff3,color:#fff
+    style B fill:#4CAF5,color:#fff0,color:#fff
+    style C fill:#FF980,color:#fff0,color:#fff
+    style D fill:#9C27B,color:#fff0,color:#fff
 ```
 
 ```csharp
@@ -653,9 +653,9 @@ resultado.Match(
 
 > 💡 **Regla:** Si solo necesitas "existe/no existe" → `Maybe<T>`. Si necesitas saber **por qué** falló → `Result<T, E>`. Si es un campo simple que puede ser null → `T?`.
 
-## 15.13. Ejemplo Completo
+## 15.13. Ejemplo completo
 
-### Errores de Dominio
+### Errores de dominio
 
 ```csharp
 namespace Academia.Errors;
@@ -684,7 +684,7 @@ public static class DomainErrors
 }
 ```
 
-### Extensión para Maybe.ToResult con Tipos Personalizados
+### Extensión para Maybe.ToResult con tipos personalizados
 
 ```csharp
 using CF = CSharpFunctionalExtensions;
@@ -712,7 +712,7 @@ public static class MaybeExtensions
 }
 ```
 
-### Servicio con Result (Patrón ROP)
+### Servicio con result (patrón ROP)
 
 ```csharp
 public class PersonaService(
@@ -800,7 +800,7 @@ error.Match(
 );
 ```
 
-## 15.14. Buenas Prácticas
+## 15.14. Buenas prácticas
 
 - **Result en vez de excepciones**: Para errores controlados. Más explícito y funcional
 - **Result sin valor de retorno**: Para operaciones que no devuelven resultado, usa `Result` (sin tipo de valor) en vez de `void` o null

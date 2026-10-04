@@ -1,12 +1,12 @@
-- [2. Componentes de una Aplicación Web](#2-componentes-de-una-aplicación-web)
-  - [2.1. Front-end y Back-end: La División del Trabajo](#21-front-end-y-back-end-la-división-del-trabajo)
-  - [2.2. El Back-end es Universal](#22-el-back-end-es-universal)
-  - [2.3. Página Web vs. Aplicación Web](#23-página-web-vs-aplicación-web)
-  - [2.4. Buenas Prácticas](#24-buenas-prácticas)
+- [2. Componentes de una aplicación web](#2-componentes-de-una-aplicación-web)
+  - [2.1. Front-end y back-end: la división del trabajo](#21-front-end-y-back-end-la-división-del-trabajo)
+  - [2.2. El back-end es universal](#22-el-back-end-es-universal)
+  - [2.3. Página web vs. aplicación web](#23-página-web-vs-aplicación-web)
+  - [2.4. Buenas prácticas](#24-buenas-prácticas)
 
 
 
-# 2. Componentes de una Aplicación Web
+# 2. Componentes de una aplicación web
 
 > 💡 **Punto de partida:** Has visto que una aplicación web tiene dos partes: lo que se ve en el navegador y lo que ocurre en el servidor. Pero, ¿qué componentes concretos forman cada parte? ¿Y por qué el mismo Back-end puede alimentar una web, una app móvil y un escritorio?
 
@@ -19,7 +19,7 @@ En este tema aprenderás los componentes que forman una aplicación web, cómo s
 - Distinguir entre una página web estática y una aplicación web dinámica
 - Conocer las tecnologías más usadas en cada lado
 
-## 2.1. Front-end y Back-end: La División del Trabajo
+## 2.1. Front-end y back-end: la división del trabajo
 
 Una aplicación web se compone de dos partes fundamentales que trabajan juntas pero tienen responsabilidades diferentes:
 
@@ -45,13 +45,13 @@ graph LR
     FRONTEND -->|"Petición HTTP"| BACKEND
     BACKEND -->|"Respuesta HTTP"| FRONTEND
 
-    style FRONTEND fill:#2196F3,color:#fff
-    style BACKEND fill:#4CAF50,color:#fff
+    style FRONTEND fill:#2196F,color:#fff3,color:#fff
+    style BACKEND fill:#4CAF5,color:#fff0,color:#fff
 ```
 
 > 📝 **Nota:** El Front-end es lo que el usuario ve y toca. El Back-end es todo lo que ocurre "detrás de la cortina". Ambos se comunican a través de **peticiones HTTP** y respuestas en formato **JSON** o **XML**.
 
-## 2.2. El Back-end es Universal
+## 2.2. El back-end es universal
 
 Uno de los conceptos más importantes es que **el Back-end no es solo para la web**. Un mismo Back-end puede servir datos a múltiples clientes:
 
@@ -66,11 +66,11 @@ graph TD
     D["🖥️ Escritorio<br/>(WPF/WinForms)"] -->|"HTTP/JSON"| A
     E["⌚ Smartwatch<br/>(WearOS)"] -->|"HTTP/JSON"| A
 
-    style BACKEND fill:#4CAF50,color:#fff
-    style B fill:#2196F3,color:#fff
-    style C fill:#FF9800,color:#fff
-    style D fill:#9C27B0,color:#fff
-    style E fill:#f44336,color:#fff
+    style BACKEND fill:#4CAF5,color:#fff0,color:#fff
+    style B fill:#2196F,color:#fff3,color:#fff
+    style C fill:#FF980,color:#fff0,color:#fff
+    style D fill:#9C27B,color:#fff0,color:#fff
+    style E fill:#f4433,color:#fff6,color:#fff
 ```
 
 📌 **Ejemplo real:** Netflix no se apoya en una única tecnología: combina varias en su back-end (Java entre ellas, junto a otros lenguajes y servicios). Esa misma plataforma de servicios alimenta:
@@ -92,7 +92,7 @@ El Back-end **no sabe ni le importa** qué cliente le está pidiendo datos. Solo
 
 > 📝 **Nota:** Esta es la razón por la que decimos que el Back-end es **agnóstico al cliente**. Puede servir a una web, una app móvil, un smartwatch o incluso un coche conectado. Todos hablan el mismo idioma: **HTTP + JSON**.
 
-## 2.3. Página Web vs. Aplicación Web
+## 2.3. Página web vs. aplicación web
 
 No es lo mismo una página web que una aplicación web. Es una diferencia fundamental:
 
@@ -110,7 +110,7 @@ No es lo mismo una página web que una aplicación web. Es una diferencia fundam
 
 > ⚠️ **Advertencia:** No confundas "página web" con "sitio web". Un sitio web es un conjunto de páginas web. Un blog puede ser un sitio web de páginas web estáticas, pero un foro es un sitio web con una aplicación web.
 
-## 2.4. Buenas Prácticas
+## 2.4. Buenas prácticas
 
 - **Separación clara**: Front-end y Back-end con responsabilidades distintas. Nunca mezclar presentación con lógica de negocio
 - **Back-end agnóstico**: Diseña APIs que sirvan a cualquier cliente (web, móvil, escritorio)

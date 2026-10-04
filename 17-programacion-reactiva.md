@@ -1,15 +1,15 @@
-- [17. Programación Reactiva en C#](#17-programación-reactiva-en-c)
-  - [17.1. Flujos de Datos: El Nuevo Paradigma](#171-flujos-de-datos-el-nuevo-paradigma)
-  - [17.2. IAsyncEnumerable: Flujos Fríos](#172-iasyncenumerable-flujos-fríos)
-  - [17.3. IObservable: Flujos Calientes](#173-iobservable-flujos-calientes)
-  - [17.4. Rx.NET: Programación Reactiva](#174-rxnet-programación-reactiva)
-  - [17.5. Subject y Subject Specialized](#175-subject-y-subject-specialized)
+- [17. Programación reactiva en C#](#17-programación-reactiva-en-c)
+  - [17.1. Flujos de datos: el nuevo paradigma](#171-flujos-de-datos-el-nuevo-paradigma)
+  - [17.2. IAsyncEnumerable: flujos fríos](#172-iasyncenumerable-flujos-fríos)
+  - [17.3. IObservable: flujos calientes](#173-iobservable-flujos-calientes)
+  - [17.4. Rx.NET: programación reactiva](#174-rxnet-programación-reactiva)
+  - [17.5. Subject y subject specialized](#175-subject-y-subject-specialized)
   - [17.6. Operadores de Rx.NET](#176-operadores-de-rxnet)
-  - [17.7. Cuándo Usar Cada Uno](#177-cuándo-usar-cada-uno)
-  - [17.8. Buenas Prácticas](#178-buenas-prácticas)
+  - [17.7. Cuándo usar cada uno](#177-cuándo-usar-cada-uno)
+  - [17.8. Buenas prácticas](#178-buenas-prácticas)
 
 
-# 17. Programación Reactiva en C#
+# 17. Programación reactiva en C#
 
 > 💡 **Punto de partida:** Has visto `async/await` para operaciones individuales, pero... ¿qué pasa cuando necesitas manejar un **flujo continuo** de datos? Como un chat en tiempo real, las notificaciones de una red social o los sensores de un IoT. No es una sola petición-respuesta, sino un **río de datos** que fluye constantemente. La Programación Reactiva te permite trabajar con estos flujos de forma declarativa y elegante.
 
@@ -23,7 +23,7 @@ En este tema aprenderás los dos tipos de flujos en C#: `IAsyncEnumerable` (frí
 - Aplicar operadores: Map, Filter, Merge, Throttle, Switch
 - Distinguir cuándo usar IAsyncEnumerable vs IObservable
 
-## 17.1. Flujos de Datos: El Nuevo Paradigma
+## 17.1. Flujos de datos: el nuevo paradigma
 
 La programación tradicional es **request-response**: haces una pregunta, obtienes una respuesta. La programación reactiva es **flujos de datos**: te suscribes a un flujo y recibes datos cuando llegan.
 
@@ -39,8 +39,8 @@ graph LR
         E --> F["📦 Dato N"]
     end
 
-    style TRADICIONAL fill:#2196F3,color:#fff
-    style REACTIVO fill:#4CAF50,color:#fff
+    style TRADICIONAL fill:#2196F,color:#fff3,color:#fff
+    style REACTIVO fill:#4CAF5,color:#fff0,color:#fff
 ```
 
 | Paradigma | Modelo | Ejemplo |
@@ -50,7 +50,7 @@ graph LR
 
 📌 **Ejemplo real:** Instagram no te envía una notificación cada vez que hay una foto nueva. Te suscribes a tu feed y los datos fluyen hacia ti automáticamente. Eso es programación reactiva.
 
-### Flujos Fríos vs Calientes
+### Flujos fríos vs calientes
 
 Hay dos tipos de flujos. La diferencia es **cuándo empiezan a emitir datos**:
 
@@ -70,8 +70,8 @@ graph LR
         B6["Suscriptor 2 entra"] --> B4
     end
 
-    style FRIO fill:#2196F3,color:#fff
-    style CALIENTE fill:#FF9800,color:#fff
+    style FRIO fill:#2196F,color:#fff3,color:#fff
+    style CALIENTE fill:#FF980,color:#fff0,color:#fff
 ```
 
 | Característica | Frío (IAsyncEnumerable) | Caliente (IObservable) |
@@ -86,7 +86,7 @@ graph LR
 
 📌 **Ejemplo real:** Un sensor de temperatura emite datos cada segundo (flujo caliente). Si tu app se conecta a las 10:00:05, no recibirá los datos de 10:00:00 a 10:00:04. Pero un fichero CSV es un flujo frío: siempre puedes leerlo desde la primera línea.
 
-## 17.2. IAsyncEnumerable: Flujos Fríos
+## 17.2. IAsyncEnumerable: flujos fríos
 
 Un **flujo frío** es como una receta: se ejecuta cada vez que alguien lo consume. `IAsyncEnumerable<T>` es el flujo frío por defecto en C#.
 
@@ -155,7 +155,7 @@ await foreach (var resultado in GenerarNumerosAsync()
 | Procesar colas de mensajes | Cola de RabbitMQ, Kafka |
 | Recorrer una colección grande sin cargarla toda | Lotes de registros de BD |
 
-## 17.3. IObservable: Flujos Calientes
+## 17.3. IObservable: flujos calientes
 
 Un **flujo caliente** es como una antena de radio: emite datos todo el tiempo, independientemente de si hay alguien escuchando. Si te suscribes tarde, pierdes datos anteriores.
 
@@ -252,7 +252,7 @@ stateDiagram-v2
 
 📌 **Ejemplo real:** Cuando abres Netflix y te suscribes a una serie, es como hacer `Subscribe()`. Cuando terminas de ver (o cancelas la suscripción), es como hacer `Dispose()`. Si no cancelas, Netflix sigue descargando episodios que no ves.
 
-## 17.4. Rx.NET: Programación Reactiva
+## 17.4. Rx.NET: programación reactiva
 
 **Rx.NET** (Reactive Extensions) es la librería que implementa la programación reactiva en .NET. Proporciona operadores poderosos para transformar, filtrar y combinar flujos de datos.
 
@@ -301,7 +301,7 @@ var observable = Observable
 
 📌 **Ejemplo real:** En una app de trading, el precio de una acción cambia cientos de veces por segundo. Rx.NET permite filtrar, agrupar y transformar esos datos en tiempo real: mostrar solo cambios significativos (>1%), agrupar por segundo, o alertar si el precio baja más de un 5%.
 
-## 17.5. Subject y Subject Specialized
+## 17.5. Subject y subject specialized
 
 `Subject<T>` es un tipo que es **simultáneamente** emisor (`IObserver<T>`) y receptor (`IObservable<T>`). Hay varios tipos especializados:
 
@@ -312,7 +312,7 @@ var observable = Observable
 | `ReplaySubject<T>` | Graba los últimos N valores | Los nuevos suscriptores reciben el historial |
 | `AsyncSubject<T>` | Solo el último valor completo | Solo emite cuando se completa el flujo |
 
-### BehaviorSubject: "¿Cuál es el valor actual?"
+### BehaviorSubject: "¿cuál es el valor actual?"
 
 ```csharp
 var subject = new BehaviorSubject<int>(0); // Valor inicial: 0
@@ -331,7 +331,7 @@ subject.OnNext(3); // S1: 3, S2: 3
 
 📌 **Ejemplo real:** `BehaviorSubject` es perfecto para el estado de una aplicación. En una app Blazor, `BehaviorSubject<User?>` mantiene el usuario actual: cuando un componente nuevo se suscribe, recibe el usuario que ya está logueado.
 
-### ReplaySubject: "Quiero el historial"
+### ReplaySubject: "quiero el historial"
 
 ```csharp
 var subject = new ReplaySubject<int>(2); // Guarda los últimos 2 valores
@@ -344,7 +344,7 @@ subject.OnNext(3);
 subject.Subscribe(v => Console.WriteLine($"S: {v}")); // S: 2, S: 3
 ```
 
-### AsyncSubject: "Solo el resultado final"
+### AsyncSubject: "solo el resultado final"
 
 ```csharp
 var subject = new AsyncSubject<int>();
@@ -358,7 +358,7 @@ subject.Subscribe(v => Console.WriteLine($"S: {v}")); // S: 2
 
 ## 17.6. Operadores de Rx.NET
 
-### Transformación: Select, SelectMany
+### Transformación: select, SelectMany
 
 ```csharp
 // Select: transforma cada valor
@@ -373,7 +373,7 @@ clicks
     .Subscribe(datos => Console.WriteLine(datos));
 ```
 
-### Filtrado: Where, DistinctUntilChanged, Throttle
+### Filtrado: where, DistinctUntilChanged, throttle
 
 ```csharp
 // Where: filtrar por condición
@@ -396,7 +396,7 @@ input
     .Subscribe(texto => BuscarEnTiempoReal(texto));
 ```
 
-### Combinación: Merge, Concat, CombineLatest, Zip
+### Combinación: merge, concat, CombineLatest, zip
 
 ```csharp
 // Merge: unir dos flujos en uno solo
@@ -415,7 +415,7 @@ nombre.OnNext("Carlos"); // Carlos, 25 años
 edad.OnNext(30);         // Carlos, 30 años
 ```
 
-### Control de tiempo: Delay, Timeout, Buffer
+### Control de tiempo: delay, timeout, buffer
 
 ```csharp
 // Delay: retrasar cada valor
@@ -434,7 +434,7 @@ Observable.Interval(TimeSpan.FromSeconds(1))
 
 > 💡 **Consejo:** Rx.NET tiene más de 400 operadores. No necesitas memorizarlos todos. Los más usados son: `Where`, `Select`, `Merge`, `CombineLatest`, `Throttle`, `Buffer`, `Switch` y `DistinctUntilChanged`.
 
-### Manejo de errores: OnError, Catch, Retry
+### Manejo de errores: OnError, catch, retry
 
 ```csharp
 // OnError: notificar un error y terminar el flujo
@@ -460,7 +460,7 @@ var observable = Observable.Throw<int>(new Exception("Error de red"))
 
 > ⚠️ **Advertencia:** Si un observable lanza `OnError`, la suscripción **termina automáticamente**. No recibirás más datos. Es como una excepción que mata el hilo.
 
-### Dispose: Cancelar suscripciones
+### Dispose: cancelar suscripciones
 
 Siempre debes hacer `Dispose()` de las suscripciones para evitar **memory leaks**:
 
@@ -483,7 +483,7 @@ subscription.Dispose(); // Cancelar
 
 📌 **En producción:** En un servidor ASP.NET, si no haces `Dispose()` de las suscripciones, cada petición crea una suscripción nueva que nunca se libera. Después de 1000 peticiones, tienes 1000 suscripciones activas quemando memoria.
 
-## 17.7. Cuándo Usar Cada Uno
+## 17.7. Cuándo usar cada uno
 
 | Característica | IAsyncEnumerable | IObservable (Rx.NET) |
 |---------------|------------------|---------------------|
@@ -506,13 +506,13 @@ graph TD
     E --> H["IoT, trading, chat"]
     F --> I["Botones, timeouts simples"]
 
-    style A fill:#4CAF50,color:#fff
-    style C fill:#2196F3,color:#fff
-    style E fill:#FF9800,color:#fff
-    style F fill:#9C27B0,color:#fff
+    style A fill:#4CAF5,color:#fff0,color:#fff
+    style C fill:#2196F,color:#fff3,color:#fff
+    style E fill:#FF980,color:#fff0,color:#fff
+    style F fill:#9C27B,color:#fff0,color:#fff
 ```
 
-### Ejemplo: Búsqueda en tiempo real con Rx
+### Ejemplo: búsqueda en tiempo real con rx
 
 ```csharp
 // Input del usuario
@@ -531,7 +531,7 @@ input
 
 📌 **Ejemplo real:** La barra de búsqueda de Google usa exactamente este patrón: espera a que dejes de escribir (throttle), ignora si escribes lo mismo (distinctUntilChanged), busca solo si hay al menos 2 caracteres (where), y cancela la búsqueda anterior si escribes algo nuevo (switch).
 
-### Ejemplo práctico: Filtrar eventos por tipo
+### Ejemplo práctico: filtrar eventos por tipo
 
 El ejemplo `14-ReactividadRxNet` muestra un patrón real: un sensor emite notificaciones de diferentes tipos (Create, Update, Delete, Error) y cada consumidor filtra lo que le interesa:
 
@@ -554,7 +554,7 @@ subject
 
 > 📝 **Nota:** Para la mayoría de casos en ASP.NET Core, `IAsyncEnumerable` es suficiente. Rx.NET es más potente pero también más complejo. Úsalo cuando necesites operaciones temporales (throttle, debounce) o combinación de múltiples flujos.
 
-## 17.8. Buenas Prácticas
+## 17.8. Buenas prácticas
 
 - **Rx.NET para flujos complejos**: Múltiples fuentes, transformaciones, combinaciones
 - **IAsyncEnumerable para datos secuenciales**: Más simple que Rx para ficheros, APIs paginadas y colas (el IoT en directo va mejor con Rx)

@@ -1,11 +1,11 @@
-# Práctica 7: Desayuno Asíncrono
+# Práctica 7: desayuno asíncrono
 
-- [Práctica 7: Desayuno Asíncrono](#práctica-7-desayuno-asíncrono)
+- [Práctica 7: desayuno asíncrono](#práctica-7-desayuno-asíncrono)
   - [Objetivo](#objetivo)
   - [Descripción](#descripción)
-  - [Las 7 Acciones del Desayuno](#las-7-acciones-del-desayuno)
+  - [Las 7 acciones del desayuno](#las-7-acciones-del-desayuno)
   - [Restricción](#restricción)
-  - [Tareas a Realizar](#tareas-a-realizar)
+  - [Tareas a realizar](#tareas-a-realizar)
   - [Entrega](#entrega)
 
 ---
@@ -26,7 +26,7 @@ Tu trabajo es implementar diferentes enfoques de ejecución y descubrir cuál es
 
 ---
 
-## Las 7 Acciones del Desayuno
+## Las 7 acciones del desayuno
 
 | # | Acción | Tiempo | Descripción |
 |---|--------|--------|-------------|
@@ -48,7 +48,7 @@ El usuario tiene un **tiempo límite de 500ms**. Si el desayuno no está listo a
 
 ---
 
-## Tareas a Realizar
+## Tareas a realizar
 
 1. Ejecución **secuencial**
 2. Ejecución con **`async/await`**
@@ -72,7 +72,7 @@ Sube tu proyecto a GitHub. El `README.md` debe incluir:
   4. ¿El enfoque con mejor rendimiento es también el más seguro? ¿Por qué?
   5. ¿Merece la pena complicarse con paralelismo o con mecanismos de control de tiempo? Justifica tu respuesta.
 
-### 2. Aula Virtual
+### 2. Aula virtual
 
 Entrega en **Aula Virtual**:
 - Enlace al repositorio GitHub

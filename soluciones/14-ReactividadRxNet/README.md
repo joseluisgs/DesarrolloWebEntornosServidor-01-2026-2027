@@ -40,9 +40,9 @@ flowchart LR
     S -->|"#1, #2, #3, #4..."| C1S
     S -->|"#1 ❌ #2 ❌ #3 ❌ #4 ✅"| C2S
 
-    style SENSOR fill:#2196F3,color:#fff
-    style C1 fill:#4CAF50,color:#fff
-    style C2 fill:#FF9800,color:#fff
+    style SENSOR fill:#2196F,color:#fff3,color:#fff
+    style C1 fill:#4CAF5,color:#fff0,color:#fff
+    style C2 fill:#FF980,color:#fff0,color:#fff
 ```
 
 ## Filtros de cada consumidor

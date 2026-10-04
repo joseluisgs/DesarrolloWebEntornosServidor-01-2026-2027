@@ -1,8 +1,8 @@
-# curl & HTTP — Comandos de Supervivencia
+# Curl & HTTP — comandos de supervivencia
 
 > Para probar APIs REST, endpoints y servicios web desde la terminal.
 
-## GET — Obtener datos
+## GET — obtener datos
 
 ```bash
 # Básico
@@ -36,7 +36,7 @@ curl -L https://ejemplo.com
 
 > 💡 **Analogía:** `curl` es como un navegador en la terminal. Hace peticiones HTTP y muestra la respuesta. Es la herramienta #1 para probar APIs.
 
-## POST — Crear datos
+## POST — crear datos
 
 ```bash
 # JSON
@@ -63,7 +63,7 @@ curl -X POST https://api.ejemplo.com/upload \
 
 > 🔧 **Truco:** `-d @usuario.json` lee el contenido de un fichero. Perfecto para enviar cuerpos grandes sin escribir todo en la línea de comandos.
 
-## PUT — Actualizar datos
+## PUT — actualizar datos
 
 ```bash
 # Actualizar recurso completo
@@ -77,7 +77,7 @@ curl -X PUT https://api.ejemplo.com/users/1 \
   -d @usuario_actualizado.json
 ```
 
-## PATCH — Actualización parcial
+## PATCH — actualización parcial
 
 ```bash
 # Solo cambiar campos específicos
@@ -88,7 +88,7 @@ curl -X PATCH https://jsonplaceholder.typicode.com/users/1 \
 
 > 💡 **Consejo:** `PUT` reemplaza TODO el recurso. `PATCH` solo cambia los campos que envías. Si solo quieres cambiar el email, usa `PATCH`.
 
-## DELETE — Eliminar datos
+## DELETE — eliminar datos
 
 ```bash
 # Eliminar recurso
@@ -166,7 +166,7 @@ curl --retry 3 --retry-delay 2 https://api.ejemplo.com/users
 
 > ⚠️ **Advertencia:** `--max-time 30` aborta la petición después de 30 segundos. Si el servidor es lento, puede cortar la respuesta a mitad.
 
-## httpie (alternativa moderna a curl)
+## Httpie (alternativa moderna a curl)
 
 ```bash
 # Instalar

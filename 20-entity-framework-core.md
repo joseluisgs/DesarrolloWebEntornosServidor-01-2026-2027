@@ -1,13 +1,13 @@
 - [20. Entity Framework Core: ORM de .NET](#20-entity-framework-core-orm-de-net)
   - [20.1. ¿Qué es un ORM?](#201-qué-es-un-orm)
-  - [20.2. DbContext: El Corazón de EF Core](#202-dbcontext-el-corazón-de-ef-core)
-  - [20.3. Configuración: Data Annotations vs Fluent API](#203-configuración-data-annotations-vs-fluent-api)
+  - [20.2. DbContext: el corazón de EF Core](#202-dbcontext-el-corazón-de-ef-core)
+  - [20.3. Configuración: data annotations vs fluent API](#203-configuración-data-annotations-vs-fluent-api)
   - [20.4. CRUD con EF Core](#204-crud-con-ef-core)
-  - [20.5. LINQ to Entities](#205-linq-to-entities)
-  - [20.6. SQL Raw](#206-sql-raw)
+  - [20.5. LINQ to entities](#205-linq-to-entities)
+  - [20.6. SQL raw](#206-sql-raw)
   - [20.7. Migraciones](#207-migraciones)
-  - [20.8. Seed Data](#208-seed-data)
-  - [20.9. Buenas Prácticas](#209-buenas-prácticas)
+  - [20.8. Seed data](#208-seed-data)
+  - [20.9. Buenas prácticas](#209-buenas-prácticas)
 
 
 # 20. Entity Framework Core: ORM de .NET
@@ -65,8 +65,8 @@ graph LR
     B -->|"Mapeo"| E
     C -->|"Mapeo"| F
 
-    style CSHARP fill:#2196F3,color:#fff
-    style SQL fill:#4CAF50,color:#fff
+    style CSHARP fill:#2196F,color:#fff3,color:#fff
+    style SQL fill:#4CAF5,color:#fff0,color:#fff
 ```
 
 | Sin ORM | Con ORM |
@@ -79,7 +79,7 @@ graph LR
 
 📌 **Ejemplo real:** Cuando usas Instagram, cada vez que guardas un comentario, EF Core traduce `context.Comentarios.Add(comentario)` a `INSERT INTO Comentarios (Texto, UsuarioId, Fecha) VALUES (...)`. No escribes SQL, pero se ejecuta SQL.
 
-## 20.2. DbContext: El Corazón de EF Core
+## 20.2. DbContext: el corazón de EF Core
 
 El `DbContext` es la clase principal de EF Core. Representa una sesión con la base de datos y permite consultar y guardar datos.
 
@@ -152,11 +152,11 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 > 💡 **Consejo:** Usa `Set<Persona>()` en vez de una propiedad `DbSet<Persona>` autoimplementada. Es más limpio: siempre devuelve el `DbSet` real del contexto y evitas dejar la propiedad sin inicializar (`null`).
 
-## 20.3. Configuración: Data Annotations vs Fluent API
+## 20.3. Configuración: data annotations vs fluent API
 
 Hay dos formas de configurar cómo se mapean las clases a tablas:
 
-### Data Annotations (atributos)
+### Data annotations (atributos)
 
 ```csharp
 using System.ComponentModel.DataAnnotations;
@@ -233,7 +233,7 @@ protected override void OnModelCreating(ModelBuilder modelBuilder)
 
 ## 20.4. CRUD con EF Core
 
-### Create: Insertar
+### Create: insertar
 
 ```csharp
 // Insertar uno
@@ -251,7 +251,7 @@ context.Personas.AddRange(personas);
 await context.SaveChangesAsync();
 ```
 
-### Read: Consultar
+### Read: consultar
 
 ```csharp
 // Por ID
@@ -271,7 +271,7 @@ var activas = await context.Personas
     .ToListAsync();
 ```
 
-### Update: Actualizar
+### Update: actualizar
 
 ```csharp
 // Forma 1: Modificar y guardar (tracking)
@@ -288,7 +288,7 @@ context.Personas.Update(personaEditada);
 await context.SaveChangesAsync();
 ```
 
-### Delete: Eliminar
+### Delete: eliminar
 
 ```csharp
 // Eliminar por ID
@@ -308,7 +308,7 @@ context.Personas.RemoveRange(inactivas);
 await context.SaveChangesAsync();
 ```
 
-## 20.5. LINQ to Entities
+## 20.5. LINQ to entities
 
 EF Core traduce LINQ a SQL automáticamente:
 
@@ -344,7 +344,7 @@ int edadMax = await context.Personas.MaxAsync(p => p.Edad);
 decimal totalPedidos = await context.Pedidos.SumAsync(p => p.Total);
 ```
 
-### Include: Cargar relaciones (Eager Loading)
+### Include: cargar relaciones (eager loading)
 
 ```csharp
 // Cargar pedidos junto con la persona
@@ -376,11 +376,11 @@ var dtos = await context.Personas
     .ToListAsync();
 ```
 
-## 20.6. SQL Raw
+## 20.6. SQL raw
 
 Cuando LINQ no es suficiente (consultas complejas, optimización, consultas legadas), puedes escribir SQL directamente. EF Core ofrece varias formas de hacerlo de forma segura.
 
-### FromSqlRaw — Entidades completas
+### FromSqlRaw — entidades completas
 
 Devuelve entidades completas con tracking (EF Core las hace seguimiento):
 
@@ -398,7 +398,7 @@ var filtradas = await context.Personas
     .ToListAsync();
 ```
 
-### SqlQueryRaw — Escalares y DTOs
+### SqlQueryRaw — escalares y DTOs
 
 Si NO necesitas entidades, usa `SqlQueryRaw` para devolver escalares o DTOs:
 
@@ -425,7 +425,7 @@ public record ResumenPersona(int Id, string Nombre, string Email);
 
 > 💡 **Consejo:** `SqlQueryRaw` NO trackea las entidades. Es ideal para consultas de solo lectura donde no necesitas modificar el resultado.
 
-### SqlQuery vs SqlQueryRaw — ¿Cuál usar?
+### SqlQuery vs SqlQueryRaw — ¿cuál usar?
 
 Ambos devuelven tipos no-entidad, pero se diferencian en cómo pasas los parámetros:
 
@@ -453,7 +453,7 @@ var resultadoInterpolado = await context.Database
 
 > 💡 **Consejo:** Usa SIEMPRE `SqlQuery` (interpolado). Es más legible y seguro. `SqlQueryRaw` solo si necesitas concatenar el SQL de forma dinámica.
 
-### ExecuteSqlRaw — Comandos (INSERT, UPDATE, DELETE)
+### ExecuteSqlRaw — comandos (INSERT, UPDATE, DELETE)
 
 ```csharp
 // UPDATE directo
@@ -476,7 +476,7 @@ await context.Database
 
 > ⚠️ **Advertencia:** `ExecuteSqlRaw` NO pasa por el Change Tracker. Si tenías entidades en memoria, no se actualizan. Llama a `DetectChanges()` después si necesitas sincronizar.
 
-### Stored Procedures
+### Stored procedures
 
 > 📝 **Nota:** El SQL varía según el SGBD. Ojo: **SQLite NO tiene procedimientos almacenados**; en SQLite tendrías que usar una función o hacerlo con LINQ/SQL directo.
 
@@ -503,7 +503,7 @@ await context.Database
         DateTime.Now);
 ```
 
-### SQL Injection — NUNCA Concatenes Strings
+### SQL injection — NUNCA concatenes strings
 
 ```csharp
 // ❌ MALO: SQL Injection vulnerable
@@ -522,7 +522,7 @@ var personasPosicionales = await context.Personas
     .ToListAsync();
 ```
 
-### ¿Cuándo usar SQL Raw vs LINQ?
+### ¿Cuándo usar SQL raw vs LINQ?
 
 | Escenario | Usa | Por qué |
 |-----------|-----|---------|
@@ -564,11 +564,11 @@ graph LR
     C --> D["Aplicar<br/>dotnet ef database update"]
     D --> E["BD sincronizada"]
 
-    style A fill:#2196F3,color:#fff
-    style B fill:#FF9800,color:#fff
-    style C fill:#9C27B0,color:#fff
-    style D fill:#4CAF50,color:#fff
-    style E fill:#607D8B,color:#fff
+    style A fill:#2196F,color:#fff3,color:#fff
+    style B fill:#FF980,color:#fff0,color:#fff
+    style C fill:#9C27B,color:#fff0,color:#fff
+    style D fill:#4CAF5,color:#fff0,color:#fff
+    style E fill:#607D8,color:#fffB,color:#fff
 ```
 
 ### Ejemplo de migración generada
@@ -608,11 +608,11 @@ public partial class Inicial : Migration
 
 > 💡 **Consejo:** Nunca edites una migración ya aplicada. Si necesitas cambiar algo, crea una nueva migración. Las migraciones son como "snapshots" de la estructura de la BD.
 
-## 20.8. Seed Data
+## 20.8. Seed data
 
 El seed data inserta datos iniciales en la base de datos (usuarios admin, categorías por defecto, etc.).
 
-### Usando HasData en Fluent API
+### Usando HasData en fluent API
 
 ```csharp
 protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -641,7 +641,7 @@ protected override void OnModelCreating(ModelBuilder modelBuilder)
 }
 ```
 
-### Seed Data con método de extensión
+### Seed data con método de extensión
 
 ```csharp
 // Para datos más complejos, crear un método de extensión
@@ -670,7 +670,7 @@ protected override void OnModelCreating(ModelBuilder modelBuilder)
 
 > 📝 **Nota:** Después de añadir seed data, necesitas crear una nueva migración: `dotnet ef migrations add "SeedData"`. Los datos se insertan al aplicar la migración.
 
-## 20.9. Buenas Prácticas
+## 20.9. Buenas prácticas
 
 - **DbContext en Entity/**: SIEMPRE en la capa de persistencia, NUNCA en Repositories/
 - **Migraciones para esquema**: Nunca scripts SQL manuales en producción

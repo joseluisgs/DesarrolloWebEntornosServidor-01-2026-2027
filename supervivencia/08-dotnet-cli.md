@@ -1,4 +1,4 @@
-# .NET CLI — Comandos de Supervivencia
+# .NET CLI — comandos de supervivencia
 
 > Referencia rápida de `dotnet` para desarrollo en C#/.NET.
 

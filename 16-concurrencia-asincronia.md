@@ -1,23 +1,23 @@
-- [16. Concurrencia y Asincronía en C#](#16-concurrencia-y-asincronía-en-c)
-  - [16.1. Sincronía: La Base para Entender la Asincronía](#161-sincronía-la-base-para-entender-la-asincronía)
-  - [16.2. Operaciones de E/S: El Verdadero Enemigo](#162-operaciones-de-e-s-el-verdadero-enemigo)
-  - [16.3. Asíncronía: No Bloquear Mientras Esperas](#163-asincronía-no-bloquear-mientras-esperas)
-  - [16.4. Concurrencia vs Paralelismo vs Sincronía vs Asíncronía](#164-concurrencia-vs-paralelismo-vs-sincronía-vs-asíncronía)
-    - [16.4.1. Diseñar en paralelo: Los 2 errores clásicos](#1641-diseñar-en-paralelo-los-2-errores-clásicos)
+- [16. Concurrencia y asincronía en C#](#16-concurrencia-y-asincronía-en-c)
+  - [16.1. Sincronía: la base para entender la asincronía](#161-sincronía-la-base-para-entender-la-asincronía)
+  - [16.2. Operaciones de E/S: el verdadero enemigo](#162-operaciones-de-e-s-el-verdadero-enemigo)
+  - [16.3. Asíncronía: no bloquear mientras esperas](#163-asincronía-no-bloquear-mientras-esperas)
+  - [16.4. Concurrencia vs paralelismo vs sincronía vs asíncronía](#164-concurrencia-vs-paralelismo-vs-sincronía-vs-asíncronía)
+    - [16.4.1. Diseñar en paralelo: los 2 errores clásicos](#1641-diseñar-en-paralelo-los-2-errores-clásicos)
     - [16.4.2. El coste invisible de Task.Run y el ThreadPool](#1642-el-coste-invisible-de-taskrun-y-el-threadpool)
-    - [16.4.3. ¿Cuándo NO paralelizar? La regla de oro](#1643-cuándo-no-paralelizar-la-regla-de-oro)
-  - [16.5. Async/Await: La Base de la Asincronía en C#](#165-asyncawait-la-base-de-la-asincronía-en-c)
-  - [16.6. Task y Task\<T\>: El Resultado de una Operación Asíncrona](#166-task-y-taskt-el-resultado-de-una-operación-asíncrona)
-  - [16.7. CancellationToken: Cancelar Operaciones en Marcha](#167-cancellationtoken-cancelar-operaciones-en-marcha)
-  - [16.8. Async Void vs Async Task](#168-async-void-vs-async-task)
-  - [16.9. Patrones de Concurrencia](#169-patrones-de-concurrencia)
-  - [16.10. Errores en Código Asíncrono](#1610-errores-en-código-asíncrono)
+    - [16.4.3. ¿Cuándo NO paralelizar? la regla de oro](#1643-cuándo-no-paralelizar-la-regla-de-oro)
+  - [16.5. Async/Await: la base de la asincronía en C#](#165-asyncawait-la-base-de-la-asincronía-en-c)
+  - [16.6. Task y Task\<T\>: el resultado de una operación asíncrona](#166-task-y-taskt-el-resultado-de-una-operación-asíncrona)
+  - [16.7. CancellationToken: cancelar operaciones en marcha](#167-cancellationtoken-cancelar-operaciones-en-marcha)
+  - [16.8. Async void vs async task](#168-async-void-vs-async-task)
+  - [16.9. Patrones de concurrencia](#169-patrones-de-concurrencia)
+  - [16.10. Errores en código asíncrono](#1610-errores-en-código-asíncrono)
   - [16.11. Parallel.For vs Task.WhenAll](#1611-parallelfor-vs-taskwhenall)
   - [16.12. Task vs ValueTask vs IAsyncEnumerable](#1612-task-vs-valuetask-vs-iasyncenumerable)
-  - [16.13. Buenas Prácticas](#1613-buenas-prácticas)
+  - [16.13. Buenas prácticas](#1613-buenas-prácticas)
 
 
-# 16. Concurrencia y Asincronía en C#
+# 16. Concurrencia y asincronía en C#
 
 > 💡 **Punto de partida:** Tu app web hace una petición a una API externa que tarda 3 segundos. Mientras tanto, el usuario mira la pantalla... ¿cargando? ¿Y si en vez de esperar, la app pudiera hacer otras cosas mientras tanto? Eso es la **asincronía**: no bloquear el hilo mientras esperas algo lento (red, disco, base de datos). Pero cuidado: asincronía no es paralelismo. Vamos a ver la diferencia y cómo usar `async/await` correctamente.
 
@@ -36,7 +36,7 @@ En este tema aprenderás qué es la sincronía, por qué las operaciones de E/S 
 - Diferenciar `Task`, `ValueTask` e `IAsyncEnumerable`
 - Diseñar operaciones paralelas correctamente (los 2 errores clásicos)
 
-## 16.1. Sincronía: La Base para Entender la Asincronía
+## 16.1. Sincronía: la base para entender la asincronía
 
 Antes de hablar de asíncronia, necesitas entender **sincronía**. Es el modelo "normal" que conoces: un programa ejecuta instrucciones una tras otra, en orden, esperando a que cada una termine antes de pasar a la siguiente.
 
@@ -95,13 +95,13 @@ graph LR
         I5["Consulta BD"] --> I6["Espera BD (0% CPU)"]
     end
 
-    style CPU fill:#f44336,color:#fff
-    style IO fill:#4CAF50,color:#fff
+    style CPU fill:#f4433,color:#fff6,color:#fff
+    style IO fill:#4CAF5,color:#fff0,color:#fff
 ```
 
 > 💡 **Truco:** Las operaciones de I/O son las que **más benefician** de la asincronía. Porque mientras esperas la respuesta de la red o del disco, el hilo está **libre** para hacer otras cosas. ¡No estás quemando CPU esperando!
 
-## 16.2. Operaciones de E/S: El Verdadero Enemigo
+## 16.2. Operaciones de E/S: el verdadero enemigo
 
 Las operaciones de entrada/salida (I/O) son las que más afectan al rendimiento de una app. Son **lentas** comparadas con la CPU:
 
@@ -173,7 +173,7 @@ Procesador Intel i7 (4 núcleos, 8 hilos por Hyper-Threading):
 
 Pero tu ordenador tiene **docenas de hilos** activos (navegador, sistema operativo, tu app, antivirus...). ¿Cómo maneja 50 hilos con solo 4 núcleos?
 
-#### El Sistema Operativo como "director de orquesta"
+#### El sistema operativo como "director de orquesta"
 
 El SO (Windows, Linux) usa un algoritmo de **planificación** (scheduler) que:
 
@@ -302,8 +302,8 @@ graph TD
     
     SERVIDOR --> COLA
     
-    style SERVIDOR fill:#f44336,color:#fff
-    style COLA fill:#FF9800,color:#fff
+    style SERVIDOR fill:#f4433,color:#fff6,color:#fff
+    style COLA fill:#FF980,color:#fff0,color:#fff
 ```
 
 **Qué pasa cuando un usuario hace petición:**
@@ -319,7 +319,7 @@ graph TD
 
 **La regla de oro para servidores:** Nunca bloquees un hilo en operaciones de I/O. Usa `async/await` siempre que hagas una petición a BD, lectura de fichero, o llamada a API externa.
 
-## 16.3. Asíncronía: No Bloquear Mientras Esperas
+## 16.3. Asíncronía: no bloquear mientras esperas
 
 La **asincronía** es la capacidad de **iniciar una operación y seguir haciendo otras cosas** mientras esperas el resultado. No es paralelismo (no es hacer dos cosas al mismo tiempo), es **no quedarse parado esperando**.
 
@@ -358,7 +358,7 @@ public async Task<string> ObtenerDatosAsync()
 
 > 📝 **Nota:** Crear un `HttpClient` en cada llamada es válido para un ejemplo, pero en producción agota los sockets (socket exhaustion). En el tema 18 veremos `IHttpClientFactory`, la forma correcta de gestionar `HttpClient` en ASP.NET Core.
 
-### ¿Cómo funciona internamente? El ciclo de vida de un `await`
+### ¿Cómo funciona internamente? el ciclo de vida de un `await`
 
 Cuando el compilador encuentra un `await`, esto es lo que **realmente** pasa paso a paso:
 
@@ -412,19 +412,19 @@ graph LR
 
     TAREA --> HILO
 
-    style A fill:#2196F3,color:#fff
-    style B fill:#FF9800,color:#fff
-    style C fill:#4CAF50,color:#fff
-    style E fill:#f44336,color:#fff
-    style F fill:#4CAF50,color:#fff
-    style G fill:#4CAF50,color:#fff
+    style A fill:#2196F,color:#fff3,color:#fff
+    style B fill:#FF980,color:#fff0,color:#fff
+    style C fill:#4CAF5,color:#fff0,color:#fff
+    style E fill:#f4433,color:#fff6,color:#fff
+    style F fill:#4CAF5,color:#fff0,color:#fff
+    style G fill:#4CAF5,color:#fff0,color:#fff
 ```
 
 📌 **Ejemplo real:** Cuando abres Netflix y carga tu lista de series, la app hace 15 peticiones HTTP a la vez (thumbnails, recomendaciones, historial). Cada petición es un `await`. El hilo principal no espera: lanza las 15 peticiones (crea 15 Tasks), se devuelve al pool, y cuando cada respuesta llega, el pool asigna un hilo para procesarla. Si fueran síncronas, la app estaría congelada 15 x 200ms = **3 segundos**. Con asincronía, tarda lo que la más lenta: **~200ms**.
 
 > 💡 **Consejo:** Usa `async/await` en operaciones de I/O (red, disco, BD). **NO** lo uses para operaciones de CPU puro (calcular primos, procesar imagen) — para eso usa `Task.Run` o `Parallel.For`.
 
-## 16.4. Concurrencia vs Paralelismo vs Sincronía vs Asíncronía
+## 16.4. Concurrencia vs paralelismo vs sincronía vs asíncronía
 
 Estos cuatro términos se confunden mucho. Vamos a aclararlos de una vez:
 
@@ -448,10 +448,10 @@ graph TB
     A -->|"permite"| C
     C -->|"puede usar"| P
 
-    style S fill:#f44336,color:#fff
-    style A fill:#4CAF50,color:#fff
-    style C fill:#2196F3,color:#fff
-    style P fill:#FF9800,color:#fff
+    style S fill:#f4433,color:#fff6,color:#fff
+    style A fill:#4CAF5,color:#fff0,color:#fff
+    style C fill:#2196F,color:#fff3,color:#fff
+    style P fill:#FF980,color:#fff0,color:#fff
 ```
 
 > 💡 **Analogía — El Restaurante (versión completa):**
@@ -485,13 +485,13 @@ sequenceDiagram
 
 📌 **Ejemplo real:** Cuando haces scroll en Instagram y se cargan imágenes, la app no se bloquea. Usa **asincronía** para cargar las imágenes mientras tú sigues navegando. Si cargara todo de golpe, la pantalla se congelaría. Y si además descarga 10 imágenes a la vez, usa **concurrencia** (las 10 en progreso). Si tuviera 2 núcleos de CPU trabajando en decode de imagen, sería **paralelismo**.
 
-### 16.4.1. Diseñar en paralelo: Los 2 errores clásicos
+### 16.4.1. Diseñar en paralelo: los 2 errores clásicos
 
 Cuando tienes varias operaciones de I/O independientes, el instinto es hacerlas secuenciales. Pero eso es un error de diseño que cuesta **multiplicar el tiempo de respuesta**. Vamos a ver los 2 patrones que fallan y, después, el patrón correcto.
 
 > 💡 **Punto de partida:** Tienes que leer un CSV (1000 filas), un JSON (500 elementos) y una BD SQLite (100 registros). Cada operación tarda ~50ms. ¿Cómo lo haces?
 
-#### Error 1: Await secuencial (el más común)
+#### Error 1: await secuencial (el más común)
 
 ```csharp
 // ❌ MAL: await secuencial — cada uno ESPERA al anterior
@@ -519,7 +519,7 @@ gantt
 
 **Por qué falla:** Cada `await` pausa la ejecución hasta que termine. Es como ir al supermercado y hacer 3 viajes separados: uno por leche, otro por pan, otro por huevos. Total = 3 viajes.
 
-#### Error 2: Fire-and-forget (olvidar el resultado)
+#### Error 2: fire-and-forget (olvidar el resultado)
 
 ```csharp
 // ❌ MAL: Lanzas sin await — no sabes cuándo terminan
@@ -669,11 +669,11 @@ graph LR
         P1 & P2 & P3 & P4 --> OVERHEAD["+ overhead<br/>+ competencia por CPU"]
     end
 
-    style S1 fill:#4CAF50,color:#fff
-    style S4 fill:#4CAF50,color:#fff
-    style P1 fill:#f44336,color:#fff
-    style P4 fill:#f44336,color:#fff
-    style OVERHEAD fill:#FF9800,color:#fff
+    style S1 fill:#4CAF5,color:#fff0,color:#fff
+    style S4 fill:#4CAF5,color:#fff0,color:#fff
+    style P1 fill:#f4433,color:#fff6,color:#fff
+    style P4 fill:#f4433,color:#fff6,color:#fff
+    style OVERHEAD fill:#FF980,color:#fff0,color:#fff
 ```
 
 **Secuencial**: 30 × 27 ms = **810 ms** (sin overhead, sin competencia)
@@ -689,7 +689,7 @@ Cuando muchas tareas compiten por pocos núcleos, el sistema operativo hace **co
 
 📌 **Ejemplo real:** Netflix no paraleliza el decode de un frame de vídeo (2-3 ms, cálculo rápido). Pero sí paraleliza la descarga de thumbnails (E/S de red, 100+ ms cada una). Cada herramienta para su trabajo.
 
-### 16.4.3. ¿Cuándo NO paralelizar? La regla de oro
+### 16.4.3. ¿Cuándo NO paralelizar? la regla de oro
 
 No todo se debe paralelizar. La clave es saber **cuándo** vale la pena y cuándo no.
 
@@ -707,9 +707,9 @@ flowchart TD
     D -->|"SÍ"| E["✅ Paralelizar<br/>Task.Run + WhenAll"]
     D -->|"NO: < 50 ms"| F["❌ NO paralelizar<br/>Ejecutar secuencial"]
     
-    style C fill:#4CAF50,color:#fff
-    style E fill:#4CAF50,color:#fff
-    style F fill:#f44336,color:#fff
+    style C fill:#4CAF5,color:#fff0,color:#fff
+    style E fill:#4CAF5,color:#fff0,color:#fff
+    style F fill:#f4433,color:#fff6,color:#fff
 ```
 
 #### La "zona muerta" (5-50 ms)
@@ -740,13 +740,13 @@ graph TB
         M3["Cálculo: GroupBy con pocos grupos"]
     end
 
-    style BUENO fill:#4CAF50,color:#fff
-    style MALO fill:#f44336,color:#fff
+    style BUENO fill:#4CAF5,color:#fff0,color:#fff
+    style MALO fill:#f4433,color:#fff6,color:#fff
 ```
 
 > 💡 **Consejo para el examen:** Si te preguntan "¿cuándo usar `Task.Run` o `Parallel.For`?", la respuesta es: **solo para cálculos CPU-bound pesados (> 50 ms)**. Para operaciones de I/O no hace falta `Task.Run`: usa `async/await` directamente (el proveedor de I/O ya libera el hilo mientras espera). Para todo lo demás, ejecuta secuencial. Más código, menos sorpresas.
 
-## 16.5. Async/Await: La Base de la Asincronía en C#
+## 16.5. Async/Await: la base de la asincronía en C#
 
 `async` y `await` son las palabras clave que C# usa para la programación asíncrona. `await` pausa la ejecución del método **sin bloquear el hilo** hasta que termine la operación.
 
@@ -806,11 +806,11 @@ public async Task<string> ObtenerDatosAsync()
 
 > ⚠️ **Advertencia:** **NUNCA** uses `.Result` o `.Wait()`. En código de UI (WinForms, WPF) pueden causar **deadlocks** (el hilo de UI espera a que termine algo que necesita el hilo de UI para terminar). En ASP.NET Core no hay deadlock (no hay hilo de UI), pero bloquear provoca **starvation del ThreadPool**: los hilos ocupados no se liberan y otras peticiones esperan en cola. Usa siempre `await`.
 
-## 16.6. Task y Task\<T\>: El Resultado de una Operación Asíncrona
+## 16.6. Task y Task\<T\>: el resultado de una operación asíncrona
 
 Un `Task` representa una operación asíncrona en curso. Es como un **vale por un resultado futuro** — una promesa de que obtendrás algo, pero todavía no.
 
-### El ciclo de vida de un Task
+### El ciclo de vida de un task
 
 ```mermaid
 stateDiagram-v2
@@ -846,10 +846,10 @@ graph LR
 
     PROMESA --> CODIGO
 
-    style A fill:#2196F3,color:#fff
-    style C fill:#4CAF50,color:#fff
-    style D fill:#f44336,color:#fff
-    style H fill:#4CAF50,color:#fff
+    style A fill:#2196F,color:#fff3,color:#fff
+    style C fill:#4CAF5,color:#fff0,color:#fff
+    style D fill:#f4433,color:#fff6,color:#fff
+    style H fill:#4CAF5,color:#fff0,color:#fff
 ```
 
 | Tipo | Significado | Ejemplo |
@@ -917,7 +917,7 @@ string resultadoRapido = await primera;
 
 📌 **Ejemplo real:** Cuando abres Netflix y carga los thumbnails de las series, lanza 10-20 peticiones en paralelo con `Task.WhenAll`. Si esperara secuencialmente, tardaría 10x más. Con paralelo, tarda lo que la más lenta.
 
-## 16.7. CancellationToken: Cancelar Operaciones en Marcha
+## 16.7. CancellationToken: cancelar operaciones en marcha
 
 Un `CancellationToken` permite cancelar operaciones asíncronas que están en curso. Es como decirle a una tarea "ya no te necesito, para".
 
@@ -977,7 +977,7 @@ await OperacionLargaAsync(ctsCombinado.Token);
 
 > 💡 **Consejo:** Siempre pasa el `CancellationToken` a los métodos asíncronos que crees. Si el usuario cancela una operación, tu app puede liberar recursos rápidamente en vez de esperar a que termine.
 
-## 16.8. Async Void vs Async Task
+## 16.8. Async void vs async task
 
 | Retorno | Uso | Problemas |
 |---------|-----|-----------|
@@ -1013,7 +1013,7 @@ catch (Exception ex)
 
 > ⚠️ **Advertencia:** **NUNCA** uses `async void` excepto en manejadores de eventos de UI (`Button_Click`). Un `async void` que lanza una excepción provoca que la aplicación se cierre inmediatamente. No hay forma de capturar esa excepción con `try/catch`.
 
-## 16.9. Patrones de Concurrencia
+## 16.9. Patrones de concurrencia
 
 ### Producer-Consumer con BlockingCollection
 
@@ -1042,7 +1042,7 @@ foreach (var item in cola.GetConsumingEnumerable())
 }
 ```
 
-### Parallel.ForEach: Procesamiento paralelo
+### Parallel.ForEach: procesamiento paralelo
 
 ```csharp
 var productos = new List<Producto> { /* 1000 productos */ };
@@ -1055,7 +1055,7 @@ Parallel.ForEach(productos, producto =>
 });
 ```
 
-### SemaphoreSlim: Limitar concurrencia
+### SemaphoreSlim: limitar concurrencia
 
 ```csharp
 // Máximo 3 descargas simultáneas
@@ -1078,7 +1078,7 @@ await Task.WhenAll(tareas);
 
 📌 **Ejemplo real:** Un servicio de streaming como Netflix usa `SemaphoreSlim` para limitar cuántas descargas simultáneas puede hacer un usuario. Si intentas descargar 10 películas a la vez, solo 3 se descargan realmente; las demás esperan en cola.
 
-## 16.10. Errores en Código Asíncrono
+## 16.10. Errores en código asíncrono
 
 ### Capturar excepciones
 
@@ -1182,8 +1182,8 @@ graph LR
         C2 --> C3["Cálculo 3"]
     end
 
-    style WHENALL fill:#4CAF50,color:#fff
-    style PARALLEL fill:#FF9800,color:#fff
+    style WHENALL fill:#4CAF5,color:#fff0,color:#fff
+    style PARALLEL fill:#FF980,color:#fff0,color:#fff
 ```
 
 > ⚠️ **Advertencia:** No uses `Parallel.For` para operaciones de I/O. Parallel bloquea un hilo del ThreadPool por cada iteración. Si una iteración tarda 1 segundo en respuesta de red, 100 iteraciones necesitarán 100 hilos bloqueados durante 1 segundo. Con `Task.WhenAll`, solo necesitas 1 hilo que se libera inmediatamente.
@@ -1261,7 +1261,7 @@ sequenceDiagram
 
 📌 **Ejemplo real:** Cuando descargas un fichero grande con Chrome, ves la barra de progreso avanzando poco a poco. Eso es streaming con `IAsyncEnumerable` — no espera a tener todo el fichero para mostrarlo, va emitiendo porciones a medida que llegan.
 
-## 16.13. Buenas Prácticas
+## 16.13. Buenas prácticas
 
 - **NUNCA async void**: Siempre async Task para que se propague correctamente
 - **CancellationToken SIEMPRE**: Permite cancelar operaciones largas

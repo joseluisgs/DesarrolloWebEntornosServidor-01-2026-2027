@@ -1,10 +1,10 @@
 - [18. Consumo de APIs: HttpClient, Refit y Polly](#18-consumo-de-apis-httpclient-refit-y-polly)
-  - [18.1. HttpClient: La Base de la Comunicación HTTP](#181-httpclient-la-base-de-la-comunicación-http)
-  - [18.2. IHttpClientFactory: Gestionar HttpClient Correctamente](#182-ihttpclientfactory-gestionar-httpclient-correctamente)
-  - [18.3. Refit: Interfaces Tipadas para APIs](#183-refit-interfaces-tipadas-para-apis)
-  - [18.4. Polly: Resiliencia y Reintentos](#184-polly-resiliencia-y-reintentos)
-  - [18.5. Ejemplo Completo: API con Refit y Polly](#185-ejemplo-completo-api-con-refit-y-polly)
-  - [18.6. Buenas Prácticas](#186-buenas-prácticas)
+  - [18.1. HttpClient: la base de la comunicación HTTP](#181-httpclient-la-base-de-la-comunicación-http)
+  - [18.2. IHttpClientFactory: gestionar HttpClient correctamente](#182-ihttpclientfactory-gestionar-httpclient-correctamente)
+  - [18.3. Refit: interfaces tipadas para APIs](#183-refit-interfaces-tipadas-para-apis)
+  - [18.4. Polly: resiliencia y reintentos](#184-polly-resiliencia-y-reintentos)
+  - [18.5. Ejemplo completo: API con Refit y Polly](#185-ejemplo-completo-api-con-refit-y-polly)
+  - [18.6. Buenas prácticas](#186-buenas-prácticas)
 
 
 # 18. Consumo de APIs: HttpClient, Refit y Polly
@@ -21,7 +21,7 @@ En este tema aprenderás a consumir APIs con `HttpClient`, `IHttpClientFactory`,
 - Aplicar resiliencia con Polly: retry y circuit breaker
 - Construir un cliente de API completo y robusto
 
-## 18.1. HttpClient: La Base de la Comunicación HTTP
+## 18.1. HttpClient: la base de la comunicación HTTP
 
 `HttpClient` es la clase de .NET para hacer peticiones HTTP. Soporta GET, POST, PUT, DELETE, etc.
 
@@ -75,7 +75,7 @@ private static readonly HttpClient _client = new();
 
 > ⚠️ **Advertencia:** `HttpClient` **no debe** crearse ni destruirse frecuentemente. Cada instancia consume un socket del sistema operativo. Si creas miles de instancias, el sistema operativo se queda sin sockets y las peticiones fallan con `SocketException` (socket exhaustion). La solución es `IHttpClientFactory`, que veremos en el siguiente apartado.
 
-## 18.2. IHttpClientFactory: Gestionar HttpClient Correctamente
+## 18.2. IHttpClientFactory: gestionar HttpClient correctamente
 
 `IHttpClientFactory` es la solución de .NET a los problemas de `HttpClient`. Gestiona un pool de clientes HTTP y renueva las conexiones automáticamente.
 
@@ -155,7 +155,7 @@ builder.Services.AddHttpClient<ISpotifyService, SpotifyService>(client =>
 
 📌 **Ejemplo real:** En una app de e-commerce, `IPedidoService` usa un cliente tipado para la API de Stripe (pagos), otro para la API de Correos (envíos) y otro para la API de NIF/CIF (validación fiscal). Cada uno tiene su URL, timeout y cabeceras.
 
-## 18.3. Refit: Interfaces Tipadas para APIs
+## 18.3. Refit: interfaces tipadas para APIs
 
 **Refit** convierte una interfaz C# en un cliente HTTP. Es como la Inversión de Dependencias pero para APIs: defines **qué** necesitas (la interfaz) y Refit se encarga del **cómo** (las peticiones HTTP).
 
@@ -244,7 +244,7 @@ public class UsuarioService(IUsuarioApi api) // Refit crea la implementación au
 
 📌 **Ejemplo real:** En un proyecto real, Refit reduce ~50 líneas de código HTTP por endpoint a ~3 (el atributo + la firma del método). Si la API tiene 30 endpoints, ahorras ~1500 líneas de código repetitivo.
 
-## 18.4. Polly: Resiliencia y Reintentos
+## 18.4. Polly: resiliencia y reintentos
 
 **Polly** es una librería que añade resiliencia a las llamadas HTTP: reintentos automáticos, circuit breakers, timeouts y rate limiting.
 
@@ -254,7 +254,7 @@ public class UsuarioService(IUsuarioApi api) // Refit crea la implementación au
 dotnet add package Microsoft.Extensions.Http.Polly
 ```
 
-### Retry: Reintentos automáticos
+### Retry: reintentos automáticos
 
 ```csharp
 // Configurar reintentos con Polly
@@ -274,7 +274,7 @@ builder.Services.AddHttpClient<ISpotifyService, SpotifyService>()
         ));
 ```
 
-### Circuit Breaker: Cortocircuito
+### Circuit breaker: cortocircuito
 
 El Circuit Breaker abre el circuito cuando hay demasiados fallos, evitando seguir llamando a un servicio caído.
 
@@ -297,7 +297,7 @@ builder.Services.AddHttpClient<ISpotifyService, SpotifyService>()
         ));
 ```
 
-### Combinar Retry + Circuit Breaker
+### Combinar retry + circuit breaker
 
 ```csharp
 // Política compuesta: retry + circuit breaker
@@ -335,7 +335,7 @@ builder.Services.AddHttpClient<ISpotifyService, SpotifyService>()
 
 📌 **Ejemplo real:** Netflix usa Circuit Breaker en todas sus llamadas a microservicios. Si el servicio de recomendaciones se cae, en vez de seguir enviando peticiones que van a fallar (y congestionar aún más el servicio caído), abre el circuito y devuelve recomendaciones por defecto. Cuando el servicio se recupera, el circuito se cierra automáticamente.
 
-## 18.5. Ejemplo Completo: API con Refit y Polly
+## 18.5. Ejemplo completo: API con Refit y Polly
 
 ### Interfaz de la API
 
@@ -410,7 +410,7 @@ app.Run();
 
 > 💡 **Consejo:** Para el examen, recuerda la combinación ideal: **Refit** (para código limpio) + **IHttpClientFactory** (para gestión de sockets) + **Polly** (para resiliencia). Es el patrón estándar en producción.
 
-## 18.6. Buenas Prácticas
+## 18.6. Buenas prácticas
 
 - **Refit para APIs externas**: Interfaces tipadas, sin código repetitivo
 - **IHttpClientFactory siempre**: Nunca crear HttpClient con `new`

@@ -1,46 +1,46 @@
 - [4. Fundamentos de la programación en C#](#4-fundamentos-de-la-programación-en-c)
-  - [4.1. Entrada y Salida por Consola](#41-entrada-y-salida-por-consola)
-  - [4.2. Analogía: Value Types vs Reference Types](#42-analogía-value-types-vs-reference-types)
+  - [4.1. Entrada y salida por consola](#41-entrada-y-salida-por-consola)
+  - [4.2. Analogía: value types vs reference types](#42-analogía-value-types-vs-reference-types)
   - [4.3. Estructuras de control](#43-estructuras-de-control)
     - [4.3.1. Condicionales](#431-condicionales)
     - [4.3.2. Bucles](#432-bucles)
-  - [4.4. Arrays: Tipos compuestos](#44-arrays-tipos-compuestos)
+  - [4.4. Arrays: tipos compuestos](#44-arrays-tipos-compuestos)
   - [4.5. Modificadores de acceso](#45-modificadores-de-acceso)
   - [4.6. Modificadores de comportamiento](#46-modificadores-de-comportamiento)
   - [4.7. Excepciones](#47-excepciones)
-    - [4.7.1. ¿Qué es una Excepción?](#471-qué-es-una-excepción)
-    - [4.7.2. Excepciones Comunes en C#](#472-excepciones-comunes-en-c)
-    - [4.7.3. Lanzar Excepciones con throw](#473-lanzar-excepciones-con-throw)
-    - [4.7.4. Capturar Excepciones con try-catch](#474-capturar-excepciones-con-try-catch)
-    - [4.7.5. Flujo de Excepciones: Orden de Captura](#475-flujo-de-excepciones-orden-de-captura)
-    - [4.7.6. try-catch con Recursos: using](#476-try-catch-con-recursos-using)
-    - [4.7.7. Excepciones Personalizadas](#477-excepciones-personalizadas)
-    - [4.7.8. Re-lanzar Excepciones](#478-re-lanzar-excepciones)
-    - [4.7.9. Excepciones y el Patrón Result vs Excepciones](#479-excepciones-y-el-patrón-result-vs-excepciones)
-    - [4.7.10. Diferencia con Java: No Hay Checked vs Unchecked](#4710-diferencia-con-java-no-hay-checked-vs-unchecked)
-    - [4.7.11. Mejores Prácticas con Excepciones](#4711-mejores-prácticas-con-excepciones)
-      - [El Arquitecto Previsor: If vs Excepciones](#el-arquitecto-previsor-if-vs-excepciones)
-  - [4.8. Programación Orientada a Objetos (POO)](#48-programación-orientada-a-objetos-poo)
-    - [4.8.1. Clases y Propiedades](#481-clases-y-propiedades)
+    - [4.7.1. ¿Qué es una excepción?](#471-qué-es-una-excepción)
+    - [4.7.2. Excepciones comunes en C#](#472-excepciones-comunes-en-c)
+    - [4.7.3. Lanzar excepciones con throw](#473-lanzar-excepciones-con-throw)
+    - [4.7.4. Capturar excepciones con try-catch](#474-capturar-excepciones-con-try-catch)
+    - [4.7.5. Flujo de excepciones: orden de captura](#475-flujo-de-excepciones-orden-de-captura)
+    - [4.7.6. Try-catch con recursos: using](#476-try-catch-con-recursos-using)
+    - [4.7.7. Excepciones personalizadas](#477-excepciones-personalizadas)
+    - [4.7.8. Re-lanzar excepciones](#478-re-lanzar-excepciones)
+    - [4.7.9. Excepciones y el patrón result vs excepciones](#479-excepciones-y-el-patrón-result-vs-excepciones)
+    - [4.7.10. Diferencia con java: no hay checked vs unchecked](#4710-diferencia-con-java-no-hay-checked-vs-unchecked)
+    - [4.7.11. Mejores prácticas con excepciones](#4711-mejores-prácticas-con-excepciones)
+      - [El arquitecto previsor: if vs excepciones](#el-arquitecto-previsor-if-vs-excepciones)
+  - [4.8. Programación orientada a objetos (POO)](#48-programación-orientada-a-objetos-poo)
+    - [4.8.1. Clases y propiedades](#481-clases-y-propiedades)
     - [4.8.2. Constructores](#482-constructores)
-    - [4.8.3. Backing Fields en C# 14](#483-backing-fields-en-c-14)
+    - [4.8.3. Backing fields en C# 14](#483-backing-fields-en-c-14)
     - [4.8.4. Métodos](#484-métodos)
-    - [4.8.5. Herencia y Polimorfismo](#485-herencia-y-polimorfismo)
-    - [4.8.6. Clases Abstractas](#486-clases-abstractas)
+    - [4.8.5. Herencia y polimorfismo](#485-herencia-y-polimorfismo)
+    - [4.8.6. Clases abstractas](#486-clases-abstractas)
     - [4.8.7. Interfaces](#487-interfaces)
     - [4.8.8. Structs](#488-structs)
     - [4.8.9. Records](#489-records)
-    - [4.8.10. Sobrecarga de Operadores](#4810-sobrecarga-de-operadores)
-    - [4.8.11. Miembros de Object: Equals, GetHashCode, ToString](#4811-miembros-de-object-equals-gethashcode-tostring)
+    - [4.8.10. Sobrecarga de operadores](#4810-sobrecarga-de-operadores)
+    - [4.8.11. Miembros de object: equals, GetHashCode, ToString](#4811-miembros-de-object-equals-gethashcode-tostring)
     - [4.8.12. Miembros estáticos y clases estáticas](#4812-miembros-estáticos-y-clases-estáticas)
-    - [4.8.13. Clases Inner](#4813-clases-inner)
-    - [4.8.14. Clases Parciales](#4814-clases-parciales)
+    - [4.8.13. Clases inner](#4813-clases-inner)
+    - [4.8.14. Clases parciales](#4814-clases-parciales)
     - [4.8.15. Enums](#4815-enums)
   - [4.9. Parámetros](#49-parámetros)
-  - [4.10. Strings y Plantillas](#410-strings-y-plantillas)
-  - [4.11. Null Safety](#411-null-safety)
-  - [4.12. Culturas e Internacionalización](#412-culturas-e-internacionalización)
-  - [4.13. Tuplas y Objetos Anónimos](#413-tuplas-y-objetos-anónimos)
+  - [4.10. Strings y plantillas](#410-strings-y-plantillas)
+  - [4.11. Null safety](#411-null-safety)
+  - [4.12. Culturas e internacionalización](#412-culturas-e-internacionalización)
+  - [4.13. Tuplas y objetos anónimos](#413-tuplas-y-objetos-anónimos)
 
 
 
@@ -62,7 +62,7 @@ Este capítulo establece los cimientos sobre los que construirás todo tu conoci
 
 📌 Ejemplo real: Cuando el formulario de login de Instagram valida que el campo email no esté vacío y no lanza una excepción sino un mensaje de error, está aplicando "validación anticipada vs excepción" — justo la distinción que verás en la sección de excepciones de este punto.
 
-## 4.1. Entrada y Salida por Consola
+## 4.1. Entrada y salida por consola
 
 La entrada y salida por consola es la forma más básica de interactuar con un programa en C#.
 
@@ -207,7 +207,7 @@ namespace Fundamentos.Consola
 }
 ```
 
-## 4.2. Analogía: Value Types vs Reference Types
+## 4.2. Analogía: value types vs reference types
 
 Los tipos por valor almacenan el dato directamente, mientras que los tipos por referencia almacenan una dirección de memoria.
 
@@ -242,9 +242,9 @@ flowchart TD
     C --> E[Continuar]
     D --> E
     
-    style B fill:#FF9800
-    style C fill:#4CAF50
-    style D fill:#F44336
+    style B fill:#FF9800,color:#fff
+    style C fill:#4CAF50,color:#fff
+    style D fill:#F44336,color:#fff
 ```
 
 **If-else:**
@@ -317,8 +317,8 @@ flowchart TD
     E --> F[Actualizar]
     F --> C
     
-    style C fill:#FF9800
-    style E fill:#4CAF50
+    style C fill:#FF9800,color:#fff
+    style E fill:#4CAF50,color:#fff
 ```
 
 **For:**
@@ -392,7 +392,7 @@ for (int i = 0; i < 10; i++)
 }
 ```
 
-## 4.4. Arrays: Tipos compuestos
+## 4.4. Arrays: tipos compuestos
 
 Los arrays permiten almacenar múltiples valores del mismo tipo.
 
@@ -447,10 +447,10 @@ graph TD
     A --> F["protected internal<br/>Clase + derivadas + mismo assembly"]
     A --> G["private protected<br/>Clase + derivadas del mismo assembly"]
     
-    style B fill:#4CAF50
-    style C fill:#F44336
-    style D fill:#FF9800
-    style E fill:#2196F3
+    style B fill:#4CAF50,color:#fff
+    style C fill:#F44336,color:#fff
+    style D fill:#FF9800,color:#fff
+    style E fill:#2196F3,color:#fff
 ```
 
 ```csharp
@@ -512,12 +512,12 @@ flowchart TD
     J -->|No| E
     J -->|Si| K[Terminar programa]
     
-    style C fill:#F44336
-    style G fill:#4CAF50
-    style K fill:#FF9800
+    style C fill:#F44336,color:#fff
+    style G fill:#4CAF50,color:#fff
+    style K fill:#FF9800,color:#fff
 ```
 
-### 4.7.1. ¿Qué es una Excepción?
+### 4.7.1. ¿Qué es una excepción?
 
 Una **excepción** es un objeto que encapsula información sobre un error que ha ocurrido durante la ejecución. Deriva de la clase base `System.Exception`.
 
@@ -539,12 +539,12 @@ flowchart TD
     
     D --> J[Custom exceptions<br/>Tu propia excepción]
     
-    style A fill:#607D8B,color:#fff
-    style B fill:#FF9800,color:#fff
-    style J fill:#4CAF50,color:#fff
+    style A fill:#607D8,color:#fffB,color:#fff
+    style B fill:#FF980,color:#fff0,color:#fff
+    style J fill:#4CAF5,color:#fff0,color:#fff
 ```
 
-### 4.7.2. Excepciones Comunes en C#
+### 4.7.2. Excepciones comunes en C#
 
 | Excepción | Descripción | Ejemplo |
 |-----------|-------------|---------|
@@ -600,7 +600,7 @@ namespace Fundamentos.Excepciones
 }
 ```
 
-### 4.7.3. Lanzar Excepciones con throw
+### 4.7.3. Lanzar excepciones con throw
 
 La palabra clave `throw` se usa para lanzar una excepción manualmente.
 
@@ -677,7 +677,7 @@ namespace Fundamentos.Excepciones
 
 📝 **Nota del Profesor**: Es una buena práctica lanzar excepciones específicas en lugar de genéricas. Esto permite un manejo más preciso de errores y mejor información de depuración.
 
-### 4.7.4. Capturar Excepciones con try-catch
+### 4.7.4. Capturar excepciones con try-catch
 
 El bloque `try-catch` se usa para capturar y manejar excepciones.
 
@@ -797,7 +797,7 @@ namespace Fundamentos.Excepciones
 }
 ```
 
-### 4.7.5. Flujo de Excepciones: Orden de Captura
+### 4.7.5. Flujo de excepciones: orden de captura
 
 ⚠️ **Advertencia Importante**: Las excepciones deben capturarse **de la más específica a la más general**. Si colocas `catch (Exception)` primero, nunca llegarás a los bloques más específicos.
 
@@ -861,12 +861,12 @@ flowchart TD
     M -->|No| N[Terminar programa]
     M -->|Sí| A
     
-    style D fill:#F44336
-    style F fill:#4CAF50
-    style N fill:#FF9800
+    style D fill:#F44336,color:#fff
+    style F fill:#4CAF50,color:#fff
+    style N fill:#FF9800,color:#fff
 ```
 
-### 4.7.6. try-catch con Recursos: using
+### 4.7.6. Try-catch con recursos: using
 
 La declaración `using` garantiza que los recursos se liberen correctamente, incluso si ocurre una excepción.
 
@@ -924,7 +924,7 @@ namespace Fundamentos.Excepciones
 }
 ```
 
-### 4.7.7. Excepciones Personalizadas
+### 4.7.7. Excepciones personalizadas
 
 Puedes crear tus propias excepciones heredando de `Exception` o de una excepción más específica.
 
@@ -1056,7 +1056,7 @@ namespace Fundamentos.Excepciones
 }
 ```
 
-### 4.7.8. Re-lanzar Excepciones
+### 4.7.8. Re-lanzar excepciones
 
 Puedes capturar una excepción, realizar alguna acción, y luego volver a lanzarla.
 
@@ -1139,7 +1139,7 @@ namespace Fundamentos.Excepciones
 }
 ```
 
-### 4.7.9. Excepciones y el Patrón Result vs Excepciones
+### 4.7.9. Excepciones y el patrón result vs excepciones
 
 Hay debate sobre cuándo usar excepciones vs **valores de retorno de error**. C# favorece excepciones, pero algunos patrones modernos usan `Result<T>`.
 
@@ -1219,7 +1219,7 @@ namespace Fundamentos.Excepciones
 }
 ```
 
-### 4.7.10. Diferencia con Java: No Hay Checked vs Unchecked
+### 4.7.10. Diferencia con java: no hay checked vs unchecked
 
 ⚠️ **Diferencia Importante con Java**: A diferencia de Java, **C# NO tiene el concepto de excepciones checked (verificadas) y unchecked (no verificadas)**.
 
@@ -1296,9 +1296,9 @@ catch (Exception ex)  // Captura TODO - MAL PRÁCTICA
 }
 ```
 
-### 4.7.11. Mejores Prácticas con Excepciones
+### 4.7.11. Mejores prácticas con excepciones
 
-#### El Arquitecto Previsor: If vs Excepciones
+#### El arquitecto previsor: if vs excepciones
 
 Un **arquitecto previsor** sabe que **lanzar una excepción es costoso**. Cada excepción implica:
 
@@ -1538,9 +1538,9 @@ namespace Fundamentos.Excepciones
 }
 ```
 
-## 4.8. Programación Orientada a Objetos (POO)
+## 4.8. Programación orientada a objetos (POO)
 
-### 4.8.1. Clases y Propiedades
+### 4.8.1. Clases y propiedades
 Una clase es una plantilla para crear objetos. Las propiedades encapsulan datos con lógica de acceso.
 En C#, las propiedades pueden ser completas, auto-implementadas, de solo lectura, y usar *expression-bodied*. De esta manera nos ahorramos hacer los famosos getters y setters manuales.
 
@@ -1634,7 +1634,7 @@ namespace POO.Constructores
 }
 ```
 
-### 4.8.3. Backing Fields en C# 14
+### 4.8.3. Backing fields en C# 14
 
 C# 14 introduce **campos respaldo (backing fields)** con la palabra clave `field`, lo que simplifica la creación de propiedades con lógica personalizada sin necesidad de declarar campos privados explícitos.
 
@@ -1776,7 +1776,7 @@ namespace POO.Metodos
 }
 ```
 
-### 4.8.5. Herencia y Polimorfismo
+### 4.8.5. Herencia y polimorfismo
 
 ```csharp
 namespace POO.Herencia
@@ -1893,7 +1893,7 @@ namespace POO.Herencia
 }
 ```
 
-### 4.8.6. Clases Abstractas
+### 4.8.6. Clases abstractas
 
 ```csharp
 namespace POO.Abstractas
@@ -2063,7 +2063,7 @@ namespace POO.Records
 }
 ```
 
-### 4.8.10. Sobrecarga de Operadores
+### 4.8.10. Sobrecarga de operadores
 
 ```csharp
 namespace POO.Operadores
@@ -2096,7 +2096,7 @@ namespace POO.Operadores
 }
 ```
 
-### 4.8.11. Miembros de Object: Equals, GetHashCode, ToString
+### 4.8.11. Miembros de object: equals, GetHashCode, ToString
 Los métodos `Equals`, `GetHashCode` y `ToString` son miembros fundamentales de la clase base `Object`. Sobrescribirlos permite personalizar el comportamiento de comparación, generación de hash y representación en cadena de los objetos.
 
 ```csharp
@@ -2186,7 +2186,7 @@ namespace POO.Estaticos
 }
 ``` 
 
-### 4.8.13. Clases Inner
+### 4.8.13. Clases inner
 Las clases inner (anidadas) son clases definidas dentro de otra clase. Pueden acceder a los miembros privados de la clase contenedora.
 
 ```csharp
@@ -2227,7 +2227,7 @@ namespace POO.ClasesInner
 }
 ```
 
-### 4.8.14. Clases Parciales
+### 4.8.14. Clases parciales
 Las clases parciales permiten dividir la definición de una clase en múltiples archivos. Esto es útil para organizar código y trabajar en equipo.
 
 ```csharp
@@ -2395,7 +2395,7 @@ namespace POO.Parametros
 }
 ```
 
-## 4.10. Strings y Plantillas
+## 4.10. Strings y plantillas
 Los strings en C# son inmutables y ofrecen múltiples funcionalidades para manipulación y formateo.
 
 ```csharp
@@ -2456,7 +2456,7 @@ Ruta: {ruta}";
 }
 ```
 
-## 4.11. Null Safety
+## 4.11. Null safety
 Los tipos nullable y las características de seguridad contra null en C# ayudan a prevenir errores comunes relacionados con referencias nulas. Para que la característica de tipos de referencia anulables (nullable reference types) funcione, debe estar habilitada en el proyecto con `#nullable enable` o en el archivo .csproj y `TreatWarningsAsErrors true` configurado adecuadamente.
 
 ```csharp
@@ -2558,7 +2558,7 @@ namespace Fundamentos.NullSafety
 }
 ```
 
-## 4.12. Culturas e Internacionalización
+## 4.12. Culturas e internacionalización
 El namespace `System.Globalization` proporciona clases para manejar diferentes culturas, formatos de fecha, números y monedas, así como para poder redondear, o formatear fechas y números según la cultura deseada.
 
 ```csharp
@@ -2602,7 +2602,7 @@ namespace Fundamentos.Culturas
 }
 ```
 
-## 4.13. Tuplas y Objetos Anónimos
+## 4.13. Tuplas y objetos anónimos
 Las tuplas y los objetos anónimos son estructuras ligeras para agrupar datos sin necesidad de definir clases completas.
 
 ```csharp

@@ -1,14 +1,14 @@
-- [12. Patrones y Arquitecturas en ASP.NET Core](#12-patrones-y-arquitecturas-en-aspnet-core)
-  - [12.1. Patrón Repository](#121-patrón-repository)
-  - [12.2. Patrón Service](#122-patrón-service)
-  - [12.3. Patrón Factory](#123-patrón-factory)
-  - [12.4. Patrón Decorator](#124-patrón-decorator)
+- [12. Patrones y arquitecturas en ASP.NET Core](#12-patrones-y-arquitecturas-en-aspnet-core)
+  - [12.1. Patrón repository](#121-patrón-repository)
+  - [12.2. Patrón service](#122-patrón-service)
+  - [12.3. Patrón factory](#123-patrón-factory)
+  - [12.4. Patrón decorator](#124-patrón-decorator)
   - [12.5. Clean Architecture](#125-clean-architecture)
-  - [12.6. Organización de Carpetas](#126-organización-de-carpetas)
-  - [12.7. Buenas Prácticas](#127-buenas-prácticas)
+  - [12.6. Organización de carpetas](#126-organización-de-carpetas)
+  - [12.7. Buenas prácticas](#127-buenas-prácticas)
 
 
-# 12. Patrones y Arquitecturas en ASP.NET Core
+# 12. Patrones y arquitecturas en ASP.NET Core
 
 > 💡 **Punto de partida:** Si construyes una casa, no pones tuberías de agua por donde te da la gana. Hay reglas: las tuberías de agua van juntas, las eléctricas van por otro sitio, y las dos nunca se cruzan. Lo mismo ocurre con el software: hay **patrones** que organizan el código de forma que sea mantenible, fácil de probar y escalable.
 
@@ -21,7 +21,7 @@ En este tema aprenderás los patrones más usados en ASP.NET Core (Repository, S
 - Comprender el patrón Factory y cuándo usarlo
 - Aplicar Clean Architecture en proyectos reales
 
-## 12.1. Patrón Repository
+## 12.1. Patrón repository
 
 El patrón **Repository** abstrae el acceso a datos. El servicio no sabe si los datos vienen de una base de datos, un JSON o memoria. Solo sabe que existe una interfaz `IRepository<T>`.
 
@@ -32,11 +32,11 @@ graph LR
     B -->|"Implementa"| D["📄 Repository (JSON)"]
     B -->|"Implementa"| E["💾 Repository (Memoria)"]
 
-    style A fill:#4CAF50,color:#fff
-    style B fill:#2196F3,color:#fff
-    style C fill:#FF9800,color:#fff
-    style D fill:#FF9800,color:#fff
-    style E fill:#FF9800,color:#fff
+    style A fill:#4CAF5,color:#fff0,color:#fff
+    style B fill:#2196F,color:#fff3,color:#fff
+    style C fill:#FF980,color:#fff0,color:#fff
+    style D fill:#FF980,color:#fff0,color:#fff
+    style E fill:#FF980,color:#fff0,color:#fff
 ```
 
 ```csharp
@@ -75,7 +75,7 @@ public class PersonasEfRepository(AppDbContext context) : IPersonasRepository
 
 > 💡 **Consejo:** Un Repository **solo** accede a datos. No contiene lógica de negocio. Si necesitas validar, filtrar o transformar datos, eso va en el **Service**.
 
-## 12.2. Patrón Service
+## 12.2. Patrón service
 
 El patrón **Service** encapsula la **lógica de negocio**. Un servicio usa uno o más repositorios para realizar operaciones complejas.
 
@@ -112,7 +112,7 @@ public class AcademiaService(IPersonasRepository repository, IValidador<Persona>
 
 > 📝 **Nota:** El Service **no sabe** cómo se guardan los datos. Solo llama al Repository. Si mañana cambias de PostgreSQL a MongoDB, el Service **no se modifica**.
 
-## 12.3. Patrón Factory
+## 12.3. Patrón factory
 
 El patrón **Factory** crea objetos sin especificar la clase exacta. Es útil cuando la creación depende de una configuración o condición.
 
@@ -138,7 +138,7 @@ var repo = RepositoryFactory.Create(AppConfig.RepositoryType, context);
 
 > 📝 **Nota:** En la práctica, el Factory lo reemplaza la DI. En vez de crear un Factory manual, registras múltiples implementaciones en el contenedor de DI y resolves según la configuración.
 
-## 12.4. Patrón Decorator
+## 12.4. Patrón decorator
 
 El patrón **Decorator** añade funcionalidad a un servicio existente sin modificarlo. Como poner una capa extra a un regalo.
 
@@ -184,8 +184,8 @@ graph TD
     B -->|"Implementa"| E
     C -->|"Usa"| D
 
-    style EXTERNO fill:#2196F3,color:#fff
-    style INTERNO fill:#4CAF50,color:#fff
+    style EXTERNO fill:#2196F,color:#fff3,color:#fff
+    style INTERNO fill:#4CAF5,color:#fff0,color:#fff
 ```
 
 | Capa | Contenido | Dependencias |
@@ -197,7 +197,7 @@ graph TD
 
 > 💡 **Consejo:** La regla clave de Clean Architecture es que las dependencias **nunca** van hacia afuera. La capa interna (Domain) no puede depender de la externa (Infrastructure).
 
-## 12.6. Organización de Carpetas
+## 12.6. Organización de carpetas
 
 En ASP.NET Core, la organización típica es:
 
@@ -222,7 +222,7 @@ MiProyecto/
 
 > 📝 **Nota:** No hay una estructura "correcta" universal. Lo importante es que sea **consistente** en todo el proyecto. Si usas `Repositories/`, no mezcles con `Repository/`.
 
-## 12.7. Buenas Prácticas
+## 12.7. Buenas prácticas
 
 - **Repository para datos, Service para negocio**: No mezclar responsabilidades
 - **Clean Architecture**: Dependencias hacia adentro. Nunca hacia afuera

@@ -1,12 +1,12 @@
-- [1. Introducción al Desarrollo Web en Entorno Servidor](#1-introducción-al-desarrollo-web-en-entorno-servidor)
-  - [1.1. El Desarrollo Web Actual](#11-el-desarrollo-web-actual)
-  - [1.2. Front-end y Back-end: Los Dos Lados de la Moneda](#12-front-end-y-back-end-los-dos-lados-de-la-moneda)
-  - [1.3. Modelos de Ejecución de Código](#13-modelos-de-ejecución-de-código)
-  - [1.4. El Despliegue: Del Desarrollo a la Producción](#14-el-despliegue-del-desarrollo-a-la-producción)
-  - [1.5. Buenas Prácticas](#15-buenas-prácticas)
+- [1. Introducción al desarrollo web en entorno servidor](#1-introducción-al-desarrollo-web-en-entorno-servidor)
+  - [1.1. El desarrollo web actual](#11-el-desarrollo-web-actual)
+  - [1.2. Front-end y back-end: los dos lados de la moneda](#12-front-end-y-back-end-los-dos-lados-de-la-moneda)
+  - [1.3. Modelos de ejecución de código](#13-modelos-de-ejecución-de-código)
+  - [1.4. El despliegue: del desarrollo a la producción](#14-el-despliegue-del-desarrollo-a-la-producción)
+  - [1.5. Buenas prácticas](#15-buenas-prácticas)
 
 
-# 1. Introducción al Desarrollo Web en Entorno Servidor
+# 1. Introducción al desarrollo web en entorno servidor
 
 > 💡 **Punto de partida:** ¿Alguna vez has pensado lo que pasa cuando le das al botón de "Enviar" en un formulario web? ¿O cómo es posible que puedas ver tu perfil en Instagram, comprar en Amazon o ver una película en Netflix desde cualquier dispositivo? Detrás de estas acciones aparentemente simples, hay un complejo ecosistema de tecnologías que hacen posible la experiencia web moderna. Este módulo es el que te enseña a construir esa parte "invisible" que hace que todo funcione.
 
@@ -19,7 +19,7 @@ En este tema aprenderás qué es el desarrollo web en entorno servidor, cómo se
 - Entender los modelos de ejecución de código en cliente y servidor
 - Conocer qué es el despliegue y por qué es importante
 
-## 1.1. El Desarrollo Web Actual
+## 1.1. El desarrollo web actual
 
 El desarrollo web moderno es un campo en constante evolución que abarca la creación y mantenimiento de sitios web y aplicaciones que operan a través de Internet. Pero no es solo cuestión de funcionalidad: hay que pensar en **despliegue**, **escalabilidad**, **seguridad** y **rendimiento**.
 
@@ -37,11 +37,11 @@ graph TD
     D --> D1["PostgreSQL / MongoDB / Redis"]
     E --> E1["Docker / CI-CD / Nube"]
 
-    style A fill:#9C27B0,color:#fff
-    style B fill:#2196F3,color:#fff
-    style C fill:#4CAF50,color:#fff
-    style D fill:#FF9800,color:#fff
-    style E fill:#f44336,color:#fff
+    style A fill:#9C27B,color:#fff0,color:#fff
+    style B fill:#2196F,color:#fff3,color:#fff
+    style C fill:#4CAF5,color:#fff0,color:#fff
+    style D fill:#FF980,color:#fff0,color:#fff
+    style E fill:#f4433,color:#fff6,color:#fff
 ```
 
 📌 **Ejemplo real:** Cuando abres Netflix y seleccionas una película, tu navegador envía una petición a los servidores de Netflix. El servidor consulta bases de datos con millones de registros de usuarios, catálogos y preferencias. Genera una respuesta personalizada y te la devuelve en milisegundos. Todo esto ocurre en el **entorno servidor**.
@@ -63,7 +63,7 @@ Los principales objetivos del despliegue son garantizar la **accesibilidad**, la
 
 > 💡 **Analogía — La Mudanza:** Imagina que el **desarrollo** es como construir muebles a medida en tu taller. El **despliegue** es el proceso de empaquetar esos muebles, transportarlos a la nueva casa, montarlos y dejarlos listos para que la familia los use. De nada sirve un mueble precioso si se rompe en el camión o si no cabe por la puerta.
 
-## 1.2. Front-end y Back-end: Los Dos Lados de la Moneda
+## 1.2. Front-end y back-end: los dos lados de la moneda
 
 La lógica de una aplicación web se divide en dos entornos principales, cada uno con responsabilidades específicas:
 
@@ -85,11 +85,11 @@ graph LR
     C -->|"🔌 Consulta"| E["🗄️ Base de Datos"]
     E -->|"📊 Datos"| C
 
-    style A fill:#9C27B0,color:#fff
-    style B fill:#2196F3,color:#fff
-    style C fill:#4CAF50,color:#fff
-    style D fill:#FF9800,color:#fff
-    style E fill:#f44336,color:#fff
+    style A fill:#9C27B,color:#fff0,color:#fff
+    style B fill:#2196F,color:#fff3,color:#fff
+    style C fill:#4CAF5,color:#fff0,color:#fff
+    style D fill:#FF980,color:#fff0,color:#fff
+    style E fill:#f4433,color:#fff6,color:#fff
 ```
 
 📌 **Ejemplo real:** Cuando abres Instagram:
@@ -113,7 +113,7 @@ graph LR
 > - **Cocina (Servidor/Back-end)**: Recibe la orden. El chef comprueba si hay ingredientes en la despensa (Base de Datos), cocina el plato y lo entrega al camarero.
 > - **Plato (Web)**: Lo que recibes listo para consumir. No ves cómo se cocinó, solo ves el resultado.
 
-## 1.3. Modelos de Ejecución de Código
+## 1.3. Modelos de ejecución de código
 
 El código de una aplicación web se ejecuta en dos entornos con responsabilidades diferentes. Es fundamental entender qué se ejecuta dónde.
 
@@ -134,8 +134,8 @@ graph TD
     CLIENTE -->|"Petición HTTP"| SERVIDOR
     SERVIDOR -->|"Respuesta HTTP"| CLIENTE
 
-    style CLIENTE fill:#2196F3,color:#fff
-    style SERVIDOR fill:#4CAF50,color:#fff
+    style CLIENTE fill:#2196F,color:#fff3,color:#fff
+    style SERVIDOR fill:#4CAF5,color:#fff0,color:#fff
 ```
 
 **Código del cliente (Front-end):**
@@ -183,7 +183,7 @@ app.Run();
 
 > 💡 **Consejo:** Para el examen, recuerda que el Front-end se comunica con el Back-end a través de **peticiones HTTP**. El servidor procesa la petición y devuelve una **respuesta HTTP** con los datos solicitados.
 
-## 1.4. El Despliegue: Del Desarrollo a la Producción
+## 1.4. El despliegue: del desarrollo a la producción
 
 El **despliegue** es el proceso de llevar una aplicación desde el entorno de desarrollo (tu ordenador) hasta el entorno de producción (un servidor accesible por Internet).
 
@@ -193,10 +193,10 @@ graph LR
     B --> C["📦 Staging<br/>(Pre-producción)"]
     C --> D["🚀 Producción<br/>(Servidor real)"]
 
-    style A fill:#2196F3,color:#fff
-    style B fill:#FF9800,color:#fff
-    style C fill:#9C27B0,color:#fff
-    style D fill:#4CAF50,color:#fff
+    style A fill:#2196F,color:#fff3,color:#fff
+    style B fill:#FF980,color:#fff0,color:#fff
+    style C fill:#9C27B,color:#fff0,color:#fff
+    style D fill:#4CAF5,color:#fff0,color:#fff
 ```
 
 📌 **Ejemplo real:** Cuando Netflix despliega una nueva versión de su aplicación, no lo hace directamente a todos los usuarios. Primero lo prueba con un 1 % de usuarios (Canary Release); si funciona bien, lo amplía al 10%, luego al 50% y finalmente al 100%. Así minimiza el riesgo de errores.
@@ -212,7 +212,7 @@ graph LR
 
 > 💡 **Consejo:** En el tema 09 profundizaremos en despliegue con Docker y CI-CD. Ahora solo necesitas entender el concepto.
 
-## 1.5. Buenas Prácticas
+## 1.5. Buenas prácticas
 
 - **Separación de responsabilidades**: Front-end para interfaz, Back-end para lógica de negocio. No mezclar ambos
 - **Back-end agnóstico**: Diseña el Back-end para servir a cualquier cliente (web, móvil, escritorio), no solo al navegador

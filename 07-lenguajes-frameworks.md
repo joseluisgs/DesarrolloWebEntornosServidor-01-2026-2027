@@ -1,13 +1,13 @@
-- [7. Lenguajes y Frameworks de Programación en Entorno Servidor](#7-lenguajes-y-frameworks-de-programación-en-entorno-servidor)
-  - [7.1. Tipos de Ejecución de Lenguajes](#71-tipos-de-ejecución-de-lenguajes)
-  - [7.2. Plataformas Web: LAMP, MEAN, WISA](#72-plataformas-web-lamp-mean-wisa)
-  - [7.3. Tecnologías para el Desarrollo de Servicios](#73-tecnologías-para-el-desarrollo-de-servicios)
-  - [7.4. Integración del Código con Lenguajes de Marcas](#74-integración-del-código-con-lenguajes-de-marcas)
-  - [7.5. Comparativa de Tecnologías](#75-comparativa-de-tecnologías)
-  - [7.6. Buenas Prácticas](#76-buenas-prácticas)
+- [7. Lenguajes y Frameworks de programación en entorno servidor](#7-lenguajes-y-frameworks-de-programación-en-entorno-servidor)
+  - [7.1. Tipos de ejecución de lenguajes](#71-tipos-de-ejecución-de-lenguajes)
+  - [7.2. Plataformas web: LAMP, MEAN, WISA](#72-plataformas-web-lamp-mean-wisa)
+  - [7.3. Tecnologías para el desarrollo de servicios](#73-tecnologías-para-el-desarrollo-de-servicios)
+  - [7.4. Integración del código con lenguajes de marcas](#74-integración-del-código-con-lenguajes-de-marcas)
+  - [7.5. Comparativa de tecnologías](#75-comparativa-de-tecnologías)
+  - [7.6. Buenas prácticas](#76-buenas-prácticas)
 
 
-# 7. Lenguajes y Frameworks de Programación en Entorno Servidor
+# 7. Lenguajes y Frameworks de programación en entorno servidor
 
 > 💡 **Punto de partida:** Has visto que existen varias tecnologías para crear páginas web dinámicas: PHP, Java, C#, Python, Node.js. Pero, ¿por qué hay tantas? ¿Cuál es la diferencia entre que PHP "interprete" el código y que Java lo "compile"? ¿Qué significa que Python sea "scripting"? Todo esto afecta al rendimiento, la portabilidad y la forma en que desplegamos nuestras aplicaciones.
 
@@ -21,7 +21,7 @@ En este tema aprenderás los tipos de ejecución de lenguajes, las plataformas w
 - Entender cómo se integra el código del servidor con HTML
 - Comparar ventajas e inconvenientes de cada tecnología
 
-## 7.1. Tipos de Ejecución de Lenguajes
+## 7.1. Tipos de ejecución de lenguajes
 
 Los lenguajes de programación del lado del servidor se ejecutan de formas muy diferentes. Es fundamental entender estas diferencias porque afectan directamente al rendimiento y a la forma de trabajar.
 
@@ -49,9 +49,9 @@ graph TD
         D -->|"Máquina Virtual JVM/CLR"| B
     end
 
-    style SCRIPTING fill:#2196F3,color:#fff
-    style COMPILADO fill:#f44336,color:#fff
-    style BYTECODE fill:#4CAF50,color:#fff
+    style SCRIPTING fill:#2196F,color:#fff3,color:#fff
+    style COMPILADO fill:#f4433,color:#fff6,color:#fff
+    style BYTECODE fill:#4CAF5,color:#fff0,color:#fff
 ```
 
 📌 **Ejemplo real:** PHP es como un **traductor simultáneo**: hablas (escribes código) y él traduce frase a frase al momento. Java es como **traducir un libro entero e imprimirlo**: tardas al principio (compilación), pero una vez lo tienes, lo lees rapidísimo sin traductores.
@@ -62,7 +62,7 @@ graph TD
 
 > 📝 **Nota:** C# y Java son lenguajes compilados a bytecode. Su código se compila a un formato intermedio que luego ejecuta una máquina virtual (CLR para C#, JVM para Java). Esto les da portabilidad: «Write Once, Run Anywhere» ("escribe una vez, ejecuta en cualquier lugar").
 
-## 7.2. Plataformas Web: LAMP, MEAN, WISA
+## 7.2. Plataformas web: LAMP, MEAN, WISA
 
 Una **plataforma web** (o **stack**) es el conjunto de tecnologías que se usan juntas para desarrollar y desplegar una aplicación web. La combinación más habitual es: **Sistema Operativo + Servidor Web + Base de Datos + Lenguaje de Programación**.
 
@@ -101,9 +101,9 @@ graph TD
     M1 --> M2 --> M3 --> M4
     W1 --> W2 --> W3 --> W4
 
-    style LAMP fill:#4CAF50,color:#fff
-    style MEAN fill:#2196F3,color:#fff
-    style WISA fill:#FF9800,color:#fff
+    style LAMP fill:#4CAF5,color:#fff0,color:#fff
+    style MEAN fill:#2196F,color:#fff3,color:#fff
+    style WISA fill:#FF980,color:#fff0,color:#fff
 ```
 
 📌 **Ejemplo real:** WordPress (que usa el 43% de las webs del mundo) funciona sobre LAMP. Netflix usa Java sobre Linux. Microsoft Teams usa ASP.NET Core sobre Windows/Azure.
@@ -112,7 +112,7 @@ graph TD
 
 > ⚠️ **Advertencia:** No confundas **XAMPP/WAMP** con un entorno de producción. Son herramientas de desarrollo local. En producción, se usan servidores reales con configuración específica.
 
-## 7.3. Tecnologías para el Desarrollo de Servicios
+## 7.3. Tecnologías para el desarrollo de servicios
 
 El desarrollo de servicios se centra en la creación de APIs para que las aplicaciones se comuniquen. Cada tecnología tiene un framework principal:
 
@@ -159,7 +159,7 @@ app.Run();
 
 > 📝 **Nota:** La tendencia actual es crear APIs REST que devuelvan datos en formato JSON, y que el Front-end (React, Angular, Vue) se encargue de mostrarlos. Esta separación se llama **arquitectura desacoplada** (**decoupled**) o **headless**.
 
-## 7.4. Integración del Código con Lenguajes de Marcas
+## 7.4. Integración del código con lenguajes de marcas
 
 Una técnica fundamental para crear páginas web dinámicas es integrar código de programación directamente dentro de lenguajes de marcado como HTML.
 
@@ -198,7 +198,7 @@ Una técnica fundamental para crear páginas web dinámicas es integrar código 
 
 > 💡 **Consejo:** Aunque empezamos viendo código incrustado (como PHP dentro de HTML), la tendencia profesional es **separar completamente** el Backend (API JSON) del Frontend (HTML/JS generado por React/Angular). Esto facilita el mantenimiento y permite que diferentes equipos trabajen en cada parte.
 
-## 7.5. Comparativa de Tecnologías
+## 7.5. Comparativa de tecnologías
 
 | Característica | PHP | Java | C# | Python | JavaScript (Node.js) |
 |----------------|-----|------|----|--------|---------------------|
@@ -223,7 +223,7 @@ Una técnica fundamental para crear páginas web dinámicas es integrar código 
 > - ¿Tratas datos, IA o machine learning? → **Python / Django**
 > - ¿Necesitas tiempo real y APIs rápidas? → **Node.js / Express**
 
-## 7.6. Buenas Prácticas
+## 7.6. Buenas prácticas
 
 - **Elegir según el problema**: No uses el lenguaje que mejor conoces si no es el adecuado
 - **Un framework bien elegido ahorra meses**: Evalúa comunidad, soporte y documentación

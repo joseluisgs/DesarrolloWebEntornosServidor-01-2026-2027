@@ -28,7 +28,7 @@ Variantes de granularidad (las 30 consultas deben dividirse en partes iguales): 
 
 ## Conceptos clave
 
-### LINQ (Language Integrated Query)
+### LINQ (language integrated query)
 
 LINQ es una extensión de C# que permite escribir consultas sobre colecciones de datos de forma integrada en el lenguaje. Funciona como "SQL pero dentro de C#".
 
@@ -58,7 +58,7 @@ var accidentesPorDistrito = accidentes
 
 📌 Ejemplo real: **Netflix** usa consultas similares a LINQ internamente para filtrar y recomendar contenido según tus preferencias.
 
-### PLINQ (Parallel LINQ)
+### PLINQ (parallel LINQ)
 
 PLINQ es la versión paralela de LINQ. Con solo añadir `.AsParallel()`, las consultas se ejecutan en múltiples hilos del procesador.
 

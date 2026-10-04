@@ -4,7 +4,7 @@
 
 Este ejemplo muestra cómo usar **Redis** como caché distribuida con el patrón **Cache-Aside** usando el driver nativo `StackExchange.Redis`.
 
-## Conceptos Clave
+## Conceptos clave
 
 ### ¿Qué es Redis?
 
@@ -27,9 +27,9 @@ graph LR
     C -->|3. Guardar en caché| B
     B -->|4. Devolver resultado| A
     
-    style A fill:#2196F3,color:#fff
-    style B fill:#f44336,color:#fff
-    style C fill:#4CAF50,color:#fff
+    style A fill:#2196F,color:#fff3,color:#fff
+    style B fill:#f4433,color:#fff6,color:#fff
+    style C fill:#4CAF5,color:#fff0,color:#fff
 ```
 
 | Paso | Acción | Descripción |
@@ -61,7 +61,7 @@ graph LR
 | **Async/Await** | API completamente asíncrona |
 | **Pub/Sub** | Soporte para mensajería |
 
-### Docker Compose
+### Docker compose
 
 Levanta Redis 7 con Redis Commander (interfaz web):
 
@@ -133,7 +133,7 @@ await cache.SetAsync(key, value, TimeSpan.FromMinutes(30));
 | **Medio** | 10-60 min | Catálogos, listados |
 | **Largo** | horas/días | Datos estáticos, configuración |
 
-## Invalidación de Caché
+## Invalidación de caché
 
 Cuando los datos cambian en la BD, hay que invalidar la caché:
 
@@ -145,7 +145,7 @@ await cache.RemoveAsync("producto:1");
 await cache.SetAsync("producto:1", productoActualizado);
 ```
 
-## Casos de Uso
+## Casos de uso
 
 - **APIs REST**: Cachear respuestas de consultas frecuentes
 - **Sesiones de usuario**: Almacenar estado de sesión

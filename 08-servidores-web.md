@@ -1,16 +1,16 @@
-- [8. Servidores Web y de Aplicaciones](#8-servidores-web-y-de-aplicaciones)
-  - [8.1. ¿Qué es un Servidor Web?](#81-qué-es-un-servidor-web)
-  - [8.2. Apache HTTP Server](#82-apache-http-server)
+- [8. Servidores web y de aplicaciones](#8-servidores-web-y-de-aplicaciones)
+  - [8.1. ¿Qué es un servidor web?](#81-qué-es-un-servidor-web)
+  - [8.2. Apache HTTP server](#82-apache-http-server)
   - [8.3. Nginx](#83-nginx)
-  - [8.4. Comparativa: Apache vs Nginx](#84-comparativa-apache-vs-nginx)
-  - [8.5. Servidores de Aplicaciones](#85-servidores-de-aplicaciones)
-  - [8.6. Kestrel: El Servidor de ASP.NET Core](#86-kestrel-el-servidor-de-aspnet-core)
-  - [8.7. Gestores de Bases de Datos](#87-gestores-de-bases-de-datos)
-  - [8.8. Arquitectura Completa de un Servidor Web](#88-arquitectura-completa-de-un-servidor-web)
-  - [8.9. Buenas Prácticas](#89-buenas-prácticas)
+  - [8.4. Comparativa: apache vs nginx](#84-comparativa-apache-vs-nginx)
+  - [8.5. Servidores de aplicaciones](#85-servidores-de-aplicaciones)
+  - [8.6. Kestrel: el servidor de ASP.NET Core](#86-kestrel-el-servidor-de-aspnet-core)
+  - [8.7. Gestores de bases de datos](#87-gestores-de-bases-de-datos)
+  - [8.8. Arquitectura completa de un servidor web](#88-arquitectura-completa-de-un-servidor-web)
+  - [8.9. Buenas prácticas](#89-buenas-prácticas)
 
 
-# 8. Servidores Web y de Aplicaciones
+# 8. Servidores web y de aplicaciones
 
 > 💡 **Punto de partida:** Cuando escribes una URL en el navegador, ¿quién te devuelve la página web? No es solo "un servidor": hay un **servidor web** que recibe la petición, y si es contenido dinámico, la pasa a un **servidor de aplicaciones** que ejecuta el código. Y detrás de todo esto hay una **base de datos** que almacena la información. Vamos a desgranar cada pieza.
 
@@ -25,7 +25,7 @@ En este tema aprenderás qué son los servidores web (Apache, Nginx), los servid
 - Analizar los gestores de bases de datos más importantes
 - Visualizar la arquitectura completa de un servidor web en producción
 
-## 8.1. ¿Qué es un Servidor Web?
+## 8.1. ¿Qué es un servidor web?
 
 Un **servidor web** es el programa que "escucha" en un puerto (80 para HTTP, 443 para HTTPS) y responde a las peticiones de los navegadores. Su función principal es:
 
@@ -51,16 +51,16 @@ graph LR
     SA -->|"Respuesta"| SW
     SW -->|"Respuesta HTTP"| C
 
-    style SW fill:#2196F3,color:#fff
-    style SA fill:#4CAF50,color:#fff
-    style DB fill:#FF9800,color:#fff
+    style SW fill:#2196F,color:#fff3,color:#fff
+    style SA fill:#4CAF5,color:#fff0,color:#fff
+    style DB fill:#FF980,color:#fff0,color:#fff
 ```
 
 > 💡 **Analogía — El Recepcionista y la Cocina:**
 > - **Servidor Web (Apache/Nginx)**: Es el **recepcionista**. Te saluda, te da la carta (HTML estático), te sirve las bebidas (imágenes). Si pides algo complicado, se lo pasa a la cocina.
 > - **Servidor de Aplicaciones (Tomcat/Kestrel)**: Es la **cocina**. Allí se procesan los ingredientes, se cocina el plato (ejecuta el código) y se lo da al recepcionista para que te lo lleve a la mesa.
 
-## 8.2. Apache HTTP Server
+## 8.2. Apache HTTP server
 
 Apache es el veterano de los servidores web. Lanzado en 1995, ha sido el servidor más popular del mundo durante décadas.
 
@@ -73,7 +73,7 @@ Apache es el veterano de los servidores web. Lanzado en 1995, ha sido el servido
 | **Modular** | Se activa/desactiva funcionalidad con módulos |
 | **Cuota de mercado** | Alrededor del 25-30 % de las webs (varía según la fuente) |
 
-### Instalación y Configuración Básica (Linux)
+### Instalación y configuración básica (Linux)
 
 ```bash
 # Instalación en Ubuntu/Debian
@@ -90,7 +90,7 @@ sudo systemctl status apache2
 # /var/www/html/ → Aquí van tus archivos HTML
 ```
 
-### Hosts Virtuales (VirtualHosts)
+### Hosts virtuales (VirtualHosts)
 
 Los VirtualHosts permiten tener **varias webs en un mismo servidor** (misma IP). El servidor sabe cuál servir mirando la cabecera `Host` de la petición HTTP.
 
@@ -125,7 +125,7 @@ Nginx (pronunciado "engine-x") es el servidor web moderno por excelencia. Su arq
 | **Uso principal** | Proxy inverso, balanceador de carga, estáticos |
 | **Cuota de mercado** | Alrededor del 30 % de las webs y en aumento (varía según la fuente) |
 
-### Ventajas de Nginx
+### Ventajas de nginx
 
 - **Rendimiento**: Arquitectura asíncrona. Aguanta mucha más carga concurrente con menos RAM
 - **Proxy inverso**: Ideal para dirigir tráfico a servidores de aplicaciones
@@ -156,7 +156,7 @@ server {
 
 > 📝 **Nota:** En producción, no solemos exponer el servidor de aplicaciones directamente a Internet. Ponemos un Nginx o Apache delante haciendo de "proxy" por seguridad y rendimiento.
 
-## 8.4. Comparativa: Apache vs Nginx
+## 8.4. Comparativa: apache vs nginx
 
 | Característica | Apache | Nginx |
 |----------------|--------|-------|
@@ -175,9 +175,9 @@ graph LR
     N -->|"Dinámicos"| A["🔶 Apache / Tomcat"]
     A -->|"Procesa"| DB["🗄️ Base de Datos"]
 
-    style N fill:#2196F3,color:#fff
-    style A fill:#FF9800,color:#fff
-    style DB fill:#4CAF50,color:#fff
+    style N fill:#2196F,color:#fff3,color:#fff
+    style A fill:#FF980,color:#fff0,color:#fff
+    style DB fill:#4CAF5,color:#fff0,color:#fff
 ```
 
 📌 **Ejemplo real:** En una arquitectura típica:
@@ -188,7 +188,7 @@ graph LR
 
 > 💡 **Consejo:** Para el examen, recuerda que Apache es más flexible (`.htaccess`) y Nginx es más rápido (asíncrono). En producción moderna, Nginx se usa como proxy inverso delante de cualquier servidor de aplicaciones.
 
-## 8.5. Servidores de Aplicaciones
+## 8.5. Servidores de aplicaciones
 
 Un **servidor de aplicaciones** va más allá de servir archivos estáticos. Proporciona un entorno completo para ejecutar lógica de negocio compleja, transacciones, colas de mensajes, etc.
 
@@ -201,7 +201,7 @@ Un **servidor de aplicaciones** va más allá de servir archivos estáticos. Pro
 | **uWSGI** | Python (WSGI) | 5000 | Django, Flask |
 | **PHP-FPM** | PHP (FastCGI) | 9000 | Laravel, WordPress |
 
-### Apache Tomcat
+### Apache tomcat
 
 Tomcat es el contenedor de **Servlets y JSP** por excelencia. Implementación de referencia de Java EE (ahora Jakarta EE) para la parte web.
 
@@ -219,7 +219,7 @@ sudo service tomcat9 start
 
 > 📝 **Nota:** En producción, no exponemos Tomcat directamente a Internet (puerto 8080). Ponemos un Nginx o Apache delante (puerto 80/443) haciendo de "proxy" por seguridad y rendimiento.
 
-## 8.6. Kestrel: El Servidor de ASP.NET Core
+## 8.6. Kestrel: el servidor de ASP.NET Core
 
 **Kestrel** es el servidor web que viene integrado en ASP.NET Core. Es ligero, rápido y está optimizado para .NET.
 
@@ -275,7 +275,7 @@ La misma configuración puede definirse en `appsettings.json`:
 
 > 💡 **Consejo:** Para el examen, recuerda que Kestrel es el servidor web que viene con ASP.NET Core. En producción, se usa Nginx o IIS como proxy inverso delante de Kestrel.
 
-## 8.7. Gestores de Bases de Datos
+## 8.7. Gestores de bases de datos
 
 Las bases de datos son donde se almacenan los datos de las aplicaciones. Existen dos grandes familias:
 
@@ -284,7 +284,7 @@ Las bases de datos son donde se almacenan los datos de las aplicaciones. Existen
 | **Relacional (SQL)** | Datos en tablas, relaciones, lenguaje SQL, ACID | MySQL, PostgreSQL, SQL Server, Oracle | Datos estructurados, transacciones |
 | **NoSQL** | Datos en documentos, claves, grafos, flexible | MongoDB, Redis, Cassandra | Datos no estructurados, escalabilidad |
 
-### Bases de Datos Relacionales (SQL)
+### Bases de datos relacionales (SQL)
 
 | BD | Características | Ideal para |
 |----|----------------|------------|
@@ -293,7 +293,7 @@ Las bases de datos son donde se almacenan los datos de las aplicaciones. Existen
 | **SQL Server** | Microsoft, integración con .NET | Empresarial, entornos Microsoft |
 | **Oracle** | El más potente, licencia cara | Grandes empresas, banca |
 
-### Bases de Datos NoSQL
+### Bases de datos NoSQL
 
 | BD | Tipo | Características | Ideal para |
 |----|------|----------------|------------|
@@ -318,8 +318,8 @@ graph TD
         N4["Neo4j<br/>(Grafos)"]
     end
 
-    style SQL fill:#2196F3,color:#fff
-    style NOSQL fill:#4CAF50,color:#fff
+    style SQL fill:#2196F,color:#fff3,color:#fff
+    style NOSQL fill:#4CAF5,color:#fff0,color:#fff
 ```
 
 📌 **Ejemplo real:** Instagram usa **Redis** para caché y sesiones, **PostgreSQL** para datos relacionales y **Cassandra** para datos de gran volumen como el feed y los perfiles de usuario. Las fotos y vídeos no se guardan en la base de datos: van a **almacenamiento de objetos** (tipo S3).
@@ -328,7 +328,7 @@ graph TD
 
 > 💡 **Consejo:** Para el examen, recuerda que MySQL es el más usado en hosting barato, PostgreSQL es más potente y estricto, Redis es para caché en memoria y MongoDB es para datos no estructurados.
 
-## 8.8. Arquitectura Completa de un Servidor Web
+## 8.8. Arquitectura completa de un servidor web
 
 En producción, una aplicación web típica tiene esta arquitectura:
 
@@ -345,14 +345,14 @@ graph TD
     DB1 -->|"Réplica"| DB2["🗄️ PostgreSQL<br/>(Réplica lectura)"]
     A1 -->|"Caché"| R["⚡ Redis<br/>(Caché)"]
 
-    style LB fill:#9C27B0,color:#fff
-    style N1 fill:#2196F3,color:#fff
-    style N2 fill:#2196F3,color:#fff
-    style A1 fill:#4CAF50,color:#fff
-    style A2 fill:#4CAF50,color:#fff
-    style DB1 fill:#FF9800,color:#fff
-    style DB2 fill:#FF9800,color:#fff
-    style R fill:#f44336,color:#fff
+    style LB fill:#9C27B,color:#fff0,color:#fff
+    style N1 fill:#2196F,color:#fff3,color:#fff
+    style N2 fill:#2196F,color:#fff3,color:#fff
+    style A1 fill:#4CAF5,color:#fff0,color:#fff
+    style A2 fill:#4CAF5,color:#fff0,color:#fff
+    style DB1 fill:#FF980,color:#fff0,color:#fff
+    style DB2 fill:#FF980,color:#fff0,color:#fff
+    style R fill:#f4433,color:#fff6,color:#fff
 ```
 
 📌 **Ejemplo real:** Netflix tiene más de 100.000 servidores en todo el mundo. Cuando abres Netflix, tu petición pasa por un balanceador de carga que la dirige al servidor más cercano y menos cargado. Ese servidor usa Nginx como proxy, y detrás tiene microservicios en Java que consultan bases de datos y caché Redis.
@@ -366,7 +366,7 @@ graph TD
 | **Base de datos** | Persiste datos | PostgreSQL, MySQL, MongoDB |
 | **CDN** | Archivos estáticos cercanos al usuario | Cloudflare, AWS CloudFront |
 
-## 8.9. Buenas Prácticas
+## 8.9. Buenas prácticas
 
 - **Kestrel para desarrollo**: Es suficiente. En producción, usa Nginx o Apache como proxy inverso
 - **Separar servidor web de aplicaciones**: Escalabilidad y seguridad

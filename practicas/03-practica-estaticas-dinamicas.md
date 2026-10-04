@@ -1,10 +1,10 @@
-# Práctica 3: Análisis Comparativo de Páginas Web Estáticas y Dinámicas
+# Práctica 3: análisis comparativo de páginas web estáticas y dinámicas
 
-- [Práctica 3: Análisis Comparativo de Páginas Web Estáticas y Dinámicas](#práctica-3-análisis-comparativo-de-páginas-web-estáticas-y-dinámicas)
+- [Práctica 3: análisis comparativo de páginas web estáticas y dinámicas](#práctica-3-análisis-comparativo-de-páginas-web-estáticas-y-dinámicas)
   - [Objetivo](#objetivo)
   - [Descripción](#descripción)
-  - [Tareas a Realizar](#tareas-a-realizar)
-  - [Formato de Entrega](#formato-de-entrega)
+  - [Tareas a realizar](#tareas-a-realizar)
+  - [Formato de entrega](#formato-de-entrega)
 
 ---
 
@@ -20,9 +20,9 @@ La elección entre una página estática y una dinámica es una decisión fundam
 
 ---
 
-## Tareas a Realizar
+## Tareas a realizar
 
-### 1. Páginas Web Estáticas
+### 1. Páginas web estáticas
 
 Para cada punto, investiga y describe:
 
@@ -32,7 +32,7 @@ Para cada punto, investiga y describe:
 - **Uso más adecuado:** Proyectos donde encajan (portfolio, web corporativa, documentación)
 - **Tecnologías:** HTML, CSS, JavaScript, generadores estáticos (Hugo, Jekyll)
 
-### 2. Páginas Web Dinámicas
+### 2. Páginas web dinámicas
 
 Para cada punto, investiga y describe:
 
@@ -43,13 +43,13 @@ Para cada punto, investiga y describe:
 - **Tecnologías Back-end:** PHP, Java/Spring, ASP.NET Core, Python/Django, Node.js
 - **Tecnologías Front-end:** JavaScript, frameworks SPA (React, Angular, Vue)
 
-### 3. Diagrama de Funcionamiento
+### 3. Diagrama de funcionamiento
 
 - Busca un diagrama que muestre el flujo de una página web dinámica
 - Incrusta el diagrama en tu documento
 - Explica con tus propias palabras cada paso: petición del cliente → servidor → BBDD → respuesta
 
-### 4. Conclusión Comparativa
+### 4. Conclusión comparativa
 
 - Resume las diferencias principales en una tabla comparativa
 - Justifica cuándo elegir estática vs dinámica
@@ -57,7 +57,7 @@ Para cada punto, investiga y describe:
 
 ---
 
-## Formato de Entrega
+## Formato de entrega
 
 - Documento estructurado (Markdown o PDF)
 - Citar fuentes externas utilizadas

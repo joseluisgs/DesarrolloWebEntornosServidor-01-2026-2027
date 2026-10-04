@@ -35,7 +35,7 @@ dotnet run --project 12-Docker-HelloWorld
 # http://localhost:5000
 ```
 
-## Ejecución con Docker Compose
+## Ejecución con Docker compose
 
 ```bash
 # Build + ejecutar (primera vez)
@@ -70,9 +70,9 @@ curl http://localhost:5000/health
 # → {"status":"Healthy","timestamp":"2026-09-08T..."}
 ```
 
-## Dockerfile: ¿Por qué es así?
+## Dockerfile: ¿por qué es así?
 
-### Etapa 1: Build (imagen pesada)
+### Etapa 1: build (imagen pesada)
 
 ```dockerfile
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
@@ -115,7 +115,7 @@ RUN dotnet test --configuration Release --no-restore
 
 Si un test falla, el build de la imagen **se detiene**. Así garantizamos que solo desplegamos código que pasa los tests. Es la regla dorada: **nada se despliega sin tests verdes**.
 
-### Etapa 2: Runtime (imagen ligera + segura)
+### Etapa 2: runtime (imagen ligera + segura)
 
 ```dockerfile
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
@@ -161,12 +161,12 @@ graph LR
     B --> C["📦 Runtime (~200MB)<br/>+ usuario no-root"]
     C --> D["🐳 Imagen final"]
 
-    style A fill:#FF9800,color:#fff
-    style C fill:#4CAF50,color:#fff
-    style D fill:#2196F3,color:#fff
+    style A fill:#FF980,color:#fff0,color:#fff
+    style C fill:#4CAF5,color:#fff0,color:#fff
+    style D fill:#2196F,color:#fff3,color:#fff
 ```
 
-## docker-compose.yml: ¿Por qué es así?
+## Docker-compose.yml: ¿por qué es así?
 
 ```yaml
 services:
@@ -222,7 +222,7 @@ docker compose logs -f          # seguir en tiempo real
 docker compose ps
 ```
 
-## .dockerignore: ¿Para qué sirve?
+## .dockerignore: ¿para qué sirve?
 
 ```
 **/bin/

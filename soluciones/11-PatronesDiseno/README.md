@@ -23,7 +23,7 @@ Ejemplo completo que demuestra los 5 principios SOLID y 6 patrones de diseño ap
 | **I** (ISP) | Interfaces pequeñas | `IReadRepository` vs `IWriteRepository` — solo lo que necesitas |
 | **D** (DIP) | Depender de abstracciones | `PedidoServiceDip` depende de `IPedidoRepository`, no de `PedidoRepository` |
 
-## Patrones de Diseño
+## Patrones de diseño
 
 | Patrón | Qué hace | Ejemplo real |
 |--------|----------|--------------|
@@ -39,7 +39,7 @@ Ejemplo completo que demuestra los 5 principios SOLID y 6 patrones de diseño ap
 dotnet run
 ```
 
-## Resultado Esperado
+## Resultado esperado
 
 ```
 === Ejemplo 11: Patrones de Diseño y SOLID ===

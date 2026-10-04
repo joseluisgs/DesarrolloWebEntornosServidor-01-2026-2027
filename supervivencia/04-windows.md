@@ -1,4 +1,4 @@
-# Windows — Comandos de Supervivencia
+# Windows — comandos de supervivencia
 
 > Comandos de PowerShell y CMD para desarrollo en Windows.
 

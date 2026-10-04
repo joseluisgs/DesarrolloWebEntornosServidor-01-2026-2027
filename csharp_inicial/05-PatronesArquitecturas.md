@@ -1,35 +1,35 @@
-- [5. Patrones y Arquitecturas en .NET](#5-patrones-y-arquitecturas-en-net)
+- [5. Patrones y arquitecturas en .NET](#5-patrones-y-arquitecturas-en-net)
   - [5.1. Principios SOLID](#51-principios-solid)
     - [5.1.1. 🧠 Analogía: SOLID como construcción de un edificio](#511--analogía-solid-como-construcción-de-un-edificio)
-    - [5.1.2. SRP: Principio de Responsabilidad Única](#512-srp-principio-de-responsabilidad-única)
-    - [5.1.3. OCP: Principio Abierto/Cerrado](#513-ocp-principio-abiertocerrado)
-    - [5.1.4. LSP: Principio de Sustitución de Liskov](#514-lsp-principio-de-sustitución-de-liskov)
-    - [🧠 Analogía: El LSP en la vida real](#-analogía-el-lsp-en-la-vida-real)
-    - [5.1.5. ISP: Principio de Segregación de Interfaces](#515-isp-principio-de-segregación-de-interfaces)
-    - [5.1.6. DIP: Principio de Inversión de Dependencias](#516-dip-principio-de-inversión-de-dependencias)
-  - [5.2. Patrones de Diseño](#52-patrones-de-diseño)
-    - [5.2.1. Patrones de Creación](#521-patrones-de-creación)
-    - [5.2.2. Patrones Estructurales](#522-patrones-estructurales)
-    - [5.2.3. Patrones de Comportamiento](#523-patrones-de-comportamiento)
+    - [5.1.2. SRP: principio de responsabilidad única](#512-srp-principio-de-responsabilidad-única)
+    - [5.1.3. OCP: principio Abierto/Cerrado](#513-ocp-principio-abiertocerrado)
+    - [5.1.4. LSP: principio de sustitución de liskov](#514-lsp-principio-de-sustitución-de-liskov)
+    - [🧠 Analogía: el LSP en la vida real](#-analogía-el-lsp-en-la-vida-real)
+    - [5.1.5. ISP: principio de segregación de interfaces](#515-isp-principio-de-segregación-de-interfaces)
+    - [5.1.6. DIP: principio de inversión de dependencias](#516-dip-principio-de-inversión-de-dependencias)
+  - [5.2. Patrones de diseño](#52-patrones-de-diseño)
+    - [5.2.1. Patrones de creación](#521-patrones-de-creación)
+    - [5.2.2. Patrones estructurales](#522-patrones-estructurales)
+    - [5.2.3. Patrones de comportamiento](#523-patrones-de-comportamiento)
     - [5.2.4. 📊 Diagrama de clasificación de patrones](#524--diagrama-de-clasificación-de-patrones)
-  - [5.3. Arquitecturas Software](#53-arquitecturas-software)
-    - [5.3.1. 🧠 Analogía: Arquitectura como plano de ciudad](#531--analogía-arquitectura-como-plano-de-ciudad)
-    - [5.3.2. Arquitectura Monolítica](#532-arquitectura-monolítica)
-    - [5.3.3. Arquitectura en Capas](#533-arquitectura-en-capas)
+  - [5.3. Arquitecturas software](#53-arquitecturas-software)
+    - [5.3.1. 🧠 Analogía: arquitectura como plano de ciudad](#531--analogía-arquitectura-como-plano-de-ciudad)
+    - [5.3.2. Arquitectura monolítica](#532-arquitectura-monolítica)
+    - [5.3.3. Arquitectura en capas](#533-arquitectura-en-capas)
     - [5.3.4. Clean Architecture](#534-clean-architecture)
     - [5.3.5. Microservicios](#535-microservicios)
   - [5.4. Arquitecturas en aplicaciones .NET modernas](#54-arquitecturas-en-aplicaciones-net-modernas)
     - [5.4.1. 📊 Estructura de proyecto Clean Architecture](#541--estructura-de-proyecto-clean-architecture)
-    - [5.4.2. Configuración de Inyección de Dependencias](#542-configuración-de-inyección-de-dependencias)
-    - [5.4.3. Comunicación entre Microservicios](#543-comunicación-entre-microservicios)
-  - [5.5. APIs Web en ASP.NET Core](#55-apis-web-en-aspnet-core)
-    - [5.5.1. Tipos de APIs Web](#551-tipos-de-apis-web)
+    - [5.4.2. Configuración de inyección de dependencias](#542-configuración-de-inyección-de-dependencias)
+    - [5.4.3. Comunicación entre microservicios](#543-comunicación-entre-microservicios)
+  - [5.5. APIs web en ASP.NET Core](#55-apis-web-en-aspnet-core)
+    - [5.5.1. Tipos de APIs web](#551-tipos-de-apis-web)
     - [5.5.2. REST APIs con Minimal APIs](#552-rest-apis-con-minimal-apis)
     - [5.5.3. WebSockets en ASP.NET Core](#553-websockets-en-aspnet-core)
 
 
 
-# 5. Patrones y Arquitecturas en .NET
+# 5. Patrones y arquitecturas en .NET
 
 > 💡 **Punto de partida:** ¿Por qué el código de un equipo senior en Netflix o Toyota se mantiene durante años y el de otros proyectos se vuelve inmantenible en meses? La diferencia está en principios como SOLID, patrones de diseño reutilizables y una arquitectura bien pensada.
 
@@ -54,10 +54,10 @@ graph TD
     C --> C1["Soluciones probadas"]
     D --> D1["Estructura escalable"]
     
-    style A fill:#4CAF50
-    style B fill:#2196F3
-    style C fill:#FF9800
-    style D fill:#9C27B0
+    style A fill:#4CAF50,color:#fff
+    style B fill:#2196F3,color:#fff
+    style C fill:#FF9800,color:#fff
+    style D fill:#9C27B0,color:#fff
 ```
 
 ## 5.1. Principios SOLID
@@ -93,7 +93,7 @@ Imagina que estás construyendo un edificio de varios pisos:
 
 💡 **Tip del Examinador**: En el examen, ten claro el acrónimo y sé capaz de explicar cada principio con tus propias palabras. Los entrevistadores valoran más la comprensión conceptual que la memorización.
 
-### 5.1.2. SRP: Principio de Responsabilidad Única
+### 5.1.2. SRP: principio de responsabilidad única
 
 Una clase debe tener una, y solo una, razón para cambiar. Esto significa que una clase debe tener solo una tarea o responsabilidad.
 
@@ -135,8 +135,8 @@ graph TD
     B --> C2["ImprimirInforme"]
     B --> C3["EmailService"]
     
-    style A fill:#F44336
-    style B fill:#4CAF50
+    style A fill:#F44336,color:#fff
+    style B fill:#4CAF50,color:#fff
 ```
 
 **Ejemplo práctico:**
@@ -189,7 +189,7 @@ public class ServicioEmail
 
 ⚠️ **Advertencia**: No lleves el SRP al extremo. Una clase "Usuario" que solo tenga "ID" y nada más es ridículo. El contexto importa.
 
-### 5.1.3. OCP: Principio Abierto/Cerrado
+### 5.1.3. OCP: principio Abierto/Cerrado
 
 Las entidades de software deben estar abiertas para la extensión, pero cerradas para la modificación.
 
@@ -293,7 +293,7 @@ public class Triangulo : Forma
 - Herencia
 - Composición sobre herencia
 
-### 5.1.4. LSP: Principio de Sustitución de Liskov
+### 5.1.4. LSP: principio de sustitución de liskov
 
 Los objetos de una superclase deben poder ser reemplazados por objetos de una subclase sin afectar la corrección del programa.
 
@@ -389,11 +389,11 @@ public class Pinguino : Pajaro
 }
 ```
 
-### 🧠 Analogía: El LSP en la vida real
+### 🧠 Analogía: el LSP en la vida real
 
 Imagina un contrato que dice "todo vehículo tiene un método acelerar()". Si diseñas una bicicleta que lanza excepción cuando llamas a acelerar(), estás violando el LSP. La solución es: o la bicicleta no implementa IVehiculo, o creas una interfaz IMotorizado para vehículos con motor.
 
-### 5.1.5. ISP: Principio de Segregación de Interfaces
+### 5.1.5. ISP: principio de segregación de interfaces
 
 Los clientes no deben ser forzados a depender de interfaces que no usan.
 
@@ -453,11 +453,11 @@ graph TD
     A --> D["IDescansable"]
     A --> E["IRemunerado"]
     
-    style A fill:#F44336
-    style B fill:#4CAF50
-    style C fill:#4CAF50
-    style D fill:#4CAF50
-    style E fill:#4CAF50
+    style A fill:#F44336,color:#fff
+    style B fill:#4CAF50,color:#fff
+    style C fill:#4CAF50,color:#fff
+    style D fill:#4CAF50,color:#fff
+    style E fill:#4CAF50,color:#fff
 ```
 
 **Ejemplo práctico:**
@@ -511,7 +511,7 @@ public class Robot : ITrabajable
 
 ⚠️ **Advertencia**: Crear interfaces de un solo método para todo es el extremo opuesto (Interface Pollution). Busca el equilibrio.
 
-### 5.1.6. DIP: Principio de Inversión de Dependencias
+### 5.1.6. DIP: principio de inversión de dependencias
 
 Los módulos de alto nivel no deben depender de los módulos de bajo nivel. Ambos deben depender de abstracciones.
 
@@ -570,8 +570,8 @@ graph TD
     B --> C["MySqlDatabase"]
     B --> D["PostgreSqlDatabase"]
     
-    style A fill:#2196F3
-    style B fill:#4CAF50
+    style A fill:#2196F3,color:#fff
+    style B fill:#4CAF50,color:#fff
 ```
 
 **Ejemplo práctico:**
@@ -625,13 +625,13 @@ app.GuardarDatos("Datos importantes");
 
 📝 **Nota del Profesor**: La Inyección de Dependencias (DI) es la implementación práctica del DIP. En ASP.NET Core, DI viene integrado. Úsalo siempre que sea posible.
 
-## 5.2. Patrones de Diseño
+## 5.2. Patrones de diseño
 
 Los patrones de diseño son soluciones probadas a problemas comunes en el desarrollo de software. No son código de copiar y pegar, son plantillas de pensamiento.
 
 📌 Ejemplo real: La Tienda (TiendaDawApi-NetCore) usa el patrón **Strategy** cuando cambia el repositorio de pedidos entre MongoDB y EF Core según `appsettings.json`, y el patrón **Repository** para no pegar SQL en los services. Netflix usa **Observer** cada vez que le das a "Me gusta" y se actualiza el contador para todos los suscriptores.
 
-### 5.2.1. Patrones de Creación
+### 5.2.1. Patrones de creación
 
 Controlan cómo se crean los objetos, ocultando la lógica de instanciación.
 
@@ -642,7 +642,7 @@ Controlan cómo se crean los objetos, ocultando la lógica de instanciación.
 | **Abstract Factory** | Crear familias de objetos relacionados | `DbProviderFactory` |
 | **Builder** | Construir objetos complejos paso a paso | `StringBuilder`, `HttpRequestBuilder` |
 
-### 5.2.2. Patrones Estructurales
+### 5.2.2. Patrones estructurales
 
 Definen cómo se componen clases y objetos para formar estructuras más grandes.
 
@@ -653,7 +653,7 @@ Definen cómo se componen clases y objetos para formar estructuras más grandes.
 | **Proxy** | Placeholder de otro objeto | `Lazy<T>`, proxies de EF Core |
 | **Composite** | Estructuras de árbol | `Control` en WinForms/WPF |
 
-### 5.2.3. Patrones de Comportamiento
+### 5.2.3. Patrones de comportamiento
 
 Definen cómo los objetos interactúan y se comunican.
 
@@ -684,10 +684,10 @@ graph TD
     D --> D2["Strategy"]
     D --> D3["Command"]
     
-    style A fill:#4CAF50
-    style B fill:#2196F3
-    style C fill:#FF9800
-    style D fill:#9C27B0
+    style A fill:#4CAF50,color:#fff
+    style B fill:#2196F3,color:#fff
+    style C fill:#FF9800,color:#fff
+    style D fill:#9C27B0,color:#fff
 ```
 
 **Ejemplo de patrón Strategy con C# moderno:**
@@ -733,11 +733,11 @@ var totalVIP = carritoVIP.CalcularTotal(1000m); // 800
 
 💡 **Tip del Examinador**: El patrón Strategy es el más común en entrevistas. Prepáralo bien. La clave es entender que intercambias algoritmos en tiempo de ejecución.
 
-## 5.3. Arquitecturas Software
+## 5.3. Arquitecturas software
 
 Una arquitectura de software define la estructura organizativa fundamental de un sistema.
 
-### 5.3.1. 🧠 Analogía: Arquitectura como plano de ciudad
+### 5.3.1. 🧠 Analogía: arquitectura como plano de ciudad
 
 Imagina diseñar una ciudad:
 
@@ -746,7 +746,7 @@ Imagina diseñar una ciudad:
 - **Clean Architecture** es una ciudad con anillo de circunvalación que protege el centro histórico
 - **Microservicios** son pueblos independientes conectados por carreteras
 
-### 5.3.2. Arquitectura Monolítica
+### 5.3.2. Arquitectura monolítica
 
 Todos los componentes en un solo bloque.
 
@@ -757,7 +757,7 @@ graph TD
     A --> D["Acceso a datos"]
     A --> E["Todo junto"]
     
-    style A fill:#FF9800
+    style A fill:#FF9800,color:#fff
 ```
 
 **Ventajas:**
@@ -770,7 +770,7 @@ graph TD
 - Acoplamiento alto
 - Cambios afectan a todo el sistema
 
-### 5.3.3. Arquitectura en Capas
+### 5.3.3. Arquitectura en capas
 
 Divide la aplicación en capas lógicas con responsabilidades específicas.
 
@@ -780,10 +780,10 @@ graph TD
     B --> C["Domain Layer"]
     C --> D["Infrastructure Layer"]
     
-    style A fill:#FF9800,color:#fff
-    style B fill:#2196F3,color:#fff
-    style C fill:#4CAF50,color:#fff
-    style D fill:#9C27B0,color:#fff
+    style A fill:#FF980,color:#fff0,color:#fff
+    style B fill:#2196F,color:#fff3,color:#fff
+    style C fill:#4CAF5,color:#fff0,color:#fff
+    style D fill:#9C27B,color:#fff0,color:#fff
 ```
 
 ### 5.3.4. Clean Architecture
@@ -796,10 +796,10 @@ graph TD
     B --> C["Application<br/>Use Cases"]
     C --> D["Domain<br/>Entities"]
     
-    style D fill:#4CAF50
-    style C fill:#2196F3
-    style B fill:#FF9800
-    style A fill:#F44336
+    style D fill:#4CAF50,color:#fff
+    style C fill:#2196F3,color:#fff
+    style B fill:#FF9800,color:#fff
+    style A fill:#F44336,color:#fff
 ```
 
 **Regla de dependencia:** Las flechas siempre van hacia dentro. El dominio (centro) no conoce nada de infraestructura.
@@ -818,11 +818,11 @@ graph LR
     P <-->|HTTP/gRPC| PE
     PE <-->|Msg| I
     
-    style G fill:#9C27B0
-    style P fill:#4CAF50
-    style PE fill:#2196F3
-    style I fill:#FF9800
-    style N fill:#2196F3
+    style G fill:#9C27B0,color:#fff
+    style P fill:#4CAF50,color:#fff
+    style PE fill:#2196F3,color:#fff
+    style I fill:#FF9800,color:#fff
+    style N fill:#2196F3,color:#fff
 ```
 
 **Características:**
@@ -873,7 +873,7 @@ MiAplicacion/
     └── MiAplicacion.IntegrationTests/
 ```
 
-### 5.4.2. Configuración de Inyección de Dependencias
+### 5.4.2. Configuración de inyección de dependencias
 
 ```csharp
 using MiAplicacion.Application.Interfaces;
@@ -922,7 +922,7 @@ app.MapControllers();
 app.Run();
 ```
 
-### 5.4.3. Comunicación entre Microservicios
+### 5.4.3. Comunicación entre microservicios
 
 ```csharp
 // Definir el cliente del microservicio
@@ -964,9 +964,9 @@ public class PedidoService(IInventarioApi inventarioApi)
 }
 ```
 
-## 5.5. APIs Web en ASP.NET Core
+## 5.5. APIs web en ASP.NET Core
 
-### 5.5.1. Tipos de APIs Web
+### 5.5.1. Tipos de APIs web
 
 | Tipo | Características | Caso de uso |
 |------|-----------------|-------------|

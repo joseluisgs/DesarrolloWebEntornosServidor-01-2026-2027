@@ -26,7 +26,7 @@ dotnet run --project 15-SincroniaVsAsyncronia
 
 Los datos se generan automáticamente al ejecutar el programa.
 
-## Por qué se ve el Thread ID
+## Por qué se ve el thread ID
 
 El ejemplo usa **Serilog** con `ILogger` para mostrar el **Thread ID** de cada operación. Esto permite ver visualmente cuándo las operaciones se ejecutan en el mismo hilo (secuencial) o en hilos distintos (paralelo).
 
@@ -101,9 +101,9 @@ flowchart LR
         B3 -->|WhenAll| B4
     end
 
-    style SYNC fill:#f44336,color:#fff
-    style ASYNC_BAD fill:#FF9800,color:#fff
-    style ASYNC_GOOD fill:#4CAF50,color:#fff
+    style SYNC fill:#f4433,color:#fff6,color:#fff
+    style ASYNC_BAD fill:#FF980,color:#fff0,color:#fff
+    style ASYNC_GOOD fill:#4CAF5,color:#fff0,color:#fff
 ```
 
 ## ¿Cuándo usar cada uno?
@@ -128,8 +128,8 @@ graph TD
     
     G[❌ NUNCA hagas] --> H[await secuencial<br/>pensando que es paralelo]
     
-    style C fill:#4CAF50,color:#fff
-    style D fill:#2196F3,color:#fff
-    style H fill:#f44336,color:#fff
-    style G fill:#f44336,color:#fff
+    style C fill:#4CAF5,color:#fff0,color:#fff
+    style D fill:#2196F,color:#fff3,color:#fff
+    style H fill:#f4433,color:#fff6,color:#fff
+    style G fill:#f4433,color:#fff6,color:#fff
 ```

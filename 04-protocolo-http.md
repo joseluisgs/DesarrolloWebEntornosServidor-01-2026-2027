@@ -1,16 +1,16 @@
-- [4. El Protocolo HTTP](#4-el-protocolo-http)
+- [4. El protocolo HTTP](#4-el-protocolo-http)
   - [4.1. ¿Qué es HTTP?](#41-qué-es-http)
-  - [4.2. Formato de una Petición HTTP](#42-formato-de-una-petición-http)
-  - [4.3. Formato de una Respuesta HTTP](#43-formato-de-una-respuesta-http)
-  - [4.4. Métodos o Verbos HTTP](#44-métodos-o-verbos-http)
-  - [4.5. Códigos de Estado HTTP](#45-códigos-de-estado-http)
+  - [4.2. Formato de una petición HTTP](#42-formato-de-una-petición-http)
+  - [4.3. Formato de una respuesta HTTP](#43-formato-de-una-respuesta-http)
+  - [4.4. Métodos o verbos HTTP](#44-métodos-o-verbos-http)
+  - [4.5. Códigos de estado HTTP](#45-códigos-de-estado-http)
   - [4.6. Cabeceras HTTP](#46-cabeceras-http)
-  - [4.7. HTTPS: HTTP Seguro](#47-https-http-seguro)
-  - [4.8. Buenas Prácticas](#48-buenas-prácticas)
+  - [4.7. HTTPS: HTTP seguro](#47-https-http-seguro)
+  - [4.8. Buenas prácticas](#48-buenas-prácticas)
 
 
 
-# 4. El Protocolo HTTP
+# 4. El protocolo HTTP
 
 > 💡 **Punto de partida:** Cada vez que escribes una URL en el navegador, estás usando HTTP. Pero, ¿qué es exactamente? ¿Cómo se estructura una petición? ¿Qué significan esos códigos que aparecen (404, 500, 200)? HTTP es el idioma que usan cliente y servidor para comunicarse.
 
@@ -49,7 +49,7 @@ sequenceDiagram
 
 > 💡 **Analogía:** HTTP es como mandar cartas por correo. Cada carta es independiente. Si mandas dos cartas, el cartero no sabe que vienen de la misma persona a menos que pongas tu nombre en la carta (cookie o cabecera).
 
-## 4.2. Formato de una Petición HTTP
+## 4.2. Formato de una petición HTTP
 
 Una petición HTTP tiene tres partes: línea de petición, cabeceras y cuerpo.
 
@@ -78,7 +78,7 @@ Authorization: Bearer eyJhbGci...
 2. El servidor verifica y devuelve un token JWT
 3. En las siguientes peticiones, envías ese token en la cabecera `Authorization`
 
-## 4.3. Formato de una Respuesta HTTP
+## 4.3. Formato de una respuesta HTTP
 
 Una respuesta HTTP también tiene tres partes: línea de estado, cabeceras y cuerpo.
 
@@ -109,7 +109,7 @@ sequenceDiagram
     Note right of S: {"id":1,"nombre":"Ana"}
 ```
 
-## 4.4. Métodos o Verbos HTTP
+## 4.4. Métodos o verbos HTTP
 
 Cada petición HTTP lleva un **método** (o verbo) que indica qué acción quieres realizar sobre el recurso:
 
@@ -185,7 +185,7 @@ record Usuario(int Id, string Nombre, string Email);
 
 > 💡 **Consejo:** Cuando diseñes una API, piensa en los verbos HTTP como operaciones CRUD. Si no sabes qué verbo usar, pregúntate: "¿Estoy leyendo, creando, actualizando o eliminando?"
 
-## 4.5. Códigos de Estado HTTP
+## 4.5. Códigos de estado HTTP
 
 Los códigos de estado indican el resultado de la petición. Se organizan en 5 categorías:
 
@@ -236,7 +236,7 @@ Las cabeceras añaden información adicional a peticiones y respuestas:
 | `Cache-Control` | Res | Políticas de caché | `no-cache`, `max-age=3600` |
 | `Set-Cookie` | Res | Guardar cookie en el cliente | `session=abc123` |
 
-## 4.7. HTTPS: HTTP Seguro
+## 4.7. HTTPS: HTTP seguro
 
 **HTTPS** es HTTP con cifrado SSL/TLS. La "S" significa **Secure** (seguro).
 
@@ -264,7 +264,7 @@ sequenceDiagram
 
 > 💡 **Consejo:** Para el examen, recuerda que HTTP es la base de las APIs REST. Cada petición HTTP lleva un verbo (GET, POST...) y devuelve un código de estado (200, 404...). Esto es fundamental para entender cómo funcionan las aplicaciones web modernas.
 
-## 4.8. Buenas Prácticas
+## 4.8. Buenas prácticas
 
 - **HTTPS siempre**: Nunca HTTP sin cifrar en producción. SSL/TLS es obligatorio
 - **Códigos de estado precisos**: 201 para crear, 204 para eliminar, 404 para no encontrado. No uses 200 para todo

@@ -1,6 +1,6 @@
 - [9. Testing en .NET](#9-testing-en-net)
   - [9.1. Fundamentos del testing](#91-fundamentos-del-testing)
-    - [9.1.1. 🧠 Analogía: Tests como cinturón de seguridad](#911--analogía-tests-como-cinturón-de-seguridad)
+    - [9.1.1. 🧠 Analogía: tests como cinturón de seguridad](#911--analogía-tests-como-cinturón-de-seguridad)
     - [9.1.2. Tipos de tests](#912-tipos-de-tests)
   - [9.2. Test unitarios con NUnit](#92-test-unitarios-con-nunit)
   - [9.3. Test con Moq](#93-test-con-moq)
@@ -37,12 +37,12 @@ graph TD
     D --> D1["Selenium/Playwright"]
     D --> D2["HttpClient tests"]
     
-    style A fill:#4CAF50
+    style A fill:#4CAF50,color:#fff
 ```
 
 ## 9.1. Fundamentos del testing
 
-### 9.1.1. 🧠 Analogía: Tests como cinturón de seguridad
+### 9.1.1. 🧠 Analogía: tests como cinturón de seguridad
 
 Sin tests, conduces sin cinturón. Con tests, tienes protección cuando algo sale mal. Los tests te permiten refactorizar con confianza, detectar problemas antes de que lleguen a producción, y dormir tranquilo sabiendo que tu código funciona según lo esperado.
 

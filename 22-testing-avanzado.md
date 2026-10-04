@@ -1,20 +1,20 @@
-- [22. Testing Avanzado en .NET](#22-testing-avanzado-en-net)
-  - [22.1. NUnit: Framework de Tests](#221-nunit-framework-de-tests)
-  - [22.2. FluentAssertions: Aserciones Expresivas](#222-fluentassertions-aserciones-expresivas)
-  - [22.3. Moq: Mocking de Interfaces](#223-moq-mocking-de-interfaces)
+- [22. Testing avanzado en .NET](#22-testing-avanzado-en-net)
+  - [22.1. NUnit: framework de tests](#221-nunit-framework-de-tests)
+  - [22.2. FluentAssertions: aserciones expresivas](#222-fluentassertions-aserciones-expresivas)
+  - [22.3. Moq: mocking de interfaces](#223-moq-mocking-de-interfaces)
   - [22.4. Patrón AAA: Arrange-Act-Assert](#224-patrón-aaa-arrange-act-assert)
-  - [22.5. Testcontainers: Tests con Docker](#225-testcontainers-tests-con-docker)
-    - [22.5.1. Coverlet: Cobertura de Código](#2251-coverlet-cobertura-de-código)
-  - [22.6. Depuración de Errores en C#](#226-depuración-de-errores-en-c)
-    - [22.6.1. Leer un Stack Trace](#2261-leer-un-stack-trace)
-    - [22.6.2. Tipos de Error Comunes en C#](#2262-tipos-de-error-comunes-en-c)
-    - [22.6.3. Herramientas de Depuración](#2263-herramientas-de-depuración)
-    - [22.6.4. Depuración de Tests](#2264-depuración-de-tests)
-  - [22.7. Regla: Nada se Entrega sin Tests](#227-regla-nada-se-entrega-sin-tests)
-  - [22.8. Buenas Prácticas](#228-buenas-prácticas)
+  - [22.5. Testcontainers: tests con Docker](#225-testcontainers-tests-con-docker)
+    - [22.5.1. Coverlet: cobertura de código](#2251-coverlet-cobertura-de-código)
+  - [22.6. Depuración de errores en C#](#226-depuración-de-errores-en-c)
+    - [22.6.1. Leer un stack trace](#2261-leer-un-stack-trace)
+    - [22.6.2. Tipos de error comunes en C#](#2262-tipos-de-error-comunes-en-c)
+    - [22.6.3. Herramientas de depuración](#2263-herramientas-de-depuración)
+    - [22.6.4. Depuración de tests](#2264-depuración-de-tests)
+  - [22.7. Regla: nada se entrega sin tests](#227-regla-nada-se-entrega-sin-tests)
+  - [22.8. Buenas prácticas](#228-buenas-prácticas)
 
 
-# 22. Testing Avanzado en .NET
+# 22. Testing avanzado en .NET
 
 > 💡 **Punto de partida:** Has escrito código, funciona... pero ¿y si mañana lo cambias y rompes algo? Los **tests automatizados** son tu red de seguridad: ejecutan tu código automáticamente y te avisan si algo se rompe. Pero no todos los tests son iguales. Hay tests unitarios (rápidos, aíslan componentes), tests de integración (prueban componentes juntos) y tests con contenedores (prueban contra bases de datos reales). Vamos a ver cómo escribir tests profesionales.
 
@@ -28,7 +28,7 @@ En este tema aprenderás NUnit, FluentAssertions, Moq, el patrón AAA y Testcont
 - Aplicar el patrón AAA (Arrange-Act-Assert)
 - Configurar Testcontainers para tests con bases de datos reales
 
-## 22.1. NUnit: Framework de Tests
+## 22.1. NUnit: framework de tests
 
 ### Instalación
 
@@ -170,7 +170,7 @@ public class PersonaTests
 
 > 💡 **Consejo:** Usa `SetUp` solo para inicializar objetos compartidos. No pongas lógica de negocio en `SetUp`: cada test debe ser independiente y autocontenido.
 
-## 22.2. FluentAssertions: Aserciones Expresivas
+## 22.2. FluentAssertions: aserciones expresivas
 
 **FluentAssertions** hace que las aserciones sean más legibles y proporciona mensajes de error descriptivos.
 
@@ -244,7 +244,7 @@ real.Should().BeEquivalentTo(esperado, options => options
 
 > 📝 **Nota:** FluentAssertions genera mensajes de error como: `Expected persona.Nombre to be "Carlos", but "Ana" differs near index 0.` Mucho más descriptivo que un simple `Expected: 5, Actual: 4`.
 
-## 22.3. Moq: Mocking de Interfaces
+## 22.3. Moq: mocking de interfaces
 
 **Moq** crea implementaciones "falsas" de interfaces para aislar el componente que estás testeando. Si tu servicio depende de un repositorio, puedes mockear el repositorio para no depender de la base de datos real.
 
@@ -312,7 +312,7 @@ public class PersonaServiceTests
 }
 ```
 
-### Setup con Match
+### Setup con match
 
 ```csharp
 // Setup con condición
@@ -403,7 +403,7 @@ public async Task Guardar_PedidoValido_GuardaEnRepositorio()
 
 > ⚠️ **Advertencia:** Cada test debe ser **independiente**. No dependas del orden de ejecución ni de datos de otros tests. Usa `SetUp` para reiniciar el estado.
 
-## 22.5. Testcontainers: Tests con Docker
+## 22.5. Testcontainers: tests con Docker
 
 **Testcontainers** lanza contenedores Docker (o Podman) reales para tests de integración. En vez de mockear una base de datos, usas una real (PostgreSQL, Redis, MongoDB) que se crea y destruye automáticamente.
 
@@ -559,7 +559,7 @@ public class RedisCacheServiceTests
 
 > 💡 **Consejo:** Los tests con Testcontainers son más lentos que los unitarios (arrancan Docker/Podman), pero mucho más fiables. Úsalos para tests de integración donde necesitas una base de datos real.
 
-### Docker-in-Docker: El problema del puerto 2375
+### Docker-in-Docker: el problema del puerto 2375
 
 Cuando ejecutas tests con Testcontainers **dentro de un contenedor** (por ejemplo, en una etapa de build de un Dockerfile), se produce un problema conocido como **Docker-in-Docker** (DinD): un contenedor intenta crear otros contenedores.
 
@@ -574,10 +574,10 @@ graph TD
 
     B -->|"Puerto 2375 sin TLS"| D["Cualquier proceso puede enviar comandos"]
 
-    style HOST fill:#2196F3,color:#fff
-    style DOCKER fill:#FF9800,color:#fff
-    style B fill:#f44336,color:#fff
-    style D fill:#f44336,color:#fff
+    style HOST fill:#2196F,color:#fff3,color:#fff
+    style DOCKER fill:#FF980,color:#fff0,color:#fff
+    style B fill:#f4433,color:#fff6,color:#fff
+    style D fill:#f4433,color:#fff6,color:#fff
 ```
 
 **¿Por qué es un problema?** Para que el contenedor de build pueda crear otros contenedores, necesitas **exponer el daemon de Docker** en el puerto `2375` sin TLS (sin cifrar). Esto significa:
@@ -596,9 +596,9 @@ graph LR
         C --> D["Mount / - ROOT total"]
     end
 
-    style DANGER fill:#f44336,color:#fff
-    style B fill:#f44336,color:#fff
-    style D fill:#f44336,color:#fff
+    style DANGER fill:#f4433,color:#fff6,color:#fff
+    style B fill:#f4433,color:#fff6,color:#fff
+    style D fill:#f4433,color:#fff6,color:#fff
 ```
 
 **La solución con Podman:** Podman **no usa demonio (daemonless)** y corre **sin privilegios de root (rootless)**. No hay daemon que exponer. Cada contenedor es un proceso independiente del usuario:
@@ -613,14 +613,14 @@ graph TD
 
     B -->|"Proceso del usuario, sin daemon"| C["SEGURO"]
 
-    style HOST fill:#2196F3,color:#fff
-    style USER fill:#4CAF50,color:#fff
-    style C fill:#4CAF50,color:#fff
+    style HOST fill:#2196F,color:#fff3,color:#fff
+    style USER fill:#4CAF5,color:#fff0,color:#fff
+    style C fill:#4CAF5,color:#fff0,color:#fff
 ```
 
 > ⚠️ **Advertencia:** Si ejecutas tests con Testcontainers dentro de un Dockerfile y usas **Docker**, necesitas exponer el daemon en el puerto `2375` sin TLS. Si usas **Podman**, no necesitas nada de esto: no hay daemon, no hay socket, no hay puerto expuesto.
 
-### 22.5.1. Coverlet: Cobertura de Código
+### 22.5.1. Coverlet: cobertura de código
 
 ¿Cómo sabes si tus tests cubren todo el código que deberían? Con **coverlet** — una herramienta que mide qué porcentaje de tu código se ejecuta al correr los tests.
 
@@ -650,7 +650,7 @@ dotnet test --collect:"XPlat Code Coverage"
 # MiProyecto.Test/TestResults/<GUID>/coverage.cobertura.xml
 ```
 
-#### Formato del informe (Cobertura XML)
+#### Formato del informe (cobertura XML)
 
 El archivo `coverage.cobertura.xml` contiene datos como:
 
@@ -722,11 +722,11 @@ dotnet test --collect:"XPlat Code Coverage" --settings coverlet.runsettings
 | **Integración** | 🐢 Medio | Alta | Testcontainers | `PersonaRepository` con PostgreSQL real |
 | **E2E** | 🐌 Lento | Muy alta | App completa | Un usuario real haciendo login |
 
-## 22.6. Depuración de Errores en C#
+## 22.6. Depuración de errores en C#
 
 > 💡 **Punto de partida:** Ves un error en rojo y no sabes por dónde empezar. No es para entrar en pánico — es para leer. Un stack trace bien leído te dice exactamente dónde está el problema. Vamos a aprender a leerlo.
 
-### 22.6.1. Leer un Stack Trace
+### 22.6.1. Leer un stack trace
 
 Cuando tu programa lanza una excepción, ves algo así:
 
@@ -748,7 +748,7 @@ System.InvalidOperationException: Unable to resolve service for type 'IUserServi
 
 > 💡 **Truco:** Busca SIEMPRE la **última línea** de tu código en el stack trace. Las líneas anteriores son de librerías internas — ahí no está tu error.
 
-### 22.6.2. Tipos de Error Comunes en C#
+### 22.6.2. Tipos de error comunes en C#
 
 | Error | Causa típica | Solución |
 |-------|-------------|----------|
@@ -758,7 +758,7 @@ System.InvalidOperationException: Unable to resolve service for type 'IUserServi
 | `TaskCanceledException` | Timeout o CancellationToken activado | Revisa tiempos o tokens |
 | `JsonException` | JSON mal formado | Usa [jsonlint.com](https://jsonlint.com) para validar |
 
-### 22.6.3. Herramientas de Depuración
+### 22.6.3. Herramientas de depuración
 
 **En el IDE (Rider / VS Code):**
 
@@ -793,7 +793,7 @@ dotnet-trace collect --process-id <PID>
 
 > 💡 **Consejo para el examen:** Si te sale un error que no entiendes, **lee el mensaje completo**. Los errores de C# suelen decir exactamente qué falla y dónde. No mires solo el tipo de excepción — lee la descripción.
 
-### 22.6.4. Depuración de Tests
+### 22.6.4. Depuración de tests
 
 Cuando un test falla, NUnit te muestra:
 
@@ -817,7 +817,7 @@ resultado.Should().Be(5);
 
 > ⚠️ **Advertencia:** `Console.WriteLine` en tests es solo para depuración temporal. Los tests deben ser autoexplicativos — si necesitas prints para entender qué falla, el test necesita mejor nombre o estructura.
 
-## 22.7. Regla: Nada se Entrega sin Tests
+## 22.7. Regla: nada se entrega sin tests
 
 > ⚠️ **Regla CRÍTICA:** En este módulo, **no se acepta ninguna entrega sin tests** y **sin informe de cobertura de código**. Esto no es una opción — es lo mínimo esperable de cualquier desarrollador profesional.
 
@@ -873,7 +873,7 @@ reportgenerator -reports:coverage.cobertura.xml -targetdir:coverage
 
 > 💡 **Consejo:** La cobertura no lo es todo — un test que solo hace `Assert.Pass()` no cubre nada. Pero sin cobertura, no tienes ni idea de qué partes de tu código están protegidas.
 
-## 22.8. Buenas Prácticas
+## 22.8. Buenas prácticas
 
 - **Tests obligatorios**: No se entrega código sin tests verdes
 - **Cobertura mínima del 80%**: En código de negocio
