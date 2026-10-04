@@ -9,37 +9,37 @@ UD01. Introducción al desarrollo de software en Servidor. 2DAW. Curso 2026-2027
 
 ### Desarrollo web en entorno servidor
 
-1. [Introducción al Desarrollo Web](01-introduccion-web.md)
-2. [Componentes de una Web](02-componentes-web.md)
-3. [Arquitecturas Web](03-arquitecturas-web.md)
-4. [El Protocolo HTTP y HTTPS](04-protocolo-http.md)
-5. [Servicio Web y Comunicación con APIs](05-servicios-web-apis.md)
-6. [Funcionamiento de una Web Dinámica](06-web-dinamica.md)
-7. [Lenguajes y Frameworks en Servidor](07-lenguajes-frameworks.md)
-8. [Servidores Web y de Aplicaciones](08-servidores-web.md)
-9. [Despliegue de Aplicaciones](09-despliegue.md)
-10. [Seguridad y Monitorización](10-seguridad-monitorizacion.md)
+1. [Introducción al desarrollo web](01-introduccion-web.md)
+2. [Componentes de una web](02-componentes-web.md)
+3. [Arquitecturas web](03-arquitecturas-web.md)
+4. [El protocolo HTTP y HTTPS](04-protocolo-http.md)
+5. [Servicio web y comunicación con APIs](05-servicios-web-apis.md)
+6. [Funcionamiento de una web dinámica](06-web-dinamica.md)
+7. [Lenguajes y Frameworks en servidor](07-lenguajes-frameworks.md)
+8. [Servidores web y de aplicaciones](08-servidores-web.md)
+9. [Despliegue de aplicaciones](09-despliegue.md)
+10. [Seguridad y monitorización](10-seguridad-monitorizacion.md)
 
 ### C# avanzado para desarrollo web en entorno servidor
 
-11. [Inyección de Dependencias](11-inyeccion-dependencias.md)
-12. [Patrones y Arquitecturas](12-patrones-arquitecturas.md)
+11. [Inyección de dependencias](11-inyeccion-dependencias.md)
+12. [Patrones y arquitecturas](12-patrones-arquitecturas.md)
 13. [LINQ y DataFrames](13-linq-dataframes.md)
-14. [Ficheros y Formatos de Intercambio](14-ficheros-formatos.md)
-15. [Patrón Result vs Excepciones (ROP)](15-rop-result.md)
-16. [Concurrencia y Asincronía](16-concurrencia-asincronia.md)
-17. [Programación Reactiva](17-programacion-reactiva.md)
+14. [Ficheros y formatos de intercambio](14-ficheros-formatos.md)
+15. [Patrón result vs excepciones (ROP)](15-rop-result.md)
+16. [Concurrencia y asincronía](16-concurrencia-asincronia.md)
+17. [Programación reactiva](17-programacion-reactiva.md)
 18. [Consumo de APIs con Refit](18-refit-apis.md)
-19. [Configuration y Logging](19-configuration-logging.md)
+19. [Configuration y logging](19-configuration-logging.md)
 20. [Entity Framework Core](20-entity-framework-core.md)
 21. [SQL vs NoSQL: ACID vs BASE](21-sql-nosql.md)
-22. [Testing Avanzado](22-testing-avanzado.md)
+22. [Testing avanzado](22-testing-avanzado.md)
 23. [Docker](23-docker.md)
 24. [Seguridad](24-seguridad.md)
 
 
 
-25. [Resumen de la Unidad 01](25-resumen.md)
+25. [Resumen de la unidad 01](25-resumen.md)
 
 ## Contenido en YouTube
 
