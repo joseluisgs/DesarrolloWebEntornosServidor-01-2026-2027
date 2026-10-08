@@ -1,0 +1,15 @@
+**/bin/
+**/obj/
+**/out/
+**/.vs/
+**/.vscode/
+**/.idea/
+**/*.user
+**/*.suo
+**/*.log
+**/TestResults/
+**/publish/
+
+# Artefactos locales de desarrollo (SQLite, exports)
+users.db
+data/

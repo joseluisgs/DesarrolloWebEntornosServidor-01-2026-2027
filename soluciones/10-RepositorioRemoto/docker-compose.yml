@@ -1,0 +1,59 @@
+# ============================================================
+# Stack de PRODUCCIÓN: App + PostgreSQL + Redis
+# La app arranca con DOTNET_ENVIRONMENT=Production, así que carga
+# appsettings.Production.json (PostgreSQL + Redis).
+# ============================================================
+services:
+
+  postgres:
+    image: postgres:17-alpine
+    container_name: repositorio-postgres
+    environment:
+      POSTGRES_DB: usuarios
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      # 5433 en el host para no chocar con otras instancias de PostgreSQL.
+      # Dentro de la red docker la app usa "Host=postgres;Port=5432".
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d usuarios"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  redis:
+    image: redis:7-alpine
+    container_name: repositorio-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+
+  repo-remoto:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: repositorio-remoto
+    restart: unless-stopped
+    environment:
+      # Entorno: carga appsettings.Production.json
+      DOTNET_ENVIRONMENT: Production
+      # Variables de entorno que SOBREESCRIBEN el appsettings.
+      # En la red docker los hostnames son los nombres de los servicios:
+      #   postgres (no localhost) y redis (no localhost)
+      InfraSettings__ConnectionStrings__PostgreSql: "Host=postgres;Port=5432;Database=usuarios;Username=postgres;Password=postgres"
+      InfraSettings__ConnectionStrings__Redis: "redis:6379"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
