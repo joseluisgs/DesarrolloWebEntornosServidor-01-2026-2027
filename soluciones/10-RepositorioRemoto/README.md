@@ -100,6 +100,25 @@ Un valor desconocido lanza `InvalidOperationException` con un mensaje claro: fal
 
 > ⚠️ **Advertencia:** Inyectar un servicio scoped directamente en un singleton es un error clásico. En `Production` no salta (no valida scopes), pero en `Development` el contenedor lanza `InvalidOperationException` al arrancar.
 
+## Ciclo de vida del host
+
+Hay tres líneas del proyecto que llaman a código que no es nuestro: `AddHostedService<UserSyncBackgroundService>()`, `host.StartAsync()` y `host.WaitForShutdownAsync()`. Las tres vienen del paquete `Microsoft.Extensions.Hosting`. Lo que se escribe a mano es solo `ExecuteAsync`; el resto es la maquinaria que lo arranca y lo para.
+
+| Parte | Quién la escribe |
+|-------|------------------|
+| `ExecuteAsync` y su bucle `while` | `Sync/UserSyncBackgroundService.cs` |
+| `AddHostedService<UserSyncBackgroundService>()` | `Infrastructure/DependenciesProvider.cs` |
+| `await host.StartAsync()` y `await host.WaitForShutdownAsync()` | `Program.cs` |
+| Lanzar `ExecuteAsync` en un hilo aparte con `Task.Run` | `BackgroundService.StartAsync`, del framework |
+| Escuchar el Ctrl+C y el SIGTERM | `ConsoleLifetime`, del framework |
+| Cancelar el `stoppingToken` y esperar el `ExecuteTask` | `Host.StopAsync`, del framework |
+
+**Por qué la demo va antes de `host.StartAsync()`:** `StartAsync` despierta el servicio de sincronización, que vacía y recarga la BD local cada `SyncIntervalSeconds`. Si el host arrancara antes, ese vaciado periódico se cruzaría con las 13 fases de la demostración.
+
+**Por qué se sale con Ctrl+C:** `ConsoleLifetime` capta la señal y dispara `ApplicationStopping`, el token que hace despertar a `WaitForShutdownAsync()`. Este llama a `Host.StopAsync()`, que cancela el `stoppingToken` de cada servicio y espera a que termine su `ExecuteTask`. El `Task.Delay(interval, stoppingToken)` del bucle lanza entonces `OperationCanceledException` y el `while` sale limpio.
+
+> 📝 **Nota:** `host.RunAsync()` es el atajo que hace `StartAsync` + `WaitForShutdownAsync` + `Dispose` en una sola llamada. Aquí van separadas para poder mostrar el mensaje de "Host arrancado" entre la demo y el arranque del servicio.
+
 ## Tests
 
 ```bash
