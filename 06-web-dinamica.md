@@ -269,11 +269,13 @@ record Usuario(int Id, string Nombre, string Email, int Edad);
 
 > ⚠️ **Advertencia:** Este código almacena datos en memoria (una lista). Cuando el servidor se reinicia, **se pierden todos los datos**. En producción, se usaría una base de datos (PostgreSQL, SQL Server, etc.).
 
-### Razor: C# dentro del HTML
+### Razor: la tecnología para páginas web dinámicas en ASP.NET Core
 
-Las APIs devuelven datos, pero una web necesita **HTML**. En ASP.NET Core, el motor que mezcla C# con HTML se llama **Razor**: un motor de plantillas que resuelve el código C# **en el servidor** antes de enviar la página al navegador.
+Razor es **el motor de plantillas que ASP.NET Core usa para generar páginas web dinámicas**. Permite escribir HTML con C# incrustado, y el servidor resuelve ese C# antes de enviar la página al navegador. Es lo que permite que una misma plantilla muestre datos distintos a cada usuario.
 
-La regla es sencilla: el símbolo `@` indica "aquí viene C#". Todo lo que empieza por `@` se ejecuta en el servidor; el resto es HTML que se envía tal cual.
+**Cómo funciona: el fichero `.cshtml` es la plantilla**
+
+El programador escribe un fichero `.cshtml` que contiene dos cosas mezcladas: HTML (que se envía tal cual) y C# con `@` (que se ejecuta en el servidor). Ese fichero **no es lo que ve el navegador**: es la receta que el servidor usa para generar el HTML final.
 
 ```mermaid
 flowchart LR
@@ -295,7 +297,9 @@ flowchart LR
 
 📌 **Ejemplo real:** Cuando abres la ficha de un producto en Amazon, el precio con descuento, el nombre y la disponibilidad vienen de la base de datos. El servidor los mete en una plantilla Razor y envía el HTML ya resuelto. El navegador solo ve el resultado final.
 
-**La plantilla `.cshtml` (lo que escribe el programador):**
+**Ejemplo completo: de la plantilla al HTML**
+
+La plantilla `.cshtml` (lo que escribe el programador):
 
 ```html
 @model Producto
@@ -311,7 +315,7 @@ flowchart LR
 <p>@mensaje</p>
 ```
 
-**El HTML que recibe el navegador (lo que ve el usuario):**
+El HTML que recibe el navegador (lo que ve el usuario):
 
 ```html
 <h1>Teclado mecánico</h1>
@@ -319,7 +323,7 @@ flowchart LR
 <p>En stock</p>
 ```
 
-Fíjate en lo que **no** ve el navegador: no hay `@model`, no hay `@{ ... }`, no hay `@precioFinal`, no hay `@mensaje`. El servidor ejecutó todo eso y solo envió el HTML resultante con los valores ya calculados.
+El servidor ejecutó el bloque `@{ }`, calculó el precio con descuento, evaluó el `@if` del stock y sustituyó cada `@variable` por su valor. El navegador recibió solo HTML limpio, sin rastro de C#.
 
 **Las tres piezas básicas de Razor:**
 
@@ -329,7 +333,7 @@ Fíjate en lo que **no** ve el navegador: no hay `@model`, no hay `@{ ... }`, no
 | `@variable` | `@precio` | Muestra el valor de una variable en el HTML |
 | `@if / @foreach` | `@if (stock > 0)` | Estructuras de control que se resuelven en el servidor |
 
-> 📝 **Nota:** El `.cshtml` es un fichero de texto con C# y HTML mezclados. El servidor lo compila a una clase C# cuando arranca, y cada petición ejecuta esa clase para generar el HTML que ve el navegador.
+> 📝 **Nota:** El `.cshtml` se compila a una clase C# cuando el servidor arranca. Cada petición ejecuta esa clase con los datos del momento para generar el HTML que ve el navegador.
 
 ```mermaid
 sequenceDiagram
