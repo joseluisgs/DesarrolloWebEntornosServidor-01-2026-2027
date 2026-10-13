@@ -275,6 +275,24 @@ Las APIs devuelven datos, pero una web necesita **HTML**. En ASP.NET Core, el mo
 
 La regla es sencilla: el símbolo `@` indica "aquí viene C#". Todo lo que empieza por `@` se ejecuta en el servidor; el resto es HTML que se envía tal cual.
 
+```mermaid
+flowchart LR
+    subgraph SERVIDOR
+        A[".cshtml<br/>plantilla Razor"] -->|"compila"| B[Clase C#]
+        C[Modelo / Datos<br/>Producto] --> B
+        B -->|"ejecuta"| D["HTML resuelto"]
+    end
+    D -->|"HTTP"| E[Navegador]
+    E --> F["Ve solo HTML:<br/>sin @Model, sin @{ }"]
+
+    style A fill:#2196F3,color:#fff
+    style B fill:#9C27B0,color:#fff
+    style C fill:#FF9800,color:#fff
+    style D fill:#4CAF50,color:#fff
+    style E fill:#607D8B,color:#fff
+    style F fill:#4CAF50,color:#fff
+```
+
 📌 **Ejemplo real:** Cuando abres la ficha de un producto en Amazon, el precio con descuento, el nombre y la disponibilidad vienen de la base de datos. El servidor los mete en una plantilla Razor y envía el HTML ya resuelto. El navegador solo ve el resultado final.
 
 **La plantilla `.cshtml` (lo que escribe el programador):**
@@ -312,6 +330,23 @@ Fíjate en lo que **no** ve el navegador: no hay `@model`, no hay `@{ ... }`, no
 | `@if / @foreach` | `@if (stock > 0)` | Estructuras de control que se resuelven en el servidor |
 
 > 📝 **Nota:** El `.cshtml` es un fichero de texto con C# y HTML mezclados. El servidor lo compila a una clase C# cuando arranca, y cada petición ejecuta esa clase para generar el HTML que ve el navegador.
+
+```mermaid
+sequenceDiagram
+    participant N as Navegador
+    participant S as Servidor Kestrel
+    participant R as Motor Razor
+    participant B as Base de datos
+
+    N->>S: GET /producto/7
+    S->>B: Consulta producto 7
+    B-->>S: Producto (nombre, precio, stock)
+    S->>R: Ejecuta Index.cshtml con el modelo
+    R->>R: Resuelve @Model.Nombre, @{ precioFinal }, @if (stock)
+    R-->>S: HTML ya resuelto
+    S-->>N: 200 OK con HTML
+    Note over N: Ve solo HTML limpio:<br/>sin @Model, sin @{ }, sin @if
+```
 
 > ⚠️ **Advertencia:** Si buscas `@{ ... }` o `@precio` en "Ver código fuente" del navegador, no los encontrarás: el servidor ya los ejecutó y los sustituyó por valores reales antes de enviar la página.
 
