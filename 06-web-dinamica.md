@@ -1,4 +1,4 @@
-- [6. Páginas web dinámicas y generación de contenido](#6-páginas-web-dinámicas-y-generación-de-contenido)
+﻿- [6. Páginas web dinámicas y generación de contenido](#6-páginas-web-dinámicas-y-generación-de-contenido)
   - [6.1. Páginas estáticas vs. páginas dinámicas](#61-páginas-estáticas-vs-páginas-dinámicas)
   - [6.2. Cómo funciona una página web dinámica (SSR)](#62-cómo-funciona-una-página-web-dinámica-ssr)
   - [6.3. Tecnologías de generación de contenido dinámico](#63-tecnologías-de-generación-de-contenido-dinámico)
@@ -268,6 +268,52 @@ record Usuario(int Id, string Nombre, string Email, int Edad);
 > 💡 **Consejo:** En ASP.NET Core, `Minimal API` es ideal para APIs pequeñas y prototipos rápidos. Para aplicaciones más complejas, se usa el patrón MVC completo con controladores, modelos y vistas.
 
 > ⚠️ **Advertencia:** Este código almacena datos en memoria (una lista). Cuando el servidor se reinicia, **se pierden todos los datos**. En producción, se usaría una base de datos (PostgreSQL, SQL Server, etc.).
+
+### Razor: C# dentro del HTML
+
+Las APIs devuelven datos, pero una web necesita **HTML**. En ASP.NET Core, el motor que mezcla C# con HTML se llama **Razor**: un motor de plantillas que resuelve el código C# **en el servidor** antes de enviar la página al navegador.
+
+La regla es sencilla: el símbolo `@` indica "aquí viene C#". Todo lo que empieza por `@` se ejecuta en el servidor; el resto es HTML que se envía tal cual.
+
+📌 **Ejemplo real:** Cuando abres la ficha de un producto en Amazon, el precio con descuento, el nombre y la disponibilidad vienen de la base de datos. El servidor los mete en una plantilla Razor y envía el HTML ya resuelto. El navegador solo ve el resultado final.
+
+**La plantilla `.cshtml` (lo que escribe el programador):**
+
+```html
+@model Producto
+
+@{
+    // Bloque de código C#: se ejecuta en el servidor, no se muestra
+    var precioFinal = Model.Precio * 0.9;  // 10% de descuento
+    var mensaje = Model.Stock > 0 ? "En stock" : "Agotado";
+}
+
+<h1>@Model.Nombre</h1>
+<p>Precio: @precioFinal.ToString("0.00") €</p>
+<p>@mensaje</p>
+```
+
+**El HTML que recibe el navegador (lo que ve el usuario):**
+
+```html
+<h1>Teclado mecánico</h1>
+<p>Precio: 71.91 €</p>
+<p>En stock</p>
+```
+
+Fíjate en lo que **no** ve el navegador: no hay `@model`, no hay `@{ ... }`, no hay `@precioFinal`, no hay `@mensaje`. El servidor ejecutó todo eso y solo envió el HTML resultante con los valores ya calculados.
+
+**Las tres piezas básicas de Razor:**
+
+| Pieza | Ejemplo | Qué hace |
+|-------|---------|----------|
+| `@{ ... }` | `@{ var precio = 79.90; }` | Bloque de código C#: calcula pero no muestra nada |
+| `@variable` | `@precio` | Muestra el valor de una variable en el HTML |
+| `@if / @foreach` | `@if (stock > 0)` | Estructuras de control que se resuelven en el servidor |
+
+> 📝 **Nota:** El `.cshtml` es un fichero de texto con C# y HTML mezclados. El servidor lo compila a una clase C# cuando arranca, y cada petición ejecuta esa clase para generar el HTML que ve el navegador.
+
+> ⚠️ **Advertencia:** Si buscas `@{ ... }` o `@precio` en "Ver código fuente" del navegador, no los encontrarás: el servidor ya los ejecutó y los sustituyó por valores reales antes de enviar la página.
 
 ## 6.5. Comparativa de tecnologías
 
