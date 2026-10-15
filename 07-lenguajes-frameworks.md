@@ -49,9 +49,6 @@ graph TD
         D -->|"Máquina Virtual JVM/CLR"| B
     end
 
-    style SCRIPTING fill:#2196F,color:#fff3,color:#fff
-    style COMPILADO fill:#f4433,color:#fff6,color:#fff
-    style BYTECODE fill:#4CAF5,color:#fff0,color:#fff
 ```
 
 📌 **Ejemplo real:** PHP es como un **traductor simultáneo**: hablas (escribes código) y él traduce frase a frase al momento. Java es como **traducir un libro entero e imprimirlo**: tardas al principio (compilación), pero una vez lo tienes, lo lees rapidísimo sin traductores.
@@ -60,7 +57,7 @@ graph TD
 > - **Interpretado (PHP/Python):** Es como cocinar con una receta que vas leyendo paso a paso. Si te equivocas en el último paso, te das cuenta al final. Flexible pero más lento.
 > - **Compilado (C++/Go):** Es como memorizar la receta entera antes de cocinar. Tardas más en prepararte, pero una vez memorizada, cocinas rapidísimo. Si hay un error en la receta, no empiezas a cocinar hasta corregirlo.
 
-> 📝 **Nota:** C# y Java son lenguajes compilados a bytecode. Su código se compila a un formato intermedio que luego ejecuta una máquina virtual (CLR para C#, JVM para Java). Esto les da portabilidad: «Write Once, Run Anywhere» ("escribe una vez, ejecuta en cualquier lugar").
+> 📝 **Nota:** C# y Java son lenguajes compilados a bytecode. Su código se compila a un formato intermedio que luego ejecuta una máquina virtual (CLR para C#, JVM para Java). Esto les da portabilidad: "Write Once, Run Anywhere" (escribe una vez, ejecuta en cualquier lugar).
 
 ## 7.2. Plataformas web: LAMP, MEAN, WISA
 
@@ -101,9 +98,6 @@ graph TD
     M1 --> M2 --> M3 --> M4
     W1 --> W2 --> W3 --> W4
 
-    style LAMP fill:#4CAF5,color:#fff0,color:#fff
-    style MEAN fill:#2196F,color:#fff3,color:#fff
-    style WISA fill:#FF980,color:#fff0,color:#fff
 ```
 
 📌 **Ejemplo real:** WordPress (que usa el 43% de las webs del mundo) funciona sobre LAMP. Netflix usa Java sobre Linux. Microsoft Teams usa ASP.NET Core sobre Windows/Azure.

@@ -45,8 +45,6 @@ graph LR
     FRONTEND -->|"Petición HTTP"| BACKEND
     BACKEND -->|"Respuesta HTTP"| FRONTEND
 
-    style FRONTEND fill:#2196F,color:#fff3,color:#fff
-    style BACKEND fill:#4CAF5,color:#fff0,color:#fff
 ```
 
 > 📝 **Nota:** El Front-end es lo que el usuario ve y toca. El Back-end es todo lo que ocurre "detrás de la cortina". Ambos se comunican a través de **peticiones HTTP** y respuestas en formato **JSON** o **XML**.
@@ -66,7 +64,6 @@ graph TD
     D["🖥️ Escritorio<br/>(WPF/WinForms)"] -->|"HTTP/JSON"| A
     E["⌚ Smartwatch<br/>(WearOS)"] -->|"HTTP/JSON"| A
 
-    style BACKEND fill:#4CAF5,color:#fff0,color:#fff
     style B fill:#2196F,color:#fff3,color:#fff
     style C fill:#FF980,color:#fff0,color:#fff
     style D fill:#9C27B,color:#fff0,color:#fff

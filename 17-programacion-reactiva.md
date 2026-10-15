@@ -39,8 +39,6 @@ graph LR
         E --> F["📦 Dato N"]
     end
 
-    style TRADICIONAL fill:#2196F,color:#fff3,color:#fff
-    style REACTIVO fill:#4CAF5,color:#fff0,color:#fff
 ```
 
 | Paradigma | Modelo | Ejemplo |
@@ -70,8 +68,6 @@ graph LR
         B6["Suscriptor 2 entra"] --> B4
     end
 
-    style FRIO fill:#2196F,color:#fff3,color:#fff
-    style CALIENTE fill:#FF980,color:#fff0,color:#fff
 ```
 
 | Característica | Frío (IAsyncEnumerable) | Caliente (IObservable) |

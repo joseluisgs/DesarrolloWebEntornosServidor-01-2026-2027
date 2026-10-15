@@ -574,8 +574,6 @@ graph TD
 
     B -->|"Puerto 2375 sin TLS"| D["Cualquier proceso puede enviar comandos"]
 
-    style HOST fill:#2196F,color:#fff3,color:#fff
-    style DOCKER fill:#FF980,color:#fff0,color:#fff
     style B fill:#f4433,color:#fff6,color:#fff
     style D fill:#f4433,color:#fff6,color:#fff
 ```
@@ -596,7 +594,6 @@ graph LR
         C --> D["Mount / - ROOT total"]
     end
 
-    style DANGER fill:#f4433,color:#fff6,color:#fff
     style B fill:#f4433,color:#fff6,color:#fff
     style D fill:#f4433,color:#fff6,color:#fff
 ```
@@ -613,8 +610,6 @@ graph TD
 
     B -->|"Proceso del usuario, sin daemon"| C["SEGURO"]
 
-    style HOST fill:#2196F,color:#fff3,color:#fff
-    style USER fill:#4CAF5,color:#fff0,color:#fff
     style C fill:#4CAF5,color:#fff0,color:#fff
 ```
 

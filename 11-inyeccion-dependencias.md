@@ -156,9 +156,6 @@ graph LR
         N4["Petición 3"] --> N2
     end
 
-    style TRANSIENT fill:#2196F,color:#fff3,color:#fff
-    style SCOPED fill:#4CAF5,color:#fff0,color:#fff
-    style SINGLETON fill:#FF980,color:#fff0,color:#fff
 ```
 
 ```csharp
@@ -184,8 +181,6 @@ graph TD
         E -->|"Se destruye al cerrar"| F["OK"]
     end
 
-    style MAL fill:#f4433,color:#fff6,color:#fff
-    style BIEN fill:#4CAF5,color:#fff0,color:#fff
 ```
 
 ## 11.5. Service locator: el Anti-Patrón
@@ -218,8 +213,6 @@ graph TD
         E -->|"Inyecta"| F["PedidoRepository"]
     end
 
-    style SERVICELOCATOR fill:#f4433,color:#fff6,color:#fff
-    style DI fill:#4CAF5,color:#fff0,color:#fff
 ```
 
 > 💡 **Analogía — Service Locator:**

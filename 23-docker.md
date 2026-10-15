@@ -44,8 +44,6 @@ graph LR
         C3 --> C4["Hardware (mismo kernel)"]
     end
 
-    style VM fill:#FF980,color:#fff0,color:#fff
-    style DC fill:#4CAF5,color:#fff0,color:#fff
 ```
 
 | Concepto | Definición | Ejemplo |
@@ -124,8 +122,6 @@ graph LR
 
     B -->|"Solo publicación"| C
 
-    style BUILD fill:#FF980,color:#fff0,color:#fff
-    style RUNTIME fill:#4CAF5,color:#fff0,color:#fff
 ```
 
 | Sin multi-stage | Con multi-stage |
@@ -549,8 +545,6 @@ graph TD
         end
     end
 
-    style HOST fill:#2196F,color:#fff3,color:#fff
-    style DAEMON fill:#FF980,color:#fff0,color:#fff
     style B fill:#f4433,color:#fff6,color:#fff
 ```
 
@@ -568,8 +562,6 @@ graph TD
 
     B -->|"Sin daemon, seguro"| C["OK"]
 
-    style HOST fill:#2196F,color:#fff3,color:#fff
-    style USER fill:#4CAF5,color:#fff0,color:#fff
     style C fill:#4CAF5,color:#fff0,color:#fff
 ```
 

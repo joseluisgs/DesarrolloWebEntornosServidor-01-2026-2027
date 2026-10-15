@@ -134,8 +134,6 @@ graph TD
     CLIENTE -->|"Petición HTTP"| SERVIDOR
     SERVIDOR -->|"Respuesta HTTP"| CLIENTE
 
-    style CLIENTE fill:#2196F,color:#fff3,color:#fff
-    style SERVIDOR fill:#4CAF5,color:#fff0,color:#fff
 ```
 
 **Código del cliente (Front-end):**

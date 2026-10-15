@@ -184,8 +184,6 @@ graph TD
     B -->|"Implementa"| E
     C -->|"Usa"| D
 
-    style EXTERNO fill:#2196F,color:#fff3,color:#fff
-    style INTERNO fill:#4CAF5,color:#fff0,color:#fff
 ```
 
 | Capa | Contenido | Dependencias |

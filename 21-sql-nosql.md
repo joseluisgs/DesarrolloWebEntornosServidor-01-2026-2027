@@ -847,9 +847,6 @@ graph LR
         C2 -.->|"Borrar"| X3["❌"]
     end
 
-    style FIFO fill:#2196F,color:#fff3,color:#fff
-    style LRU fill:#4CAF5,color:#fff0,color:#fff
-    style LFU fill:#FF980,color:#fff0,color:#fff
 ```
 
 > 💡 **Analogía — La nevera:**
@@ -874,8 +871,6 @@ graph TB
         B2 --> B3["Expira a las 10:55<br/>(se renueva con cada uso)"]
     end
 
-    style ABSOLUTA fill:#f4433,color:#fff6,color:#fff
-    style DESLIZANTE fill:#4CAF5,color:#fff0,color:#fff
 ```
 
 | Tipo | ¿Cuándo expira? | Ejemplo |
@@ -1079,8 +1074,6 @@ graph TB
         D2 -->|"1:N"| D3
     end
 
-    style EMBEDDED fill:#4CAF5,color:#fff0,color:#fff
-    style REFERENCIAS fill:#FF980,color:#fff0,color:#fff
 ```
 
 #### Embedded (documentos embebidos)
@@ -1191,8 +1184,6 @@ graph LR
         D1["📄 Documento Pedido<br/>cliente: {nombre, email}<br/>producto: {nombre, precio}"]
     end
 
-    style SQL fill:#2196F,color:#fff3,color:#fff
-    style MONGO fill:#FF980,color:#fff0,color:#fff
 ```
 
 > 💡 **Consejo:** El embedding elimina JOINs pero crea redundancia. Si el cliente cambia de email, tienes que actualizar todos los pedidos embebidos. Elige según tu caso de uso: si los datos son estáticos, embebe; si cambian, referencia.
@@ -1337,8 +1328,6 @@ graph LR
         C1["Colección personas"] --> D1["Documento: {_id:1, nombre:Ana, pedidos:[...]}"]
     end
 
-    style SQL fill:#2196F,color:#fff3,color:#fff
-    style NOSQL fill:#FF980,color:#fff0,color:#fff
 ```
 
 **PostgreSQL (relacional):**
@@ -1417,8 +1406,6 @@ graph TB
         LB --> C["Clientes"]
     end
 
-    style VERTICAL fill:#FF980,color:#fff0,color:#fff
-    style HORIZONTAL fill:#4CAF5,color:#fff0,color:#fff
 ```
 
 > 💡 **Analogía:**

@@ -318,8 +318,6 @@ graph TD
         N4["Neo4j<br/>(Grafos)"]
     end
 
-    style SQL fill:#2196F,color:#fff3,color:#fff
-    style NOSQL fill:#4CAF5,color:#fff0,color:#fff
 ```
 
 📌 **Ejemplo real:** Instagram usa **Redis** para caché y sesiones, **PostgreSQL** para datos relacionales y **Cassandra** para datos de gran volumen como el feed y los perfiles de usuario. Las fotos y vídeos no se guardan en la base de datos: van a **almacenamiento de objetos** (tipo S3).

@@ -95,8 +95,6 @@ graph LR
         I5["Consulta BD"] --> I6["Espera BD (0% CPU)"]
     end
 
-    style CPU fill:#f4433,color:#fff6,color:#fff
-    style IO fill:#4CAF5,color:#fff0,color:#fff
 ```
 
 > 💡 **Truco:** Las operaciones de I/O son las que **más benefician** de la asincronía. Porque mientras esperas la respuesta de la red o del disco, el hilo está **libre** para hacer otras cosas. ¡No estás quemando CPU esperando!
@@ -302,8 +300,6 @@ graph TD
     
     SERVIDOR --> COLA
     
-    style SERVIDOR fill:#f4433,color:#fff6,color:#fff
-    style COLA fill:#FF980,color:#fff0,color:#fff
 ```
 
 **Qué pasa cuando un usuario hace petición:**
@@ -740,8 +736,6 @@ graph TB
         M3["Cálculo: GroupBy con pocos grupos"]
     end
 
-    style BUENO fill:#4CAF5,color:#fff0,color:#fff
-    style MALO fill:#f4433,color:#fff6,color:#fff
 ```
 
 > 💡 **Consejo para el examen:** Si te preguntan "¿cuándo usar `Task.Run` o `Parallel.For`?", la respuesta es: **solo para cálculos CPU-bound pesados (> 50 ms)**. Para operaciones de I/O no hace falta `Task.Run`: usa `async/await` directamente (el proveedor de I/O ya libera el hilo mientras espera). Para todo lo demás, ejecuta secuencial. Más código, menos sorpresas.
@@ -1182,8 +1176,6 @@ graph LR
         C2 --> C3["Cálculo 3"]
     end
 
-    style WHENALL fill:#4CAF5,color:#fff0,color:#fff
-    style PARALLEL fill:#FF980,color:#fff0,color:#fff
 ```
 
 > ⚠️ **Advertencia:** No uses `Parallel.For` para operaciones de I/O. Parallel bloquea un hilo del ThreadPool por cada iteración. Si una iteración tarda 1 segundo en respuesta de red, 100 iteraciones necesitarán 100 hilos bloqueados durante 1 segundo. Con `Task.WhenAll`, solo necesitas 1 hilo que se libera inmediatamente.

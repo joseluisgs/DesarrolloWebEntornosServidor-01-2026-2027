@@ -143,8 +143,6 @@ graph LR
         B1["App"] --> B2["Libs"] --> B3["Container Engine"] --> B4["Hardware"]
     end
 
-    style VM fill:#FF980,color:#fff0,color:#fff
-    style DC fill:#4CAF5,color:#fff0,color:#fff
 ```
 
 📌 **Ejemplo real:** Un contenedor de Node.js pesa 50MB, una VM completa puede pesar 2GB. Los contenedores arrancan en milisegundos, las VM en minutos.
@@ -334,7 +332,6 @@ graph TD
     U -->|"Solo código"| PaaS
     U -->|"Solo usas"| SaaS
 
-    style CLOUD fill:#2196F,color:#fff3,color:#fff
     style IaaS fill:#FF980,color:#fff0,color:#fff
     style PaaS fill:#4CAF5,color:#fff0,color:#fff
     style SaaS fill:#9C27B,color:#fff0,color:#fff

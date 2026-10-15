@@ -52,8 +52,6 @@ graph TD
         S2 -->|"Respuesta HTML"| U2
     end
 
-    style ESTÁTICA fill:#2196F,color:#fff3,color:#fff
-    style DINÁMICA fill:#4CAF5,color:#fff0,color:#fff
 ```
 
 📌 **Ejemplo real:** La web de "InfoJobs" muestra ofertas de trabajo. Cuando buscas ofertas en Madrid, la página se genera **en ese momento** con los resultados que coinciden con tu búsqueda. No hay un archivo HTML con todas las búsquedas posibles pregeneradas.
@@ -116,8 +114,6 @@ graph LR
         N2b -->|"Muestra"| U2["👤 Usuario"]
     end
 
-    style SSR fill:#2196F,color:#fff3,color:#fff
-    style CSR fill:#FF980,color:#fff0,color:#fff
 ```
 
 | | **SSR (Server-Side)** | **CSR (Client-Side)** |

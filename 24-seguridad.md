@@ -507,7 +507,6 @@ graph TB
         H4 --> H5["Content-Security-Policy<br/>default-src 'self'"]
     end
 
-    style HEADERS fill:#4CAF5,color:#fff0,color:#fff
 ```
 
 | Cabecera | Protege contra | Valor recomendado |

@@ -27,7 +27,7 @@ En este tema aprenderás Entity Framework Core: `DbContext`, configuración con 
 - Crear y aplicar migraciones
 - Sembrar datos iniciales con Seed Data
 
-**Prerrequisitos:** Antes de empezar —y en particular antes de usar `dotnet ef` en la §20.7— instala el proveedor de base de datos (PostgreSQL, el proveedor del curso, o SQLite para probar sin instalar servidor), el paquete de diseño y la CLI de EF Core:
+**Prerrequisitos:** Antes de empezar (y en particular antes de usar `dotnet ef` en la §20.7) instala el proveedor de base de datos (PostgreSQL, el proveedor del curso, o SQLite para probar sin instalar servidor), el paquete de diseño y la CLI de EF Core:
 
 ```bash
 # 1. Proveedor de base de datos (elige uno)
@@ -65,8 +65,6 @@ graph LR
     B -->|"Mapeo"| E
     C -->|"Mapeo"| F
 
-    style CSHARP fill:#2196F,color:#fff3,color:#fff
-    style SQL fill:#4CAF5,color:#fff0,color:#fff
 ```
 
 | Sin ORM | Con ORM |

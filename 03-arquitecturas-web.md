@@ -59,7 +59,6 @@ graph TD
 
     A --> B --> C --> D
 
-    style MONOLITO fill:#FF980,color:#fff0,color:#fff
 ```
 
 📌 **Ejemplo real:** Muchas startups empiezan con monolitos porque es rápido de desarrollar y desplegar. Etsy (tienda online de artesanías) sigue usando un monolito PHP bien estructurado.
@@ -112,9 +111,6 @@ graph TD
     B --> E
     B --> F
 
-    style CLIENTE fill:#2196F,color:#fff3,color:#fff
-    style API_GATEWAY fill:#9C27B,color:#fff0,color:#fff
-    style MICROSERVICIOS fill:#4CAF5,color:#fff0,color:#fff
 ```
 
 📌 **Ejemplo real:** Netflix usa microservicios. Cada función (recomendaciones, búsquedas, pagos, streaming) es un servicio independiente. Si falla el servicio de pagos, el de recomendaciones sigue funcionando.
