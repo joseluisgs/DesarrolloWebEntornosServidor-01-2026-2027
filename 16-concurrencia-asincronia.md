@@ -32,7 +32,7 @@ En este tema aprenderás qué es la sincronía, por qué las operaciones de E/S 
 - Entender `Task` y `Task<T>` como promesas de C#
 - Usar `CancellationToken` para cancelar operaciones largas
 - Evitar los peligros de `async void`
-- Aplicar patrones de concurrencia: `WhenAll`, `WhenAny`, `Parallel.For`
+- Aplicar patrones de concurrencia: `WhenAll`, `WhenAny`, `Parallel.For` y productor-consumidor con `Channel<T>`
 - Diferenciar `Task`, `ValueTask` e `IAsyncEnumerable`
 - Diseñar operaciones paralelas correctamente (los 2 errores clásicos)
 
@@ -1009,32 +1009,88 @@ catch (Exception ex)
 
 ## 16.9. Patrones de concurrencia
 
-### Producer-Consumer con BlockingCollection
+> 📝 **Nota:** `BlockingCollection` es la forma **síncrona** y de legado de hacer productor-consumidor: `Add` bloquea el hilo cuando la cola está llena. En código moderno se sustituye por `Channel<T>`, que hace lo mismo pero sin bloquear hilos.
+
+### Producer-Consumer con channels (System.Threading.Channels)
+
+El patrón **productor-consumidor** separa dos trabajos que van a ritmos distintos: el productor genera datos (un mensaje recibido, un fichero subido, un pedido) y el consumidor los procesa (guardarlos en la base de datos, enviarlos, facturarlos). Entre los dos hay una cola que los desacopla en el tiempo: el productor no espera a que el consumidor termine y el consumidor coge lo que puede; si llega un pico de trabajo, la cola absorbe la diferencia.
+
+`Channel<T>` (namespace `System.Threading.Channels`, parte del runtime desde .NET Core 3.0) es la cola asíncrona de esta pareja: el productor escribe con `await WriteAsync` sin ocupar el hilo mientras espera, y el consumidor recorre la cola con `await foreach`.
+
+```mermaid
+flowchart LR
+    subgraph Productor
+        P[WriteAsync]
+    end
+    subgraph Consumidor
+        C[ReadAllAsync] --> G[Procesar cada dato]
+    end
+    P -->|cola| C
+```
+
+El ejemplo mínimo, con la misma forma que el de `BlockingCollection` para que se vea el cambio:
 
 ```csharp
-using System.Collections.Concurrent;
+using System.Threading.Channels;
 
-// Productor: genera datos
-// Consumidor: procesa datos
-var cola = new BlockingCollection<string>();
+// 1. Crear la cola: acotada (cupo máximo) o ilimitada
+var cola = Channel.CreateBounded<string>(new BoundedChannelOptions(100)
+{
+    FullMode = BoundedChannelMode.Wait   // si la cola está llena, el productor espera
+});
 
-// Productor (en un hilo separado)
-Task.Run(() =>
+// 2. Productor: escribe sin bloquear el hilo
+var productor = Task.Run(async () =>
 {
     for (int i = 0; i < 10; i++)
     {
-        cola.Add($"Tarea {i}");
-        Thread.Sleep(100); // Simular trabajo
+        await cola.Writer.WriteAsync($"Tarea {i}");
+        await Task.Delay(100);           // simular trabajo
     }
-    cola.CompleteAdding(); // Señal de que ya no hay más datos
+    cola.Writer.Complete();              // señal: ya no llegan más datos
 });
 
-// Consumidor (en el hilo principal)
-foreach (var item in cola.GetConsumingEnumerable())
+// 3. Consumidor: recorre la cola de forma asíncrona
+await foreach (var item in cola.Reader.ReadAllAsync())
 {
     Console.WriteLine($"Procesando: {item}");
 }
+
+await productor;
 ```
+
+| Aspecto | `BlockingCollection` | `Channel<T>` |
+|---------|----------------------|--------------|
+| **Modelo** | Síncrono: bloquea el hilo | Asíncrono: se espera con `await` |
+| **Escribir** | `Add(item)` | `await WriteAsync(item)` |
+| **Leer** | `GetConsumingEnumerable()` | `await foreach ... ReadAllAsync()` |
+| **Fin de datos** | `CompleteAdding()` | `Writer.Complete()` |
+| **Capacidad** | Acotada | Acotada (`CreateBounded`) o ilimitada (`CreateUnbounded`) |
+| **Uso hoy** | Legado | El recomendado |
+
+En el diseño real, el consumidor casi nunca necesita la cola entera: se le pasa solo el `ChannelReader`, que es la parte de lectura. Así el consumidor no conoce ni al productor ni la configuración de la cola:
+
+```csharp
+// El consumidor recibe SOLO el lector (desacople total)
+public class PersistenciaMensajesService(ChannelReader<(string Canal, string Texto)> cola)
+{
+    public async Task ProcesarAsync(CancellationToken cancelacion)
+    {
+        await foreach (var (canal, texto) in cola.ReadAllAsync(cancelacion))
+        {
+            await GuardarAsync(canal, texto, cancelacion);
+        }
+    }
+}
+```
+
+> 💡 **Consejo:** acota la capacidad con `CreateBounded` salvo que sepas que el volumen es controlado. Una cola ilimitada con un consumidor lento crece en memoria sin control hasta que la aplicación se queda sin ella.
+
+> ⚠️ **Advertencia:** si olvidas `Writer.Complete()`, el consumidor espera en `ReadAllAsync` para siempre: la cola nunca se cierra y la tarea del consumidor jamás termina.
+
+> 📝 **Nota:** el `CancellationToken` que acepta `ReadAllAsync(ct)` corta la espera de forma ordenada, que es lo que necesitas al parar la aplicación.
+
+📌 **Ejemplo real:** un servidor de chat. Cada mensaje que llega a una sala se escribe en la cola de mensajes salientes de cada cliente conectado (productor: el hilo que recibe el mensaje de la red; consumidor: el que envía los pendientes a ese cliente). Si un cliente tiene la conexión lenta, su cola crece y el `FullMode` decide si se espera o se descarta; el resto de la sala no se entera. Más adelante, en el módulo de servidor, montarás esta misma idea para la cola de correos de una tienda.
 
 ### Parallel.ForEach: procesamiento paralelo
 
