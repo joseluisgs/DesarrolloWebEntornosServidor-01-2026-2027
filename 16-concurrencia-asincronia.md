@@ -24,7 +24,7 @@
       - [¿Por qué la competencia empeora las cosas?](#por-qué-la-competencia-empeora-las-cosas)
     - [16.4.3. ¿Cuándo NO paralelizar? la regla de oro](#1643-cuándo-no-paralelizar-la-regla-de-oro)
       - [La "zona muerta" (5-50 ms)](#la-zona-muerta-5-50-ms)
-      - [Resumen visual](#resumen-visual)
+      - [Esquema de la zona muerta](#esquema-de-la-zona-muerta)
   - [16.5. Async/Await: la base de la asincronía en C#](#165-asyncawait-la-base-de-la-asincronía-en-c)
     - [Sintaxis básica](#sintaxis-básica)
     - [Flujo de ejecución](#flujo-de-ejecución)
@@ -754,7 +754,7 @@ Hay una zona gris donde el resultado es **impredecible**:
 
 📌 **Ejemplo real:** Netflix no paraleliza el decode de un frame de vídeo (2-3 ms). Pero sí paraleliza la descarga de thumbnails (E/S de red, 100+ ms cada una). Cada herramienta para su trabajo.
 
-#### Resumen visual
+#### Esquema de la zona muerta
 
 ```mermaid
 graph TB
