@@ -502,9 +502,8 @@ Las **Security Headers** son cabeceras HTTP que protegen tu app de ataques comun
 graph TB
     subgraph HEADERS["Security Headers — Capas de Protección"]
         H1["X-Content-Type-Options<br/>nosniff"] --> H2["X-Frame-Options<br/>DENY"]
-        H2 --> H3["X-XSS-Protection<br/>1; mode=block"]
-        H3 --> H4["Strict-Transport-Security<br/>max-age=31536000"]
-        H4 --> H5["Content-Security-Policy<br/>default-src 'self'"]
+        H2 --> H3["Strict-Transport-Security<br/>max-age=31536000"]
+        H3 --> H4["Content-Security-Policy<br/>default-src 'self'"]
     end
 
 ```
@@ -513,7 +512,6 @@ graph TB
 |----------|---------------|-------------------|
 | `X-Content-Type-Options` | MIME sniffing (ejecutar JS como HTML) | `nosniff` |
 | `X-Frame-Options` | Clickjacking (iframes ocultos) | `DENY` |
-| `X-XSS-Protection` | XSS en navegadores antiguos | `1; mode=block` |
 | `Strict-Transport-Security` | Fuerza HTTPS (HSTS) | `max-age=31536000; includeSubDomains` |
 | `Content-Security-Policy` | XSS, inyección de scripts | `default-src 'self'` |
 | `Referrer-Policy` | Filtración de URLs | `strict-origin-when-cross-origin` |
@@ -525,7 +523,9 @@ app.Use(async (context, next) =>
 {
     context.Response.Headers.Append("X-Content-Type-Options", "nosniff");
     context.Response.Headers.Append("X-Frame-Options", "DENY");
-    context.Response.Headers.Append("X-XSS-Protection", "1; mode=block");
+    // X-XSS-Protection ya no se envía: los navegadores modernos la
+    // ignoran (Chrome la retiró en 2019) y OWASP recomienda no usarla.
+    // La defensa de verdad contra XSS es Content-Security-Policy.
     context.Response.Headers.Append("Strict-Transport-Security",
         "max-age=31536000; includeSubDomains");
     context.Response.Headers.Append("Content-Security-Policy",
@@ -537,7 +537,9 @@ app.Use(async (context, next) =>
 });
 ```
 
-> 💡 **Consejo:** Usa la librería `NWebsec` o `AspNetCoreRateLimit` para configurar headers de forma declarativa en vez de manual.
+> 📝 **Nota:** `X-XSS-Protection` ya no se envía, y no es un olvido: era el filtro XSS de IE y Chrome antiguos, los navegadores modernos la ignoran (Chrome la retiró en 2019) y OWASP recomienda no enviarla. La protección real contra XSS es `Content-Security-Policy`, que ya está en la tabla.
+
+> 💡 **Consejo:** El middleware propio basta para las cabeceras y no depende de terceros. Si prefieres una librería, revisa antes su fecha de mantenimiento: `AspNetCoreRateLimit`, por ejemplo, lleva años abandonado, y para limitar peticiones ya está la API nativa `System.Threading.RateLimiting` de .NET.
 
 ## 24.9. CSRF: Cross-Site request forgery
 
