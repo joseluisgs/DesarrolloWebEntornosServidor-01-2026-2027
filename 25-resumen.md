@@ -17,7 +17,7 @@
       - [Tema 12: patrones de diseño](#tema-12-patrones-de-diseño)
       - [Tema 13: LINQ y DataFrames](#tema-13-linq-y-dataframes)
       - [Tema 14: ficheros y serialización](#tema-14-ficheros-y-serialización)
-      - [Tema 15: manejo de errores con result](#tema-15-manejo-de-errores-con-result)
+      - [Tema 15: manejo de errores con Result\<T\>](#tema-15-manejo-de-errores-con-resultt)
       - [Tema 16: programación asíncrona](#tema-16-programación-asíncrona)
       - [Tema 17: flujos reactivos](#tema-17-flujos-reactivos)
       - [Tema 18: consumo de APIs externas](#tema-18-consumo-de-apis-externas)

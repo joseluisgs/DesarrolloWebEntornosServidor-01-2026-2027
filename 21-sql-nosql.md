@@ -10,7 +10,7 @@
   - [21.7. Patrón Cache-Aside](#217-patrón-cache-aside)
   - [21.8. Consistencia eventual](#218-consistencia-eventual)
   - [21.9. Modelo relacional vs documento](#219-modelo-relacional-vs-documento)
-  - [21.10. Dapper vs EF Core vs ADO.NET](#2110-dapper-vs-ef-core-vs-ado)
+  - [21.10. Dapper vs EF Core vs ADO.NET](#2110-dapper-vs-ef-core-vs-adonet)
   - [21.11. Escalabilidad vertical vs horizontal](#2111-escalabilidad-vertical-vs-horizontal)
   - [21.12. Comparativa y cuándo usar cada uno](#2112-comparativa-y-cuándo-usar-cada-uno)
   - [21.13. Buenas prácticas](#2113-buenas-prácticas)
