@@ -210,12 +210,14 @@ Los códigos de estado indican el resultado de la petición. Se organizan en 5 c
 | **401** | Unauthorized | No estás autenticado (falta login) |
 | **403** | Forbidden | Estás autenticado pero no tienes permiso |
 | **404** | Not Found | El recurso no existe |
-| **409** | Conflict | Conflicto (ej: usuario ya existe) |
-| **422** | Unprocessable Entity | Datos correctos pero lógicamente inválidos |
+| **409** | Conflict | El recurso o el estado que pides choca con algo que ya existe (usuario duplicado, dos peticiones compitiendo por el mismo) |
+| **422** | Unprocessable Entity | Los datos están bien, pero una regla de negocio los rechaza (stock insuficiente, no se borra con elementos asociados) |
 | **429** | Too Many Requests | Rate limiting (demasiadas peticiones) |
 | **500** | Internal Server Error | Error interno del servidor |
 | **502** | Bad Gateway | El servidor recibió una respuesta inválida |
 | **503** | Service Unavailable | El servidor está sobrecargado o en mantenimiento |
+
+> 📝 **Nota:** El 409 y el 422 son los dos que más se discuten. Los verás decididos en la UD02, en el tema de REST API, con el dilema de qué responder cuando se borra algo que tiene elementos asociados y el criterio que siguen las APIs de ejemplo: 409 para duplicados y choques de concurrencia, 422 para reglas de negocio.
 
 > 🔧 **Truco nemotécnico:**
 > - **2xx** = "Todo bien" ✅
