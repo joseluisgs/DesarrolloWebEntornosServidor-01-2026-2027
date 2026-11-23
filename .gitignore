@@ -43,3 +43,13 @@ upload.sh
 practicas/2023-2024
 ejercicios/2023-2024
 practicas/2024-2025
+
+# Node y Slidev
+node_modules/
+.slidev/
+dist/
+*.local
+.npm/
+
+# Instrucciones locales de agentes
+AGENTS.md

@@ -53,6 +53,10 @@ UD01. Introducción al desarrollo de software en Servidor. 2DAW. Curso 2026-2027
 - [Entity Framework Core](https://youtu.be/Noj_7CQWnUI)
 - [Lista de reproducción](https://www.youtube.com/playlist?list=PLLiuVpAc3Gv4)
 
+## Presentaciones
+
+- Parte 1: fundamentos del desarrollo web en entorno servidor ([tema claro](presentaciones/ud01-parte1-claro.pdf), [tema oscuro](presentaciones/ud01-parte1-oscuro.pdf))
+
 ## Resultados de Aprendizaje y Criterios de Evaluación
 
 - RA1: Selecciona las arquitecturas y tecnologías de programación web en entorno servidor, analizando sus capacidades y características propias.

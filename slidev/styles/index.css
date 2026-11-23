@@ -1,0 +1,586 @@
+/* ============================================================
+   UD01 · Presentación Slidev
+   Sistema de diseño basado en la paleta de joseluisgs.dev
+   (VuePress Theme Hope: accent #7289da, fondos #fff / #1b1b1f)
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap');
+
+:root {
+  /* --- Fondos --- */
+  --ud-bg: #ffffff;
+  --ud-bg-alt: #f6f6f7;
+  --ud-bg-elv: #ffffff;
+  --ud-bg-soft: rgba(255, 255, 255, 0.9);
+
+  /* --- Texto --- */
+  --ud-text: #3c3c43;
+  --ud-text-mute: rgba(60, 60, 67, 0.78);
+  --ud-text-subtle: rgba(60, 60, 67, 0.56);
+
+  /* --- Líneas --- */
+  --ud-divider: #e2e2e3;
+
+  /* --- Acento principal (blurple de la web) --- */
+  --ud-accent: #7289da;
+  --ud-accent-strong: #4967cf;
+  --ud-accent-soft: rgba(114, 137, 218, 0.14);
+  --ud-on-accent: #ffffff;
+
+  /* --- Semánticos (claro) --- */
+  --ud-green: #30a46c;
+  --ud-green-text: #18794e;
+  --ud-green-soft: rgba(48, 164, 108, 0.12);
+  --ud-red: #e0575b;
+  --ud-red-text: #b8272c;
+  --ud-red-soft: rgba(224, 87, 91, 0.12);
+  --ud-yellow: #c28100;
+  --ud-yellow-text: #915930;
+  --ud-yellow-soft: rgba(194, 129, 0, 0.12);
+  --ud-blue: #2fa1c5;
+  --ud-blue-text: #2888a7;
+  --ud-blue-soft: rgba(47, 161, 197, 0.12);
+  --ud-purple: #8e5cd9;
+  --ud-purple-text: #6f42c1;
+  --ud-purple-soft: rgba(142, 92, 217, 0.12);
+
+  /* --- Tipografía --- */
+  --ud-font: 'Ubuntu', 'Segoe UI', system-ui, sans-serif;
+  --ud-font-mono: Consolas, 'Cascadia Mono', 'JetBrains Mono', monospace;
+  /* Solo para código: Fira Code Nerd Font con ligaduras (=>, !=, ->...) */
+  --ud-font-code: 'FiraCode Nerd Font Mono', 'FiraCode Nerd Font', 'Fira Code', 'Cascadia Mono', Consolas, monospace;
+
+  /* --- Radios y sombras --- */
+  --ud-radius: 12px;
+  --ud-shadow: 0 2px 12px rgba(60, 60, 67, 0.08);
+  --ud-shadow-lg: 0 8px 32px rgba(60, 60, 67, 0.12);
+}
+
+/* ============================================================
+   Modo oscuro (mismos tokens que la web: #1b1b1f / #161618 / #202127)
+   ============================================================ */
+html.dark {
+  --ud-bg: #1b1b1f;
+  --ud-bg-alt: #161618;
+  --ud-bg-elv: #202127;
+  --ud-bg-soft: rgba(32, 33, 39, 0.9);
+
+  --ud-text: #ebebf5;
+  --ud-text-mute: rgba(235, 235, 245, 0.6);
+  --ud-text-subtle: rgba(235, 235, 245, 0.38);
+
+  --ud-divider: #2e2e32;
+
+  --ud-accent-soft: rgba(114, 137, 218, 0.18);
+  --ud-on-accent: #ffffff;
+
+  --ud-green: #298459;
+  --ud-green-text: #3dd68c;
+  --ud-green-soft: rgba(61, 214, 140, 0.12);
+  --ud-red: #b62a3c;
+  --ud-red-text: #f66f81;
+  --ud-red-soft: rgba(246, 111, 129, 0.12);
+  --ud-yellow: #a46a0a;
+  --ud-yellow-text: #f9b44e;
+  --ud-yellow-soft: rgba(249, 180, 78, 0.12);
+  --ud-blue: #2785a3;
+  --ud-blue-text: #c9e8f2;
+  --ud-blue-soft: rgba(201, 232, 242, 0.1);
+  --ud-purple: #7e4cc9;
+  --ud-purple-text: #c8abfa;
+  --ud-purple-soft: rgba(200, 171, 250, 0.12);
+
+  --ud-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+  --ud-shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+/* ============================================================
+   Base
+   ============================================================ */
+.slidev-layout {
+  font-family: var(--ud-font);
+  color: var(--ud-text);
+  background-color: var(--ud-bg);
+}
+
+/* Layout "default": el contenido se pegaba arriba y dejaba una banda muerta
+   de hasta 340px bajo el pie (bug: "media slide vacía").
+   Con flex + margin auto, el bloque de contenido se CENTRA en el espacio
+   sobrante y el título sigue arriba. Los layouts especiales (cover, section,
+   statement, center) ya vienen centrados de Slidev y no se tocan. */
+.slidev-layout.default {
+  display: flex;
+  flex-direction: column;
+}
+
+.slidev-layout.default > h2 + * {
+  /* !important: el centrado manda SIEMPRE sobre los márgenes fijos de los
+     bloques (bug: `.ud-real:not(:first-child)` (0,3,0) ganaba al auto
+     (0,2,1) y la slide quedaba pegada arriba con la mitad inferior vacía) */
+  margin-top: auto !important;
+}
+
+.slidev-layout.default > *:last-child {
+  /* !important: el wrapper de código trae `margin` (shorthand) con
+     !important de Slidev → sin lo nuestro, el auto de abajo perdía y el
+     contenido se hundía FLOTE ABAJO con un hueco enorme tras el título
+     (bug: "las cosas salen abajo sin centrar"). */
+  margin-bottom: auto !important;
+}
+
+.slidev-layout h1,
+.slidev-layout h2,
+.slidev-layout h3 {
+  font-family: var(--ud-font);
+  font-weight: 700;
+  color: var(--ud-text);
+}
+
+.slidev-layout h1 {
+  background: linear-gradient(120deg, var(--ud-accent-strong) 0%, var(--ud-accent) 60%, var(--ud-blue) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+html.dark .slidev-layout h1 {
+  background: linear-gradient(120deg, #a3b1ee 0%, var(--ud-accent) 55%, #6fc3e0 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.slidev-layout a {
+  color: var(--ud-accent-strong);
+}
+
+html.dark .slidev-layout a {
+  color: #a3b1ee;
+}
+
+.slidev-layout p {
+  color: var(--ud-text-mute);
+}
+
+.slidev-layout strong {
+  color: var(--ud-text);
+}
+
+/* ============================================================
+   Bloques de código
+   ============================================================ */
+.slidev-layout code {
+  font-family: var(--ud-font-code);
+  font-variant-ligatures: contextual;
+  font-feature-settings: 'calt' 1, 'liga' 1;
+}
+
+.slidev-layout pre {
+  border-radius: var(--ud-radius);
+  border: 1px solid var(--ud-divider);
+  box-shadow: var(--ud-shadow);
+}
+
+.slidev-layout pre code {
+  font-family: var(--ud-font-code);
+  font-variant-ligatures: contextual;
+  font-feature-settings: 'calt' 1, 'liga' 1;
+  font-size: 1.15em;
+  line-height: 1.6;
+}
+
+/* El código de las VIÑETAS no se parte (chips cortos: `int.TryParse`, `??`).
+   En prosa y dentro de cajas SÍ se permite partir: con `nowrap` un chip largo
+   desbordaba la caja (bug: "when (e is FormatException || ..." se salía de la
+   Nota). Si un chip de la prosa queda feo partido, se acorta el texto. */
+.slidev-layout li > code {
+  white-space: nowrap;
+}
+
+/* Código dentro de una tarjeta de concepto: más pequeño y con scroll
+   horizontal (bug: "enum TipoSuscripcion { Basica, Estand" cortado) */
+.slidev-layout .ud-concept pre {
+  overflow-x: auto;
+  margin: 0.4em 0;
+}
+
+.slidev-layout .ud-concept pre code {
+  font-size: 0.72em;
+  line-height: 1.45;
+}
+
+/* Las columnas de un grid arrancan a la MISMA altura: el bloque de código
+   (envuelto por Slidev en .slidev-code-wrapper) trae margin con !important
+   y arrancaba más abajo que la nota de al lado
+   (bug: "la nota empieza más alta que el fragmento de código") */
+.slidev-layout .grid > div > :first-child {
+  margin-top: 0;
+}
+
+.slidev-layout .grid > div > .slidev-code-wrapper:first-child {
+  margin-top: 0 !important;
+}
+
+/* ============================================================
+   Tablas
+   ============================================================ */
+.slidev-layout table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8em;
+  /* La 1ª columna (Concepto/Tipo) no se estruja: si no, los chips de código
+     se parten en dos líneas y las filas quedan de alturas distintas */
+  table-layout: auto;
+}
+
+/* La 1ª columna NO lleva min-width: hincha las tablas de 5 columnas y las
+   mete encima del bloque de la derecha (bug: tabla reventada en "Constantes
+   y literales"). El ancho lo decide el contenido. */
+.slidev-layout th:first-child,
+.slidev-layout td:first-child {
+  min-width: 0;
+}
+
+/* Los chips de la 1ª columna son cortos y no deben partirse
+   (bug: "enum / struct / tupla" en dos líneas y la fila desigual).
+   Solo la 1ª columna: aplicarlo a todas hincha la tabla y la revienta. */
+.slidev-layout td:first-child code {
+  white-space: nowrap;
+}
+
+/* El código de una celda: se permite cortar entre palabras (nunca dentro de
+   un token) y con fuente algo menor para que la tabla no crezca más que su
+   columna. PROHIBIDO `white-space: nowrap` aquí: hincha la tabla y la
+   revienta (bug: "te has cargado las tablas"). */
+.slidev-layout td code,
+.slidev-layout th code {
+  white-space: normal;
+  overflow-wrap: break-word;
+  font-size: 0.92em;
+}
+
+.slidev-layout th {
+  background: var(--ud-accent-soft);
+  color: var(--ud-text);
+  font-weight: 600;
+  text-align: left;
+  padding: 0.4em 0.7em;
+  border-bottom: 2px solid var(--ud-accent);
+}
+
+.slidev-layout td {
+  padding: 0.32em 0.7em;
+  border-bottom: 1px solid var(--ud-divider);
+  color: var(--ud-text-mute);
+  /* Parte palabras SOLO si no caben ni solas (evita cortar "Interpretado"
+     en "Interpretad/o"); con 'anywhere' se partía cualquier palabra fea.
+     Si aun así una celda no cabe, se reduzce el font-size de la tabla. */
+  overflow-wrap: break-word;
+}
+
+.slidev-layout tr:last-child td {
+  border-bottom: none;
+}
+
+/* ============================================================
+   Utilidades de marca
+   ============================================================ */
+.ud-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  padding: 0.2em 0.8em;
+  border-radius: 999px;
+  background: var(--ud-accent-soft);
+  color: var(--ud-accent-strong);
+  font-size: 0.75em;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 1px solid var(--ud-accent);
+  text-decoration: none;
+}
+
+/* Redes sociales en el cierre: pill clicable con aire entre ellos */
+.ud-pill-link {
+  margin: 0.4em 0.8em;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.ud-pill-link:hover {
+  transform: translateY(-2px);
+  background: var(--ud-accent);
+  color: var(--ud-on-accent);
+}
+
+html.dark .ud-pill {
+  color: #a3b1ee;
+}
+
+.ud-card {
+  background: var(--ud-bg-elv);
+  border: 1px solid var(--ud-divider);
+  border-radius: var(--ud-radius);
+  padding: 0.9em 1.1em;
+  box-shadow: var(--ud-shadow);
+}
+
+.ud-card-accent {
+  border-left: 4px solid var(--ud-accent);
+}
+
+.ud-quote {
+  border-left: 4px solid var(--ud-accent);
+  background: var(--ud-accent-soft);
+  border-radius: 0 var(--ud-radius) var(--ud-radius) 0;
+  padding: 0.7em 1em;
+  color: var(--ud-text);
+  font-style: italic;
+}
+
+/* ============================================================
+   Portada y secciones
+   ============================================================ */
+.ud-cover-bg {
+  background:
+    radial-gradient(ellipse 80% 60% at 85% -10%, rgba(114, 137, 218, 0.35) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 10% 110%, rgba(47, 161, 197, 0.25) 0%, transparent 60%),
+    var(--ud-bg);
+}
+
+.ud-section-number {
+  font-size: 9rem;
+  font-weight: 700;
+  line-height: 1;
+  background: linear-gradient(160deg, var(--ud-accent) 0%, var(--ud-blue) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  opacity: 0.95;
+}
+
+/* Pie de diapositiva: separador superior */
+.ud-footer {
+  border-top: 1px solid var(--ud-divider);
+  color: var(--ud-text-subtle);
+  font-size: 0.7em;
+}
+
+/* ============================================================
+   Overrides de Slidev (variables del cliente + utilidades UnoCSS)
+   ============================================================ */
+:root {
+  --slidev-theme-primary: #7289da;
+  --slidev-code-background: #f6f6f7;
+  --slidev-code-foreground: #3c3c43;
+}
+
+html.dark {
+  --slidev-theme-primary: #8fa2e8;
+  --slidev-code-background: #161618;
+  --slidev-code-foreground: #ebebf5;
+}
+
+/* Utilidades `bg-main` / `text-main` del cliente: llevadas a nuestra paleta */
+.bg-main {
+  background-color: var(--ud-bg) !important;
+}
+
+html.dark .bg-main {
+  background-color: var(--ud-bg) !important;
+}
+
+.text-main {
+  color: var(--ud-text) !important;
+}
+
+html.dark .text-main {
+  color: var(--ud-text) !important;
+}
+
+/* Blockquotes del tema: mismo estilo que las notas del material */
+.slidev-layout blockquote {
+  background: var(--ud-accent-soft);
+  color: var(--ud-text-mute);
+  border-left: 4px solid var(--ud-accent);
+  border-radius: 0 8px 8px 0;
+  padding: 0.55em 0.9em;
+  font-size: 0.88em;
+}
+
+.slidev-layout blockquote > * {
+  margin: 0.2em 0;
+}
+
+/* Listas con viñeta cuadrada del tema → redondeadas de marca.
+   Sangría colgante: el marcador va en posición absoluta y el texto tiene
+   padding-left → las líneas continuadas se alinean con el texto de la
+   primera línea (no con el margen de la slide). */
+.slidev-layout ul {
+  list-style: none;
+  padding-left: 1.35em;
+}
+
+.slidev-layout ul li {
+  position: relative;
+}
+
+.slidev-layout ul li::before {
+  content: '▹';
+  position: absolute;
+  left: -1.05em;
+  color: var(--ud-accent);
+  font-weight: 700;
+}
+
+/* ============================================================
+   Ritmo vertical: separación entre título y contenido,
+   y entre bloques apilados (nada pegado)
+   ============================================================ */
+.slidev-layout h2 {
+  margin-bottom: 0.85em;
+}
+
+/* Ritmo vertical entre bloques apilados en una COLUMNA (nada pegado).
+   OJO: NO aplica a hijos directos de .grid — están en la misma fila y un
+   margin-top desalinearía la primera tarjeta respecto a las demás
+   (bug: "una tarjeta empieza más arriba que las otras"). */
+.slidev-layout :not(.grid) > .ud-tip:not(:first-child),
+.slidev-layout :not(.grid) > .ud-card:not(:first-child),
+.slidev-layout :not(.grid) > .ud-concept:not(:first-child),
+.slidev-layout :not(.grid) > .ud-quote:not(:first-child) {
+  margin-top: 1em;
+}
+
+/* ⚠️ La regla de arriba exige un ANCESTRO `.slidev-layout`, así que NO
+   matchea cuando el bloque es HIJO DIRECTO del layout (el layout no tiene
+   ancestro `.slidev-layout`) → margin-top:0 y bloques pegados
+   (bug: "Ejemplo real toca Advertencia 0px"). Se repite aquí, apuntando a
+   hijos directos. (ud-real/ud-window ya los cubre la regla de 0.85em
+   más abajo, que sí es descendiente.) */
+.slidev-layout > .ud-tip:not(:first-child),
+.slidev-layout > .ud-card:not(:first-child),
+.slidev-layout > .ud-concept:not(:first-child),
+.slidev-layout > .ud-quote:not(:first-child) {
+  margin-top: 1em;
+}
+
+/* Componente → bloque de código: el wrapper de código trae margin-top de
+   4px con !important de Slidev → solo ganándole con !important
+   (bug: "el recuadro Truco pega al bloque de código") */
+.slidev-layout > .ud-tip + .slidev-code-wrapper,
+.slidev-layout > .ud-real + .slidev-code-wrapper,
+.slidev-layout > .ud-card + .slidev-code-wrapper,
+.slidev-layout > .ud-quote + .slidev-code-wrapper,
+.slidev-layout > .ud-concept + .slidev-code-wrapper {
+  margin-top: 0.85em !important;
+}
+
+/* Lista → tabla: venían a 0px (bug: "el párrafo queda pegado a la tabla") */
+.slidev-layout > ul + table,
+.slidev-layout > p + table {
+  margin-top: 1em;
+}
+
+/* Aire generoso DESPUÉS de un grid (bug: "muy pegada, sin aire") */
+.slidev-layout .grid + .ud-tip,
+.slidev-layout .grid + .ud-card,
+.slidev-layout .grid + .ud-real,
+.slidev-layout .grid + .ud-window,
+.slidev-layout .grid + p,
+.slidev-layout .grid + table,
+.slidev-layout .grid + .mermaid {
+  margin-top: 1.5em;
+}
+
+/* Las imágenes sueltas dejan aire por debajo (bug: "la imagen está muy
+   pegada, no hay aire"). Solo imágenes de markdown, no las de flex. */
+.slidev-layout p:has(> img) {
+  margin-bottom: 1.1em;
+}
+
+/* Slides con mucho aire muerto abajo: `ud-vcenter` hace que el contenido
+   ocupe el hueco sobrante y quede centrado verticalmente (decisión de
+   diseño, no error). El bloque crece con flex:1 y sus filas se centran. */
+.slidev-layout .ud-vcenter {
+  flex: 1;
+  align-content: center;
+}
+
+/* Hijos directos de un grid: sin margen extra, la separación da la fila
+   (gap) y todos arrancan a la misma altura */
+.slidev-layout .grid > .ud-tip:not(:first-child),
+.slidev-layout .grid > .ud-card:not(:first-child),
+.slidev-layout .grid > .ud-concept:not(:first-child),
+.slidev-layout .grid > .ud-quote:not(:first-child) {
+  margin-top: 0;
+}
+
+/* Aire explícito cuando un ConceptCard va justo detrás de una tabla markdown */
+.slidev-layout table + .ud-concept,
+.slidev-layout table + .ud-tip,
+.slidev-layout table + .ud-window {
+  margin-top: 1em;
+}
+
+/* ============================================================
+   Emoji dentro de un h1 con gradiente: no debe teñirse
+   ============================================================ */
+.slidev-layout h1 .ud-emoji {
+  color: var(--ud-text);
+  -webkit-text-fill-color: var(--ud-text);
+}
+
+/* Frase remarcada dentro de una tarjeta */
+.ud-highlight {
+  color: var(--ud-accent-strong);
+  background: var(--ud-accent-soft);
+  padding: 0.05em 0.4em;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+html.dark .ud-highlight {
+  color: #a3b1ee;
+}
+
+/* ============================================================
+   Diagramas Mermaid: a ancho completo y sin salirse
+   El SVG vive en un shadow root, así que solo podemos actuar
+   sobre el contenedor (el host) y sobre la config de Mermaid
+   (setup/mermaid.ts → useMaxWidth).
+   ============================================================ */
+.slidev-layout .mermaid {
+  display: block;
+  width: 100%;
+  /* Un poco menos de ancho = diagrama más bajo y texto más legible */
+  max-width: 820px;
+  max-height: 350px;
+  margin-inline: auto;
+  /* NUNCA pegado al bloque anterior (bug: el rombo rozaba la tarjeta de
+     arriba y la etiqueta "¿Sigue?" la cruzaba la línea del flujo) */
+  margin-top: 1.1em;
+  overflow: hidden;
+}
+
+/* ...salvo cuando el diagrama va justo debajo del título: ahí el aire ya lo
+   pone el h2 y el margen extra solo acercaba el contenido al pie */
+.slidev-layout h2 + .mermaid {
+  margin-top: 0;
+}
+
+/* Diagrama casi cuadrado (árbol de 6 hojas: pilares de la POO): a 424px de
+   columna medía 386px de alto y se cortaba al ENTRAR en la slide (el JS de
+   ajuste llegaba tarde y solo se arreglaba al refrescar). A 384px cabe SOLO:
+   384 × (559/614) ≈ 350px = el tope del host, sin depender de JS. */
+.slidev-layout .ud-mer-angosto .mermaid {
+  max-width: 384px;
+}
+
+/* Separación entre bloques apilados dentro de la misma columna */
+.slidev-layout .ud-window:not(:first-child),
+.slidev-layout .ud-real:not(:first-child),
+.slidev-layout .ud-tip + .ud-window,
+.slidev-layout .ud-tip + .ud-real {
+  margin-top: 0.85em;
+}

@@ -1,0 +1,26 @@
+{
+  "name": "dwes-ud01-slidev",
+  "type": "module",
+  "private": true,
+  "description": "Presentaciones Slidev de la UD01 de Desarrollo Web en Entorno Servidor (2DAW)",
+  "scripts": {
+    "dev:parte1": "slidev parte1.md",
+    "dev:parte2": "slidev parte2.md",
+    "build:parte1": "slidev build parte1.md --out dist/parte1",
+    "build:parte2": "slidev build parte2.md --out dist/parte2",
+    "export:parte1": "slidev export parte1.md",
+    "export:parte2": "slidev export parte2.md"
+  },
+  "dependencies": {
+    "@slidev/cli": "latest",
+    "@slidev/theme-default": "latest",
+    "gsap": "latest",
+    "slidev-addon-autofit": "latest",
+    "slidev-addon-gsap": "latest",
+    "slidev-component-poll": "latest",
+    "vue": "latest"
+  },
+  "devDependencies": {
+    "playwright-chromium": "^1.65.1"
+  }
+}
