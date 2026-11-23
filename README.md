@@ -56,6 +56,7 @@ UD01. Introducción al desarrollo de software en Servidor. 2DAW. Curso 2026-2027
 ## Presentaciones
 
 - Parte 1: fundamentos del desarrollo web en entorno servidor ([tema claro](presentaciones/ud01-parte1-claro.pdf), [tema oscuro](presentaciones/ud01-parte1-oscuro.pdf))
+- Parte 2: C# avanzado para desarrollo servidor ([tema claro](presentaciones/ud01-parte2-claro.pdf), [tema oscuro](presentaciones/ud01-parte2-oscuro.pdf))
 
 ## Resultados de Aprendizaje y Criterios de Evaluación
 
